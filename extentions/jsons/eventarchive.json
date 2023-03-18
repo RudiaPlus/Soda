@@ -1,0 +1,147 @@
+{
+    "act20side": {
+        "id": "act20side",
+        "type": "SIDESTORY",
+        "stageAdd": "False",
+        "name": "理想都市-エンドレスカーニバル-",
+        "link": "https://arknights.wikiru.jp/index.php?%A5%A4%A5%D9%A5%F3%A5%C877_%CD%FD%C1%DB%C5%D4%BB%D4-%A5%A8%A5%F3%A5%C9%A5%EC%A5%B9%A5%AB%A1%BC%A5%CB%A5%D0%A5%EB-",
+        "startTime": 1673575200,
+        "endTime": 1675364399,
+        "rewardEndTime": 1675969199
+    },
+    "cc#10": {
+        "id": "cc10",
+        "type": "CRISIS",
+        "name": "危機契約#10 作戦コード「塵環」",
+        "link": "https://arknights.wikiru.jp/index.php?%A5%A4%A5%D9%A5%F3%A5%C879_%B4%ED%B5%A1%B7%C0%CC%F3%A1%F410",
+        "stageAdd":"CRISIS",
+        "startTime": 1675407600,
+        "firstAddTime": 1675969200,
+        "endTime": 1676573999,
+        "eventColor": "4A3D35",
+        "permStage": {
+            "stageType": "PERM",
+            "stageName": "ロンディニウム辺縁区画",
+            "startTime": 1675407600,
+            "firstAddTime": 1675969200,
+            "endTime": 1676573999
+        },
+        "dailyStage": [
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 1,
+                "stageName": "ヒロック郡物流拠点",
+                "startTime": 1675407600
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 2,
+                "stageName": "灼熱の溶岩洞",
+                "startTime": 1675537200
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 3,
+                "stageName": "大騎士領バー通り",
+                "startTime": 1675623600
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 4,
+                "stageName": "尚蜀山道",
+                "startTime": 1675710000
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 5,
+                "stageName": "灰斉山麓",
+                "startTime": 1675796400
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 6,
+                "stageName": "砂海の遺跡",
+                "startTime": 1675882800
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 7,
+                "stageName": "サルヴィエントの洞窟",
+                "startTime": 1675969200
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 8,
+                "stageName": "大騎士領バー通り",
+                "startTime": 1676055600
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 9,
+                "stageName": "サルヴィエントの洞窟",
+                "startTime": 1676142000
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 10,
+                "stageName": "尚蜀山道",
+                "startTime": 1676228400
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 11,
+                "stageName": "砂海の遺跡",
+                "startTime": 1676314800
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 12,
+                "stageName": "灰斉山麓",
+                "startTime": 1676401200
+            },
+            {
+                "stageType": "DAILY_FINAL",
+                "dailyNumber": 13,
+                "stageName": "ヒロック郡物流拠点",
+                "startTime": 1676487600
+            }
+        ]
+    },
+    "act11mini": {
+        "id": "act11mini",
+        "type": "OTHER",
+        "stageAdd": "False",
+        "name": "未尽篇章",
+        "link": "https://00m.in/XKNt3",
+        "startTime": 1676617200,
+        "endTime": 1677178799,
+        "rewardEndTime": 1677437999
+    },
+    "act12side": {
+        "id": "act12sre",
+        "type": "SIDESTORY",
+        "stageAdd": "False",
+        "name": "ドッソレス・ホリデー・復刻",
+        "link": "https://arknights.wikiru.jp/index.php?%A5%A4%A5%D9%A5%F3%A5%C8xx_%A5%C9%A5%C3%A5%BD%A5%EC%A5%B9%A5%DB%A5%EA%A5%C7%A1%BC%28%C9%FC%B9%EF%29",
+        "startTime": 1677567600,
+        "endTime": 1678388399,
+        "rewardEndTime": 1678733999
+    },
+    "act19side": {
+        "id": "act19side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "翠玉の夢",
+        "link": "https://00m.in/HmmmR",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/c4b6d5f46a142ab6650796eaed375a37.png",
+        "startTime": 1678777200,
+        "endTime": 1679943599,
+        "rewardEndTime": 1680548399,
+        "additionalStage": [
+            {
+                "name": "ライン生命本社",
+                "startTime": 1679382000
+            }
+        ]
+    }
+}

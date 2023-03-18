@@ -1,0 +1,19 @@
+{
+    "act19side": {
+        "id": "act19side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "翠玉の夢",
+        "link": "https://00m.in/HmmmR",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/c4b6d5f46a142ab6650796eaed375a37.png",
+        "startTime": 1678759200,
+        "endTime": 1679943599,
+        "rewardEndTime": 1680548399,
+        "additionalStage": [
+            {
+                "name": "ライン生命本社",
+                "startTime": 1679382000
+            }
+        ]
+    }
+}
