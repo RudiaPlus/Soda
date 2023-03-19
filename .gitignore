@@ -14,3 +14,4 @@ docker-compose.yml
 Dockerfile
 .replit
 venv
+chat.json
