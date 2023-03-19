@@ -20,7 +20,7 @@ async def get_response(message, reset: bool) -> str:
     with open(os.path.join(prompt_dir, prompt_name), encoding="UTF-8") as f:
       prompt = f.read()
     chatbot = ChatGPT.Chatbot(api_key=config.openAI_key,
-                              temperature=0.8,
+                              temperature=0.6,
                               system_prompt=prompt)
     if reset == True:
       chatbot.reset()
