@@ -11,8 +11,8 @@ testserverid = discord.Object(id=1059155328584908810)
 chat = int(1072158278634713108)  #1072158278634713108
 me = int(870729549833465917)
 server_icon = "https://cdn.discordapp.com/icons/1018858818345631745/039c77dd10811cb8e193c8e0cd4be453.webp?size=1024"
-announce = int(1081251314958344313)  #
-morningtime = datetime.time(hour=6, minute=30, tzinfo=JST)
+announce = int(1059155329050497075)  #1081251314958344313
+morningtime = datetime.time(hour=19, minute=5, tzinfo=JST)
 modchannnel = int(1073151183092457514)
 morning = True
 command = False
