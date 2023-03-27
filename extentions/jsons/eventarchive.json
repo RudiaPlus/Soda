@@ -143,5 +143,16 @@
                 "startTime": 1679382000
             }
         ]
+    },
+    "act12mini": {
+        "id": "act12mini",
+        "type": "MINISTORY",
+        "stageAdd": "False",
+        "name": "夕景に影ありて",
+        "link": "https://00m.in/JrJ6G",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/8fa86f454c3a05fc8e93e2bb148b0e5f.png",
+        "startTime": 1680246000,
+        "endTime": 1680807599,
+        "rewardEndTime": 1681066799
     }
 }
