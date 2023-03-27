@@ -354,18 +354,22 @@ def run_discord_bot():
               await channel.send(embed=embed)
 
           elif events[i]["dif"] == "past":
+            eventpic = events[i]["pic"]
             rewardEndTime = events[i]["rewardEndTime"]
             embed = discord.Embed(title=events[i]["name"],
                                   description=f"報酬受取期限：{rewardEndTime}",
                                   color=0x454545)
             embed.set_author(name="終了したイベント")
+            embed.set_image(url=eventpic)
             await channel.send(embed=embed)
 
           else:
+            eventpic = events[i]["pic"]
             embed = discord.Embed(title=events[i]["name"],
                                   description=events[i]["time"],
                                   color=0xba80ea)
             embed.set_author(name="開催予定のイベント")
+            embed.set_image(url=eventpic)
             await channel.send(embed=embed)
 
       await responses.get_response("reset", reset=True)
