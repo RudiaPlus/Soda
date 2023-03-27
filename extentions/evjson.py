@@ -122,10 +122,11 @@ def eventget():
                 type = event_dic[event_end_list[i]]["type"]
                 rewardEndTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_end_list[i]]["rewardEndTime"])
                 link = event_dic[event_end_list[i]]["link"]
+                pic = event_dic[event_now_list[i]]["pic"]
             except KeyError as e:
                 print("event_end_listにて")
                 
-            events.append({"name": name, "dif": "past", "type": type, "rewardEndTime": rewardEndTime, "link": link})
+            events.append({"name": name, "dif": "past", "type": type, "rewardEndTime": rewardEndTime, "link": link, "pic": pic})
                 
         
         for i in range(len(event_value_list)):
