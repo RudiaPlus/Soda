@@ -1,25 +1,18 @@
 import discord
-from extentions import (responses, config, evjson, JSTTime, modmails)
+from extentions import (responses, config, evjson, JSTTime, modmails, log)
+from extentions.aclient import client
 import re
 import os
 import json
 from discord import app_commands
 from discord.ext import tasks
 
-
-class Rhodolite(discord.Client):
-
-  def __init__(self, *, intents: discord.Intents):
-    super().__init__(intents=intents)
-    self.tree = app_commands.CommandTree(self)
-    self.activity = discord.Activity(type=discord.ActivityType.watching,
-                                     name="DISCOVERED TERRA")
-
+logger = log.setup_logger(__name__)
 
 async def send_message(message, user_message):
   try:
     response = await responses.get_response(user_message, reset=False)
-    print(f"【rhodo.send_message】返信を取得しました「{response}」")
+    logger.info(f"返信を取得しました「{response}」")
 
     if len(response) > 1900:
       await message.channel.send("文字数制限を超えてしまいました！すみませんがもう一度お願いします！")
@@ -27,34 +20,23 @@ async def send_message(message, user_message):
       await message.channel.send(response)
 
   except Exception as e:
-    print(f"【rhodo.send_message】エラー：{e}")
-
-  except Exception as e:
-    print(f"【rhodo.send_start_prompt】エラー：{e}")
+    logger.exception(f"[send_message]にてエラー：{e}")
 
 
 def run_discord_bot():
 
-  TOKEN = config.token
-  intents = discord.Intents.default()
-  intents.message_content = True
-  intents.guilds = True
-  intents.members = True
-  intents.voice_states = True
-  client = Rhodolite(intents=intents)
   dir = os.path.abspath(__file__ + "/../")
 
   @client.event
   async def on_ready():
-    print("【rhodo.run_discord_bot.on_ready】準備を始めます")
+    logger.info("準備を始めます")
     try:
-      #await send_start_prompt(client)
       synced = await client.tree.sync()
       await client.tree.sync(guild=config.testserverid)
-      print(f"【rhodo.run_discord_bot.on_ready】{len(synced)}個のコマンドを同期しました。")
+      logger.info(f"{len(synced)}個のコマンドを同期しました。")
     except Exception as e:
-      print(f"【rhodo.run_discord_bot.on_ready】 エラー：{e}")
-    print(f"【rhodo.run_discord_bot.on_ready】{client.user} 、準備完了です！")
+      logger.exception(f"[on_ready]にて エラー：{e}")
+    logger.info(f"{client.user} 、準備完了です！")
 
   @client.event
   async def setup_hook() -> None:
@@ -82,9 +64,12 @@ def run_discord_bot():
           color=user.accent_color)
         embed_mod.set_author(name=user.name, icon_url=user.avatar.url)
         await channel.send(embed=embed_mod)
-        await user.send(embed=embed)
-        await interaction.response.send_message("DMをお送りしました。ご確認ください！",
-                                                ephemeral=True)
+        if interaction.message.guild:
+          await user.send(embed=embed)
+          await interaction.response.send_message("DMをお送りしました。ご確認ください！",
+                                                  ephemeral=True)
+        else:
+          await interaction.response.send_message(embed=embed)
 
       elif await modmails.modmail_queue(user) == "False":
         await interaction.response.send_message("DMを既にお送りしております。ご確認ください！",
@@ -104,9 +89,12 @@ def run_discord_bot():
           color=user.accent_color)
         embed_mod.set_author(name=user.name, icon_url=user.avatar.url)
         await channel.send(embed=embed_mod)
-        await user.send(embed=embed)
-        await interaction.response.send_message("DMをお送りしました。ご確認ください！",
-                                                ephemeral=True)
+        if interaction.message.guild:
+          await user.send(embed=embed)
+          await interaction.response.send_message("DMをお送りしました。ご確認ください！",
+                                                  ephemeral=True)
+        else:
+          await interaction.response.send_message(embed=embed)
 
   @client.tree.command(name="modmail",
                        description="サーバースタッフと会話を開始することが出来ます！お気軽にご利用ください！")
@@ -118,8 +106,7 @@ def run_discord_bot():
                           color=0x696969)
     embed.set_author(
       name="あしたはこぶねスタッフ",
-      icon_url=
-      "https://cdn.discordapp.com/icons/1018858818345631745/039c77dd10811cb8e193c8e0cd4be453.webp?size=1024"
+      icon_url=config.server_icon
     )
     await interaction.response.send_message(embed=embed,
                                             ephemeral=True,
@@ -143,8 +130,6 @@ def run_discord_bot():
       return
     await interaction.response.defer()
     events = evjson.eventget()
-    print(
-      f"【rhodo.run_discord_bot.eventtest】イベントのリストを受け取りました。以下になります。\n{events}")
     await interaction.followup.send(events)
 
   @client.event
@@ -164,25 +149,33 @@ def run_discord_bot():
         mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
         await messageuser.send(embed=mail)
 
-    elif message.author == messageuser:
-      channel = client.get_channel(config.modchannnel)
-      mail = discord.Embed(title=f"{message.author.name}からのメッセージ",
-                           description=message.content)
-      mail.set_footer(text="Modmailを終わらせるには「終了」と送信してください")
-      await channel.send(embed=mail)
+    if not message.guild:
+      logger.debug("DM受信")
+      if message.author == messageuser:
+        channel = client.get_channel(config.modchannnel)
+        mail = discord.Embed(title=f"{message.author.name}からのメッセージ",
+                            description=message.content)
+        mail.set_footer(text="Modmailを終わらせるには「終了」と送信してください")
+        await channel.send(embed=mail)
+        
+      else:
+        mail = discord.Embed(title="お問い合わせの場合は、/modmailをご利用ください！",
+                             description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmail")
+        mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
+        await message.author.send(embed=mail)
 
     username = str(message.author)
     user_message = str(message.content)
     channel = str(message.channel)
     channelID = int(message.channel.id)
 
-    print(
-      f"【rhodo.run_discord_bot.on_message】{username}が{channel}({channelID})にて「{user_message}」と言ったのを記録しました"
+    logger.info(
+      f"{username}が{channel}({channelID})にて「{user_message}」と言ったのを記録しました"
     )
 
     if channelID == config.chat:
       clean_message = re.sub('<.*?>', '', user_message)
-      print("【rhodo.run_discord_bot.on_message】返事をします")
+      logger.info("返事をします")
       await send_message(message, clean_message)
 
     else:
@@ -191,16 +184,18 @@ def run_discord_bot():
   @tasks.loop(time=config.morningtime)
   async def morning():
     try:
-      print("【rhodo.morning】時間になりました。モーニングルーティンを始めます")
+      logger.info("時間になりました。モーニングルーティンを始めます")
 
       if config.morning == True:
         events = evjson.eventget()
-        print(f"【rhodo.morning】イベントのリストを受け取りました。以下になります。\n{events}")
         eventcount = evjson.eventcount()
         channel = client.get_channel(config.announce)
 
         if eventcount[0] == 0:
-          eventnow = "本日は少し休める日ですね！"
+          if eventcount[3] != 1:
+            eventnow = "本日からイベントが開催されます！"
+          else: 
+            eventnow = "本日は少し休める日ですね！"
         elif eventcount[0] == 1:
           eventnow = f"\n・イベントが進行中です:sparkles: 頑張りましょう！"
         else:
@@ -209,7 +204,7 @@ def run_discord_bot():
         if eventcount[1] == 0:
           eventend = ""
         elif eventcount[1] == 1:
-          eventend = f"\n・終了したイベントが在ります！ 報酬の受け取りを忘れずに！:eyes:"
+          eventend = f"\n・終了したイベントがあります！ 報酬の受け取りを忘れずに！:eyes:"
         else:
           eventend = f"\n・{eventcount[1]}個のイベントが終了しています。報酬の受け取りを忘れずに！:eyes:"
 
@@ -375,6 +370,7 @@ def run_discord_bot():
       await responses.get_response("reset", reset=True)
 
     except Exception as e:
-      print(e)
+      logger.exception(f"[morning]にてエラー：{e}")
 
+  TOKEN = config.token
   client.run(TOKEN)

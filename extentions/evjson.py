@@ -2,6 +2,10 @@ import json
 import os
 import time
 import datetime
+from extentions import log, JSTTime
+
+logger = log.setup_logger(__name__)
+timeDay = JSTTime.timetoJST
 
 def eventget():
     dir = os.path.abspath(__file__ + "/../")
@@ -47,8 +51,8 @@ def eventget():
                 event_end_list.append(k)
 
             
-        print(f"【evjson.eventget】現在{event_now}個のイベントが進行中です")
-        print(f"【evjson.eventget】開催予定のイベントは{event_value}個、終了したイベントは{event_end}個あります")
+        logger.info(f"【evjson.eventget】現在{event_now}個のイベントが進行中です")
+        logger.info(f"【evjson.eventget】開催予定のイベントは{event_value}個、終了したイベントは{event_end}個あります")
         
         for i in range(len(event_now_list)):
             #開催中リストから「名前、イベントの種類、開始時間、終了時間、攻略リンク、ステージ追加」の有無を取得する←これらは必須です！
@@ -61,8 +65,7 @@ def eventget():
                 stageAdd = event_dic[event_now_list[i]]["stageAdd"]
                 pic = event_dic[event_now_list[i]]["pic"]
             except KeyError as e:
-                print(f"【evjson】event_now_listにてエラー：{e}")
-                print(e)
+                logger.exception(f"[event_now_list]にてエラー：{e}")
                 
             #
             if type == "CRISIS":
@@ -70,7 +73,7 @@ def eventget():
                     dailyStage = event_dic[event_now_list[i]]["dailyStage"]
                     permStage = event_dic[event_now_list[i]]["permStage"]["stageName"]
                 except KeyError as e:
-                    print(f"【evjson】CRISIS.dailyStageにてエラー：{e}")
+                    logger.exception(f"[CRISIS.dailyStage]にてエラー：{e}")
                 
                 dt = datetime.datetime.fromtimestamp(event_dic[event_now_list[i]]["startTime"] - 43200) #starttimeは16時なので、4時にするために-43200にする
                 now = datetime.datetime.now()
@@ -96,7 +99,7 @@ def eventget():
                     additionalStage = event_dic[event_now_list[i]]["additionalStage"]
                     stageAddTime = additionalStage[0]["startTime"]
                 except KeyError as e:
-                    print("stageAddにて")
+                    logger.error(e)
                     
                 if additionalStage[0]["startTime"] > time.time():
                     nextStageName = additionalStage[0]["name"]
@@ -124,7 +127,7 @@ def eventget():
                 link = event_dic[event_end_list[i]]["link"]
                 pic = event_dic[event_end_list[i]]["pic"]
             except KeyError as e:
-                print("event_end_listにて")
+                logger.exception(f"[event_end_list]にてエラー：{e}")
                 
             events.append({"name": name, "dif": "past", "type": type, "rewardEndTime": rewardEndTime, "link": link, "pic": pic})
                 
@@ -138,7 +141,7 @@ def eventget():
                 pic = event_dic[event_value_list[i]]["pic"]
             
             except KeyError as e:
-                print("event_value_listにて")
+                logger.exception(f"[event_value_list]にてエラー：{e}")
             
             events.append({"name": name, "dif": "future", "type": type, "time": f"開始: {startTime}\n終了: {endTime}", "pic": pic})
             
@@ -156,6 +159,7 @@ def eventcount() :
         event_value = 0
         event_now = 0
         event_end = 0
+        event_today = 0
         
         for k in event_dic.keys():
             try:
@@ -169,11 +173,14 @@ def eventcount() :
             if time.time() < eventtime:
                 event_value += 1
                 
+                if timeDay(eventtime, type="m/d") == timeDay(time.time(), type="m/d"):
+                    event_today += 1
+                
             elif time.time() < eventEndtime:
                 event_now += 1
             
             elif time.time() < eventRewardEndTime:
                 event_end += 1
     
-    event_count = [event_now, event_end, event_value]        
+    event_count = [event_now, event_end, event_value, event_today]        
     return(event_count)

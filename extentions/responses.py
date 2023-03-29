@@ -1,7 +1,9 @@
 #from revChatGPT.V1 import AsyncChatbot
-from extentions import ChatGPT
-from extentions import config
+from extentions import ChatGPT, config, log
 import os
+
+logger = log.setup_logger(__name__)
+
 """async def getresponse(message) -> str:
     try:
         chatbot = AsyncChatbot(config = {"access_token": config.openAI_token}, conversation_id = "67bcc8d1-5c4a-48e3-9d0a-d38a64a8b208")
@@ -32,4 +34,4 @@ async def get_response(message, reset: bool) -> str:
     chatbot.save()
     return response
   except Exception as e:
-    print(f"【responses.get_response】エラー：{e}")
+    logger.info(f"【responses.get_response】エラー：{e}")

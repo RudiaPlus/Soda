@@ -32,6 +32,8 @@ def timetoJST(timestamp: int, type: str) -> str:
     
     if type == "full":
         return(f"{time.year}年{time.month}月{time.day}日 ({weekday}) {time.hour}時{time.minute}分{time.second}秒")
+    elif type == "m/d":
+        return(f"{time.month}/{time.day}")
     elif type == "minute":
         return(f"{time.year}年{time.month}月{time.day}日 ({weekday}) {time.hour}時{time.minute}分")
     elif type == "hour":

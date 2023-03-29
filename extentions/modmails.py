@@ -1,8 +1,11 @@
 import json
 import os
+from extentions import log
+
 dir = os.path.abspath(__file__ + "/../")
 json_name = "jsons/modmail.json"
 json_path = os.path.join(dir, json_name)
+logger = log.setup_logger(__name__)
 
 def modmail_get_user():
     with open(json_path, mode = "r", encoding="utf-8") as f:
@@ -48,7 +51,7 @@ async def modmail_queue(user):
                 json.dump(modmail_json, f, indent=2, ensure_ascii=False)
             return("notReady")
     except Exception as e:
-        print(f"【modmails.modmail_queue】エラー：{e}")
+        logger.exception(f"[modmail_queue]にてエラー：{e}")
             
 async def modmail_finish(user):
         
