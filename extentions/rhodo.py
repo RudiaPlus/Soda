@@ -160,7 +160,7 @@ def run_discord_bot():
         
       else:
         mail = discord.Embed(title="お問い合わせの場合は、/modmailをご利用ください！",
-                             description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmail")
+                             description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！")
         mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
         await message.author.send(embed=mail)
 
