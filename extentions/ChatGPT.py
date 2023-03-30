@@ -11,8 +11,8 @@ class Chatbot:
         self,
         api_key: str,
         engine: str = "gpt-3.5-turbo", #gpt-3.5-turbo
-        temperature: float = 1.0,
-        system_prompt: str = None,
+        temperature: float = 0.6,
+        system_prompt: str = None
     ) -> None:
 
         self.engine = engine
@@ -23,6 +23,7 @@ class Chatbot:
 
     def ChatConversation(self, conversation):
         response = openai.ChatCompletion.create(
+            temperature = self.temperature,
             model = self.engine,
             messages = conversation
         )
@@ -47,3 +48,31 @@ class Chatbot:
         self.addConversation(message = message, role = "user")
         response = self.ChatConversation(self.conversation)
         return (response[-1]["content"])
+    
+class Imakita:
+    def __init__(
+        self,
+        api_key: str,
+        engine: str = "gpt-3.5-turbo", #gpt-3.5-turbo
+        temperature: float = 0.4
+    ) -> None:
+
+        self.engine = engine
+        openai.api_key = api_key
+        self.temperature = temperature
+        
+        self.messages = [
+            {"role": "system", "content": "あなたは会話文を3行に敬語を使って要約する人です。1行につき1文までとし、必ず3行に収めてください。"},
+            {"role": "system", "content": "あなたに与えられる会話文は「[名前]#[ID]:[メッセージ]」の形式です"},
+        ]
+        
+    def imakita(self, texts):
+        for text in texts:
+            self.messages.append({"role": "user", "content": text})
+
+        response = openai.ChatCompletion.create(
+            model = self.engine,
+            temperature = self.temperature,
+            messages = self.messages
+        )
+        return (response["choices"][0]["message"]["content"])

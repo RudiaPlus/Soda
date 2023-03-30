@@ -22,7 +22,7 @@ async def get_response(message, reset: bool) -> str:
     with open(os.path.join(prompt_dir, prompt_name), encoding="UTF-8") as f:
       prompt = f.read()
     chatbot = ChatGPT.Chatbot(api_key=config.openAI_key,
-                              temperature=0.6,
+                              temperature=0.8,
                               system_prompt=prompt)
     if reset == True:
       chatbot.reset()
@@ -35,3 +35,13 @@ async def get_response(message, reset: bool) -> str:
     return response
   except Exception as e:
     logger.info(f"【responses.get_response】エラー：{e}")
+    
+async def imakita_response(message) -> str:
+  Imakita = ChatGPT.Imakita(api_key = config.openAI_key,
+                            temperature = 0.2,)
+  try:
+    reply = Imakita.imakita(message)
+  except Exception as e:
+    reply = "エラーが発生しました"
+    logger.exception(f"[imakita_response]にてエラー：{e}")
+  return reply

@@ -2,6 +2,7 @@ import discord
 from extentions import (responses, config, evjson, JSTTime, modmails, log)
 from extentions.aclient import client
 import re
+import datetime
 import os
 import json
 from discord import app_commands
@@ -118,9 +119,31 @@ def run_discord_bot():
   async def rechat(interaction: discord.Interaction):
     if interaction.user == client.user:
       return
+    
     await interaction.response.defer()
     await responses.get_response("reset", reset=True)
     await interaction.followup.send("完了しました！")
+    
+  @client.tree.command(name="imakita",
+                       description="指定された時間内の会話をロードが適当に要約します")
+  async def imakita(interaction: discord.Interaction, hour: int):
+    if interaction.user == client.user:
+      return
+    
+    await interaction.response.defer()
+    end_time = JSTTime.timeJST("raw")
+    start_time = end_time - datetime.timedelta(hours=hour)
+    
+    text = []
+    async for message in interaction.channel.history(limit = None,
+                                                     after = start_time,
+                                                     before = end_time):
+      text.append(f"{message.author}: {message.content}")
+      
+    reply = discord.Embed(title = f"{str(hour)}時間分の会話を要約しました",
+                          description = await responses.imakita_response(text),
+                          color = 0x00ffff)
+    await interaction.followup.send(embed = reply)
 
   @client.tree.command(name="eventtest",
                        description="イベントリストのテストを行います",
@@ -160,7 +183,7 @@ def run_discord_bot():
         
       else:
         mail = discord.Embed(title="お問い合わせの場合は、/modmailをご利用ください！",
-                             description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmail")
+                             description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！")
         mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
         await message.author.send(embed=mail)
 
@@ -192,7 +215,7 @@ def run_discord_bot():
         channel = client.get_channel(config.announce)
 
         if eventcount[0] == 0:
-          if eventcount[3] != 1:
+          if eventcount[3] != 0:
             eventnow = "本日からイベントが開催されます！"
           else: 
             eventnow = "本日は少し休める日ですね！"
