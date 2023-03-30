@@ -43,7 +43,7 @@ def run_discord_bot():
   async def setup_hook() -> None:
     morning.start()
     maintenances.maintenance_timer.start()
-    print("start task")
+    logger.info("タスクを開始しました")
 
   class ModmailButton(discord.ui.View):
 

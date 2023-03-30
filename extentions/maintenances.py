@@ -9,7 +9,7 @@ from extentions.aclient import client
 
 logger = log.setup_logger(__name__)
 dir = os.path.abspath(__file__ + "/../")
-json_dir = "jsons\\maintenances.json"
+json_dir = "jsons/maintenances.json"
 
 async def write_json(dic):
     with open(os.path.join(dir, json_dir), "w", encoding = "UTF-8") as f:
