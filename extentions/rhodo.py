@@ -192,7 +192,7 @@ def run_discord_bot():
         channel = client.get_channel(config.announce)
 
         if eventcount[0] == 0:
-          if eventcount[3] != 1:
+          if eventcount[3] != 0:
             eventnow = "本日からイベントが開催されます！"
           else: 
             eventnow = "本日は少し休める日ですね！"
