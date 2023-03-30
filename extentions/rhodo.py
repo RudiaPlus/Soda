@@ -1,5 +1,5 @@
 import discord
-from extentions import (responses, config, evjson, JSTTime, modmails, log)
+from extentions import (responses, config, evjson, JSTTime, modmails, log, maintenances)
 from extentions.aclient import client
 import re
 import datetime
@@ -42,6 +42,8 @@ def run_discord_bot():
   @client.event
   async def setup_hook() -> None:
     morning.start()
+    maintenances.maintenance_timer.start()
+    print("start task")
 
   class ModmailButton(discord.ui.View):
 
@@ -144,6 +146,20 @@ def run_discord_bot():
                           description = await responses.imakita_response(text),
                           color = 0x00ffff)
     await interaction.followup.send(embed = reply)
+  
+  @client.tree.command(name = "maintenance",
+                       description = "メンテナンスについて",
+                       guild = config.testserverid)
+  async def maintenance(interaction: discord.Interaction,number: int, status: str, name: str = "メンテナンス"):
+    if status == "ruined":
+      await interaction.response.defer()
+      await maintenances.maintenance_ruined(number)
+      await interaction.followup.send("完了しました")
+    
+    if status == "end":
+      await interaction.response.defer()
+      await maintenances.maintenance_end(name, number)
+      await interaction.followup.send("完了しました")
 
   @client.tree.command(name="eventtest",
                        description="イベントリストのテストを行います",
@@ -154,6 +170,16 @@ def run_discord_bot():
     await interaction.response.defer()
     events = evjson.eventget()
     await interaction.followup.send(events)
+    
+  @client.tree.command(name="mainttest",
+                       description="メンテナンスリストのテストを行います",
+                       guild=config.testserverid)
+  async def eventtest(interaction: discord.Interaction):
+    if interaction.user == client.user:
+      return
+    await interaction.response.defer()
+    maintenance = await maintenances.maintenance_list()
+    await interaction.followup.send(maintenance)
 
   @client.event
   async def on_message(message):
@@ -212,6 +238,7 @@ def run_discord_bot():
       if config.morning == True:
         events = evjson.eventget()
         eventcount = evjson.eventcount()
+        maintenance = await maintenances.maintenance_list()
         channel = client.get_channel(config.announce)
 
         if eventcount[0] == 0:
@@ -255,6 +282,13 @@ def run_discord_bot():
         await channel.send(
           f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！  {eventnow}{eventend}{eventfuture}{weekday}{bdayop}"
         )
+        
+        for i in range(len(maintenance)):
+          embed = discord.Embed(title = maintenance[i]["name"],
+                                description = maintenance[i]["time"],
+                                color = 0xf5b642)
+          embed.set_author(name = "メンテナンス")
+          await channel.send(embed=embed)
 
         for i in range(len(events)):
           if events[i]["dif"] == "present":

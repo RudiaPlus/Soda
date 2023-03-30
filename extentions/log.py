@@ -40,7 +40,7 @@ def setup_logger(module_name:str) -> logging.Logger:
     logger = logging.getLogger(library)
     
     if not logger.hasHandlers():
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
 
         log_level = "INFO"
         level = logging.getLevelName(log_level.upper())
