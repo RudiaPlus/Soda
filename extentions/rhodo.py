@@ -125,7 +125,7 @@ def run_discord_bot():
     await interaction.followup.send("完了しました！")
     
   @client.tree.command(name="imakita",
-                       description="指定された時間内の会話をロードが適当に要約します")
+                       description="指定された時間内の会話をロードが適当に要約します。出来ない時もあります")
   async def imakita(interaction: discord.Interaction, hour: int):
     if interaction.user == client.user:
       return
