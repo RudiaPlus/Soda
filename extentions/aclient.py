@@ -14,6 +14,6 @@ class Rhodolite(discord.Client):
     super().__init__(intents=intents)
     self.tree = app_commands.CommandTree(self)
     self.activity = discord.Activity(type=discord.ActivityType.watching,
-                                     name="DISCOVERED TERRA")
+                                     name="あ")
     
 client = Rhodolite()
