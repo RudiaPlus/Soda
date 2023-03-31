@@ -51,8 +51,8 @@ def eventget():
                 event_end_list.append(k)
 
             
-        logger.info(f"【evjson.eventget】現在{event_now}個のイベントが進行中です")
-        logger.info(f"【evjson.eventget】開催予定のイベントは{event_value}個、終了したイベントは{event_end}個あります")
+        logger.info(f"現在{event_now}個のイベントが進行中です")
+        logger.info(f"開催予定のイベントは{event_value}個、終了したイベントは{event_end}個あります")
         
         for i in range(len(event_now_list)):
             #開催中リストから「名前、イベントの種類、開始時間、終了時間、攻略リンク、ステージ追加」の有無を取得する←これらは必須です！

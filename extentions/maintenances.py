@@ -36,7 +36,7 @@ async def maintenance_list():
                         
             maint_start = "<t:{0}:F>( <t:{0}:R> )".format(maintenances[entry]["startTime"])
             maint_end = "<t:{0}:F>( <t:{0}:R> )".format(maintenances[entry]["endTime"])
-            maint_list.append({"name": maint_name, "time": f"開始：{maint_start}\n終了:{maint_end}"})
+            maint_list.append({"name": maint_name, "time": f"開始:{maint_start}\n終了:{maint_end}"})
     
     return maint_list
     
@@ -79,7 +79,7 @@ async def maintenance_timer():
                 start = "<t:{0}:F>( <t:{0}:R> )".format(maint_start)
                 end = "<t:{0}:F>( <t:{0}:R> )".format(maint_end)
                 embed = discord.Embed(title = f"{maint_name}が開始されました！",
-                                      description = f"開始：{start}\n終了:{end}",
+                                      description = f"開始:{start}\n終了:{end}",
                                       color = 0xf5b642
                                       )
                 await channel.send("<@&1090976873774854177>", embed = embed)    
