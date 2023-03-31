@@ -114,6 +114,15 @@ def run_discord_bot():
     await interaction.response.send_message(embed=embed,
                                             ephemeral=True,
                                             view=ModmailButton())
+    
+  @client.tree.command(name = "send",
+                       description = "for dev only",
+                       guild = config.testserverid)
+  async def send(interaction: discord.Interaction, text: str):
+    await interaction.response.defer()
+    channel = client.get_channel(1019202000975560754)
+    await channel.send(text)
+    await interaction.followup.send("完了しました")
 
   @client.tree.command(name="rechat",
                        description="for dev only",
@@ -232,6 +241,10 @@ def run_discord_bot():
 
   @tasks.loop(time=config.morningtime)
   async def morning():
+    channel = client.get_channel(1019202000975560754)
+    await channel.send(f"<@&1019295385967149057>\n業務連絡です。直ちに私とあなたの名前とアイコン、サーバーのアイコンを元に戻してください。タスクがこなせないじゃないですか。春だからと言ってやって良い事と悪いことがあります。")
+  
+  """async def morning():
     try:
       logger.info("時間になりました。モーニングルーティンを始めます")
 
@@ -427,7 +440,7 @@ def run_discord_bot():
       await responses.get_response("reset", reset=True)
 
     except Exception as e:
-      logger.exception(f"[morning]にてエラー：{e}")
+      logger.exception(f"[morning]にてエラー：{e}")"""
 
   TOKEN = config.token
   client.run(TOKEN)
