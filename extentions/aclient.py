@@ -2,6 +2,7 @@ import os
 import discord
 from discord import app_commands
 
+
 class Rhodolite(discord.Client):
 
   def __init__(self) -> None:
@@ -14,6 +15,7 @@ class Rhodolite(discord.Client):
     super().__init__(intents=intents)
     self.tree = app_commands.CommandTree(self)
     self.activity = discord.Activity(type=discord.ActivityType.watching,
-                                     name="あ")
-    
+                                     name="DISCOVERED TERRA")
+
+
 client = Rhodolite()

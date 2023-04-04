@@ -145,14 +145,25 @@
         ]
     },
     "act12mini": {
-        "id": "act12mini",
+      "id": "act12mini",
+      "type": "MINISTORY",
+      "stageAdd": "False",
+      "name": "夕景に影ありて",
+      "link": "https://00m.in/JrJ6G",
+      "pic": "https://webusstatic.yo-star.com/uy0news/aj/8fa86f454c3a05fc8e93e2bb148b0e5f.png",
+      "startTime": 1680246000,
+      "endTime": 1680807599,
+      "rewardEndTime": 1681066799
+    },
+    "act13mini": {
+        "id": "act13mini",
         "type": "MINISTORY",
         "stageAdd": "False",
-        "name": "夕景に影ありて",
-        "link": "https://00m.in/JrJ6G",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/8fa86f454c3a05fc8e93e2bb148b0e5f.png",
-        "startTime": 1680246000,
-        "endTime": 1680807599,
-        "rewardEndTime": 1681066799
+        "name": "また会えたね",
+        "link": "https://00m.in/srkqe",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/4550ad5c20d1733e91efa5afd40c876a.png",
+        "startTime": 1680850800,
+        "endTime": 1681412399,
+        "rewardEndTime": 1681671599
     }
 }

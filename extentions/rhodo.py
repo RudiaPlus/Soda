@@ -1,5 +1,6 @@
 import discord
-from extentions import (responses, config, evjson, JSTTime, modmails, log, maintenances)
+from extentions import (responses, config, evjson, JSTTime, modmails, log,
+                        maintenances)
 from extentions.aclient import client
 import re
 import datetime
@@ -9,6 +10,7 @@ from discord import app_commands
 from discord.ext import tasks
 
 logger = log.setup_logger(__name__)
+
 
 async def send_message(message, user_message):
   try:
@@ -107,10 +109,7 @@ def run_discord_bot():
     embed = discord.Embed(title="あしたはこぶね・お問い合わせ",
                           description="以下のボタンを押すと、スタッフとの会話が開始されます\nよろしいですか？",
                           color=0x696969)
-    embed.set_author(
-      name="あしたはこぶねスタッフ",
-      icon_url=config.server_icon
-    )
+    embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
     await interaction.response.send_message(embed=embed,
                                             ephemeral=True,
                                             view=ModmailButton())
@@ -121,41 +120,44 @@ def run_discord_bot():
   async def rechat(interaction: discord.Interaction):
     if interaction.user == client.user:
       return
-    
+
     await interaction.response.defer()
     await responses.get_response("reset", reset=True)
     await interaction.followup.send("完了しました！")
-    
+
   @client.tree.command(name="imakita",
                        description="指定された時間内の会話をロードが適当に要約します。出来ない時もあります")
   async def imakita(interaction: discord.Interaction, hour: int):
     if interaction.user == client.user:
       return
-    
+
     await interaction.response.defer()
     end_time = JSTTime.timeJST("raw")
     start_time = end_time - datetime.timedelta(hours=hour)
-    
+
     text = []
-    async for message in interaction.channel.history(limit = None,
-                                                     after = start_time,
-                                                     before = end_time):
+    async for message in interaction.channel.history(limit=None,
+                                                     after=start_time,
+                                                     before=end_time):
       text.append(f"{message.author}: {message.content}")
-      
-    reply = discord.Embed(title = f"{str(hour)}時間分の会話を要約しました",
-                          description = await responses.imakita_response(text),
-                          color = 0x00ffff)
-    await interaction.followup.send(embed = reply)
-  
-  @client.tree.command(name = "maintenance",
-                       description = "メンテナンスについて",
-                       guild = config.testserverid)
-  async def maintenance(interaction: discord.Interaction,number: int, status: str, name: str = "メンテナンス"):
+
+    reply = discord.Embed(title=f"{str(hour)}時間分の会話を要約しました",
+                          description=await responses.imakita_response(text),
+                          color=0x00ffff)
+    await interaction.followup.send(embed=reply)
+
+  @client.tree.command(name="maintenance",
+                       description="メンテナンスについて",
+                       guild=config.testserverid)
+  async def maintenance(interaction: discord.Interaction,
+                        number: int,
+                        status: str,
+                        name: str = "メンテナンス"):
     if status == "ruined":
       await interaction.response.defer()
       await maintenances.maintenance_ruined(number)
       await interaction.followup.send("完了しました")
-    
+
     if status == "end":
       await interaction.response.defer()
       await maintenances.maintenance_end(name, number)
@@ -170,7 +172,15 @@ def run_discord_bot():
     await interaction.response.defer()
     events = evjson.eventget()
     await interaction.followup.send(events)
-    
+
+  @client.tree.command(name="send",
+                       description="dev only",
+                       guild=config.testserverid)
+  async def send(interaction: discord.Interaction, text: str):
+    channel = client.get_channel(1019202000975560754)
+    await channel.send(text)
+    await interaction.response.send_message("完了しました")
+
   @client.tree.command(name="mainttest",
                        description="メンテナンスリストのテストを行います",
                        guild=config.testserverid)
@@ -203,13 +213,14 @@ def run_discord_bot():
       if message.author == messageuser:
         channel = client.get_channel(config.modchannnel)
         mail = discord.Embed(title=f"{message.author.name}からのメッセージ",
-                            description=message.content)
+                             description=message.content)
         mail.set_footer(text="Modmailを終わらせるには「終了」と送信してください")
         await channel.send(embed=mail)
-        
+
       else:
-        mail = discord.Embed(title="お問い合わせの場合は、/modmailをご利用ください！",
-                             description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！")
+        mail = discord.Embed(
+          title="お問い合わせの場合は、/modmailをご利用ください！",
+          description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！")
         mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
         await message.author.send(embed=mail)
 
@@ -219,8 +230,7 @@ def run_discord_bot():
     channelID = int(message.channel.id)
 
     logger.info(
-      f"{username}が{channel}({channelID})にて「{user_message}」と言ったのを記録しました"
-    )
+      f"{username}が{channel}({channelID})にて「{user_message}」と言ったのを記録しました")
 
     if channelID == config.chat:
       clean_message = re.sub('<.*?>', '', user_message)
@@ -244,7 +254,7 @@ def run_discord_bot():
         if eventcount[0] == 0:
           if eventcount[3] != 0:
             eventnow = "本日からイベントが開催されます！"
-          else: 
+          else:
             eventnow = "本日は少し休める日ですね！"
         elif eventcount[0] == 1:
           eventnow = f"\n・イベントが進行中です:sparkles: 頑張りましょう！"
@@ -282,12 +292,12 @@ def run_discord_bot():
         await channel.send(
           f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！  {eventnow}{eventend}{eventfuture}{weekday}{bdayop}"
         )
-        
+
         for i in range(len(maintenance)):
-          embed = discord.Embed(title = maintenance[i]["name"],
-                                description = maintenance[i]["time"],
-                                color = 0xf5b642)
-          embed.set_author(name = "メンテナンス")
+          embed = discord.Embed(title=maintenance[i]["name"],
+                                description=maintenance[i]["time"],
+                                color=0xf5b642)
+          embed.set_author(name="メンテナンス")
           await channel.send(embed=embed)
 
         for i in range(len(events)):
