@@ -95,11 +95,11 @@ def run_discord_bot():
       return
     await interaction.response.defer(ephemeral = True)
     embed = discord.Embed(title = "コマンドヘルプ",
-                          description = "以下が現在実装されているコマンドになります。"
+                          description = "以下が現在実装されているコマンドになります。",
                           color = 0x696969)
-    embed.add_field(name = "「ドクターネーム」", value = "ゲーム内のドクターネーム(Dr.xxxx#0000の形のゲーム内ID)を紐づけします\n\n・**/doctorname set**：ドクターネームを登録/変更します\n・**/doctorname show**：指定した人のドクターネームを表示します\n**/doctorname delete**：登録したドクターネームを削除します")
-    embed.add_field(name = "「サポートリクエスト」", value = "チャンネルを使ってサポートオペレーターのリクエストができます。攻略に詰まったら是非使ってください！\n\n・**/request**：サポートのリクエストを送信します")
-    embed.add_field(name = "「Modmail」", value = "運営スタッフへの問い合わせが簡単にできます\n\n・**/modmail**：運営スタッフへの問い合わせを開始します")
+    embed.add_field(name = "「ドクターネーム」", value = "ゲーム内のドクターネーム(Dr.xxxx#0000の形のゲーム内ID)を紐づけします\n・**/doctorname set**：ドクターネームを登録/変更します\n・**/doctorname show**：指定した人のドクターネームを表示します\n・**/doctorname delete**：登録したドクターネームを削除します", inline = False)  
+    embed.add_field(name = "「サポートリクエスト」", value = "チャンネルを使ってサポートオペレーターのリクエストができます。攻略に詰まったら是非使ってください！\n・**/request**：サポートのリクエストを送信します", inline = False)
+    embed.add_field(name = "「Modmail」", value = "運営スタッフへの問い合わせが簡単にできます\n・**/modmail**：運営スタッフへの問い合わせを開始します", inline = False)
     
     await interaction.followup.send(embed = embed, ephemeral = True)
 
