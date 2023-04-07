@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": 0,
+    "userID": 870729549833465917,
+    "operator": "\u6fc1\u5fc3\u30b9\u30ab\u30b8",
+    "skill": "\u30b9\u30ad\u30eb2\uff1a\u540c\u846c\u7121\u5149\u306e\u9858",
+    "skillLevel": "\u30ec\u30d9\u30eb7",
+    "module": null,
+    "module_rank": "",
+    "lv": 40,
+    "messageID": 1093851986341920908
+  }
+]

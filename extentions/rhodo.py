@@ -35,7 +35,8 @@ def run_discord_bot():
   async def on_ready():
     logger.info("準備を始めます")
     try:
-      doctorname = DoctorNameCommand(name = "doctorname", description = "ドクターネームに関するコマンド")
+      doctorname = DoctorNameCommand(name="doctorname",
+                                     description="ドクターネームに関するコマンド")
       client.tree.add_command(doctorname)
       synced = await client.tree.sync()
       await client.tree.sync(guild=config.testserverid)
@@ -184,299 +185,405 @@ def run_discord_bot():
     channel = client.get_channel(1019202000975560754)
     await channel.send(text)
     await interaction.response.send_message("完了しました")
-  
+
   class OperatorSkillButton(discord.ui.View):
 
     def __init__(self, operators, skills, operator, lv):
       self.lv = lv
       self.operators = operators
       self.operator = operator
-      super().__init__(timeout = 300)
+      super().__init__(timeout=300)
       for i in skills:
         self.add_buttons(f"スキル{i}：{skills[i]}")
-      
+
     def add_buttons(self, label):
-      button_skill = discord.ui.Button(label = label, style = discord.ButtonStyle.primary)
+      button_skill = discord.ui.Button(label=label,
+                                       style=discord.ButtonStyle.primary)
+
       async def button_callback(interaction: discord.Interaction):
-        embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                              description = f"「{label}」を選択しました。\nスキルレベルの条件を選んでください。")
-        await interaction.response.edit_message(embed = embed, view = OperatorLevelButton(self.operators, label, self.operator, self.lv))
+        embed = discord.Embed(
+          title=f"サポートオペレーター「{self.operator}」のリクエスト",
+          description=f"「{label}」を選択しました。\nスキルレベルの条件を選んでください。")
+        await interaction.response.edit_message(embed=embed,
+                                                view=OperatorLevelButton(
+                                                  self.operators, label,
+                                                  self.operator, self.lv))
+
       button_skill.callback = button_callback
       self.add_item(button_skill)
-      
-    @discord.ui.button(label="キャンセル",
-                       row = 1,
-                       style=discord.ButtonStyle.danger)
-    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
-      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                            description = f"リクエストをキャンセルしました。",
-                            color = 0xf45d5d)
-      await interaction.response.edit_message(embed = embed, view = None)
-      
+
+    @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
+    async def cancel(self, interaction: discord.Interaction,
+                     button: discord.ui.Button):
+      embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+                            description=f"リクエストをキャンセルしました。",
+                            color=0xf45d5d)
+      await interaction.response.edit_message(embed=embed, view=None)
+
   class OperatorLevelButton(discord.ui.View):
-    
+
     def __init__(self, operators, skill, operator, lv):
       self.operator = operator
       self.lv = lv
       self.skill = skill
-      super().__init__(timeout = 300)
-      self.modules = {k: v for k, v in operators["modules"].items() if v is not None}
+      super().__init__(timeout=300)
+      self.modules = {
+        k: v
+        for k, v in operators["modules"].items() if v is not None
+      }
       self.module_name = ""
       for n in self.modules:
         self.module_name += f"・モジュール{n}: {self.modules[n]}\n"
-    
-    @discord.ui.button(label="レベル7",
-                       style=discord.ButtonStyle.primary)
-    async def lv7(self, interaction: discord.Interaction, button: discord.ui.Button):
+
+    @discord.ui.button(label="レベル7", style=discord.ButtonStyle.primary)
+    async def lv7(self, interaction: discord.Interaction,
+                  button: discord.ui.Button):
       skillLevel = "レベル7"
       if self.modules:
-        embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                              description = f"「{self.skill}/レベル7」を選択しました。\nモジュールに条件はありますか？\n{self.module_name}")
-        await interaction.response.edit_message(embed = embed, view = OperatorModuleButton(self.skill, skillLevel, self.operator, self.modules, self.lv))
+        embed = discord.Embed(
+          title=f"サポートオペレーター「{self.operator}」のリクエスト",
+          description=
+          f"「{self.skill}/レベル7」を選択しました。\nモジュールに条件はありますか？\n{self.module_name}")
+        await interaction.response.edit_message(
+          embed=embed,
+          view=OperatorModuleButton(self.skill, skillLevel, self.operator,
+                                    self.modules, self.lv))
       else:
         if self.lv == 0:
           level = ""
         else:
           level = f"昇進2/レベル{self.lv}"
-        embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                              description = f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/レベル7\n")
+        embed = discord.Embed(
+          title=f"サポートオペレーター「{self.operator}」のリクエスト",
+          description=
+          f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/レベル7\n"
+        )
         #リクエスト
-        await requests.send_request(user = interaction.user, operator = self.operator, skill = self.skill, skillLevel = skillLevel, lv = self.lv)
-        await interaction.response.edit_message(embed = embed, view = None)
-    
-    @discord.ui.button(label="特化3",
-                       style=discord.ButtonStyle.success)
-    async def m3(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await requests.send_request(user=interaction.user,
+                                    operator=self.operator,
+                                    skill=self.skill,
+                                    skillLevel=skillLevel,
+                                    lv=self.lv)
+        await interaction.response.edit_message(embed=embed, view=None)
+
+    @discord.ui.button(label="特化3", style=discord.ButtonStyle.success)
+    async def m3(self, interaction: discord.Interaction,
+                 button: discord.ui.Button):
       skillLevel = "特化3"
       if self.modules:
-        embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                              description = f"「{self.skill}/特化3」を選択しました。\nモジュールに条件はありますか？\n{self.module_name}")
-        await interaction.response.edit_message(embed = embed, view = OperatorModuleButton(self.skill, skillLevel, self.operator, self.modules, self.lv))
+        embed = discord.Embed(
+          title=f"サポートオペレーター「{self.operator}」のリクエスト",
+          description=
+          f"「{self.skill}/特化3」を選択しました。\nモジュールに条件はありますか？\n{self.module_name}")
+        await interaction.response.edit_message(
+          embed=embed,
+          view=OperatorModuleButton(self.skill, skillLevel, self.operator,
+                                    self.modules, self.lv))
       else:
         if self.lv == 0:
           level = ""
         else:
           level = f"昇進2/レベル{self.lv}"
-        embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                            description = f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/特化3\n")
+        embed = discord.Embed(
+          title=f"サポートオペレーター「{self.operator}」のリクエスト",
+          description=
+          f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/特化3\n")
         #リクエスト
-        await requests.send_request(user = interaction.user, operator = self.operator, skill = self.skill, skillLevel = skillLevel, lv = self.lv)
-        await interaction.response.edit_message(embed = embed, view = None)
-    
-    @discord.ui.button(label="キャンセル",
-                       row = 1,
-                       style=discord.ButtonStyle.danger)
-    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
-      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                            description = f"リクエストをキャンセルしました。",
-                            color = 0xf45d5d)
-      await interaction.response.edit_message(embed = embed, view = None)
-      
+        await requests.send_request(user=interaction.user,
+                                    operator=self.operator,
+                                    skill=self.skill,
+                                    skillLevel=skillLevel,
+                                    lv=self.lv)
+        await interaction.response.edit_message(embed=embed, view=None)
+
+    @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
+    async def cancel(self, interaction: discord.Interaction,
+                     button: discord.ui.Button):
+      embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+                            description=f"リクエストをキャンセルしました。",
+                            color=0xf45d5d)
+      await interaction.response.edit_message(embed=embed, view=None)
+
   class OperatorModuleButton(discord.ui.View):
-    
+
     def __init__(self, skill, skillLevel, operator, modules, lv):
       self.operator = operator
       self.lv = lv
       self.skill = skill
       self.skillLevel = skillLevel
       self.modules = modules
-      super().__init__(timeout = 300)
-      
+      super().__init__(timeout=300)
+
       for n in modules:
         self.add_buttons(f"モジュール{n}：{modules[n]}")
-        
+
     def add_buttons(self, label):
-      button_module = discord.ui.Button(label = label, style = discord.ButtonStyle.primary)
+      button_module = discord.ui.Button(label=label,
+                                        style=discord.ButtonStyle.primary)
+
       async def button_callback(interaction: discord.Interaction):
-        embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                              description = f"「{label}」を選択しました。\nモジュールランクの条件を選んでください。")
-        await interaction.response.edit_message(embed = embed, view = OperatorModuleLevelButton(self.skill, self.skillLevel, self.operator, label, self.lv))
+        embed = discord.Embed(
+          title=f"サポートオペレーター「{self.operator}」のリクエスト",
+          description=f"「{label}」を選択しました。\nモジュールランクの条件を選んでください。")
+        await interaction.response.edit_message(
+          embed=embed,
+          view=OperatorModuleLevelButton(self.skill, self.skillLevel,
+                                         self.operator, label, self.lv))
+
       button_module.callback = button_callback
       self.add_item(button_module)
-      
-    @discord.ui.button(label="無し",
-                       row = 1,
-                       style=discord.ButtonStyle.secondary)
-    async def none(self, interaction: discord.Interaction, button: discord.ui.Button):
+
+    @discord.ui.button(label="無し", row=1, style=discord.ButtonStyle.secondary)
+    async def none(self, interaction: discord.Interaction,
+                   button: discord.ui.Button):
       if self.lv == 0:
         level = ""
       else:
         level = f"昇進2/レベル{self.lv}"
-      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                            description = f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n")
+      embed = discord.Embed(
+        title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        description=
+        f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n"
+      )
       #リクエスト
-      await requests.send_request(user = interaction.user, operator = self.operator, skill = self.skill, skillLevel = self.skillLevel, lv = self.lv)
-      await interaction.response.edit_message(embed = embed, view = None)
-    
-    @discord.ui.button(label="キャンセル",
-                       row = 1,
-                       style=discord.ButtonStyle.danger)
-    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
-      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                            description = f"リクエストをキャンセルしました。",
-                            color = 0xf45d5d)
-      await interaction.response.edit_message(embed = embed, view = None)     
-  
+      await requests.send_request(user=interaction.user,
+                                  operator=self.operator,
+                                  skill=self.skill,
+                                  skillLevel=self.skillLevel,
+                                  lv=self.lv)
+      await interaction.response.edit_message(embed=embed, view=None)
+
+    @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
+    async def cancel(self, interaction: discord.Interaction,
+                     button: discord.ui.Button):
+      embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+                            description=f"リクエストをキャンセルしました。",
+                            color=0xf45d5d)
+      await interaction.response.edit_message(embed=embed, view=None)
+
   class OperatorModuleLevelButton(discord.ui.View):
-    
+
     def __init__(self, skill, skillLevel, operator, module, lv):
       self.operator = operator
       self.skill = skill
       self.skillLevel = skillLevel
       self.module = module
       self.lv = lv
-      super().__init__(timeout = 300)
-      
-    @discord.ui.button(label="ランク1以上",
-                       style=discord.ButtonStyle.primary)
-    async def mod1(self, interaction: discord.Interaction, button: discord.ui.Button):
-      if self.lv == 0:
-        level = ""
-      else:
-        level = f"昇進2/レベル{self.lv}"
-      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                            description = f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク1以上")
-      #リクエスト
-      await requests.send_request(user = interaction.user, operator = self.operator, skill = self.skill, skillLevel = self.skillLevel, module = self.module, module_rank="ランク1以上", lv = self.lv)
-      await interaction.response.edit_message(embed = embed, view = None)
+      super().__init__(timeout=300)
 
-    @discord.ui.button(label="ランク2以上",
-                       style=discord.ButtonStyle.primary)
-    async def mod2(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="ランク1以上", style=discord.ButtonStyle.primary)
+    async def mod1(self, interaction: discord.Interaction,
+                   button: discord.ui.Button):
       if self.lv == 0:
         level = ""
       else:
         level = f"昇進2/レベル{self.lv}"
-      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                            description = f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク2以上")
+      embed = discord.Embed(
+        title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        description=
+        f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク1以上"
+      )
       #リクエスト
-      await requests.send_request(user = interaction.user, operator = self.operator, skill = self.skill, skillLevel = self.skillLevel, module = self.module, module_rank="ランク2以上", lv = self.lv)
-      await interaction.response.edit_message(embed=embed, view = None)
-      
-    @discord.ui.button(label="ランク3",
-                       style=discord.ButtonStyle.primary)
-    async def mod3(self, interaction: discord.Interaction, button: discord.ui.Button):
+      await requests.send_request(user=interaction.user,
+                                  operator=self.operator,
+                                  skill=self.skill,
+                                  skillLevel=self.skillLevel,
+                                  module=self.module,
+                                  module_rank="ランク1以上",
+                                  lv=self.lv)
+      await interaction.response.edit_message(embed=embed, view=None)
+
+    @discord.ui.button(label="ランク2以上", style=discord.ButtonStyle.primary)
+    async def mod2(self, interaction: discord.Interaction,
+                   button: discord.ui.Button):
       if self.lv == 0:
         level = ""
       else:
         level = f"昇進2/レベル{self.lv}"
-      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                            description = f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク3")
+      embed = discord.Embed(
+        title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        description=
+        f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク2以上"
+      )
       #リクエスト
-      await requests.send_request(user = interaction.user, operator = self.operator, skill = self.skill, skillLevel = self.skillLevel, module = self.module, module_rank="ランク3", lv = self.lv)
-      await interaction.response.edit_message(embed=embed, view = None)
-      
-    @discord.ui.button(label="キャンセル",
-                       row = 1,
-                       style=discord.ButtonStyle.danger)
-    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
-      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
-                            description = f"リクエストをキャンセルしました。",
-                            color = 0xf45d5d)
-      await interaction.response.edit_message(embed = embed, view = None) 
-      
-  async def operator_autocomplete(interaction: discord.Interaction, current: str) -> List[discord.app_commands.Choice[str]]:
-    
+      await requests.send_request(user=interaction.user,
+                                  operator=self.operator,
+                                  skill=self.skill,
+                                  skillLevel=self.skillLevel,
+                                  module=self.module,
+                                  module_rank="ランク2以上",
+                                  lv=self.lv)
+      await interaction.response.edit_message(embed=embed, view=None)
+
+    @discord.ui.button(label="ランク3", style=discord.ButtonStyle.primary)
+    async def mod3(self, interaction: discord.Interaction,
+                   button: discord.ui.Button):
+      if self.lv == 0:
+        level = ""
+      else:
+        level = f"昇進2/レベル{self.lv}"
+      embed = discord.Embed(
+        title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        description=
+        f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク3"
+      )
+      #リクエスト
+      await requests.send_request(user=interaction.user,
+                                  operator=self.operator,
+                                  skill=self.skill,
+                                  skillLevel=self.skillLevel,
+                                  module=self.module,
+                                  module_rank="ランク3",
+                                  lv=self.lv)
+      await interaction.response.edit_message(embed=embed, view=None)
+
+    @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
+    async def cancel(self, interaction: discord.Interaction,
+                     button: discord.ui.Button):
+      embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+                            description=f"リクエストをキャンセルしました。",
+                            color=0xf45d5d)
+      await interaction.response.edit_message(embed=embed, view=None)
+
+  async def operator_autocomplete(
+      interaction: discord.Interaction,
+      current: str) -> List[discord.app_commands.Choice[str]]:
+
     operators = await requests.operators_load()
     name_list = []
     for index in operators:
       name_list.append(operators[index]["name"])
     choices = name_list
-    return[
+    return [
       discord.app_commands.Choice(name=choice, value=choice)
       for choice in choices if current.lower() in choice.lower()
     ][:25]
-    
-  @client.tree.command(name = "request",
-                      description = "サポートリクエストのテスト中",
-                      guild=config.testserverid)
-  @discord.app_commands.describe(operator = "リクエストするオペレーター", level = "リクエストするオペレーターのレベル(最大昇進で数字のみ、任意)")
-  @discord.app_commands.autocomplete(operator = operator_autocomplete)
-  
-  async def support_request(interaction: discord.Interaction, operator: str, level: int = 0):
-      if interaction.user == client.user:
-          return
-      await interaction.response.defer(ephemeral = True)
-      operators = await requests.operators_load()
-      correct = 0
-      for index in operators:
-        if operators[index]["name"] == operator:
-          if operators[index]["rarity"] == 2 and level > 55:
-            break
-          if operators[index]["rarity"] == 3 and level > 70:
-            break
-          if operators[index]["rarity"] == 4 and level > 80:
-            break
-          if operators[index]["rarity"] == 5 and level > 90:
-            break
-            
-          operator_dic = operators[index]
-          correct = 1
-          
-          skills = {k: v for k, v in operator_dic["skills"].items() if v is not None}
-          skill_name = ""
-          for i in skills:
-            skill_name += f"・スキル{i}: {skills[i]}\n"
-          
-          embed = discord.Embed(title = f"サポートオペレーター「{operator}」のリクエスト",
-                                description = f"スキルの選択をしてください\n{skill_name}")
-          await interaction.followup.send(embed = embed, view = OperatorSkillButton(operators = operator_dic, skills=skills, operator=operator, lv = level), ephemeral=True)
-      if correct == 0:
-        await interaction.followup.send("正しいオペレーター名、またはレアリティごとの最大値を超えないレベルを入力してください！", ephemeral=True)
-  
-  class DoctorNameCommand(app_commands.Group):      
-    @app_commands.command(name = "set",
-                        description = "ドクターネーム(Dr.****#0000の形のゲーム内ID)を登録/変更します(テスト中！)")
-    @discord.app_commands.describe(name = "IDの前半の名前の部分(「Dr.」を含まない)", tag = "IDの後半の数字の部分(「#」を含まない)")
-    async def doctorname_set(self, interaction: discord.Interaction, name: str, tag: int):
+
+  @client.tree.command(name="request", description="サポートリクエストのテスト中")
+  @discord.app_commands.describe(operator="リクエストするオペレーター",
+                                 level="リクエストするオペレーターのレベル(最大昇進で数字のみ、任意)")
+  @discord.app_commands.autocomplete(operator=operator_autocomplete)
+  async def support_request(interaction: discord.Interaction,
+                            operator: str,
+                            level: int = 0):
+    if interaction.user == client.user:
+      return
+    await interaction.response.defer(ephemeral=True)
+    operators = await requests.operators_load()
+    correct = 0
+    for index in operators:
+      if operators[index]["name"] == operator:
+        if operators[index]["rarity"] == 2 and level > 55:
+          break
+        if operators[index]["rarity"] == 3 and level > 70:
+          break
+        if operators[index]["rarity"] == 4 and level > 80:
+          break
+        if operators[index]["rarity"] == 5 and level > 90:
+          break
+
+        operator_dic = operators[index]
+        correct = 1
+
+        skills = {
+          k: v
+          for k, v in operator_dic["skills"].items() if v is not None
+        }
+        skill_name = ""
+        for i in skills:
+          skill_name += f"・スキル{i}: {skills[i]}\n"
+
+        embed = discord.Embed(title=f"サポートオペレーター「{operator}」のリクエスト",
+                              description=f"スキルの選択をしてください\n{skill_name}")
+        await interaction.followup.send(embed=embed,
+                                        view=OperatorSkillButton(
+                                          operators=operator_dic,
+                                          skills=skills,
+                                          operator=operator,
+                                          lv=level),
+                                        ephemeral=True)
+    if correct == 0:
+      await interaction.followup.send(
+        "正しいオペレーター名、またはレアリティごとの最大値を超えないレベルを入力してください！", ephemeral=True)
+
+  class DoctorNameCommand(app_commands.Group):
+
+    @app_commands.command(
+      name="set", description="ドクターネーム(Dr.****#0000の形のゲーム内ID)を登録/変更します(テスト中！)")
+    @discord.app_commands.describe(name="IDの前半の名前の部分(「Dr.」を含まない)",
+                                   tag="IDの後半の数字の部分(「#」を含まない)")
+    async def doctorname_set(self, interaction: discord.Interaction, name: str,
+                             tag: int):
       if interaction.user == client.user:
         return
       if len(str(tag)) > 6 or len(name) > 16:
-        embed = discord.Embed(title = "名前が長すぎます！", description = "なにかの間違いで無かったら、スタッフまでお問い合わせください", color = 0xf45d5d)
-        await interaction.response.send_message(embed = embed)
+        embed = discord.Embed(title="名前が長すぎます！",
+                              description="なにかの間違いで無かったら、スタッフまでお問い合わせください",
+                              color=0xf45d5d)
+        await interaction.response.send_message(embed=embed)
         return
-        
+
       await interaction.response.defer()
       added = await requests.doctor_add(interaction.user, name, tag)
-      embed = discord.Embed(title = "ドクターネームの登録が完了しました！", description = f"新しく設定された貴方のドクターネームは「{added}」です！", color=0x5cb85c)
-      embed.set_author(name = interaction.user.name, icon_url = interaction.user.avatar)
-      embed.set_footer(text = "変更する場合はもう一度「/doctorname_set」、登録を削除する場合は「/doctorname_delete」")
-      await interaction.followup.send(embed = embed)
-      
-    @app_commands.command(name = "show",
-                        description = "指定された人のドクターネームを表示します(テスト中！)")
-    @discord.app_commands.describe(user = "ドクターネームを知りたい人を選択してください(設定していない人も選択肢に表示されます)")
-    async def doctorname_show(self, interaction: discord.Interaction, user: discord.Member):
+      embed = discord.Embed(title="ドクターネームの登録が完了しました！",
+                            description=f"新しく設定された貴方のドクターネームは「{added}」です！",
+                            color=0x5cb85c)
+      embed.set_author(name=interaction.user.name,
+                       icon_url=interaction.user.avatar)
+      embed.set_footer(
+        text="変更する場合はもう一度「/doctorname_set」、登録を削除する場合は「/doctorname_delete」")
+      await interaction.followup.send(embed=embed)
+
+    @app_commands.command(name="show",
+                          description="指定された人のドクターネームを表示します(テスト中！)")
+    @discord.app_commands.describe(
+      user="ドクターネームを知りたい人を選択してください(設定していない人も選択肢に表示されます)")
+    async def doctorname_show(self, interaction: discord.Interaction,
+                              user: discord.Member):
       if interaction.user == client.user:
         return
       await interaction.response.defer()
       name_full = await requests.doctor_check(user)
       if name_full is None:
-        embed = discord.Embed(title = f"ドクターネームが見つかりません！", description = f"{user.name}さんのドクターネームは見つかりませんでした！", color = 0xf45d5d)
-        embed.set_author(name = user.name, icon_url = user.avatar)
-        await interaction.followup.send(embed = embed)
+        embed = discord.Embed(title=f"ドクターネームが見つかりません！",
+                              description=f"{user.name}さんのドクターネームは見つかりませんでした！",
+                              color=0xf45d5d)
+        embed.set_author(name=user.name, icon_url=user.avatar)
+        await interaction.followup.send(embed=embed)
         return
       else:
-        embed = discord.Embed(title = f"ドクターネームが見つかりました！", description = f"{user.name}さんのドクターネームは以下になります！\n「{name_full}」", color = 0x5cb85c)
-        embed.set_author(name = user.name, icon_url = user.avatar)
-        await interaction.followup.send(embed = embed)
-    
-    @app_commands.command(name = "delete",
-                        description = "設定されたドクターネームを削除します(テスト中！)")
+        embed = discord.Embed(
+          title=f"ドクターネームが見つかりました！",
+          description=f"{user.name}さんのドクターネームは以下になります！\n「{name_full}」",
+          color=0x5cb85c)
+        embed.set_author(name=user.name, icon_url=user.avatar)
+        await interaction.followup.send(embed=embed)
+
+    @app_commands.command(name="delete",
+                          description="設定されたドクターネームを削除します(テスト中！)")
     async def doctorname_delete(self, interaction: discord.Interaction):
       if interaction.user == client.user:
         return
       await interaction.response.defer()
       delete = await requests.doctor_delete(interaction.user)
       if delete == "success":
-        embed = discord.Embed(title = f"ドクターネームの登録を削除しました！", description = f"登録しなおす場合は、「/doctorname_set」をご利用ください！", color = 0x5cb85c)
-        embed.set_author(name = interaction.user.name, icon_url = interaction.user.avatar)
-        await interaction.followup.send(embed = embed, ephemeral=True)
+        embed = discord.Embed(
+          title=f"ドクターネームの登録を削除しました！",
+          description=f"登録しなおす場合は、「/doctorname_set」をご利用ください！",
+          color=0x5cb85c)
+        embed.set_author(name=interaction.user.name,
+                         icon_url=interaction.user.avatar)
+        await interaction.followup.send(embed=embed, ephemeral=True)
       else:
-        embed = discord.Embed(title = f"ドクターネームの登録を削除できませんでした。", description = f"ドクターネームの登録を削除できませんでした！既に登録が削除されている場合があります！\nもし削除されているか確認したい場合は「/modmail」にてお問い合わせください！", color = 0xf45d5d)
-        embed.set_author(name = interaction.user.name, icon_url = interaction.user.avatar)
-        await interaction.followup.send(embed = embed, ephemeral=True)
-    
+        embed = discord.Embed(
+          title=f"ドクターネームの登録を削除できませんでした。",
+          description=
+          f"ドクターネームの登録を削除できませんでした！既に登録が削除されている場合があります！\nもし削除されているか確認したい場合は「/modmail」にてお問い合わせください！",
+          color=0xf45d5d)
+        embed.set_author(name=interaction.user.name,
+                         icon_url=interaction.user.avatar)
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
   @client.tree.command(name="mainttest",
                        description="メンテナンスリストのテストを行います",
                        guild=config.testserverid)
