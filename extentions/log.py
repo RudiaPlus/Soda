@@ -61,7 +61,7 @@ def setup_logger(module_name:str) -> logging.Logger:
         log_handler = logging.handlers.RotatingFileHandler(
             filename=log_path,
             encoding='utf-8',
-            maxBytes=32 * 1024 * 1024,  # 32 MiB
+            maxBytes=16 * 1024,  # 32 MiB
             backupCount=2,  # Rotate through 5 files
         )
         log_handler.setFormatter(CustomFormatter())
