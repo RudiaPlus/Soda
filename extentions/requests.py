@@ -154,7 +154,7 @@ async def send_request(user, operator, skill, skillLevel, module: str = None, mo
     embed = discord.Embed(title = f"サポートオペレーター「{operator}」のリクエスト",
                           description = f"リクエスト者：{user.mention}\n\n**希望条件**\n{lv_name}\n・{skill}/{skillLevel}\n{module_name}\n\n**是非ご協力ください！**")
     embed.set_author(name = str(user), icon_url = user.avatar)
-    embed.set_footer(text = "【リクエスト者のみ可能】リクエストを終了したい場合は「リクエスト終了」ボタンを押してください！")
+    embed.set_footer(text = "・対象のオペレーターをサポートに出せる場合、「リクエストに応える」ボタンを押してください！\n・【リクエスト者のみ可能】リクエストを終了したい場合は「リクエスト終了」ボタンを押してください！")
     message = await channel.send(embed = embed, view = RequestComplete())
     request["messageID"] = message.id
     requests.append(request)
