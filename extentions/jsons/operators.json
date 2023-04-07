@@ -1,0 +1,3122 @@
+{
+  "char_123_fang": {
+    "name": "フェン",
+    "rarity": 2,
+    "skills": {
+      "1": "突撃指令α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_240_wyvern": {
+    "name": "バニラ",
+    "rarity": 2,
+    "skills": {
+      "1": "突撃指令・援軍",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_192_falco": {
+    "name": "プリュム",
+    "rarity": 2,
+    "skills": {
+      "1": "迅速攻撃α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_208_melan": {
+    "name": "メランサ",
+    "rarity": 2,
+    "skills": {
+      "1": "攻撃力強化α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_281_popka": {
+    "name": "ポプカル",
+    "rarity": 2,
+    "skills": {
+      "1": "攻撃力強化α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_209_ardign": {
+    "name": "カーディ",
+    "rarity": 2,
+    "skills": {
+      "1": "HP回復α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_122_beagle": {
+    "name": "ビーグル",
+    "rarity": 2,
+    "skills": {
+      "1": "防御力強化α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_284_spot": {
+    "name": "スポット",
+    "rarity": 2,
+    "skills": {
+      "1": "第二態勢・回復",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_124_kroos": {
+    "name": "クルース",
+    "rarity": 2,
+    "skills": {
+      "1": "2点・バースト",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_211_adnach": {
+    "name": "アドナキエル",
+    "rarity": 2,
+    "skills": {
+      "1": "攻撃力強化α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_121_lava": {
+    "name": "ラヴァ",
+    "rarity": 2,
+    "skills": {
+      "1": "戦術詠唱α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_120_hibisc": {
+    "name": "ハイビスカス",
+    "rarity": 2,
+    "skills": {
+      "1": "回復力強化α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_212_ansel": {
+    "name": "アンセル",
+    "rarity": 2,
+    "skills": {
+      "1": "回復範囲強化",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_210_stward": {
+    "name": "スチュワード",
+    "rarity": 2,
+    "skills": {
+      "1": "強撃α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_278_orchid": {
+    "name": "オーキッド",
+    "rarity": 2,
+    "skills": {
+      "1": "迅速攻撃α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_141_nights": {
+    "name": "ヘイズ",
+    "rarity": 3,
+    "skills": {
+      "1": "攻撃力強化β",
+      "2": "赤色の瞳",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_109_fmout": {
+    "name": "ギターノ",
+    "rarity": 3,
+    "skills": {
+      "1": "戦術詠唱β",
+      "2": "運命",
+      "3": null
+    },
+    "modules": {
+      "X": "占い師トラベルセット",
+      "Y": null
+    }
+  },
+  "char_253_greyy": {
+    "name": "グレイ",
+    "rarity": 3,
+    "skills": {
+      "1": "戦術詠唱β",
+      "2": "帯電",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "新たな始まり"
+    }
+  },
+  "char_328_cammou": {
+    "name": "カシャ",
+    "rarity": 3,
+    "skills": {
+      "1": "攻撃力強化β",
+      "2": "同調索敵攻撃",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_469_indigo": {
+    "name": "インディゴ",
+    "rarity": 3,
+    "skills": {
+      "1": "導灯の守護者",
+      "2": "光と影の迷路",
+      "3": null
+    },
+    "modules": {
+      "X": "杖のお手入れセット",
+      "Y": null
+    }
+  },
+  "char_4004_pudd": {
+    "name": "プリン",
+    "rarity": 3,
+    "skills": {
+      "1": "戦術詠唱β",
+      "2": "電子流拡散",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "携帯式テスター"
+    }
+  },
+  "char_235_jesica": {
+    "name": "ジェシカ",
+    "rarity": 3,
+    "skills": {
+      "1": "強撃β",
+      "2": "煙幕",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "ジェシカの発注書"
+    }
+  },
+  "char_126_shotst": {
+    "name": "メテオ",
+    "rarity": 3,
+    "skills": {
+      "1": "装甲砕き",
+      "2": "装甲砕き・拡散",
+      "3": null
+    },
+    "modules": {
+      "X": "ハンティングナイフ",
+      "Y": null
+    }
+  },
+  "char_190_clour": {
+    "name": "ヴァーミル",
+    "rarity": 3,
+    "skills": {
+      "1": "攻撃力強化β",
+      "2": "デュアルアロー",
+      "3": null
+    },
+    "modules": {
+      "X": "「不落」",
+      "Y": null
+    }
+  },
+  "char_133_mm": {
+    "name": "メイ",
+    "rarity": 3,
+    "skills": {
+      "1": "ストップショット",
+      "2": "スタンショック",
+      "3": null
+    },
+    "modules": {
+      "X": "新米探偵セット",
+      "Y": null
+    }
+  },
+  "char_118_yuki": {
+    "name": "シラユキ",
+    "rarity": 3,
+    "skills": {
+      "1": "ユキケムリ",
+      "2": "カザグルマ",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "手裏剣"
+    }
+  },
+  "char_440_pinecn": {
+    "name": "パインコーン",
+    "rarity": 3,
+    "skills": {
+      "1": "RMAスパイク",
+      "2": "過負荷駆動",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_302_glaze": {
+    "name": "アンブリエル",
+    "rarity": 3,
+    "skills": {
+      "1": "妨害弾",
+      "2": "全方位レーダー",
+      "3": null
+    },
+    "modules": {
+      "X": "レーダー補助機材",
+      "Y": null
+    }
+  },
+  "char_366_acdrop": {
+    "name": "アシッドドロップ",
+    "rarity": 3,
+    "skills": {
+      "1": "ファンシーショット",
+      "2": "ダブルトリガー",
+      "3": null
+    },
+    "modules": {
+      "X": "「自由とオニオンリングとボク」",
+      "Y": null
+    }
+  },
+  "char_198_blackd": {
+    "name": "クーリエ",
+    "rarity": 3,
+    "skills": {
+      "1": "突撃指令β",
+      "2": "突撃指令・防御",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_149_scave": {
+    "name": "スカベンジャー",
+    "rarity": 3,
+    "skills": {
+      "1": "突撃指令β",
+      "2": "突撃指令・攻撃",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_290_vigna": {
+    "name": "ヴィグナ",
+    "rarity": 3,
+    "skills": {
+      "1": "攻撃力強化β",
+      "2": "ハンマリング・オン",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "ザ・グレイトロック"
+    }
+  },
+  "char_151_myrtle": {
+    "name": "テンニンカ",
+    "rarity": 3,
+    "skills": {
+      "1": "支援指令β",
+      "2": "治癒の翅",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_452_bstalk": {
+    "name": "ビーンストーク",
+    "rarity": 3,
+    "skills": {
+      "1": "出動指令",
+      "2": "「全員集合！」",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_130_doberm": {
+    "name": "ドーベルマン",
+    "rarity": 3,
+    "skills": {
+      "1": "強撃β",
+      "2": "鞭撻",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "軍用望遠鏡"
+    }
+  },
+  "char_289_gyuki": {
+    "name": "マトイマル",
+    "rarity": 3,
+    "skills": {
+      "1": "HP回復β",
+      "2": "悪鬼の力",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "切竹艶めく生け花"
+    }
+  },
+  "char_159_peacok": {
+    "name": "コンビクション",
+    "rarity": 3,
+    "skills": {
+      "1": "断罪",
+      "2": "創世記",
+      "3": null
+    },
+    "modules": {
+      "X": "断罪の拳",
+      "Y": null
+    }
+  },
+  "char_193_frostl": {
+    "name": "フロストリーフ",
+    "rarity": 3,
+    "skills": {
+      "1": "降霜の刃",
+      "2": "氷結の刃",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_127_estell": {
+    "name": "エステル",
+    "rarity": 3,
+    "skills": {
+      "1": "攻撃力強化β",
+      "2": "捨て身の覚悟",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_185_frncat": {
+    "name": "ムース",
+    "rarity": 3,
+    "skills": {
+      "1": "ひっかき！",
+      "2": "ねこのいかり",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_301_cutter": {
+    "name": "カッター",
+    "rarity": 3,
+    "skills": {
+      "1": "レッドシフト",
+      "2": "スカーレットエッジ",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "刃部交換式刀剣セット"
+    }
+  },
+  "char_337_utage": {
+    "name": "ウタゲ",
+    "rarity": 3,
+    "skills": {
+      "1": "サボり",
+      "2": "落地斬・突破",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_271_spikes": {
+    "name": "アレーン",
+    "rarity": 3,
+    "skills": {
+      "1": "いたずら",
+      "2": "フェイタルトリック",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4067_lolxh": {
+    "name": "羅小黒",
+    "rarity": 3,
+    "skills": {
+      "1": "変化自在",
+      "2": "金属操作",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_237_gravel": {
+    "name": "グラベル",
+    "rarity": 3,
+    "skills": {
+      "1": "スニークガード",
+      "2": "鼠の縄張り",
+      "3": null
+    },
+    "modules": {
+      "X": "隠密行動用工具バッグ",
+      "Y": null
+    }
+  },
+  "char_272_strong": {
+    "name": "ジェイ",
+    "rarity": 3,
+    "skills": {
+      "1": "蟹爪断ち",
+      "2": "刺身・乱れ盛り",
+      "3": null
+    },
+    "modules": {
+      "X": "無骨な包丁セット",
+      "Y": null
+    }
+  },
+  "char_236_rope": {
+    "name": "ロープ",
+    "rarity": 3,
+    "skills": {
+      "1": "鉤縄投擲",
+      "2": "鉤縄二本流",
+      "3": null
+    },
+    "modules": {
+      "X": "ブリキのジュエリーボックス",
+      "Y": null
+    }
+  },
+  "char_117_myrrh": {
+    "name": "ミルラ",
+    "rarity": 3,
+    "skills": {
+      "1": "二重治療",
+      "2": "メディカルゾーン",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_187_ccheal": {
+    "name": "ガヴィル",
+    "rarity": 3,
+    "skills": {
+      "1": "回復力促進",
+      "2": "回復力促進・広域",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_298_susuro": {
+    "name": "ススーロ",
+    "rarity": 3,
+    "skills": {
+      "1": "回復力強化β",
+      "2": "ディープヒーリング",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_181_flower": {
+    "name": "パフューマー",
+    "rarity": 3,
+    "skills": {
+      "1": "回復力強化β",
+      "2": "調香",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "「エーゲの口づけ」"
+    }
+  },
+  "char_385_finlpp": {
+    "name": "セイリュウ",
+    "rarity": 3,
+    "skills": {
+      "1": "ヒールウェーブ",
+      "2": "ピュアスプリング",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "「江河の唄」"
+    }
+  },
+  "char_4041_chnut": {
+    "name": "チェストナット",
+    "rarity": 3,
+    "skills": {
+      "1": "積土成山",
+      "2": "厚土の脈動",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_199_yak": {
+    "name": "マッターホルン",
+    "rarity": 3,
+    "skills": {
+      "1": "肉体強化",
+      "2": "寒冷順化",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "父のローブ"
+    }
+  },
+  "char_150_snakek": {
+    "name": "クオーラ",
+    "rarity": 3,
+    "skills": {
+      "1": "防御力強化β",
+      "2": "シェルガード",
+      "3": null
+    },
+    "modules": {
+      "X": "スーパーベースボールセット",
+      "Y": null
+    }
+  },
+  "char_381_bubble": {
+    "name": "バブル",
+    "rarity": 3,
+    "skills": {
+      "1": "防御力強化β",
+      "2": "「かかってこい！」",
+      "3": null
+    },
+    "modules": {
+      "X": "バブルのブレイジングソード",
+      "Y": null
+    }
+  },
+  "char_196_sunbr": {
+    "name": "グム",
+    "rarity": 3,
+    "skills": {
+      "1": "非常食",
+      "2": "戦場のシェフ",
+      "3": null
+    },
+    "modules": {
+      "X": "はちみつパイの詰め合わせ",
+      "Y": null
+    }
+  },
+  "char_260_durnar": {
+    "name": "ジュナー",
+    "rarity": 3,
+    "skills": {
+      "1": "攻撃力強化β",
+      "2": "カウンターシールド",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_110_deepcl": {
+    "name": "ディピカ",
+    "rarity": 3,
+    "skills": {
+      "1": "光陰ノ触",
+      "2": "トロンプイユ",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "冒涜的なパレット"
+    }
+  },
+  "char_183_skgoat": {
+    "name": "アーススピリット",
+    "rarity": 3,
+    "skills": {
+      "1": "攻撃力強化β",
+      "2": "流砂",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "確認待ちの申請書"
+    }
+  },
+  "char_258_podego": {
+    "name": "ポデンコ",
+    "rarity": 3,
+    "skills": {
+      "1": "アロマセラピー",
+      "2": "胞子飛散",
+      "3": null
+    },
+    "modules": {
+      "X": "「枯れない苗圃」",
+      "Y": null
+    }
+  },
+  "char_484_robrta": {
+    "name": "ロベルタ",
+    "rarity": 3,
+    "skills": {
+      "1": "シラクーザ式化粧術",
+      "2": "メイクアップマシン",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_355_ethan": {
+    "name": "イーサン",
+    "rarity": 3,
+    "skills": {
+      "1": "ループザループ",
+      "2": "グラインドツイスター",
+      "3": null
+    },
+    "modules": {
+      "X": "スーパースプレーセット",
+      "Y": null
+    }
+  },
+  "char_277_sqrrel": {
+    "name": "ショウ",
+    "rarity": 3,
+    "skills": {
+      "1": "消火ポンプ",
+      "2": "高圧放水",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_128_plosis": {
+    "name": "フィリオプシス",
+    "rarity": 4,
+    "skills": {
+      "1": "回復力強化γ",
+      "2": "エンケファリン",
+      "3": null
+    },
+    "modules": {
+      "X": "医療環境分析装置",
+      "Y": null
+    }
+  },
+  "char_275_breeze": {
+    "name": "ブリーズ",
+    "rarity": 4,
+    "skills": {
+      "1": "集中療法",
+      "2": "拡散療法",
+      "3": null
+    },
+    "modules": {
+      "X": "外科医療キット",
+      "Y": null
+    }
+  },
+  "char_115_headbr": {
+    "name": "ズィマー",
+    "rarity": 4,
+    "skills": {
+      "1": "突撃指令γ",
+      "2": "ウルサスの雄叫び",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_102_texas": {
+    "name": "テキサス",
+    "rarity": 4,
+    "skills": {
+      "1": "突撃指令γ",
+      "2": "剣雨",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_349_chiave": {
+    "name": "キアーベ",
+    "rarity": 4,
+    "skills": {
+      "1": "突撃指令γ",
+      "2": "火炎剥離",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_261_sddrag": {
+    "name": "リード",
+    "rarity": 4,
+    "skills": {
+      "1": "迅速攻撃γ",
+      "2": "マナスパーク",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "槍用クリーニングセット"
+    }
+  },
+  "char_496_wildmn": {
+    "name": "ワイルドメイン",
+    "rarity": 4,
+    "skills": {
+      "1": "ラピッドランス",
+      "2": "ランスチャージ",
+      "3": null
+    },
+    "modules": {
+      "X": "ランススペアセット",
+      "Y": null
+    }
+  },
+  "char_401_elysm": {
+    "name": "エリジウム",
+    "rarity": 4,
+    "skills": {
+      "1": "支援指令γ",
+      "2": "集音",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_476_blkngt": {
+    "name": "ブラックナイト",
+    "rarity": 4,
+    "skills": {
+      "1": "うたた寝",
+      "2": "深き眠り",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_497_ctable": {
+    "name": "カンタービレ",
+    "rarity": 4,
+    "skills": {
+      "1": "洞見",
+      "2": "水光",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_308_swire": {
+    "name": "スワイヤー",
+    "rarity": 4,
+    "skills": {
+      "1": "統括指揮",
+      "2": "協同作戦",
+      "3": null
+    },
+    "modules": {
+      "X": "防犯ルージュ",
+      "Y": null
+    }
+  },
+  "char_265_sophia": {
+    "name": "ウィスラッシュ",
+    "rarity": 4,
+    "skills": {
+      "1": "激励の美学",
+      "2": "鞭刃解放",
+      "3": null
+    },
+    "modules": {
+      "X": "鞭刃延長ワイヤー",
+      "Y": null
+    }
+  },
+  "char_106_franka": {
+    "name": "フランカ",
+    "rarity": 4,
+    "skills": {
+      "1": "迅速攻撃γ",
+      "2": "利剣の極致",
+      "3": null
+    },
+    "modules": {
+      "X": "刃先テルミットユニット",
+      "Y": null
+    }
+  },
+  "char_131_flameb": {
+    "name": "エンカク",
+    "rarity": 4,
+    "skills": {
+      "1": "血化粧",
+      "2": "刃鬼",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "折れて錆び付いた刀"
+    }
+  },
+  "char_155_tiger": {
+    "name": "インドラ",
+    "rarity": 4,
+    "skills": {
+      "1": "砕甲拳",
+      "2": "裂魂",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_415_flint": {
+    "name": "フリント",
+    "rarity": 4,
+    "skills": {
+      "1": "ストマックブロー",
+      "2": "鳥舞蜂刺",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_140_whitew": {
+    "name": "ラップランド",
+    "rarity": 4,
+    "skills": {
+      "1": "影落とす時針",
+      "2": "狼魂",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_294_ayer": {
+    "name": "エアースカーペ",
+    "rarity": 4,
+    "skills": {
+      "1": "多目標型散弾",
+      "2": "ブレイドビット起動",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_252_bibeak": {
+    "name": "バイビーク",
+    "rarity": 4,
+    "skills": {
+      "1": "剣羽飛針",
+      "2": "異刃斬",
+      "3": null
+    },
+    "modules": {
+      "X": "仕立ての良いシャツ",
+      "Y": null
+    }
+  },
+  "char_459_tachak": {
+    "name": "Tachanka",
+    "rarity": 4,
+    "skills": {
+      "1": "焼夷弾",
+      "2": "制圧射撃",
+      "3": null
+    },
+    "modules": {
+      "X": "LMG用銃架",
+      "Y": null
+    }
+  },
+  "char_143_ghost": {
+    "name": "スペクター",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "肉斬骨断",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_356_broca": {
+    "name": "ブローカ",
+    "rarity": 4,
+    "skills": {
+      "1": "ターンオン",
+      "2": "ハイボルテージ",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_274_astesi": {
+    "name": "アステシア",
+    "rarity": 4,
+    "skills": {
+      "1": "星座の守護",
+      "2": "星輝剣",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_333_sidero": {
+    "name": "シデロカ",
+    "rarity": 4,
+    "skills": {
+      "1": "HP回復γ",
+      "2": "裂波奮迅",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_475_akafyu": {
+    "name": "アカフユ",
+    "rarity": 4,
+    "skills": {
+      "1": "信影流・雷刀之勢",
+      "2": "信影流・十文字勝",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_421_crow": {
+    "name": "ラ・プルマ",
+    "rarity": 4,
+    "skills": {
+      "1": "ソニックスラッシュ",
+      "2": "リーピング",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_486_takila": {
+    "name": "テキーラ",
+    "rarity": 4,
+    "skills": {
+      "1": "即断即決",
+      "2": "極刃奇襲",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_129_bluep": {
+    "name": "アズリウス",
+    "rarity": 4,
+    "skills": {
+      "1": "ダブルショット",
+      "2": "毒液装填",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "標準カラーチャート"
+    }
+  },
+  "char_204_platnm": {
+    "name": "プラチナ",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "ペガサスアイ",
+      "3": null
+    },
+    "modules": {
+      "X": "一人旅セット",
+      "Y": null
+    }
+  },
+  "char_367_swllow": {
+    "name": "グレースロート",
+    "rarity": 4,
+    "skills": {
+      "1": "風切",
+      "2": "羽嵐",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "母の愛の倒景"
+    }
+  },
+  "char_365_aprl": {
+    "name": "エイプリル",
+    "rarity": 4,
+    "skills": {
+      "1": "精密射撃",
+      "2": "コンシールメント",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "ハイファイヘッドホン"
+    }
+  },
+  "char_1021_kroos2": {
+    "name": "寒芒クルース",
+    "rarity": 4,
+    "skills": {
+      "1": "無痕",
+      "2": "矢継ぎ早",
+      "3": null
+    },
+    "modules": {
+      "X": "真実か挑戦か",
+      "Y": null
+    }
+  },
+  "char_219_meteo": {
+    "name": "メテオリーテ",
+    "rarity": 4,
+    "skills": {
+      "1": "散弾装填",
+      "2": "榴弾装填",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "名無しの認識票"
+    }
+  },
+  "char_379_sesa": {
+    "name": "シェーシャ",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "ディレイドボンバー",
+      "3": null
+    },
+    "modules": {
+      "X": "「魂の共鳴」",
+      "Y": null
+    }
+  },
+  "char_279_excu": {
+    "name": "イグゼキュター",
+    "rarity": 4,
+    "skills": {
+      "1": "フルチョーク",
+      "2": "終焉の旅路",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_346_aosta": {
+    "name": "アオスタ",
+    "rarity": 4,
+    "skills": {
+      "1": "迅速攻撃γ",
+      "2": "影縫い釘",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_002_amiya": {
+    "name": "アーミヤ",
+    "rarity": 4,
+    "skills": {
+      "1": "戦術詠唱γ",
+      "2": "ソウルブースト",
+      "3": "キメラ"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_405_absin": {
+    "name": "アブサント",
+    "rarity": 4,
+    "skills": {
+      "1": "執行態勢",
+      "2": "告死の弾雨",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_411_tomimi": {
+    "name": "トミミ",
+    "rarity": 4,
+    "skills": {
+      "1": "部族の教え",
+      "2": "ガヴィル保護プラン",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_166_skfire": {
+    "name": "スカイフレア",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "メテオフレイム",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "防炎処理案"
+    }
+  },
+  "char_306_leizi": {
+    "name": "レイズ",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "初雷",
+      "3": null
+    },
+    "modules": {
+      "X": "「天地通明」",
+      "Y": null
+    }
+  },
+  "char_135_halo": {
+    "name": "アステジーニ",
+    "rarity": 4,
+    "skills": {
+      "1": "ボルテージダブラー",
+      "2": "アストラルバースト",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "未完成の時計"
+    }
+  },
+  "char_344_beewax": {
+    "name": "ビーズワクス",
+    "rarity": 4,
+    "skills": {
+      "1": "砂嵐拡散",
+      "2": "オベリスク召喚",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_373_lionhd": {
+    "name": "レオンハルト",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "弱点解析＆爆破",
+      "3": null
+    },
+    "modules": {
+      "X": "伝承と開拓",
+      "Y": null
+    }
+  },
+  "char_388_mint": {
+    "name": "ミント",
+    "rarity": 4,
+    "skills": {
+      "1": "風のささやき",
+      "2": "スパイラルバースト",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_338_iris": {
+    "name": "アイリス",
+    "rarity": 4,
+    "skills": {
+      "1": "童話の守り人",
+      "2": "夢想揺籃",
+      "3": null
+    },
+    "modules": {
+      "X": "夢のお城の飛び出す絵本",
+      "Y": null
+    }
+  },
+  "char_1011_lava2": {
+    "name": "炎獄ラヴァ",
+    "rarity": 4,
+    "skills": {
+      "1": "フレイムエンチャント",
+      "2": "プルガトリオ",
+      "3": null
+    },
+    "modules": {
+      "X": "サルカズの短刀",
+      "Y": null
+    }
+  },
+  "char_489_serum": {
+    "name": "コロセラム",
+    "rarity": 4,
+    "skills": {
+      "1": "過集中",
+      "2": "神経蝕滞弾",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4013_kjera": {
+    "name": "イェラ",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "心意のままに",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4040_rockr": {
+    "name": "ロックロック",
+    "rarity": 4,
+    "skills": {
+      "1": "戦術詠唱γ",
+      "2": "軛を背負う",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4054_malist": {
+    "name": "ミニマリスト",
+    "rarity": 4,
+    "skills": {
+      "1": "迅速攻撃γ",
+      "2": "マスターピース",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_242_otter": {
+    "name": "メイヤー",
+    "rarity": 4,
+    "skills": {
+      "1": "攪乱装置",
+      "2": "ミーボ起爆",
+      "3": null
+    },
+    "modules": {
+      "X": "ミーボコントロール端末XP",
+      "Y": null
+    }
+  },
+  "char_336_folivo": {
+    "name": "シーン",
+    "rarity": 4,
+    "skills": {
+      "1": "擬態化機能",
+      "2": "フルパノラマ撮影",
+      "3": null
+    },
+    "modules": {
+      "X": "プロ級改良レンズ",
+      "Y": null
+    }
+  },
+  "char_108_silent": {
+    "name": "サイレンス",
+    "rarity": 4,
+    "skills": {
+      "1": "回復力強化γ",
+      "2": "医療ドローン",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_171_bldsk": {
+    "name": "ワルファリン",
+    "rarity": 4,
+    "skills": {
+      "1": "救急包帯法",
+      "2": "不安定血漿",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_345_folnic": {
+    "name": "フォリニック",
+    "rarity": 4,
+    "skills": {
+      "1": "最大限度量投薬",
+      "2": "特製薬刃弾",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_348_ceylon": {
+    "name": "セイロン",
+    "rarity": 4,
+    "skills": {
+      "1": "ハイドロセラピー",
+      "2": "水霊の加護",
+      "3": null
+    },
+    "modules": {
+      "X": "フィールドワークセット",
+      "Y": null
+    }
+  },
+  "char_436_whispr": {
+    "name": "ウィスパーレイン",
+    "rarity": 4,
+    "skills": {
+      "1": "対症療法",
+      "2": "痛覚抑制",
+      "3": null
+    },
+    "modules": {
+      "X": "使い込まれた救急箱",
+      "Y": null
+    }
+  },
+  "char_402_tuye": {
+    "name": "トゥイエ",
+    "rarity": 4,
+    "skills": {
+      "1": "アクアリング",
+      "2": "カンフル剤",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_473_mberry": {
+    "name": "マルベリー",
+    "rarity": 4,
+    "skills": {
+      "1": "ヒーリングミスト",
+      "2": "セーフティゾーン",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_449_glider": {
+    "name": "ハニーベリー",
+    "rarity": 4,
+    "skills": {
+      "1": "メンタルケア",
+      "2": "リフレッシュ",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_1024_hbisc2": {
+    "name": "濯塵ハイビスカス",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "業の救済",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_148_nearl": {
+    "name": "ニアール",
+    "rarity": 4,
+    "skills": {
+      "1": "応急処置",
+      "2": "救護態勢",
+      "3": null
+    },
+    "modules": {
+      "X": "改良型の騎士用盾",
+      "Y": null
+    }
+  },
+  "char_226_hmau": {
+    "name": "ウン",
+    "rarity": 4,
+    "skills": {
+      "1": "応急処置・受動",
+      "2": "医療態勢・受動",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "八時台メロドラマのDVD"
+    }
+  },
+  "char_144_red": {
+    "name": "レッド",
+    "rarity": 4,
+    "skills": {
+      "1": "処刑の構え",
+      "2": "群狼",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "謎多き戦術バッグ"
+    }
+  },
+  "char_243_waaifu": {
+    "name": "ワイフー",
+    "rarity": 4,
+    "skills": {
+      "1": "寸勁",
+      "2": "七武掠陣脚",
+      "3": null
+    },
+    "modules": {
+      "X": "紅眉詠春拳譜",
+      "Y": null
+    }
+  },
+  "char_214_kafka": {
+    "name": "カフカ",
+    "rarity": 4,
+    "skills": {
+      "1": "ミステリーキューブ",
+      "2": "カオスシザーズ",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "キューブ型ペンダント"
+    }
+  },
+  "char_455_nothin": {
+    "name": "ウユウ",
+    "rarity": 4,
+    "skills": {
+      "1": "引き際の心得",
+      "2": "諸行無常",
+      "3": null
+    },
+    "modules": {
+      "X": "「檐下聴雨」",
+      "Y": null
+    }
+  },
+  "char_107_liskam": {
+    "name": "リスカム",
+    "rarity": 4,
+    "skills": {
+      "1": "チャージガード",
+      "2": "カウンターアーク",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_201_moeshd": {
+    "name": "クロワッサン",
+    "rarity": 4,
+    "skills": {
+      "1": "防御態勢",
+      "2": "テスラハンマー",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "ミリタリーブーツ"
+    }
+  },
+  "char_325_bison": {
+    "name": "バイソン",
+    "rarity": 4,
+    "skills": {
+      "1": "防御力強化γ",
+      "2": "戦線強化",
+      "3": null
+    },
+    "modules": {
+      "X": "「これまでの旅路」",
+      "Y": null
+    }
+  },
+  "char_163_hpsts": {
+    "name": "ヴァルカン",
+    "rarity": 4,
+    "skills": {
+      "1": "鉄壁の構え",
+      "2": "猛攻の構え",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_378_asbest": {
+    "name": "アスベストス",
+    "rarity": 4,
+    "skills": {
+      "1": "堅守モード",
+      "2": "爆炎モード",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4025_aprot2": {
+    "name": "シャレム",
+    "rarity": 4,
+    "skills": {
+      "1": "短期決戦",
+      "2": "群蛇の狂宴",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4047_pianst": {
+    "name": "ツェルニー",
+    "rarity": 4,
+    "skills": {
+      "1": "超絶技巧",
+      "2": "万雷の喝采",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_457_blitz": {
+    "name": "Blitz",
+    "rarity": 4,
+    "skills": {
+      "1": "フラッシュシールド",
+      "2": "防衛線突破",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_304_zebra": {
+    "name": "ヘビーレイン",
+    "rarity": 4,
+    "skills": {
+      "1": "応急迷彩",
+      "2": "広域迷彩",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "人気キャラのステッカー"
+    }
+  },
+  "char_431_ashlok": {
+    "name": "アッシュロック",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "砲撃専念",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_422_aurora": {
+    "name": "オーロラ",
+    "rarity": 4,
+    "skills": {
+      "1": "故郷の守り人",
+      "2": "人工降雪",
+      "3": null
+    },
+    "modules": {
+      "X": "盾用撮影モジュール",
+      "Y": null
+    }
+  },
+  "char_145_prove": {
+    "name": "プロヴァンス",
+    "rarity": 4,
+    "skills": {
+      "1": "ウルフアイ",
+      "2": "鮮血の匂い",
+      "3": null
+    },
+    "modules": {
+      "X": "尻尾ケアセット",
+      "Y": null
+    }
+  },
+  "char_158_milu": {
+    "name": "ファイヤーウォッチ",
+    "rarity": 4,
+    "skills": {
+      "1": "カモフラージュ",
+      "2": "爆撃要請",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "野戦用狙撃装備"
+    }
+  },
+  "char_218_cuttle": {
+    "name": "アンドレアナ",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "脅威妨害戦術",
+      "3": null
+    },
+    "modules": {
+      "X": "銃器整備用工具箱",
+      "Y": null
+    }
+  },
+  "char_363_toddi": {
+    "name": "トギフォンス",
+    "rarity": 4,
+    "skills": {
+      "1": "信号矢",
+      "2": "携帯破城矢",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4043_erato": {
+    "name": "エラト",
+    "rarity": 4,
+    "skills": {
+      "1": "安眠のメローディア",
+      "2": "英雄へのイムヌス",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_1027_greyy2": {
+    "name": "承曦グレイ",
+    "rarity": 4,
+    "skills": {
+      "1": "迅速攻撃γ",
+      "2": "明けの明星",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_173_slchan": {
+    "name": "クリフハート",
+    "rarity": 4,
+    "skills": {
+      "1": "ワイヤーシックル",
+      "2": "アレストチェーン",
+      "3": null
+    },
+    "modules": {
+      "X": "「頂上への到達」",
+      "Y": null
+    }
+  },
+  "char_383_snsant": {
+    "name": "スノーズント",
+    "rarity": 4,
+    "skills": {
+      "1": "フックキャッチ",
+      "2": "ネットキャプチャー",
+      "3": null
+    },
+    "modules": {
+      "X": "スノーズントの大事な貯金箱",
+      "Y": null
+    }
+  },
+  "char_174_slbell": {
+    "name": "プラマニクス",
+    "rarity": 4,
+    "skills": {
+      "1": "木霊せし聖音",
+      "2": "カランドの威圧",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_254_vodfox": {
+    "name": "シャマレ",
+    "rarity": 4,
+    "skills": {
+      "1": "不治の呪い",
+      "2": "呪いの人形",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_195_glassb": {
+    "name": "イースチナ",
+    "rarity": 4,
+    "skills": {
+      "1": "一心不乱",
+      "2": "嵐より生まれしもの",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "読書メモ"
+    }
+  },
+  "char_326_glacus": {
+    "name": "グラウコス",
+    "rarity": 4,
+    "skills": {
+      "1": "デュアルリロード",
+      "2": "電磁パルス",
+      "3": null
+    },
+    "modules": {
+      "X": "パワードスーツ",
+      "Y": null
+    }
+  },
+  "char_4032_provs": {
+    "name": "プロヴァイゾ",
+    "rarity": 4,
+    "skills": {
+      "1": "訴訟提起",
+      "2": "論理展開",
+      "3": null
+    },
+    "modules": {
+      "X": "デーシュットの卒業祝い",
+      "Y": null
+    }
+  },
+  "char_433_windft": {
+    "name": "ウインドフリット",
+    "rarity": 4,
+    "skills": {
+      "1": "この身で築かす",
+      "2": "この身を源とす",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_101_sora": {
+    "name": "ソラ",
+    "rarity": 4,
+    "skills": {
+      "1": "すやすやナンバー",
+      "2": "ファイトソング",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4045_heidi": {
+    "name": "ハイディ",
+    "rarity": 4,
+    "skills": {
+      "1": "架空の物語・怒れる者",
+      "2": "架空の物語・錆びた城",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_343_tknogi": {
+    "name": "ツキノギ",
+    "rarity": 4,
+    "skills": {
+      "1": "跡無",
+      "2": "森廻",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4019_ncdeer": {
+    "name": "九色鹿",
+    "rarity": 4,
+    "skills": {
+      "1": "人間降吉",
+      "2": "仙山去遠",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_492_quercu": {
+    "name": "クエルクス",
+    "rarity": 4,
+    "skills": {
+      "1": "大地の慈悲",
+      "2": "生命の木霊",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_215_mantic": {
+    "name": "マンティコア",
+    "rarity": 4,
+    "skills": {
+      "1": "アジトキシン",
+      "2": "スコーピオンテール",
+      "3": null
+    },
+    "modules": {
+      "X": "訓練用尻尾保護セット",
+      "Y": null
+    }
+  },
+  "char_478_kirara": {
+    "name": "キララ",
+    "rarity": 4,
+    "skills": {
+      "1": "アンカークラッシュ",
+      "2": "アンカーポイント",
+      "3": null
+    },
+    "modules": {
+      "X": "「ウィー・ウィル・サバイブ3　ONLINE」",
+      "Y": null
+    }
+  },
+  "char_241_panda": {
+    "name": "エフイーター",
+    "rarity": 4,
+    "skills": {
+      "1": "鉄意六合拳",
+      "2": "崩拳",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4036_forcer": {
+    "name": "エンフォーサー",
+    "rarity": 4,
+    "skills": {
+      "1": "デタランスショット",
+      "2": "スタガリングショット",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_451_robin": {
+    "name": "ロビン",
+    "rarity": 4,
+    "skills": {
+      "1": "バインド「クリップ」",
+      "2": "バースト「クリップ」",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_458_rfrost": {
+    "name": "Frost",
+    "rarity": 4,
+    "skills": {
+      "1": "トラップセット",
+      "2": "リーサルパシュート",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_369_bena": {
+    "name": "ベナ",
+    "rarity": 4,
+    "skills": {
+      "1": "フルトリミング",
+      "2": "クイッククロップ",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": "『ジェフリー今昔童話集』ハードカバー版"
+    }
+  },
+  "char_4016_kazema": {
+    "name": "カゼマル",
+    "rarity": 4,
+    "skills": {
+      "1": "紙織・速攻",
+      "2": "紙織・双影",
+      "3": null
+    },
+    "modules": {
+      "X": "お古",
+      "Y": null
+    }
+  },
+  "char_103_angel": {
+    "name": "エクシア",
+    "rarity": 5,
+    "skills": {
+      "1": "アサルトモード",
+      "2": "バーストモード",
+      "3": "オーバーロード"
+    },
+    "modules": {
+      "X": "エクシアの傑作",
+      "Y": null
+    }
+  },
+  "char_332_archet": {
+    "name": "アルケット",
+    "rarity": 5,
+    "skills": {
+      "1": "飛散の矢",
+      "2": "追討の矢",
+      "3": "暴風の矢"
+    },
+    "modules": {
+      "X": null,
+      "Y": "「明日の種」"
+    }
+  },
+  "char_456_ash": {
+    "name": "Ash",
+    "rarity": 5,
+    "skills": {
+      "1": "援護射撃",
+      "2": "突撃戦法",
+      "3": "ブリーチング弾"
+    },
+    "modules": {
+      "X": null,
+      "Y": "戦術榴弾バッグ"
+    }
+  },
+  "char_340_shwaz": {
+    "name": "シュヴァルツ",
+    "rarity": 5,
+    "skills": {
+      "1": "強射",
+      "2": "暮色の慧眼",
+      "3": "ターミネート"
+    },
+    "modules": {
+      "X": "特注クロスボウ部品セット",
+      "Y": null
+    }
+  },
+  "char_4055_bgsnow": {
+    "name": "パゼオンカ",
+    "rarity": 5,
+    "skills": {
+      "1": "イアンボス",
+      "2": "リフレイン",
+      "3": "レザーシャープペン"
+    },
+    "modules": {
+      "X": null,
+      "Y": "インクリボン"
+    }
+  },
+  "char_430_fartth": {
+    "name": "ファートゥース",
+    "rarity": 5,
+    "skills": {
+      "1": "迅速攻撃γ",
+      "2": "戦術連携",
+      "3": "フェザーアロー"
+    },
+    "modules": {
+      "X": "デビュー戦サポートセット",
+      "Y": "ファンレター"
+    }
+  },
+  "char_113_cqbw": {
+    "name": "W",
+    "rarity": 5,
+    "skills": {
+      "1": "ハートのK",
+      "2": "びっくり箱",
+      "3": "D12"
+    },
+    "modules": {
+      "X": "傭兵の鞄",
+      "Y": null
+    }
+  },
+  "char_300_phenxi": {
+    "name": "フィアメッタ",
+    "rarity": 5,
+    "skills": {
+      "1": "「直視せよ」",
+      "2": "「慚愧せよ」",
+      "3": "「償還せよ」"
+    },
+    "modules": {
+      "X": null,
+      "Y": "「律外」特殊弾薬配給セット"
+    }
+  },
+  "char_197_poca": {
+    "name": "ロサ",
+    "rarity": 5,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "スプリットショット",
+      "3": "ラヴィーナシュート"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_391_rosmon": {
+    "name": "ロスモンティス",
+    "rarity": 5,
+    "skills": {
+      "1": "意識拡張",
+      "2": "神経遮断",
+      "3": "「君が望むままに」"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_1013_chen2": {
+    "name": "遊龍チェン",
+    "rarity": 5,
+    "skills": {
+      "1": "高圧ショット",
+      "2": "バイオレットナイト",
+      "3": "ホリデーストーム"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_112_siege": {
+    "name": "シージ",
+    "rarity": 5,
+    "skills": {
+      "1": "突撃指令γ",
+      "2": "スカイスマッシュ",
+      "3": "スカルクラッシュ"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_222_bpipe": {
+    "name": "バグパイプ",
+    "rarity": 5,
+    "skills": {
+      "1": "迅速攻撃γ",
+      "2": "ハイパーインパクト",
+      "3": "クローズドボルト連射"
+    },
+    "modules": {
+      "X": "破城矛マガジン",
+      "Y": null
+    }
+  },
+  "char_362_saga": {
+    "name": "サガ",
+    "rarity": 5,
+    "skills": {
+      "1": "突撃指令γ",
+      "2": "懲悪",
+      "3": "怒目"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_479_sleach": {
+    "name": "サイラッハ",
+    "rarity": 5,
+    "skills": {
+      "1": "支援指令γ",
+      "2": "信念の義旗",
+      "3": "光輝の御旗"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_420_flamtl": {
+    "name": "フレイムテイル",
+    "rarity": 5,
+    "skills": {
+      "1": "俊敏なる直覚",
+      "2": "「レッドパイン」",
+      "3": "フレイムハート"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_134_ifrit": {
+    "name": "イフリータ",
+    "rarity": 5,
+    "skills": {
+      "1": "猛火",
+      "2": "爆炎",
+      "3": "灼獄"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_213_mostma": {
+    "name": "モスティマ",
+    "rarity": 5,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "時荒びの黒き錠",
+      "3": "時闢きの白き鍵"
+    },
+    "modules": {
+      "X": null,
+      "Y": "錠と鍵の家"
+    }
+  },
+  "char_180_amgoat": {
+    "name": "エイヤフィヤトラ",
+    "rarity": 5,
+    "skills": {
+      "1": "二重詠唱",
+      "2": "イグニッション",
+      "3": "イラプション"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_2013_cerber": {
+    "name": "ケオベ",
+    "rarity": 5,
+    "skills": {
+      "1": "「つめたいおの」",
+      "2": "「あついないふ」",
+      "3": "「おもたいやり」"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_2015_dusk": {
+    "name": "シー",
+    "rarity": 5,
+    "skills": {
+      "1": "工筆入魂",
+      "2": "潑墨淋漓",
+      "3": "写意攻苦"
+    },
+    "modules": {
+      "X": "無題の巻物",
+      "Y": null
+    }
+  },
+  "char_472_pasngr": {
+    "name": "パッセンジャー",
+    "rarity": 5,
+    "skills": {
+      "1": "エレキチェーン",
+      "2": "フォーカスオーダー",
+      "3": "ルミナスフラグメンツ"
+    },
+    "modules": {
+      "X": "電磁調節器",
+      "Y": "王権の金貨"
+    }
+  },
+  "char_426_billro": {
+    "name": "カーネリアン",
+    "rarity": 5,
+    "skills": {
+      "1": "熱砂護陣",
+      "2": "砂縛地獄",
+      "3": "喰殺ノ刻印"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_377_gdglow": {
+    "name": "ゴールデングロー",
+    "rarity": 5,
+    "skills": {
+      "1": "スパーキング",
+      "2": "インパルスカレント",
+      "3": "ゴールデングロー"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4046_ebnhlz": {
+    "name": "エーベンホルツ",
+    "rarity": 5,
+    "skills": {
+      "1": "アッチェレランド",
+      "2": "旧日の残響",
+      "3": "無響の声"
+    },
+    "modules": {
+      "X": "源石ダイス収納箱",
+      "Y": "「楽理解釈者」"
+    }
+  },
+  "char_206_gnosis": {
+    "name": "ノーシス",
+    "rarity": 5,
+    "skills": {
+      "1": "思考加速",
+      "2": "ゼロバースト",
+      "3": "ハイポサーミア"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_291_aglina": {
+    "name": "アンジェリーナ",
+    "rarity": 5,
+    "skills": {
+      "1": "秘杖・急収束　",
+      "2": "秘杖・微粒子",
+      "3": "秘杖・反重力"
+    },
+    "modules": {
+      "X": null,
+      "Y": "重力校正モジュール"
+    }
+  },
+  "char_358_lisa": {
+    "name": "スズラン",
+    "rarity": 5,
+    "skills": {
+      "1": "全身全霊",
+      "2": "過ぎし日の舞",
+      "3": "渺然たる狐火"
+    },
+    "modules": {
+      "X": "懐中の御守り",
+      "Y": null
+    }
+  },
+  "char_248_mgllan": {
+    "name": "マゼラン",
+    "rarity": 5,
+    "skills": {
+      "1": "フリーズモジュール",
+      "2": "レーザーモジュール",
+      "3": "アサルトモジュール"
+    },
+    "modules": {
+      "X": "ドローン操作専門モジュール",
+      "Y": "教育用ドローン・DDF"
+    }
+  },
+  "char_1012_skadi2": {
+    "name": "濁心スカジ",
+    "rarity": 5,
+    "skills": {
+      "1": "同帰殊塗の吟",
+      "2": "同葬無光の願",
+      "3": "「満ち潮、枯れ潮」"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_2023_ling": {
+    "name": "リィン",
+    "rarity": 5,
+    "skills": {
+      "1": "重ねて酒を進み",
+      "2": "笑いて瑟を鼓せ",
+      "3": "寧ろ吾をなさん"
+    },
+    "modules": {
+      "X": null,
+      "Y": "詩は短く、夢は長く"
+    }
+  },
+  "char_250_phatom": {
+    "name": "ファントム",
+    "rarity": 5,
+    "skills": {
+      "1": "闇夜の影法師",
+      "2": "血染めの楽章",
+      "3": "襲来の悪夢"
+    },
+    "modules": {
+      "X": "レディのフェルト細工",
+      "Y": null
+    }
+  },
+  "char_322_lmlee": {
+    "name": "リー",
+    "rarity": 5,
+    "skills": {
+      "1": "邪気退散",
+      "2": "辟邪除災",
+      "3": "千客万来"
+    },
+    "modules": {
+      "X": "「無問吉凶」",
+      "Y": null
+    }
+  },
+  "char_400_weedy": {
+    "name": "ウィーディ",
+    "rarity": 5,
+    "skills": {
+      "1": "砲身強打",
+      "2": "ハイドロキャノン",
+      "3": "LN2キャノン"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_225_haak": {
+    "name": "ア",
+    "rarity": 5,
+    "skills": {
+      "1": "高速射撃",
+      "2": "劇性増強剤・γ",
+      "3": "劇性増強剤・ドリアン"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_474_glady": {
+    "name": "グレイディーア",
+    "rarity": 5,
+    "skills": {
+      "1": "渇水の大洋裂断",
+      "2": "渇水の荒波掌握",
+      "3": "渇水の乱渦狂舞"
+    },
+    "modules": {
+      "X": "執政官の手鏡",
+      "Y": null
+    }
+  },
+  "char_437_mizuki": {
+    "name": "ミヅキ",
+    "rarity": 5,
+    "skills": {
+      "1": "呼び声",
+      "2": "ジレンマ",
+      "3": "鏡花水月"
+    },
+    "modules": {
+      "X": "使者の盟約",
+      "Y": null
+    }
+  },
+  "char_1023_ghost2": {
+    "name": "帰溟スペクター",
+    "rarity": 5,
+    "skills": {
+      "1": "生存の技巧",
+      "2": "生への渇望",
+      "3": "生からの重圧"
+    },
+    "modules": {
+      "X": "「レコード」収納箱",
+      "Y": "至らずの美しさ"
+    }
+  },
+  "char_4048_doroth": {
+    "name": "ドロシー",
+    "rarity": 5,
+    "skills": {
+      "1": "脅威排除",
+      "2": "流砂生成",
+      "3": "高周波共振"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_147_shining": {
+    "name": "シャイニング",
+    "rarity": 5,
+    "skills": {
+      "1": "信条",
+      "2": "オートカバー",
+      "3": "教導の結界"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_179_cgbird": {
+    "name": "ナイチンゲール",
+    "rarity": 5,
+    "skills": {
+      "1": "回復力強化γ",
+      "2": "アーツシールド",
+      "3": "聖域"
+    },
+    "modules": {
+      "X": "「籠の中の希望」",
+      "Y": null
+    }
+  },
+  "char_003_kalts": {
+    "name": "ケルシー",
+    "rarity": 5,
+    "skills": {
+      "1": "指令：構造強化",
+      "2": "指令：戦術連携",
+      "3": "指令：メルトダウン"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4042_lumen": {
+    "name": "ルーメン",
+    "rarity": 5,
+    "skills": {
+      "1": "恵みの慈雨",
+      "2": "清めの沛雨",
+      "3": "不滅の灯火"
+    },
+    "modules": {
+      "X": "純銅製望遠鏡",
+      "Y": null
+    }
+  },
+  "char_136_hsguma": {
+    "name": "ホシグマ",
+    "rarity": 5,
+    "skills": {
+      "1": "戦意昂揚",
+      "2": "荊棘",
+      "3": "般若"
+    },
+    "modules": {
+      "X": null,
+      "Y": "友人たちからのプレゼント"
+    }
+  },
+  "char_202_demkni": {
+    "name": "サリア",
+    "rarity": 5,
+    "skills": {
+      "1": "応急処置",
+      "2": "薬剤配置",
+      "3": "硬質化"
+    },
+    "modules": {
+      "X": "仕舞い込まれたグローブ",
+      "Y": null
+    }
+  },
+  "char_423_blemsh": {
+    "name": "ブレミシャイン",
+    "rarity": 5,
+    "skills": {
+      "1": "光芒奔溢",
+      "2": "破邪輝光",
+      "3": "英霊顕現"
+    },
+    "modules": {
+      "X": null,
+      "Y": "職人団の槌音"
+    }
+  },
+  "char_2014_nian": {
+    "name": "ニェン",
+    "rarity": 5,
+    "skills": {
+      "1": "錫灼",
+      "2": "銅印",
+      "3": "鉄御"
+    },
+    "modules": {
+      "X": "混沌の隊列",
+      "Y": null
+    }
+  },
+  "char_311_mudrok": {
+    "name": "マドロック",
+    "rarity": 5,
+    "skills": {
+      "1": "防御力強化γ",
+      "2": "岩崩し",
+      "3": "悪土の血脈"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_416_zumama": {
+    "name": "ユーネクテス",
+    "rarity": 5,
+    "skills": {
+      "1": "トマホーク",
+      "2": "烈震崩撃",
+      "3": "鋼鉄の意思"
+    },
+    "modules": {
+      "X": "ズゥママの工具箱",
+      "Y": "「リトルアグリー」"
+    }
+  },
+  "char_4039_horn": {
+    "name": "ホルン",
+    "rarity": 5,
+    "skills": {
+      "1": "照明榴弾",
+      "2": "テンペストオーダー",
+      "3": "死地戦線"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_264_f12yin": {
+    "name": "マウンテン",
+    "rarity": 5,
+    "skills": {
+      "1": "左鉤突き",
+      "2": "猛虎の構え",
+      "3": "震地砕岩撃"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_172_svrash": {
+    "name": "シルバーアッシュ",
+    "rarity": 5,
+    "skills": {
+      "1": "強撃γ",
+      "2": "雪境生存戦略",
+      "3": "真銀斬"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_293_thorns": {
+    "name": "ソーンズ",
+    "rarity": 5,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "迎撃針棘",
+      "3": "デストレッツァ"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_010_chen": {
+    "name": "チェン",
+    "rarity": 5,
+    "skills": {
+      "1": "鞘打ち",
+      "2": "赤霄・抜刀",
+      "3": "赤霄・絶影"
+    },
+    "modules": {
+      "X": "ロドス制式刀剣",
+      "Y": null
+    }
+  },
+  "char_4009_irene": {
+    "name": "アイリーニ",
+    "rarity": 5,
+    "skills": {
+      "1": "舞風",
+      "2": "裂潮",
+      "3": "判決"
+    },
+    "modules": {
+      "X": null,
+      "Y": "分厚い経典"
+    }
+  },
+  "char_017_huang": {
+    "name": "ブレイズ",
+    "rarity": 5,
+    "skills": {
+      "1": "強撃γ",
+      "2": "鎖鋸拡張モジュール",
+      "3": "ボイリングバースト"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_1026_gvial2": {
+    "name": "百錬ガヴィル",
+    "rarity": 5,
+    "skills": {
+      "1": "ピンポイントヒット",
+      "2": "ブレイクラッシュ",
+      "3": "ジャングルソウル"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_350_surtr": {
+    "name": "スルト",
+    "rarity": 5,
+    "skills": {
+      "1": "レーヴァテイン",
+      "2": "災厄の巨焔",
+      "3": "ラグナロク"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_188_helage": {
+    "name": "ヘラグ",
+    "rarity": 5,
+    "skills": {
+      "1": "新月",
+      "2": "弦月",
+      "3": "満月"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_485_pallas": {
+    "name": "パラス",
+    "rarity": 5,
+    "skills": {
+      "1": "勝敗分かつ連撃",
+      "2": "信念宿りし長鞭",
+      "3": "勇士に捧ぐ祝福"
+    },
+    "modules": {
+      "X": "「故郷の山岩」",
+      "Y": "「ヘリアの輝き」"
+    }
+  },
+  "char_1014_nearl2": {
+    "name": "耀騎士ニアール",
+    "rarity": 5,
+    "skills": {
+      "1": "夜に灯る白焔",
+      "2": "闇を払う暁光",
+      "3": "大地を照らす烈陽"
+    },
+    "modules": {
+      "X": "ブレイジングブレイド",
+      "Y": null
+    }
+  },
+  "char_4064_mlynar": {
+    "name": "ムリナール",
+    "rarity": 5,
+    "skills": {
+      "1": "秘めたる怒り",
+      "2": "癒えぬ悲しみ",
+      "3": "輝かざる栄光"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_230_savage": {
+    "name": "サベージ",
+    "rarity": 4,
+    "skills": {
+      "1": "強撃β",
+      "2": "精密起爆",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_282_catap": {
+    "name": "カタパルト",
+    "rarity": 2,
+    "skills": {
+      "1": "爆破範囲拡大α",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_283_midn": {
+    "name": "ミッドナイト",
+    "rarity": 2,
+    "skills": {
+      "1": "エンチャントα",
+      "2": null,
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_137_brownb": {
+    "name": "ビーハンター",
+    "rarity": 3,
+    "skills": {
+      "1": "ウィービング",
+      "2": "ラッシュ",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_347_jaksel": {
+    "name": "ジャッキー",
+    "rarity": 3,
+    "skills": {
+      "1": "全力パンチ！",
+      "2": "全神経集中！",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_164_nightm": {
+    "name": "ナイトメア",
+    "rarity": 4,
+    "skills": {
+      "1": "ソウルドレイン",
+      "2": "ナイトシャドウ",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_220_grani": {
+    "name": "グラニ",
+    "rarity": 4,
+    "skills": {
+      "1": "防御力強化γ",
+      "2": "引かない！",
+      "3": null
+    },
+    "modules": {
+      "X": "騎馬警察装備セット",
+      "Y": null
+    }
+  },
+  "char_263_skadi": {
+    "name": "スカジ",
+    "rarity": 5,
+    "skills": {
+      "1": "迅速攻撃γ",
+      "2": "波濤の裂刃",
+      "3": "海嘯の悲歌"
+    },
+    "modules": {
+      "X": "在りし日の夢の名残",
+      "Y": "湿ったソードバッグ"
+    }
+  }
+}
