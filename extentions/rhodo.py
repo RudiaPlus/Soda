@@ -1,6 +1,5 @@
 import discord
-from extentions import (responses, config, evjson, JSTTime, modmails, log,
-                        maintenances, requests)
+from extentions import (responses, config, evjson, JSTTime, modmails, log, maintenances, requests)
 from extentions.aclient import client
 import re
 import datetime
@@ -35,8 +34,7 @@ def run_discord_bot():
   async def on_ready():
     logger.info("準備を始めます")
     try:
-      doctorname = DoctorNameCommand(name="doctorname",
-                                     description="ドクターネームに関するコマンド")
+      doctorname = DoctorNameCommand(name="doctorname", description="ドクターネームに関するコマンド")
       client.tree.add_command(doctorname)
       synced = await client.tree.sync()
       await client.tree.sync(guild=config.testserverid)
@@ -54,43 +52,28 @@ def run_discord_bot():
 
   class ModmailButton(discord.ui.View):
 
-    @discord.ui.button(label="開始する",
-                       style=discord.ButtonStyle.success,
-                       emoji="✅")
+    @discord.ui.button(label="開始する", style=discord.ButtonStyle.success, emoji="✅")
     async def button_callback(self, interaction: discord.Interaction,
                               button: discord.ui.Button):
       channel = client.get_channel(config.modchannnel)
       user = interaction.user
       if await modmails.modmail_queue(user) == "Ready":
-        embed = discord.Embed(
-          title="あしたはこぶね・お問い合わせ",
-          description="お問い合わせありがとうございます！\nこのDMにメッセージを送ることで、スタッフとの会話を開始できます",
-          color=0x696969)
+        embed = discord.Embed(title="あしたはこぶね・お問い合わせ", description="お問い合わせありがとうございます！\nこのDMにメッセージを送ることで、スタッフとの会話を開始できます", color=0x696969)
         embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
-        embed_mod = discord.Embed(
-          title="Modmailが開始されました！",
-          description=
-          f"ニックネーム : {user.display_name}\nid : {user.id}\nアカウント作成日 : {user.created_at}",
-          color=user.accent_color)
+        embed_mod = discord.Embed(title="Modmailが開始されました！", description=f"ニックネーム : {user.display_name}\nid : {user.id}\nアカウント作成日 : {user.created_at}", color=user.accent_color)
         embed_mod.set_author(name=user.name, icon_url=user.avatar.url)
         await channel.send(embed=embed_mod)
         if interaction.message.guild:
           await user.send(embed=embed)
-          await interaction.response.send_message("DMをお送りしました。ご確認ください！",
-                                                  ephemeral=True)
+          await interaction.response.send_message("DMをお送りしました。ご確認ください！", ephemeral=True)
         else:
           await interaction.response.send_message(embed=embed)
 
       elif await modmails.modmail_queue(user) == "False":
-        await interaction.response.send_message("DMを既にお送りしております。ご確認ください！",
-                                                ephemeral=True)
+        await interaction.response.send_message("DMを既にお送りしております。ご確認ください！", ephemeral=True)
 
       else:
-        embed = discord.Embed(
-          title="あしたはこぶね・お問い合わせ",
-          description=
-          "お問い合わせありがとうございます！\n現在問い合わせが立て込んでおり、今すぐに会話を開始できない状態となっております。\n順番になり次第こちらから連絡致します。今しばらくお待ちください",
-          color=0x696969)
+        embed = discord.Embed(title="あしたはこぶね・お問い合わせ", description="お問い合わせありがとうございます！\n現在問い合わせが立て込んでおり、今すぐに会話を開始できない状態となっております。\n順番になり次第こちらから連絡致します。今しばらくお待ちください", color=0x696969)
         embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
         embed_mod = discord.Embed(
           title="Modmailの予約が入りました！",
@@ -101,10 +84,24 @@ def run_discord_bot():
         await channel.send(embed=embed_mod)
         if interaction.message.guild:
           await user.send(embed=embed)
-          await interaction.response.send_message("DMをお送りしました。ご確認ください！",
-                                                  ephemeral=True)
+          await interaction.response.send_message("DMをお送りしました。ご確認ください！", ephemeral=True)
         else:
           await interaction.response.send_message(embed=embed)
+  
+  @client.tree.command(name = "help",
+                       description = "現在実装されているコマンドの使い方を簡単に説明します！")
+  async def help(interaction: discord.Interaction):
+    if interaction.user == client.user:
+      return
+    await interaction.response.defer(ephemeral = True)
+    embed = discord.Embed(title = "コマンドヘルプ",
+                          description = "以下が現在実装されているコマンドになります。"
+                          color = 0x696969)
+    embed.add_field(name = "「ドクターネーム」", value = "ゲーム内のドクターネーム(Dr.xxxx#0000の形のゲーム内ID)を紐づけします\n\n・**/doctorname set**：ドクターネームを登録/変更します\n・**/doctorname show**：指定した人のドクターネームを表示します\n**/doctorname delete**：登録したドクターネームを削除します")
+    embed.add_field(name = "「サポートリクエスト」", value = "チャンネルを使ってサポートオペレーターのリクエストができます。攻略に詰まったら是非使ってください！\n\n・**/request**：サポートのリクエストを送信します")
+    embed.add_field(name = "「Modmail」", value = "運営スタッフへの問い合わせが簡単にできます\n\n・**/modmail**：運営スタッフへの問い合わせを開始します")
+    
+    await interaction.followup.send(embed = embed, ephemeral = True)
 
   @client.tree.command(name="modmail",
                        description="サーバースタッフと会話を開始することが出来ます！お気軽にご利用ください！")
@@ -202,13 +199,11 @@ def run_discord_bot():
                                        style=discord.ButtonStyle.primary)
 
       async def button_callback(interaction: discord.Interaction):
-        embed = discord.Embed(
-          title=f"サポートオペレーター「{self.operator}」のリクエスト",
-          description=f"「{label}」を選択しました。\nスキルレベルの条件を選んでください。")
+        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"「{label}」を選択しました。\nスキルレベルの条件を選んでください。")
         await interaction.response.edit_message(embed=embed,
                                                 view=OperatorLevelButton(
-                                                  self.operators, label,
-                                                  self.operator, self.lv))
+                                                self.operators, label,
+                                                self.operator, self.lv))
 
       button_skill.callback = button_callback
       self.add_item(button_skill)
@@ -254,11 +249,7 @@ def run_discord_bot():
           level = ""
         else:
           level = f"昇進2/レベル{self.lv}"
-        embed = discord.Embed(
-          title=f"サポートオペレーター「{self.operator}」のリクエスト",
-          description=
-          f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/レベル7\n"
-        )
+        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/レベル7\n")
         #リクエスト
         await requests.send_request(user=interaction.user,
                                     operator=self.operator,
@@ -285,10 +276,7 @@ def run_discord_bot():
           level = ""
         else:
           level = f"昇進2/レベル{self.lv}"
-        embed = discord.Embed(
-          title=f"サポートオペレーター「{self.operator}」のリクエスト",
-          description=
-          f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/特化3\n")
+        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/特化3\n")
         #リクエスト
         await requests.send_request(user=interaction.user,
                                     operator=self.operator,
@@ -341,11 +329,7 @@ def run_discord_bot():
         level = ""
       else:
         level = f"昇進2/レベル{self.lv}"
-      embed = discord.Embed(
-        title=f"サポートオペレーター「{self.operator}」のリクエスト",
-        description=
-        f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n"
-      )
+      embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n")
       #リクエスト
       await requests.send_request(user=interaction.user,
                                   operator=self.operator,
@@ -379,11 +363,7 @@ def run_discord_bot():
         level = ""
       else:
         level = f"昇進2/レベル{self.lv}"
-      embed = discord.Embed(
-        title=f"サポートオペレーター「{self.operator}」のリクエスト",
-        description=
-        f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク1以上"
-      )
+      embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク1以上")
       #リクエスト
       await requests.send_request(user=interaction.user,
                                   operator=self.operator,
@@ -401,11 +381,7 @@ def run_discord_bot():
         level = ""
       else:
         level = f"昇進2/レベル{self.lv}"
-      embed = discord.Embed(
-        title=f"サポートオペレーター「{self.operator}」のリクエスト",
-        description=
-        f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク2以上"
-      )
+      embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク2以上")
       #リクエスト
       await requests.send_request(user=interaction.user,
                                   operator=self.operator,
@@ -423,11 +399,7 @@ def run_discord_bot():
         level = ""
       else:
         level = f"昇進2/レベル{self.lv}"
-      embed = discord.Embed(
-        title=f"サポートオペレーター「{self.operator}」のリクエスト",
-        description=
-        f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク3"
-      )
+      embed = discord.Embed(title= f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク3")
       #リクエスト
       await requests.send_request(user=interaction.user,
                                   operator=self.operator,
@@ -498,13 +470,7 @@ def run_discord_bot():
 
         embed = discord.Embed(title=f"サポートオペレーター「{operator}」のリクエスト",
                               description=f"スキルの選択をしてください\n{skill_name}")
-        await interaction.followup.send(embed=embed,
-                                        view=OperatorSkillButton(
-                                          operators=operator_dic,
-                                          skills=skills,
-                                          operator=operator,
-                                          lv=level),
-                                        ephemeral=True)
+        await interaction.followup.send(embed=embed, view=OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=level), ephemeral=True)
     if correct == 0:
       await interaction.followup.send(
         "正しいオペレーター名、またはレアリティごとの最大値を超えないレベルを入力してください！", ephemeral=True)
