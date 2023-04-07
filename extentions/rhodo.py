@@ -196,13 +196,22 @@ def run_discord_bot():
         self.add_buttons(f"スキル{i}：{skills[i]}")
       
     def add_buttons(self, label):
-      button_skill = discord.ui.Button(label = label)
+      button_skill = discord.ui.Button(label = label, style = discord.ButtonStyle.primary)
       async def button_callback(interaction: discord.Interaction):
         embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
                               description = f"「{label}」を選択しました。\nスキルレベルの条件を選んでください。")
         await interaction.response.edit_message(embed = embed, view = OperatorLevelButton(self.operators, label, self.operator, self.lv))
       button_skill.callback = button_callback
       self.add_item(button_skill)
+      
+    @discord.ui.button(label="キャンセル",
+                       row = 1,
+                       style=discord.ButtonStyle.danger)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
+                            description = f"リクエストをキャンセルしました。",
+                            color = 0xf45d5d)
+      await interaction.response.edit_message(embed = embed, view = None)
       
   class OperatorLevelButton(discord.ui.View):
     
@@ -253,6 +262,15 @@ def run_discord_bot():
         #リクエスト
         await requests.send_request(user = interaction.user, operator = self.operator, skill = self.skill, skillLevel = skillLevel, lv = self.lv)
         await interaction.response.edit_message(embed = embed, view = None)
+    
+    @discord.ui.button(label="キャンセル",
+                       row = 1,
+                       style=discord.ButtonStyle.danger)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
+                            description = f"リクエストをキャンセルしました。",
+                            color = 0xf45d5d)
+      await interaction.response.edit_message(embed = embed, view = None)
       
   class OperatorModuleButton(discord.ui.View):
     
@@ -268,7 +286,7 @@ def run_discord_bot():
         self.add_buttons(f"モジュール{n}：{modules[n]}")
         
     def add_buttons(self, label):
-      button_module = discord.ui.Button(label = label)
+      button_module = discord.ui.Button(label = label, style = discord.ButtonStyle.primary)
       async def button_callback(interaction: discord.Interaction):
         embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
                               description = f"「{label}」を選択しました。\nモジュールランクの条件を選んでください。")
@@ -278,7 +296,7 @@ def run_discord_bot():
       
     @discord.ui.button(label="無し",
                        row = 1,
-                       style=discord.ButtonStyle.danger)
+                       style=discord.ButtonStyle.secondary)
     async def none(self, interaction: discord.Interaction, button: discord.ui.Button):
       if self.lv == 0:
         level = ""
@@ -288,6 +306,15 @@ def run_discord_bot():
                             description = f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n")
       #リクエスト
       await requests.send_request(user = interaction.user, operator = self.operator, skill = self.skill, skillLevel = self.skillLevel, lv = self.lv)
+      await interaction.response.edit_message(embed = embed, view = None)
+    
+    @discord.ui.button(label="キャンセル",
+                       row = 1,
+                       style=discord.ButtonStyle.danger)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
+                            description = f"リクエストをキャンセルしました。",
+                            color = 0xf45d5d)
       await interaction.response.edit_message(embed = embed, view = None)     
   
   class OperatorModuleLevelButton(discord.ui.View):
@@ -339,6 +366,15 @@ def run_discord_bot():
       await requests.send_request(user = interaction.user, operator = self.operator, skill = self.skill, skillLevel = self.skillLevel, module = self.module, module_rank="ランク3", lv = self.lv)
       await interaction.response.edit_message(embed=embed, view = None)
       
+    @discord.ui.button(label="キャンセル",
+                       row = 1,
+                       style=discord.ButtonStyle.danger)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+      embed = discord.Embed(title = f"サポートオペレーター「{self.operator}」のリクエスト",
+                            description = f"リクエストをキャンセルしました。",
+                            color = 0xf45d5d)
+      await interaction.response.edit_message(embed = embed, view = None) 
+      
   async def operator_autocomplete(interaction: discord.Interaction, current: str) -> List[discord.app_commands.Choice[str]]:
     
     operators = await requests.operators_load()
@@ -360,7 +396,7 @@ def run_discord_bot():
   async def support_request(interaction: discord.Interaction, operator: str, level: int = 0):
       if interaction.user == client.user:
           return
-      await interaction.response.defer()
+      await interaction.response.defer(ephemeral = True)
       operators = await requests.operators_load()
       correct = 0
       for index in operators:
@@ -397,12 +433,13 @@ def run_discord_bot():
         return
       if len(str(tag)) > 6 or len(name) > 16:
         embed = discord.Embed(title = "名前が長すぎます！", description = "なにかの間違いで無かったら、スタッフまでお問い合わせください", color = 0xf45d5d)
-        interaction.response.send_message(embed = embed)
+        await interaction.response.send_message(embed = embed)
         return
         
       await interaction.response.defer()
       added = await requests.doctor_add(interaction.user, name, tag)
       embed = discord.Embed(title = "ドクターネームの登録が完了しました！", description = f"新しく設定された貴方のドクターネームは「{added}」です！", color=0x5cb85c)
+      embed.set_author(name = interaction.user.name, icon_url = interaction.user.avatar)
       embed.set_footer(text = "変更する場合はもう一度「/doctorname_set」、登録を削除する場合は「/doctorname_delete」")
       await interaction.followup.send(embed = embed)
       
@@ -434,11 +471,11 @@ def run_discord_bot():
       if delete == "success":
         embed = discord.Embed(title = f"ドクターネームの登録を削除しました！", description = f"登録しなおす場合は、「/doctorname_set」をご利用ください！", color = 0x5cb85c)
         embed.set_author(name = interaction.user.name, icon_url = interaction.user.avatar)
-        await interaction.followup.send(embed = embed)
+        await interaction.followup.send(embed = embed, ephemeral=True)
       else:
         embed = discord.Embed(title = f"ドクターネームの登録を削除できませんでした。", description = f"ドクターネームの登録を削除できませんでした！既に登録が削除されている場合があります！\nもし削除されているか確認したい場合は「/modmail」にてお問い合わせください！", color = 0xf45d5d)
         embed.set_author(name = interaction.user.name, icon_url = interaction.user.avatar)
-        await interaction.followup.send(embed = embed)
+        await interaction.followup.send(embed = embed, ephemeral=True)
     
   @client.tree.command(name="mainttest",
                        description="メンテナンスリストのテストを行います",
