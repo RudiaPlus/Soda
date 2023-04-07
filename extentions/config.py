@@ -5,6 +5,7 @@ import os
 t_delta = datetime.timedelta(hours=9)
 JST = datetime.timezone(t_delta, 'JST')
 
+main_server = int(1018858818345631745)
 logging = True
 token = os.environ["DISCORD_TOKEN"]
 openAI_key = os.environ["OPENAI_API_KEY"]

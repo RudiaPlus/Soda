@@ -45,7 +45,7 @@ class RequestComplete(discord.ui.View):
                                                url = original_message.jump_url)
                     user_embed.set_footer(text=f"作戦を無事に終わらせたら、リンク先から「リクエスト終了」ボタンを押してリクエストの終了をお願いします！")
                     user_embed.set_author(name = interaction.user.name, icon_url = interaction.user.avatar)
-                    thread = await original_message.create_thread(name = f"{request_user.name}さんのリクエスト #{request_id}", auto_archive_duration = 1440)
+                    thread = await original_message.create_thread(name = f"{request_user.name}さんのリクエスト #{original_message.id}", auto_archive_duration = 1440)
                     await thread.send(content = request_user.mention, embed = user_embed)
                     await interaction.followup.send("スレッドを作成しました！リクエスト者との会話にご利用ください！", ephemeral=True)
 

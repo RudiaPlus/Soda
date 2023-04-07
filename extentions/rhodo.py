@@ -838,6 +838,14 @@ def run_discord_bot():
             await channel.send(embed=embed)
 
       await responses.get_response("reset", reset=True)
+      
+      guild = client.get_guild(config.main_server)
+      threads = guild.threads
+      for index in range(len(threads)):
+        if threads[index].parent.id == config.request and threads[index].archived == True:
+          
+          logger.info(f"「{threads[index].name}」を削除します。")
+          await threads[index].delete()
 
     except Exception as e:
       logger.exception(f"[morning]にてエラー：{e}")
