@@ -131,7 +131,8 @@ def run_discord_bot():
     await interaction.followup.send("完了しました！")
 
   @client.tree.command(name="imakita",
-                       description="指定された時間内の会話をロードが適当に要約します。出来ない時もあります")
+                       description="指定された時間内の会話をロードが適当に要約します。出来ない時もあります",
+                       guild=config.testserverid)
   async def imakita(interaction: discord.Interaction, hour: int):
     if interaction.user == client.user:
       return
@@ -459,7 +460,9 @@ def run_discord_bot():
       for choice in choices if current.lower() in choice.lower()
     ][:25]
 
-  @client.tree.command(name="request", description="サポートリクエストのテスト中")
+  @client.tree.command(
+    name="request",
+    description="サポートのリクエストを送信します。詳しくはチャンネル「#サポートリクエスト」のピン留めメッセージをご覧ください")
   @discord.app_commands.describe(operator="リクエストするオペレーター",
                                  level="リクエストするオペレーターのレベル(最大昇進で数字のみ、任意)")
   @discord.app_commands.autocomplete(operator=operator_autocomplete)
@@ -508,8 +511,9 @@ def run_discord_bot():
 
   class DoctorNameCommand(app_commands.Group):
 
-    @app_commands.command(
-      name="set", description="ドクターネーム(Dr.****#0000の形のゲーム内ID)を登録/変更します(テスト中！)")
+    @app_commands.command(name="set",
+                          description="ドクターネーム(Dr.****#0000の形のゲーム内ID)を登録/変更します"
+                          )
     @discord.app_commands.describe(name="IDの前半の名前の部分(「Dr.」を含まない)",
                                    tag="IDの後半の数字の部分(「#」を含まない)")
     async def doctorname_set(self, interaction: discord.Interaction, name: str,
@@ -531,11 +535,10 @@ def run_discord_bot():
       embed.set_author(name=interaction.user.name,
                        icon_url=interaction.user.avatar)
       embed.set_footer(
-        text="変更する場合はもう一度「/doctorname_set」、登録を削除する場合は「/doctorname_delete」")
+        text="変更する場合はもう一度「/doctorname_set」、登録を削除する場合は「/doctorname_delete」をご利用ください")
       await interaction.followup.send(embed=embed)
 
-    @app_commands.command(name="show",
-                          description="指定された人のドクターネームを表示します(テスト中！)")
+    @app_commands.command(name="show", description="指定された人のドクターネームを表示します")
     @discord.app_commands.describe(
       user="ドクターネームを知りたい人を選択してください(設定していない人も選択肢に表示されます)")
     async def doctorname_show(self, interaction: discord.Interaction,
@@ -559,8 +562,7 @@ def run_discord_bot():
         embed.set_author(name=user.name, icon_url=user.avatar)
         await interaction.followup.send(embed=embed)
 
-    @app_commands.command(name="delete",
-                          description="設定されたドクターネームを削除します(テスト中！)")
+    @app_commands.command(name="delete", description="設定された自分のドクターネームを削除します")
     async def doctorname_delete(self, interaction: discord.Interaction):
       if interaction.user == client.user:
         return
@@ -838,12 +840,13 @@ def run_discord_bot():
             await channel.send(embed=embed)
 
       await responses.get_response("reset", reset=True)
-      
+
       guild = client.get_guild(config.main_server)
       threads = guild.threads
       for index in range(len(threads)):
-        if threads[index].parent.id == config.request and threads[index].archived == True:
-          
+        if threads[index].parent.id == config.request and threads[
+            index].archived == True:
+
           logger.info(f"「{threads[index].name}」を削除します。")
           await threads[index].delete()
 
