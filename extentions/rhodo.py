@@ -3,6 +3,7 @@ from extentions import (responses, config, evjson, JSTTime, modmails, log, maint
 from extentions.aclient import client
 import re
 import datetime
+import unicodedata
 import os
 import json
 from discord import app_commands
@@ -483,21 +484,32 @@ def run_discord_bot():
     @discord.app_commands.describe(name="IDの前半の名前の部分(「Dr.」を含まない)",
                                    tag="IDの後半の数字の部分(「#」を含まない)")
     async def doctorname_set(self, interaction: discord.Interaction, name: str,
-                             tag: int):
+                             tag: str):
       if interaction.user == client.user:
         return
-      if len(str(tag)) > 6 or len(name) > 16:
+      
+      num_tag = unicodedata.normalize("NFKC", tag)
+      
+      if len(tag) > 6 or len(name) > 16:
         embed = discord.Embed(title="名前が長すぎます！",
+                              description="なにかの間違いで無かったら、スタッフまでお問い合わせください",
+                              color=0xf45d5d)
+        await interaction.response.send_message(embed=embed)
+        return
+      
+      if tag.isdecimal() == False or re.match(r"[0-9]{1,6}$", num_tag) is None:
+        embed = discord.Embed(title="タグは数字のみを入力してください！",
                               description="なにかの間違いで無かったら、スタッフまでお問い合わせください",
                               color=0xf45d5d)
         await interaction.response.send_message(embed=embed)
         return
 
       await interaction.response.defer()
-      added = await requests.doctor_add(interaction.user, name, tag)
+      added = await requests.doctor_add(interaction.user, name, num_tag)
       embed = discord.Embed(title="ドクターネームの登録が完了しました！",
                             description=f"新しく設定された貴方のドクターネームは「{added}」です！",
                             color=0x5cb85c)
+      
       embed.set_author(name=interaction.user.name,
                        icon_url=interaction.user.avatar)
       embed.set_footer(

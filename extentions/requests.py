@@ -121,7 +121,7 @@ async def doctor_delete(user):
     for index in range(len(doctors)):
         if doctors[index]["id"] == user.id:
             include = True
-            del doctors[index]["full"]
+            del doctors[index]
             await doctors_write(doctors)
             return("success")
     if include == False:
