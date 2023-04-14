@@ -167,6 +167,16 @@ def run_discord_bot():
       await maintenances.maintenance_end(name, number)
       await interaction.followup.send("完了しました")
 
+  @client.tree.command(name="remind",
+                       description="リマインドを送ります",
+                       guild=config.testserverid)
+  async def remind(interaction: discord.Interaction):
+    if interaction.user == client.user:
+      return
+    await interaction.response.defer()
+    await morning()
+    await interaction.followup.send("完了しました！")
+
   @client.tree.command(name="eventtest",
                        description="イベントリストのテストを行います",
                        guild=config.testserverid)
@@ -567,7 +577,7 @@ def run_discord_bot():
   @client.tree.command(name="mainttest",
                        description="メンテナンスリストのテストを行います",
                        guild=config.testserverid)
-  async def eventtest(interaction: discord.Interaction):
+  async def mainttest(interaction: discord.Interaction):
     if interaction.user == client.user:
       return
     await interaction.response.defer()
@@ -612,8 +622,7 @@ def run_discord_bot():
     channel = str(message.channel)
     channelID = int(message.channel.id)
 
-    logger.info(
-      f"{username}が{channel}({channelID})にて「{user_message}」と言ったのを記録しました")
+    #logger.info(f"{username}が{channel}({channelID})にて「{user_message}」と言ったのを記録しました")
 
     if channelID == config.chat:
       clean_message = re.sub('<.*?>', '', user_message)

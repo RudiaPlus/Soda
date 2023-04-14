@@ -1,15 +1,4 @@
 {
-    "act12mini": {
-        "id": "act12mini",
-        "type": "MINISTORY",
-        "stageAdd": "False",
-        "name": "夕景に影ありて",
-        "link": "https://00m.in/JrJ6G",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/8fa86f454c3a05fc8e93e2bb148b0e5f.png",
-        "startTime": 1680246000,
-        "endTime": 1680807599,
-        "rewardEndTime": 1681066799
-    },
     "act13mini": {
         "id": "act13mini",
         "type": "MINISTORY",
@@ -20,5 +9,16 @@
         "startTime": 1680850800,
         "endTime": 1681412399,
         "rewardEndTime": 1681671599
+    },
+    "act12sre": {
+        "id": "act13sre",
+        "type": "SIDESTORY",
+        "stageAdd": "False",
+        "name": "ニアーライト(復刻)",
+        "link": "https://00m.in/Ec9vI",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/e2aea5229a18e83b6261256a765c101a.png",
+        "startTime": 1681455600,
+        "endTime": 1682276399,
+        "rewardEndTime": 1682621999
     }
 }
