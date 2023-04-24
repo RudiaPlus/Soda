@@ -65,7 +65,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         
         member_got = client.get_user(int(member_id)) if member is None else member
         
-        now = JSTTime.timeJST("f")
+        now = JSTTime.timeJST("raw")
         member_punishments = []
         
         punishments = await punishment_load()
@@ -128,9 +128,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         
         member_got = client.get_user(int(member_id)) if member is None else member
         
-        await interaction.guild.kick(user= member_got, reason = reason)
-        
-        now = JSTTime.timeJST("f")
+        now = JSTTime.timeJST("raw")
         member_punishments = []
         
         punishments = await punishment_load()
@@ -164,6 +162,8 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
                                   description = f"{member_got.name}さん、あなたはスタッフの判断によってサーバーから追放されました。処罰の理由は以下になります\n{reason}\n\nあなたはまたサーバーに入りなおすことが出来ますが、これは{len(member_punishments)+1}回目の処罰です。回数が重なると、あなたはサーバーに入りなおすことが出来なくなります。\nこの理由に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
             embed.set_author(name = "あしたはこぶね", url = config.server_invite_link, icon_url=config.server_icon)
             await member_got.send(embed=embed)
+            
+        await interaction.guild.kick(user= member_got, reason = reason)
     
     except Exception as e:
         embed = discord.Embed(title = "⚠️メンバーの追放に失敗しました！",
@@ -190,9 +190,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         
         member_got = await client.fetch_user(int(member_id)) if member is None else member
         
-        await interaction.guild.ban(user = member_got, reason = reason)
-        
-        now = JSTTime.timeJST("f")
+        now = JSTTime.timeJST("raw")
         member_punishments = []
         
         punishments = await punishment_load()
@@ -226,6 +224,8 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
                                   description = f"{member_got.name}さん、あなたはスタッフの判断によってサーバーからBanされました。処罰の理由は以下になります\n{reason}\n\nあなたはもう二度とサーバーに入りなおす事が出来ませんが、この処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。")
             embed.set_author(name = "あしたはこぶね", url = config.server_invite_link, icon_url=config.server_icon)
             await member_got.send(embed=embed)
+            
+        await interaction.guild.ban(user = member_got, reason = reason)
     
     except Exception as e:
         embed = discord.Embed(title = "⚠️メンバーのキックに失敗しました！",
