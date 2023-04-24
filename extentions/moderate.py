@@ -47,7 +47,7 @@ async def reason_autocomplete(interaction: discord.Interaction, current: str) ->
     ]
 
 @client.tree.command(name = "warn", description = "指定したメンバーに警告を科します。", guild = config.testserverid)
-@discord.app_commands.describe(member = "警告するメンバー", member_id = "警告するメンバーの ID", reason = "警告する理由")
+@discord.app_commands.describe(member = "警告するメンバー(どちらか)", member_id = "警告するメンバーの ID(どちらか)", reason = "警告する理由")
 @discord.app_commands.default_permissions(kick_members = True)
 @discord.app_commands.checks.has_permissions(kick_members=True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
@@ -110,7 +110,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         logger.error(f"[warn]にてエラー：{e}")
 
 @client.tree.command(name = "kick", description = "指定したメンバーをキックします。", guild = config.testserverid)
-@discord.app_commands.describe(member = "キックするメンバー", member_id = "キックするメンバーの ID", reason = "キックする理由")
+@discord.app_commands.describe(member = "キックするメンバー(どちらか)", member_id = "キックするメンバーの ID(どちらか)", reason = "キックする理由")
 @discord.app_commands.default_permissions(kick_members = True)
 @discord.app_commands.checks.has_permissions(kick_members=True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
@@ -172,7 +172,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         logger.error(f"[kick]にてエラー：{e}")
         
 @client.tree.command(name = "ban", description = "指定したメンバーをBanします。", guild = config.testserverid)
-@discord.app_commands.describe(member = "Banするメンバー", member_id = "Banするメンバーの ID", reason = "Banする理由")
+@discord.app_commands.describe(member = "Banするメンバー(どちらか)", member_id = "Banするメンバーの ID(どちらか)", reason = "Banする理由")
 @discord.app_commands.default_permissions(kick_members = True, ban_members = True)
 @discord.app_commands.checks.has_permissions(kick_members=True, ban_members = True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
