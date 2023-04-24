@@ -588,7 +588,7 @@ def run_discord_bot():
     if message.author == client.user:
       return
 
-    messageuser = modmails.modmail_get_user()
+    messageuser = await modmails.modmail_get_user()
 
     if messageuser and message.channel.id == config.modchannnel:
       if message.content == "終了":

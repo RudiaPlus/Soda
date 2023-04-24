@@ -8,13 +8,13 @@ json_name = "jsons/modmail.json"
 json_path = os.path.join(dir, json_name)
 logger = log.setup_logger(__name__)
 
-def modmail_get_user():
+async def modmail_get_user():
     with open(json_path, mode = "r", encoding="utf-8") as f:
         modmail_json = json.load(f)
     
     for i in range(len(modmail_json)):
         if modmail_json[i]["isFinished"] == "False":
-            user = client.fetch_user(modmail_json[i]["user_ID"])
+            user = await client.fetch_user(modmail_json[i]["user_ID"])
             return(user)
     return None
 
