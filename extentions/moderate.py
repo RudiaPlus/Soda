@@ -128,7 +128,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         
         member_got = client.get_user(int(member_id)) if member is None else member
         
-        await interaction.guild.kick(member_got, reason)
+        await interaction.guild.kick(user= member_got, reason = reason)
         
         now = JSTTime.timeJST("f")
         member_punishments = []
@@ -190,7 +190,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         
         member_got = await client.fetch_user(int(member_id)) if member is None else member
         
-        await interaction.guild.ban(member_got, reason)
+        await interaction.guild.ban(user = member_got, reason = reason)
         
         now = JSTTime.timeJST("f")
         member_punishments = []
