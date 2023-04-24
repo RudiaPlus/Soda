@@ -134,8 +134,6 @@ class RequestComplete(discord.ui.View):
                              icon_url=interaction.user.avatar)
             await original_message.edit(embed=embed, view=None)
             
-            
-            
             await request_complete(request_id)
             thread = interaction.guild.get_thread(messageID)
             await asyncio.sleep(5)
@@ -252,7 +250,9 @@ async def send_request(user,
         "skillLevel": skillLevel,
         "module": module,
         "module_rank": module_rank,
-        "lv": lv
+        "lv": lv,
+        "messageID": None,
+        "respondUserID": None
     }
 
     channel = client.get_channel(config.request)
