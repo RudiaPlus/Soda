@@ -96,7 +96,7 @@ class RequestComplete(discord.ui.View):
             else:
                 embed = discord.Embed(title = "リクエストに応えます！",
                                       description = f"[こちらのリクエスト]({original_message.jump_url})に応えます！よろしいですか？")
-                interaction.followup.send(embed = embed, view = RequestConfirm(original_message=original_message, request_index = request_index), ephemeral=True)
+                await interaction.followup.send(embed = embed, view = RequestConfirm(original_message=original_message, request_index = request_index), ephemeral=True)
 
         except Exception as e:
             logger.error(f"[button_respond]にてエラー：{e}")
