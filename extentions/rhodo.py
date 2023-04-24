@@ -1,5 +1,5 @@
 import discord
-from extentions import (responses, config, evjson, JSTTime, modmails, log, maintenances, requests)
+from extentions import (responses, config, evjson, JSTTime, modmails, log, maintenances, requests, moderate)
 from extentions.aclient import client
 import re
 import datetime
@@ -588,7 +588,7 @@ def run_discord_bot():
     if message.author == client.user:
       return
 
-    messageuser = client.fetch_user(modmails.modmail_get_user()) if modmails.modmail_get_user() else None
+    messageuser = modmails.modmail_get_user()
 
     if messageuser and message.channel.id == config.modchannnel:
       if message.content == "終了":
@@ -600,7 +600,7 @@ def run_discord_bot():
         await messageuser.send(embed=mail)
 
     if not message.guild:
-      logger.debug("DM受信")
+      logger.info(f"{username}に「{user_message}」と言われました。")
       if message.author == messageuser:
         channel = client.get_channel(config.modchannnel)
         mail = discord.Embed(title=f"{message.author.name}からのメッセージ",
@@ -611,7 +611,7 @@ def run_discord_bot():
       else:
         mail = discord.Embed(
           title="お問い合わせの場合は、/modmailをご利用ください！",
-          description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！")
+          description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！\n私とお話ししたい場合は、<#1072158278634713108>までどうぞ！")
         mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
         await message.author.send(embed=mail)
 
@@ -619,8 +619,6 @@ def run_discord_bot():
     user_message = str(message.content)
     channel = str(message.channel)
     channelID = int(message.channel.id)
-
-    #logger.info(f"{username}が{channel}({channelID})にて「{user_message}」と言ったのを記録しました")
 
     if channelID == config.chat:
       clean_message = re.sub('<.*?>', '', user_message)

@@ -1,6 +1,7 @@
 import json
 import os
 from extentions import log
+from extentions.aclient import client
 
 dir = os.path.abspath(__file__ + "/../")
 json_name = "jsons/modmail.json"
@@ -13,7 +14,8 @@ def modmail_get_user():
     
     for i in range(len(modmail_json)):
         if modmail_json[i]["isFinished"] == "False":
-                return(modmail_json[i]["user_ID"])
+            user = client.fetch_user(modmail_json[i]["user_ID"])
+            return(user)
     return None
 
 async def modmail_queue(user):

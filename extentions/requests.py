@@ -52,7 +52,7 @@ class RequestConfirm(discord.ui.View):
                     auto_archive_duration=1440)
                 
                 requests = await request_load()
-                requests[self.request_index].update({"respondUserID": interaction.user.id})
+                requests[self.request_index]["respondUserID"] = interaction.user.id
                 await request_write(requests)
                 
                 await thread.send(content=request_user.mention,embed=user_embed)
@@ -147,12 +147,6 @@ class RequestComplete(discord.ui.View):
         else:
             await interaction.followup.send("リクエストはリクエストした本人だけが終了できます！",
                                             ephemeral=True)
-
-
-async def request_add(message):
-    requests = await request_load()
-    requests.append(message)
-
 
 async def request_write(dic):
     with open(os.path.join(dir, request_json), "w", encoding="UTF-8") as f:

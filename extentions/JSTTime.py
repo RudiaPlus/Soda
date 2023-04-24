@@ -10,6 +10,8 @@ def timeJST(type: str) -> str:
 
     if type == "full":
         return(f"{now.year}年{now.month}月{now.day}日 ({weekday}) {now.hour}時{now.minute}分{now.second}秒")
+    elif type == "f":
+        return(f"{now.year}/{now.month}/{now.day}({weekday}) {now.hour}:{now.minute}:{now.second}")
     elif type == "raw":
         return(now)
     elif type == "hour":
