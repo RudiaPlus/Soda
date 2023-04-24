@@ -51,7 +51,7 @@ async def reason_autocomplete(interaction: discord.Interaction, current: str) ->
 @discord.app_commands.default_permissions(kick_members = True)
 @discord.app_commands.checks.has_permissions(kick_members=True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
-async def warn(interaction:  discord.Interaction, member:  discord.Member = None, member_id: int = None, reason: str = None):
+async def warn(interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None, reason: str = None):
     await interaction.response.defer()
     try:
         if member is None and member_id is None:
@@ -63,7 +63,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         if not reason:
             reason = "無し"
         
-        member_got = client.fetch_user(member_id) if member is None else member
+        member_got = client.fetch_user(int(member_id)) if member is None else member
         
         now = JSTTime.timeJST("f")
         member_punishments = []
@@ -114,7 +114,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
 @discord.app_commands.default_permissions(kick_members = True)
 @discord.app_commands.checks.has_permissions(kick_members=True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
-async def kick(interaction:  discord.Interaction, member:  discord.Member = None, member_id: int = None, reason: str = None):
+async def kick(interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None, reason: str = None):
     await interaction.response.defer()
     try:
         if member is None and member_id is None:
@@ -126,7 +126,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         if not reason:
             reason = "無し"
         
-        member_got = client.fetch_user(member_id) if member is None else member
+        member_got = client.fetch_user(int(member_id)) if member is None else member
         
         await member_got.kick(reason = reason)
         
@@ -176,7 +176,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
 @discord.app_commands.default_permissions(kick_members = True, ban_members = True)
 @discord.app_commands.checks.has_permissions(kick_members=True, ban_members = True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
-async def ban(interaction:  discord.Interaction, member:  discord.Member = None, member_id: int = None, reason: str = None):
+async def ban(interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None, reason: str = None):
     await interaction.response.defer()
     try:
         if member is None and member_id is None:
@@ -188,7 +188,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         if not reason:
             reason = "無し"
         
-        member_got = client.fetch_user(member_id) if member is None else member
+        member_got = client.fetch_user(int(member_id)) if member is None else member
         
         await member_got.ban(reason = reason)
         
