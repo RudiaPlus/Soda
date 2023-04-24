@@ -86,12 +86,12 @@ class RequestComplete(discord.ui.View):
             original_message = interaction.message
 
             for index in range(len(requests)):
-                if requests[index]["respondUserID"]:
-                    await interaction.followup.send("申し訳ありません。既にリクエストに応えている方が居ます！", ephemeral = True)
-                    return
                 if requests[index]["messageID"] == original_message.id:
                     request_index = index
                     request_user = client.get_user(requests[index]["userID"])
+                    if requests[index]["respondUserID"]:
+                        await interaction.followup.send("申し訳ありません。既にリクエストに応えている方が居ます！", ephemeral = True)
+                        return
 
             if interaction.user.id == request_user.id:
                 await interaction.followup.send(
@@ -119,6 +119,7 @@ class RequestComplete(discord.ui.View):
                 request_id = requests[index]["id"]
                 messageID = requests[index]["messageID"]
                 request_user = client.get_user(requests[index]["userID"])
+                respond_user = None
                 if requests[index]["respondUserID"]:
                     respond_user = client.get_user(requests[index]["respondUserID"])
                     operator = requests[index]["operator"]
@@ -140,7 +141,8 @@ class RequestComplete(discord.ui.View):
             await request_complete(request_id)
             thread = interaction.guild.get_thread(messageID)
             await asyncio.sleep(5)
-            await thread.delete()
+            if respond_user:
+                await thread.delete()
             await interaction.delete_original_response()
         else:
             await interaction.followup.send("リクエストはリクエストした本人だけが終了できます！",
