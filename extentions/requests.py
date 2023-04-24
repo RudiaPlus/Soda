@@ -150,7 +150,7 @@ class RequestComplete(discord.ui.View):
 
 async def request_write(dic):
     with open(os.path.join(dir, request_json), "w", encoding="UTF-8") as f:
-        json.dump(dic, f, indent=2)
+        json.dump(dic, f, indent=2, ensure_ascii=False)
         logger.info(f"requests.jsonに新しく書き込みを行いました")
 
 
@@ -174,7 +174,7 @@ async def doctors_load():
 
 async def doctors_write(dic):
     with open(os.path.join(dir, doctors_json), "w", encoding="UTF-8") as f:
-        json.dump(dic, f, indent=2)
+        json.dump(dic, f, indent=2, ensure_ascii=False)
         logger.info(f"doctors.jsonに新しく書き込みを行いました")
 
 

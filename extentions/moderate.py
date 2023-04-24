@@ -26,7 +26,7 @@ async def punishment_delete(member, id):
 
 async def punishment_write(dic):
     with open(os.path.join(dir, puni_json_path), "w", encoding="UTF-8") as f:
-        json.dump(dic, f, indent=2)
+        json.dump(dic, f, indent=2, ensure_ascii=False)
         logger.info(f"punishments.jsonに新しく書き込みを行いました")
 
 

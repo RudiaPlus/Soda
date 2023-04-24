@@ -35,7 +35,7 @@ class Chatbot:
 
     def save(self) -> None:
         with open(os.path.join(dir, json_name), "w", encoding = "UTF-8") as f:
-            json.dump(self.conversation, f, indent=2)
+            json.dump(self.conversation, f, indent=2, ensure_ascii=False)
     
     def load(self) -> None:
         with open(os.path.join(dir, json_name), encoding = "UTF-8") as f:
