@@ -57,7 +57,7 @@ class RequestConfirm(discord.ui.View):
                 
                 await thread.send(content=request_user.mention,embed=user_embed)
                 await interaction.delete_original_response()
-                await interaction.followup.send("スレッドを作成しました！リクエスト者との会話にご利用ください！", ephemeral=True)
+                await interaction.followup.send("スレッドを作成しました！リクエスト者との会話にご利用ください！", embed = None, ephemeral=True)
 
         except Exception as e:
             logger.error(f"[button_confirm]にてエラー：{e}")
@@ -66,7 +66,7 @@ class RequestConfirm(discord.ui.View):
                        style = discord.ButtonStyle.danger)
     async def button_cancel(self, interaction: discord.Interaction,
                              button: discord.ui.Button):
-        await interaction.response.edit_message(content = "キャンセルしました。", view = None)
+        await interaction.response.edit_message(content = "キャンセルしました。", embed = None, view = None)
 
 class RequestComplete(discord.ui.View):
 
@@ -86,6 +86,9 @@ class RequestComplete(discord.ui.View):
             original_message = interaction.message
 
             for index in range(len(requests)):
+                if requests[index]["respondUserID"]:
+                    await interaction.followup.send("申し訳ありません。既にリクエストに応えている方が居ます！", ephemeral = True)
+                    return
                 if requests[index]["messageID"] == original_message.id:
                     request_index = index
                     request_user = client.get_user(requests[index]["userID"])
@@ -124,7 +127,7 @@ class RequestComplete(discord.ui.View):
                     respond_embed = discord.Embed(title = "リクエストに応えていただきありがとうございます！",
                                          description = f"{str(request_user)}さんのサポートリクエストが終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator} | {skill}")
                     respond_embed.set_author(name = str(request_user), icon_url = request_user.avatar)
-                    respond_embed.set_footer("これからも宜しくお願い致します！")
+                    respond_embed.set_footer(text = "これからも宜しくお願い致します！")
                     await respond_user.send(embed = respond_embed)
 
         if interaction.user.id == request_user.id or interaction.user.guild_permissions.manage_messages == True:

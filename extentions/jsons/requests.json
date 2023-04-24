@@ -10,29 +10,5 @@
     "lv": 0,
     "messageID": 1098944647407095899,
     "respondUserID": 827436341352333312
-  },
-  {
-    "id": 1,
-    "userID": 657603950635384874,
-    "operator": "\u30b9\u30ab\u30b8",
-    "skill": "\u30b9\u30ad\u30eb3\uff1a\u6d77\u562f\u306e\u60b2\u6b4c",
-    "skillLevel": "\u30ec\u30d9\u30eb7",
-    "module": "\u30e2\u30b8\u30e5\u30fc\u30ebX\uff1a\u5728\u308a\u3057\u65e5\u306e\u5922\u306e\u540d\u6b8b",
-    "module_rank": "\u30e9\u30f3\u30af3",
-    "lv": 0,
-    "messageID": 1100068255504289944,
-    "respondUserID": 870729549833465917
-  },
-  {
-    "id": 2,
-    "userID": 657603950635384874,
-    "operator": "\u30a2",
-    "skill": "\u30b9\u30ad\u30eb3\uff1a\u5287\u6027\u5897\u5f37\u5264\u30fb\u30c9\u30ea\u30a2\u30f3",
-    "skillLevel": "\u7279\u53163",
-    "module": null,
-    "module_rank": "",
-    "lv": 0,
-    "messageID": 1100073430260391946,
-    "respondUserID": 870729549833465917
   }
 ]
