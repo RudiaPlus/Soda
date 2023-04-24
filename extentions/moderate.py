@@ -14,7 +14,7 @@ puni_json_path = "jsons/punishments.json"
 async def punishment_delete(member, id):
     punishments = await punishment_load()
     try:
-        if member.id in punishments:
+        if str(member.id) in punishments:
             member_punishments = punishments[member.id]["punishments"]
             for index in range(len(member_punishments)):
                 if member_punishments[index]["id"] == id:
@@ -69,7 +69,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         member_punishments = []
         
         punishments = await punishment_load()
-        if member_got.id in punishments:
+        if str(member_got.id) in punishments:
             criminal_record = punishments[member_got.id]
             member_punishments = criminal_record["punishments"]
         
@@ -82,7 +82,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         
         punishment = {"id": message.id, "type": "warn", "date": now, "reason": reason}
         
-        if member_got.id in punishments:
+        if str(member_got.id) in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments.append(punishment)}
             punishments[member_got.id] = new
             await punishment_write(punishments)
@@ -131,7 +131,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         member_punishments = []
         
         punishments = await punishment_load()
-        if member_got.id in punishments:
+        if str(member_got.id) in punishments:
             criminal_record = punishments[member_got.id]
             member_punishments = criminal_record["punishments"]
         
@@ -144,7 +144,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         
         punishment = {"id": message.id, "type": "kick", "date": now, "reason": reason}
         
-        if member_got.id in punishments:
+        if str(member_got.id) in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments.append(punishment)}
             punishments[member_got.id] = new
             await punishment_write(punishments)
@@ -195,7 +195,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         member_punishments = []
         
         punishments = await punishment_load()
-        if member_got.id in punishments:
+        if str(member_got.id) in punishments:
             criminal_record = punishments[member_got.id]
             member_punishments = criminal_record["punishments"]
         
@@ -208,7 +208,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         
         punishment = {"id": message.id, "type": "ban", "date": now, "reason": reason}
         
-        if member_got.id in punishments:
+        if str(member_got.id) in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": True, "punishments": member_punishments.append(punishment)}
             punishments[member_got.id] = new
             await punishment_write(punishments)
