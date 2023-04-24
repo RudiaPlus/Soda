@@ -13,7 +13,7 @@ json_dir = "jsons/maintenances.json"
 
 async def write_json(dic):
     with open(os.path.join(dir, json_dir), "w", encoding = "UTF-8") as f:
-        json.dump(dic, f, indent=2)
+        json.dump(dic, f, indent=2, ensure_ascii=False)
 
 async def read_json():
     with open(os.path.join(dir, json_dir), encoding = "UTF-8") as f:

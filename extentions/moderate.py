@@ -26,7 +26,7 @@ async def punishment_delete(member, id):
 
 async def punishment_write(dic):
     with open(os.path.join(dir, puni_json_path), "w", encoding="UTF-8") as f:
-        json.dump(dic, f, indent=2)
+        json.dump(dic, f, indent=2, ensure_ascii=False)
         logger.info(f"punishments.jsonに新しく書き込みを行いました")
 
 
@@ -48,6 +48,7 @@ async def reason_autocomplete(interaction: discord.Interaction, current: str) ->
 
 @client.tree.command(name = "warn", description = "指定したメンバーに警告を科します。", guild = config.testserverid)
 @discord.app_commands.describe(member = "警告するメンバー", member_id = "警告するメンバーの ID", reason = "警告する理由")
+@discord.app_commands.default_permissions(kick_members = True)
 @discord.app_commands.checks.has_permissions(kick_members=True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
 async def warn(interaction:  discord.Interaction, member:  discord.Member = None, member_id: int = None, reason: str = None):
@@ -110,6 +111,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
 
 @client.tree.command(name = "kick", description = "指定したメンバーをキックします。", guild = config.testserverid)
 @discord.app_commands.describe(member = "キックするメンバー", member_id = "キックするメンバーの ID", reason = "キックする理由")
+@discord.app_commands.default_permissions(kick_members = True)
 @discord.app_commands.checks.has_permissions(kick_members=True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
 async def kick(interaction:  discord.Interaction, member:  discord.Member = None, member_id: int = None, reason: str = None):
@@ -171,7 +173,8 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         
 @client.tree.command(name = "ban", description = "指定したメンバーをBanします。", guild = config.testserverid)
 @discord.app_commands.describe(member = "Banするメンバー", member_id = "Banするメンバーの ID", reason = "Banする理由")
-@discord.app_commands.checks.has_permissions(kick_members=True)
+@discord.app_commands.default_permissions(kick_members = True, ban_members = True)
+@discord.app_commands.checks.has_permissions(kick_members=True, ban_members = True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
 async def ban(interaction:  discord.Interaction, member:  discord.Member = None, member_id: int = None, reason: str = None):
     await interaction.response.defer()
