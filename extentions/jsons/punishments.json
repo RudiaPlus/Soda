@@ -3,22 +3,22 @@
     "userName": "テスト用アカウント#4164",
     "userID": 657603950635384874,
     "banned": false,
-    "punishments": {
+    "punishments": [{
       "id": 1100157292860686356,
       "type": "kick",
       "date": "2023-04-25 05:32:18.656671+09:00",
       "reason": "暴力的な発言/脅迫行為"
-    }
+    }]
   },
   "230309932929515520": {
     "userName": "STG#5467",
     "userID": 230309932929515520,
     "banned": false,
-    "punishments": {
+    "punishments": [{
       "id": 1100159100110770186,
       "type": "warn",
       "date": "2023-04-25 05:39:29.501258+09:00",
       "reason": "無し"
-    }
+    }]
   }
 }

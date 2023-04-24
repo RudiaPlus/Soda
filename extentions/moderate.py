@@ -81,7 +81,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         embed.set_footer(text = f"{now} | このメッセージは削除しないでください。")
         message = await interaction.followup.send(embed = embed)
         
-        punishment = {"id": message.id, "type": "warn", "date": now, "reason": reason}
+        punishment = [{"id": message.id, "type": "warn", "date": now, "reason": reason}]
         
         if search_id in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments.append(punishment)}
@@ -144,7 +144,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         embed.set_footer(text = f"{now} | このメッセージは削除しないでください。")
         message = await interaction.followup.send(embed = embed)
         
-        punishment = {"id": message.id, "type": "kick", "date": now, "reason": reason}
+        punishment = [{"id": message.id, "type": "kick", "date": now, "reason": reason}]
         
         if search_id in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments.append(punishment)}
@@ -209,7 +209,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         embed.set_footer(text = f"{now} | このメッセージは削除しないでください。")
         message = await interaction.followup.send(embed = embed)
         
-        punishment = {"id": message.id, "type": "ban", "date": now, "reason": reason}
+        punishment = [{"id": message.id, "type": "ban", "date": now, "reason": reason}]
         
         if search_id in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": True, "punishments": member_punishments.append(punishment)}
