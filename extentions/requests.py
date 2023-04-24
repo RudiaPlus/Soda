@@ -116,9 +116,16 @@ class RequestComplete(discord.ui.View):
                 request_id = requests[index]["id"]
                 messageID = requests[index]["messageID"]
                 request_user = client.get_user(requests[index]["userID"])
-                respond_user = client.get_user(requests[index]["respondUserID"])
-                operator = requests[index]["operator"]
-                skill = requests[index]["skill"]
+                if requests[index]["respondUserID"]:
+                    respond_user = client.get_user(requests[index]["respondUserID"])
+                    operator = requests[index]["operator"]
+                    skill = requests[index]["skill"]
+                    
+                    respond_embed = discord.Embed(title = "リクエストに応えていただきありがとうございます！",
+                                         description = f"{str(request_user)}さんのサポートリクエストが終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator} | {skill}")
+                    respond_embed.set_author(name = str(request_user), icon_url = request_user.avatar)
+                    respond_embed.set_footer("これからも宜しくお願い致します！")
+                    await respond_user.send(embed = respond_embed)
 
         if interaction.user.id == request_user.id or interaction.user.guild_permissions.manage_messages == True:
             embed = discord.Embed(title="リクエストを終了しました！",
@@ -127,11 +134,7 @@ class RequestComplete(discord.ui.View):
                              icon_url=interaction.user.avatar)
             await original_message.edit(embed=embed, view=None)
             
-            respond_embed = discord.Embed(title = "リクエストに応えていただきありがとうございます！",
-                                         description = f"{str(request_user)}さんのサポートリクエストが終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator} | {skill}")
-            respond_embed.set_author(name = str(request_user), icon_url = request_user.avatar)
-            respond_embed.set_footer("これからも宜しくお願い致します！")
-            await respond_user.send(embed = respond_embed)
+            
             
             await request_complete(request_id)
             thread = interaction.guild.get_thread(messageID)
