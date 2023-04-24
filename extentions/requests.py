@@ -130,7 +130,7 @@ class RequestComplete(discord.ui.View):
             respond_embed = discord.Embed(title = "リクエストに応えていただきありがとうございます！",
                                          description = f"{str(request_user)}さんのサポートリクエストが終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator} | {skill}")
             respond_embed.set_author(name = str(request_user), icon_url = request_user.avatar)
-            respond_embed.set_footer("これからも宜しくお願い致します！")
+            respond_embed.set_footer(text = "これからも宜しくお願い致します！")
             await respond_user.send(embed = respond_embed)
             
             await request_complete(request_id)
