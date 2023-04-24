@@ -429,9 +429,7 @@ def run_discord_bot():
                             color=0xf45d5d)
       await interaction.response.edit_message(embed=embed, view=None)
 
-  async def operator_autocomplete(
-      interaction: discord.Interaction,
-      current: str) -> List[discord.app_commands.Choice[str]]:
+  async def operator_autocomplete(interaction: discord.Interaction, current: str) -> List[discord.app_commands.Choice[str]]:
 
     operators = await requests.operators_load()
     name_list = []
@@ -590,7 +588,7 @@ def run_discord_bot():
     if message.author == client.user:
       return
 
-    messageuser = client.get_user(modmails.modmail_get_user())
+    messageuser = client.fetch_user(modmails.modmail_get_user()) if modmails.modmail_get_user() else None
 
     if messageuser and message.channel.id == config.modchannnel:
       if message.content == "終了":
@@ -799,6 +797,21 @@ def run_discord_bot():
               embed.set_author(name="オムニバスストーリー")
               embed.set_image(url=eventpic)
               await channel.send(embed=embed)
+              
+            elif events[i]["type"] == "MAIN":
+              try:
+                link = events[i]["link"]
+                eventpic = events[i]["pic"]
+              except Exception as e:
+                logger.warn(f"[morning:main]: {e}")
+                
+              embed = discord.Embed(title=events[i]["name"],
+                                    description=events[i]["time"],
+                                    color=0x353536,
+                                    url=link)
+              embed.set_author(name="理性保護&物資回収キャンペーン")
+              embed.set_image(url=eventpic)
+              await channel.send(embed=embed)  
 
             else:
               embed = discord.Embed(title=events[i]["name"],
@@ -827,15 +840,6 @@ def run_discord_bot():
             await channel.send(embed=embed)
 
       await responses.get_response("reset", reset=True)
-
-      guild = client.get_guild(config.main_server)
-      threads = guild.threads
-      for index in range(len(threads)):
-        if threads[index].parent.id == config.request and threads[
-            index].archived == True:
-
-          logger.info(f"「{threads[index].name}」を削除します。")
-          await threads[index].delete()
 
     except Exception as e:
       logger.exception(f"[morning]にてエラー：{e}")

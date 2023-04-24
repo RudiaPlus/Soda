@@ -56,6 +56,7 @@ class RequestConfirm(discord.ui.View):
                 await request_write(requests)
                 
                 await thread.send(content=request_user.mention,embed=user_embed)
+                await interaction.delete_original_response()
                 await interaction.followup.send("スレッドを作成しました！リクエスト者との会話にご利用ください！", ephemeral=True)
 
         except Exception as e:
@@ -65,7 +66,7 @@ class RequestConfirm(discord.ui.View):
                        style = discord.ButtonStyle.danger)
     async def button_cancel(self, interaction: discord.Interaction,
                              button: discord.ui.Button):
-        await interaction.response.edit_message("キャンセルしました。", view = None)
+        await interaction.response.edit_message(content = "キャンセルしました。", view = None)
 
 class RequestComplete(discord.ui.View):
 
@@ -119,7 +120,7 @@ class RequestComplete(discord.ui.View):
                 operator = requests[index]["operator"]
                 skill = requests[index]["skill"]
 
-        if interaction.user.id == request_user.id or interaction.user.guild_permissions.manage_messages():
+        if interaction.user.id == request_user.id or interaction.user.guild_permissions.manage_messages == True:
             embed = discord.Embed(title="リクエストを終了しました！",
                                   description="この投稿は5秒後に削除されます！")
             embed.set_author(name=interaction.user.name,
