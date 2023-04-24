@@ -166,7 +166,7 @@
         "endTime": 1681412399,
         "rewardEndTime": 1681671599
     },
-    "act12sre": {
+    "act13sre": {
         "id": "act13sre",
         "type": "SIDESTORY",
         "stageAdd": "False",
@@ -176,5 +176,15 @@
         "startTime": 1681455600,
         "endTime": 1682276399,
         "rewardEndTime": 1682621999
+    },
+    "main11": {
+        "id": "main11",
+        "type": "MAIN",
+        "stageAdd": "False",
+        "name": "11章「淬火煙塵」実装",
+        "link": "https://00m.in/ryM4F",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/e1e487d948dc33982646e3e0c87d9bd4.png",
+        "startTime": 1682578800,
+        "endTime": 1683745199
     }
 }

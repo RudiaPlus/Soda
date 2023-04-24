@@ -17,6 +17,7 @@ announce = int(1081251314958344313)  #1081251314958344313
 request = int(1093849433621401600) #1093849433621401600
 morningtime = datetime.time(hour=6, minute=30, tzinfo=JST)
 modchannnel = int(1073151183092457514)
+moderatorchannel = int(1093777243601371157) #botmoderate
 morning = True
 command = False
 speechChannel_1 = int(1018908115711836162)  #1018908115711836162

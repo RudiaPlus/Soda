@@ -12,6 +12,60 @@ request_json = "jsons/requests.json"
 operators_json = "jsons/operators.json"
 doctors_json = "jsons/doctors.json"
 
+class RequestConfirm(discord.ui.View):
+    def __init__(self, original_message, request_index):
+        super().__init__(timeout=300)
+        self.original_message = original_message
+        self.request_index = request_index
+        
+    @discord.ui.button(label = "確認",
+                       style = discord.ButtonStyle.success,
+                       emoji = "✅")
+    async def button_confirm(self, interaction: discord.Interaction,
+                             button: discord.ui.Button):
+        await interaction.response.defer(ephemeral=True)
+        
+        try:
+            requests = await request_load()
+            
+            for index in range(len(requests)):
+                if requests[index]["messageID"] == self.original_message.id:
+                    request_user = client.get_user(requests[index]["userID"])
+            
+            doctor = await doctor_check(interaction.user)
+            
+            if doctor is None:
+                await interaction.followup.send("先に/doctorname setにてドクターネームの登録をお願いします！", ephemeral=True)
+                return
+            
+            else:   
+                user_embed = discord.Embed(
+                    title="リクエストへの応答が来ました！",
+                    description=
+                    f"[あなたのリクエスト]({self.original_message.jump_url})に{interaction.user.mention}さんが応じてくれるようです！\n戦友に追加していない場合サポートを借りれませんので、戦友になっていない場合はこれを機に戦友になるのは如何でしょうか？\n・ドクターネーム：{doctor}",
+                    url=self.original_message.jump_url)
+                user_embed.set_footer(text=f"作戦を無事に終わらせたら、リンク先から「リクエスト終了」ボタンを押してリクエストの終了をお願いします！")
+                user_embed.set_author(name=str(interaction.user),icon_url=interaction.user.avatar)
+                
+                thread = await self.original_message.create_thread(
+                    name=f"{request_user.name}さんのリクエスト #{self.original_message.id}",
+                    auto_archive_duration=1440)
+                
+                requests = await request_load()
+                requests[self.request_index].update({"respondUserID": interaction.user.id})
+                await request_write(requests)
+                
+                await thread.send(content=request_user.mention,embed=user_embed)
+                await interaction.followup.send("スレッドを作成しました！リクエスト者との会話にご利用ください！", ephemeral=True)
+
+        except Exception as e:
+            logger.error(f"[button_confirm]にてエラー：{e}")
+            
+    @discord.ui.button(label = "キャンセル",
+                       style = discord.ButtonStyle.danger)
+    async def button_cancel(self, interaction: discord.Interaction,
+                             button: discord.ui.Button):
+        await interaction.response.edit_message("キャンセルしました。", view = None)
 
 class RequestComplete(discord.ui.View):
 
@@ -24,7 +78,7 @@ class RequestComplete(discord.ui.View):
                        emoji="✅")
     async def button_respond(self, interaction: discord.Interaction,
                              button: discord.ui.Button):
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=True)
 
         try:
             requests = await request_load()
@@ -32,7 +86,7 @@ class RequestComplete(discord.ui.View):
 
             for index in range(len(requests)):
                 if requests[index]["messageID"] == original_message.id:
-                    request_id = requests[index]["id"]
+                    request_index = index
                     request_user = client.get_user(requests[index]["userID"])
 
             if interaction.user.id == request_user.id:
@@ -40,30 +94,9 @@ class RequestComplete(discord.ui.View):
                     "リクエストを終了するには「リクエスト終了」ボタンを押してください！", ephemeral=True)
 
             else:
-                doctor = await doctor_check(interaction.user)
-                if doctor is None:
-                    await interaction.followup.send(
-                        "リクエストに応える前に、「/doctorname set」でドクターネームを登録する必要があります！\nコマンドの実行は<#1093795949064757288>でお願いします！",
-                        ephemeral=True)
-                else:
-                    user_embed = discord.Embed(
-                        title="リクエストへの応答が来ました！",
-                        description=
-                        f"[あなたのリクエスト]({original_message.jump_url})に{interaction.user.mention}さんが応じてくれるようです！\n戦友に追加していない場合サポートを借りれませんので、戦友になっていない場合はこれを機に戦友になるのは如何でしょうか？\n・ドクターネーム：{doctor}",
-                        url=original_message.jump_url)
-                    user_embed.set_footer(
-                        text=
-                        f"作戦を無事に終わらせたら、リンク先から「リクエスト終了」ボタンを押してリクエストの終了をお願いします！")
-                    user_embed.set_author(name=interaction.user.name,
-                                          icon_url=interaction.user.avatar)
-                    thread = await original_message.create_thread(
-                        name=
-                        f"{request_user.name}さんのリクエスト #{original_message.id}",
-                        auto_archive_duration=1440)
-                    await thread.send(content=request_user.mention,
-                                      embed=user_embed)
-                    await interaction.followup.send(
-                        "スレッドを作成しました！リクエスト者との会話にご利用ください！", ephemeral=True)
+                embed = discord.Embed(title = "リクエストに応えます！",
+                                      description = f"[こちらのリクエスト]({original_message.jump_url})に応えます！よろしいですか？")
+                interaction.followup.send(embed = embed, view = RequestConfirm(original_message=original_message, request_index = request_index), ephemeral=True)
 
         except Exception as e:
             logger.error(f"[button_respond]にてエラー：{e}")
@@ -80,16 +113,29 @@ class RequestComplete(discord.ui.View):
         for index in range(len(requests)):
             if requests[index]["messageID"] == original_message.id:
                 request_id = requests[index]["id"]
+                messageID = requests[index]["messageID"]
                 request_user = client.get_user(requests[index]["userID"])
+                respond_user = client.get_user(requests[index]["respondUserID"])
+                operator = requests[index]["operator"]
+                skill = requests[index]["skill"]
 
-        if interaction.user.id == request_user.id:
+        if interaction.user.id == request_user.id or interaction.user.guild_permissions.manage_messages():
             embed = discord.Embed(title="リクエストを終了しました！",
                                   description="この投稿は5秒後に削除されます！")
             embed.set_author(name=interaction.user.name,
                              icon_url=interaction.user.avatar)
             await original_message.edit(embed=embed, view=None)
+            
+            respond_embed = discord.Embed(title = "リクエストに応えていただきありがとうございます！",
+                                         description = f"{str(request_user)}さんのサポートリクエストが終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator} | {skill}")
+            respond_embed.set_author(name = str(request_user), icon_url = request_user.avatar)
+            respond_embed.set_footer("これからも宜しくお願い致します！")
+            await respond_user.send(embed = respond_embed)
+            
             await request_complete(request_id)
+            thread = interaction.guild.get_thread(messageID)
             await asyncio.sleep(5)
+            await thread.delete()
             await interaction.delete_original_response()
         else:
             await interaction.followup.send("リクエストはリクエストした本人だけが終了できます！",

@@ -66,8 +66,7 @@ def eventget():
                 pic = event_dic[event_now_list[i]]["pic"]
             except KeyError as e:
                 logger.exception(f"[event_now_list]にてエラー：{e}")
-                
-            #
+                                
             if type == "CRISIS":
                 try:
                     dailyStage = event_dic[event_now_list[i]]["dailyStage"]
