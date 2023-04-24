@@ -84,8 +84,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         
         if member_got.id in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments.append(punishment)}
-            criminal_record.update(new)
-            punishments[member_got.id] = criminal_record
+            punishments[member_got.id] = new
             await punishment_write(punishments)
         
         else:
@@ -147,8 +146,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         
         if member_got.id in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments.append(punishment)}
-            criminal_record.update(new)
-            punishments[member_got.id] = criminal_record
+            punishments[member_got.id] = new
             await punishment_write(punishments)
         
         else:
@@ -212,8 +210,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         
         if member_got.id in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": True, "punishments": member_punishments.append(punishment)}
-            criminal_record.update(new)
-            punishments[member_got.id] = criminal_record
+            punishments[member_got.id] = new
             await punishment_write(punishments)
         
         else:
