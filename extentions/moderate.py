@@ -65,7 +65,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         
         member_got = client.get_user(int(member_id)) if member is None else member
         
-        now = JSTTime.timeJST("raw")
+        now = str(JSTTime.timeJST("raw"))
         member_punishments = []
         
         punishments = await punishment_load()
@@ -128,7 +128,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         
         member_got = client.get_user(int(member_id)) if member is None else member
         
-        now = JSTTime.timeJST("raw")
+        now = str(JSTTime.timeJST("raw"))
         member_punishments = []
         
         punishments = await punishment_load()
@@ -193,7 +193,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         
         member_got = await client.fetch_user(int(member_id)) if member is None else member
         
-        now = JSTTime.timeJST("raw")
+        now = str(JSTTime.timeJST("raw"))
         member_punishments = []
         
         punishments = await punishment_load()
