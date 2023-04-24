@@ -67,10 +67,11 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         
         now = str(JSTTime.timeJST("raw"))
         member_punishments = []
+        search_id = str(member_got.id)
         
         punishments = await punishment_load()
-        if str(member_got.id) in punishments:
-            criminal_record = punishments[member_got.id]
+        if search_id in punishments:
+            criminal_record = punishments[search_id]
             member_punishments = criminal_record["punishments"]
         
         embed = discord.Embed(title = "⚠️メンバーに「警告」を科しました。",
@@ -82,14 +83,14 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         
         punishment = {"id": message.id, "type": "warn", "date": now, "reason": reason}
         
-        if str(member_got.id) in punishments:
+        if search_id in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments.append(punishment)}
-            punishments[member_got.id] = new
+            punishments[search_id] = new
             await punishment_write(punishments)
         
         else:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": punishment}
-            punishments[member_got.id] = new
+            punishments[search_id] = new
             await punishment_write(punishments)
         
         if interaction.channel_id != config.moderatorchannel:
@@ -129,10 +130,11 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         
         now = str(JSTTime.timeJST("raw"))
         member_punishments = []
+        search_id = str(member_got.id)
         
         punishments = await punishment_load()
-        if str(member_got.id) in punishments:
-            criminal_record = punishments[member_got.id]
+        if search_id in punishments:
+            criminal_record = punishments[search_id]
             member_punishments = criminal_record["punishments"]
         
         embed = discord.Embed(title = "⚠️メンバーを追放しました",
@@ -144,14 +146,14 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         
         punishment = {"id": message.id, "type": "kick", "date": now, "reason": reason}
         
-        if str(member_got.id) in punishments:
+        if search_id in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments.append(punishment)}
-            punishments[member_got.id] = new
+            punishments[search_id] = new
             await punishment_write(punishments)
         
         else:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": punishment}
-            punishments[member_got.id] = new
+            punishments[search_id] = new
             await punishment_write(punishments)
         
         if interaction.channel_id != config.moderatorchannel:
@@ -193,10 +195,11 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         
         now = str(JSTTime.timeJST("raw"))
         member_punishments = []
+        search_id = str(member_got.id)
         
         punishments = await punishment_load()
-        if str(member_got.id) in punishments:
-            criminal_record = punishments[member_got.id]
+        if search_id in punishments:
+            criminal_record = punishments[search_id]
             member_punishments = criminal_record["punishments"]
         
         embed = discord.Embed(title = "⚠️メンバーをBanしました",
@@ -208,14 +211,14 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         
         punishment = {"id": message.id, "type": "ban", "date": now, "reason": reason}
         
-        if str(member_got.id) in punishments:
+        if search_id in punishments:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": True, "punishments": member_punishments.append(punishment)}
-            punishments[member_got.id] = new
+            punishments[search_id] = new
             await punishment_write(punishments)
         
         else:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": True, "punishments": punishment}
-            punishments[member_got.id] = new
+            punishments[search_id] = new
             await punishment_write(punishments)
         
         if interaction.channel_id != config.moderatorchannel:
