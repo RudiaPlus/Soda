@@ -589,6 +589,11 @@ def run_discord_bot():
       return
 
     messageuser = await modmails.modmail_get_user()
+    username = str(message.author)
+    user_message = str(message.content)
+    channel = str(message.channel)
+    channelID = int(message.channel.id)
+
 
     if messageuser and message.channel.id == config.modchannnel:
       if message.content == "終了":
@@ -614,12 +619,7 @@ def run_discord_bot():
           description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！\n私とお話ししたい場合は、<#1072158278634713108>までどうぞ！")
         mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
         await message.author.send(embed=mail)
-
-    username = str(message.author)
-    user_message = str(message.content)
-    channel = str(message.channel)
-    channelID = int(message.channel.id)
-
+    
     if channelID == config.chat:
       clean_message = re.sub('<.*?>', '', user_message)
       logger.info("返事をします")
