@@ -149,9 +149,12 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments.append(punishment)}
             criminal_record.update(new)
             punishments[member_got.id] = criminal_record
+            await punishment_write(punishments)
         
         else:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": punishment}
+            punishments[member_got.id] = new
+            await punishment_write(punishments)
         
         if interaction.channel_id != config.moderatorchannel:
             channel = client.get_channel(config.moderatorchannel)
@@ -211,9 +214,12 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
             new = {"userName": str(member_got), "userID": member_got.id, "banned": True, "punishments": member_punishments.append(punishment)}
             criminal_record.update(new)
             punishments[member_got.id] = criminal_record
+            await punishment_write(punishments)
         
         else:
             new = {"userName": str(member_got), "userID": member_got.id, "banned": True, "punishments": punishment}
+            punishments[member_got.id] = new
+            await punishment_write(punishments)
         
         if interaction.channel_id != config.moderatorchannel:
             channel = client.get_channel(config.moderatorchannel)
