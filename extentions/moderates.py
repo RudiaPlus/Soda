@@ -76,7 +76,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         if search_id in punishments:
             criminal_record = punishments[search_id]
             member_punishments = criminal_record["punishments"]
-            logger.info(member_punishments)
+            #logger.info(member_punishments)
         
         embed = discord.Embed(title = "⚠️メンバーに「警告」を科しました。",
                               description = f"メンバー「{member_got.display_name}」に「警告」を科しました。\n理由：{reason}\nこれは{len(member_punishments)+1}回目の処罰です。\n「警告」が数回重なった場合、より重い処罰が科される場合があります。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
@@ -85,18 +85,19 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         embed.set_footer(text = f"{now} | このメッセージは削除しないでください。")
         message = await interaction.followup.send(embed = embed)
         
-        punishment = {"id": message.id, "type": "warn", "date": now, "reason": reason}
+        punishment = {"id": message.id, "type": "warn", "date": now, "reason": reason, "by": interaction.user.id}
         
         if search_id in punishments:
             member_punishments.append(punishment)
             new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments}
             punishments[search_id] = new
-            logger.info(new)
+            #logger.info(new)
             await punishment_write(punishments)
         
         else:
             lists = []
-            new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": lists.append(punishment)}
+            lists.append(punishment)
+            new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": lists}
             punishments[search_id] = new
             await punishment_write(punishments)
         
@@ -151,7 +152,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         embed.set_footer(text = f"{now} | このメッセージは削除しないでください。")
         message = await interaction.followup.send(embed = embed)
         
-        punishment = {"id": message.id, "type": "kick", "date": now, "reason": reason}
+        punishment = {"id": message.id, "type": "kick", "date": now, "reason": reason, "by": interaction.user.id}
         
         if search_id in punishments:
             member_punishments.append(punishment)
@@ -161,7 +162,8 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
         
         else:
             lists = []
-            new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": lists.append(punishment)}
+            lists.append(punishment)
+            new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": lists}
             punishments[search_id] = new
             await punishment_write(punishments)
         
@@ -218,17 +220,18 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
         embed.set_footer(text = f"{now} | このメッセージは削除しないでください。")
         message = await interaction.followup.send(embed = embed)
         
-        punishment = {"id": message.id, "type": "ban", "date": now, "reason": reason}
+        punishment = {"id": message.id, "type": "ban", "date": now, "reason": reason, "by": interaction.user.id}
         
         if search_id in punishments:
             member_punishments.append(punishment)
-            new = {"userName": str(member_got), "userID": member_got.id, "banned": False, "punishments": member_punishments}
+            new = {"userName": str(member_got), "userID": member_got.id, "banned": True, "punishments": member_punishments}
             punishments[search_id] = new
             await punishment_write(punishments)
         
         else:
             lists = []
-            new = {"userName": str(member_got), "userID": member_got.id, "banned": True, "punishments": lists.append(punishment)}
+            lists.append(punishment)
+            new = {"userName": str(member_got), "userID": member_got.id, "banned": True, "punishments": lists}
             punishments[search_id] = new
             await punishment_write(punishments)
         
@@ -246,7 +249,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
     
     except Exception as e:
         embed = discord.Embed(title = "⚠️メンバーのBanに失敗しました！",
-                              description = f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}\n{str(member_got)}/{member_id}")
+                              description = f"メンバーの取得に失敗したか、既に退出している可能性があります！\nメッセージを送信出来なかった場合、理由を入力せずにもう一度お願いします。\n出現した例外：{e}\n{member_id}")
         await interaction.followup.send(embed=embed)
         logger.error(f"[ban]にてエラー：{e}")
         
@@ -302,16 +305,16 @@ async def unban(interaction:  discord.Interaction, member:  discord.Member = Non
     
     except Exception as e:
         embed = discord.Embed(title = "⚠️メンバーのBan解除に失敗しました！",
-                              description = f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}\n{str(member_got)}/{member_id}")
+                              description = f"メンバーの取得に失敗したか、既に退出している可能性があります！\nメッセージを送信出来なかった場合、無視しても構いません。\n出現した例外：{e}\n{str(member_got)}/{member_id}")
         await interaction.followup.send(embed=embed)
         logger.error(f"[unban]にてエラー：{e}")
-        
+
+@discord.app_commands.default_permissions(administrator = True)        
 class ModerateCommand(discord.app_commands.Group):
     @discord.app_commands.command(name = "show", description = "指定されたメンバーの情報/処罰履歴を確認します。#botmoderate限定")
-    @discord.app_commands.describe(member = "メンバー(どちらか)", member_id = "メンバーの ID(どちらか)")
-    @discord.app_commands.default_permissions(view_audit_log = True)
+    @discord.app_commands.describe(member = "メンバー(推奨)", member_id = "ユーザーID(メンバー以外)")
     @discord.app_commands.checks.has_permissions(view_audit_log = True)
-    async def show(interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None):
+    async def show(self, interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None):
         await interaction.response.defer()
         try:
             if member is None and member_id is None:
@@ -322,27 +325,33 @@ class ModerateCommand(discord.app_commands.Group):
             
             if interaction.channel_id != config.moderatorchannel:
                 embed = discord.Embed(title = f"専用チャンネルで使用してください！",
-                                      description = f"このコマンドは<#{config.moderatorchannel}>限定のコマンドです。")
+                                        description = f"このコマンドは<#{config.moderatorchannel}>限定のコマンドです。")
                 await interaction.followup.send(embed=embed)
                 return
             
-            member_got = await client.fetch_user(int(member_id)) if member is None else member
+            if member:
+                member_got = member
 
-            #ロール
-            roles = []
-            for index in member_got.roles:
-                roles.append(index.name)
+                #ロール
+                roles = []
+                for index in member_got.roles:
+                    roles.append(index.name)
+                    
+                role = "\n".join(roles)
                 
-            role = "\n".join(roles)
+                embed = discord.Embed(title = f"{member_got.display_name}さんの情報", description=f"{member_got.mention}\nID: {member_got.id}\nアカウント作成日: {member_got.created_at}\n", color = member_got.accent_color)
+                embed.set_thumbnail(url = member_got.display_avatar)
+                embed.set_author(name = str(member_got), icon_url=member_got.avatar)
+                embed.add_field(name = "所持しているロール", value = role, inline = True)
+                embed.add_field(name = "最高のロール", value = member_got.top_role, inline = True)
+                if member_got.is_timed_out() == True:
+                    embed.add_field(name = "タイムアウト状態", value=f"<t:{0}:F>( <t:{0}:R> )まで".format(member_got.timed_out_until.timestamp), inline=False)
             
-            embed = discord.Embed(title = f"{member_got.mention}さんの情報", description=f"{str(member_got)}\nアカウント作成日: {member_got.created_at}\n", color = member_got)
-            embed.set_thumbnail(member_got.display_avatar)
-            embed.set_author(name = str(member_got), icon_url=member_got.avatar)
-            embed.add_field(name = "所持しているロール", value = role, inline = True)
-            embed.add_field(name = "最高のロール", value = member_got.top_role, inline = True)
-            if member_got.is_timed_out() == True:
-                embed.add_field(name = "タイムアウト状態", value=f"<t:{0}:F>( <t:{0}:R> )まで".format(member_got.timed_out_until.timestamp), inline=False)
-            
+            else:
+                member_got = await client.fetch_user(int(member_id))
+                embed = discord.Embed(title = f"{member_got.display_name}さんの情報", description=f"{member_got.mention}\nID: {member_got.id}\nアカウント作成日: {member_got.created_at}\n", color = member_got.accent_color)
+                embed.set_thumbnail(url = member_got.display_avatar)
+                embed.set_author(name = str(member_got), icon_url=member_got.avatar)
             
             search_id = str(member_got.id)
             embed2 = None
@@ -351,14 +360,18 @@ class ModerateCommand(discord.app_commands.Group):
             if search_id in punishments:
                 banned = punishments[search_id]["banned"]
                 user_puni = punishments[search_id]["punishments"]
+                
                 if banned == True:
                     embed.add_field(name = "Banされています", value = "このユーザーはサーバーからBanされています", inline = False)
+                    
                 embed2 = discord.Embed(title = "処罰履歴", description = f"このユーザーは{len(user_puni)}回処罰を受けています")
+                
                 for index in range(len(user_puni)):
-                    id = punishments[index]["id"]
-                    date = punishments[index]["date"]
-                    reason = punishments[index]["reason"]
-                    embed2.add_field(name = punishments[index]["type"], value = f"ID: {id}\n時間: {date}\n理由: {reason}", inline = False)
+                    id = user_puni[index]["id"]
+                    date = user_puni[index]["date"]
+                    reason = user_puni[index]["reason"]
+                    by = user_puni[index]["by"]
+                    embed2.add_field(name = user_puni[index]["type"], value = f"ID: {id}\n時間: {date}\n理由: {reason}\n処罰者: {by}", inline = False)
             
             if embed2:
                 embeds = [embed, embed2]
@@ -376,9 +389,8 @@ class ModerateCommand(discord.app_commands.Group):
     
     @discord.app_commands.command(name = "delete", description = "指定された処罰履歴を削除します。#botmoderate限定")
     @discord.app_commands.describe(id = "処罰ID(/moderate showコマンドで表示されます)", member = "メンバー(どちらか)", member_id = "メンバーの ID(どちらか)")
-    @discord.app_commands.default_permissions(view_audit_log = True)
     @discord.app_commands.checks.has_permissions(view_audit_log = True)
-    async def delete(interaction:  discord.Interaction, id: str,  member:  discord.Member = None, member_id: str = None):
+    async def delete(self, interaction:  discord.Interaction, id: str,  member:  discord.Member = None, member_id: str = None):
         await interaction.response.defer()
         try:
             if member is None and member_id is None:
