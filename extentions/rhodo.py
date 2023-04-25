@@ -1,5 +1,5 @@
 import discord
-from extentions import (responses, config, evjson, JSTTime, modmails, log, maintenances, requests, moderate)
+from extentions import (moderates, responses, config, evjson, JSTTime, modmails, log, maintenances, requests)
 from extentions.aclient import client
 import re
 import datetime
@@ -36,7 +36,9 @@ def run_discord_bot():
     logger.info("準備を始めます")
     try:
       doctorname = DoctorNameCommand(name="doctorname", description="ドクターネームに関するコマンド")
+      moderate = moderates.ModerateCommand(name="moderate", description="モデレートに関するコマンド")
       client.tree.add_command(doctorname)
+      client.tree.add_command(moderate)
       synced = await client.tree.sync()
       await client.tree.sync(guild=config.testserverid)
       logger.info(f"{len(synced)}個のコマンドを同期しました。")
@@ -521,7 +523,7 @@ def run_discord_bot():
       embed.set_author(name=interaction.user.name,
                        icon_url=interaction.user.avatar)
       embed.set_footer(
-        text="変更する場合はもう一度「/doctorname_set」、登録を削除する場合は「/doctorname_delete」をご利用ください")
+        text="変更する場合はもう一度「/doctorname set」、登録を削除する場合は「/doctorname delete」をご利用ください")
       await interaction.followup.send(embed=embed)
 
     @app_commands.command(name="show", description="指定された人のドクターネームを表示します")
@@ -557,7 +559,7 @@ def run_discord_bot():
       if delete == "success":
         embed = discord.Embed(
           title=f"ドクターネームの登録を削除しました！",
-          description=f"登録しなおす場合は、「/doctorname_set」をご利用ください！",
+          description=f"登録しなおす場合は、「/doctorname set」をご利用ください！",
           color=0x5cb85c)
         embed.set_author(name=interaction.user.name,
                          icon_url=interaction.user.avatar)
