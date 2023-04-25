@@ -52,6 +52,7 @@ async def reason_autocomplete(interaction: discord.Interaction, current: str) ->
 @client.tree.command(name = "warn", description = "指定したメンバーに警告を科します。")
 @discord.app_commands.describe(member = "警告するメンバー(どちらか)", member_id = "警告するメンバーの ID(どちらか)", reason = "警告する理由")
 @discord.app_commands.default_permissions(kick_members = True)
+@discord.app_commands.guild_only()
 @discord.app_commands.checks.has_permissions(kick_members=True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
 async def warn(interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None, reason: str = None):
@@ -120,6 +121,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
 @client.tree.command(name = "kick", description = "指定したメンバーをキックします。")
 @discord.app_commands.describe(member = "キックするメンバー(どちらか)", member_id = "キックするメンバーの ID(どちらか)", reason = "キックする理由")
 @discord.app_commands.default_permissions(kick_members = True)
+@discord.app_commands.guild_only()
 @discord.app_commands.checks.has_permissions(kick_members=True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
 async def kick(interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None, reason: str = None):
@@ -188,6 +190,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
 @client.tree.command(name = "ban", description = "指定したメンバーをBanします。")
 @discord.app_commands.describe(member = "Banするメンバー(どちらか)", member_id = "Banするメンバーの ID(どちらか)", reason = "Banする理由")
 @discord.app_commands.default_permissions(kick_members = True, ban_members = True)
+@discord.app_commands.guild_only()
 @discord.app_commands.checks.has_permissions(kick_members=True, ban_members = True)
 @discord.app_commands.autocomplete(reason = reason_autocomplete)
 async def ban(interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None, reason: str = None):
@@ -256,6 +259,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
 @client.tree.command(name = "unban", description = "指定したメンバーのBanを解除します。")
 @discord.app_commands.describe(member = "Banされたメンバー(どちらか)", member_id = "Banされたメンバーの ID(どちらか)", delete = "Banの経歴を削除するかどうか(デフォルトはFalse)")
 @discord.app_commands.default_permissions(kick_members = True, ban_members = True)
+@discord.app_commands.guild_only()
 @discord.app_commands.checks.has_permissions(kick_members=True, ban_members = True)
 async def unban(interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None, delete: bool = False):
     await interaction.response.defer()
@@ -309,7 +313,8 @@ async def unban(interaction:  discord.Interaction, member:  discord.Member = Non
         await interaction.followup.send(embed=embed)
         logger.error(f"[unban]にてエラー：{e}")
 
-@discord.app_commands.default_permissions(administrator = True)        
+@discord.app_commands.default_permissions(administrator = True)   
+@discord.app_commands.guild_only()     
 class ModerateCommand(discord.app_commands.Group):
     @discord.app_commands.command(name = "show", description = "指定されたメンバーの情報/処罰履歴を確認します。#botmoderate限定")
     @discord.app_commands.describe(member = "メンバー(推奨)", member_id = "ユーザーID(メンバー以外)")
