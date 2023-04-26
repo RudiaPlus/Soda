@@ -4,5 +4,11 @@
         "startTime": 1681452000,
         "endTime": 1681452600,
         "doing": "False"
+    },
+    {
+        "type": "DATA",
+        "startTime": 1682575200,
+        "endTime": 1682575800,
+        "doing": "False"
     }
 ]
