@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": 0,
+    "userID": 593353714962792448,
+    "operator": "エイプリル",
+    "skill": "スキル2：コンシールメント",
+    "skillLevel": "レベル7",
+    "module": "モジュールY：ハイファイヘッドホン",
+    "module_rank": "ランク2以上",
+    "lv": 0,
+    "messageID": 1103645927652196375,
+    "respondUserID": null
+  }
+]
