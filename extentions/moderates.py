@@ -375,8 +375,8 @@ class ModerateCommand(discord.app_commands.Group):
                     id = user_puni[index]["id"]
                     date = user_puni[index]["date"]
                     reason = user_puni[index]["reason"]
-                    by = user_puni[index]["by"]
-                    embed2.add_field(name = user_puni[index]["type"], value = f"ID: {id}\n時間: {date}\n理由: {reason}\n処罰者: {by}", inline = False)
+                    by = {user_puni[index]["by"]}
+                    embed2.add_field(name = user_puni[index]["type"], value = f"ID: {id}\n時間: {date}\n理由: {reason}\n処罰者: <@{by}>", inline = False)
             
             if embed2:
                 embeds = [embed, embed2]
