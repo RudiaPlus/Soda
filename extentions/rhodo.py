@@ -1,6 +1,6 @@
 import discord
 from extentions import (responses, config, evjson, JSTTime, modmails, log,
-                        maintenances, requests)
+                        maintenances, requests, moderates)
 from extentions.aclient import client
 import re
 import datetime
@@ -38,7 +38,10 @@ def run_discord_bot():
         try:
             doctorname = DoctorNameCommand(name="doctorname",
                                            description="ドクターネームに関するコマンド")
+            moderate = moderates.ModerateCommand(name="moderate",
+                                                 description="モデレートに関するコマンド")
             client.tree.add_command(doctorname)
+            client.tree.add_command(moderate)
             synced = await client.tree.sync()
             await client.tree.sync(guild=config.testserverid)
             logger.info(f"{len(synced)}個のコマンドを同期しました。")
