@@ -376,6 +376,19 @@
       "Y": null
     }
   },
+  "char_4062_totter": {
+    "name": "トター",
+    "rarity": 3,
+    "skills": {
+      "1": "貫日の一射",
+      "2": "砕虹の勁弩",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
   "char_198_blackd": {
     "name": "クーリエ",
     "rarity": 3,
@@ -1039,6 +1052,19 @@
       "Y": null
     }
   },
+  "char_157_dagda": {
+    "name": "ダグザ",
+    "rarity": 4,
+    "skills": {
+      "1": "カウンターテクニック",
+      "2": "ハンティングタイム",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
   "char_140_whitew": {
     "name": "ラップランド",
     "rarity": 4,
@@ -1630,6 +1656,19 @@
     "skills": {
       "1": "攻撃力強化γ",
       "2": "業の救済",
+      "3": null
+    },
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
+  "char_4071_peper": {
+    "name": "パプリカ",
+    "rarity": 4,
+    "skills": {
+      "1": "援護作戦γ",
+      "2": "仲間意識",
       "3": null
     },
     "modules": {
@@ -2610,6 +2649,19 @@
     "modules": {
       "X": null,
       "Y": "詩は短く、夢は長く"
+    }
+  },
+  "char_4072_ironmn": {
+    "name": "ステインレス",
+    "rarity": 5,
+    "skills": {
+      "1": "ハイパーブースト",
+      "2": "供給効率化システム",
+      "3": "鉄鉗号･プロトタイプ"
+    },
+    "modules": {
+      "X": null,
+      "Y": null
     }
   },
   "char_250_phatom": {
