@@ -1,5 +1,5 @@
 {
-    "act20side": {
+    "act18side": {
         "id": "act20side",
         "type": "SIDESTORY",
         "stageAdd": "False",
@@ -186,5 +186,22 @@
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/e1e487d948dc33982646e3e0c87d9bd4.png",
         "startTime": 1682578800,
         "endTime": 1683745199
+    },
+    "act20side": {
+        "id": "act20side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "シラクザーノ",
+        "link": "https://00m.in/HmmmR",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/c4b6d5f46a142ab6650796eaed375a37.png",
+        "startTime": 1678777200,
+        "endTime": 1679943599,
+        "rewardEndTime": 1680548399,
+        "additionalStage": [
+            {
+                "name": "",
+                "startTime": 1679382000
+            }
+        ]
     }
 }

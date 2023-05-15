@@ -1,23 +1,12 @@
 {
-    "act13sre": {
-        "id": "act13sre",
+    "act20side": {
+        "id": "act20side",
         "type": "SIDESTORY",
         "stageAdd": "False",
-        "name": "ニアーライト(復刻)",
-        "link": "https://00m.in/Ec9vI",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/e2aea5229a18e83b6261256a765c101a.png",
-        "startTime": 1681455600,
-        "endTime": 1682276399,
-        "rewardEndTime": 1682621999
-    },
-    "main11": {
-        "id": "main11",
-        "type": "MAIN",
-        "stageAdd": "False",
-        "name": "11章「淬火煙塵」実装",
-        "link": "https://00m.in/ryM4F",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/e1e487d948dc33982646e3e0c87d9bd4.png",
-        "startTime": 1682578800,
-        "endTime": 1683745199
+        "name": "シラクザーノ",
+        "link": "",
+        "pic": "",
+        "startTime": 1684825200,
+        "endTime": 1686596399
     }
 }
