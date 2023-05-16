@@ -1,1 +1,8 @@
-[]
+[
+    {
+        "type": "MAINTENANCE",
+        "startTime": 1684803600,
+        "endTime": 1684825200,
+        "doing": "False"
+    }
+]
