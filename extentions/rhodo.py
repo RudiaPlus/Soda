@@ -30,6 +30,7 @@ async def send_message(message, user_message):
 def run_discord_bot():
 
   dir = os.path.abspath(__file__ + "/../")
+  
 
   @client.event
   async def on_ready():
@@ -43,6 +44,9 @@ def run_discord_bot():
       await client.tree.sync(guild=config.testserverid)
       logger.info(f"{len(synced)}個のコマンドを同期しました。")
       client.add_view(requests.RequestComplete())
+      client.add_view(modmails.ModmailButton())
+      client.add_view(modmails.ModmailFinish())
+      client.add_view(modmails.ModmailControl())
     except Exception as e:
       logger.exception(f"[on_ready]にて エラー：{e}")
     logger.info(f"{client.user} 、準備完了です！")
@@ -52,44 +56,54 @@ def run_discord_bot():
     morning.start()
     maintenances.maintenance_timer.start()
     logger.info("タスクを開始しました")
+  
+  @client.event  
+  async def on_message(message: discord.Message):
 
-  class ModmailButton(discord.ui.View):
+    if message.author == client.user:
+      return
 
-    @discord.ui.button(label="開始する", style=discord.ButtonStyle.success, emoji="✅")
-    async def button_callback(self, interaction: discord.Interaction,
-                              button: discord.ui.Button):
-      channel = client.get_channel(config.modchannnel)
-      user = interaction.user
-      if await modmails.modmail_queue(user) == "Ready":
-        embed = discord.Embed(title="あしたはこぶね・お問い合わせ", description="お問い合わせありがとうございます！\nこのDMにメッセージを送ることで、スタッフとの会話を開始できます", color=0x696969)
-        embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
-        embed_mod = discord.Embed(title="Modmailが開始されました！", description=f"ニックネーム : {user.display_name}\nid : {user.id}\nアカウント作成日 : {user.created_at}", color=user.accent_color)
-        embed_mod.set_author(name=user.name, icon_url=user.avatar.url)
-        await channel.send(embed=embed_mod)
-        if interaction.message.guild:
-          await user.send(embed=embed)
-          await interaction.response.send_message("DMをお送りしました。ご確認ください！", ephemeral=True)
+    author = message.author
+    username = str(author)
+    user_message = message.content
+    channel = message.channel
+    channelID = message.channel.id
+
+    if message.guild:
+    
+        if channel.category_id == config.feedback_category and channel.name.startswith("mail"):
+        
+            idx = channel.name.find("-") + 1
+            userID = int(channel.name[idx:])
+            user = await client.fetch_user(userID)
+        
+            mail = discord.Embed(title=f"【スタッフ】{author.name}からのメッセージ", description=user_message, color = author.accent_color)
+            mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
+            await user.send(embed=mail)
+        
+    else:
+        guild = client.get_guild(config.main_server)
+        logger.info(f"{username}に「{user_message}」と言われました。")
+        mod_channel = await modmails.fetch_mod_channel(guild = guild, user = author)
+        if mod_channel is not None:
+            mail = discord.Embed(title=f"{message.author.name}さんからのメッセージ", description=message.content)
+            mail.set_author(name = str(message.author), icon_url = message.author.avatar)
+            await mod_channel.send(embed=mail)
+
         else:
-          await interaction.response.send_message(embed=embed)
+            mail = discord.Embed(
+                title="お問い合わせの場合は、/modmailをご利用ください！",
+                description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！\n私とお話ししたい場合は、<#1072158278634713108>までどうぞ！")
+            mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
+            await message.author.send(embed=mail)
+    
+    if channelID == config.chat:
+      clean_message = re.sub('<.*?>', '', user_message)
+      logger.info("返事をします")
+      await send_message(message, clean_message)
 
-      elif await modmails.modmail_queue(user) == "False":
-        await interaction.response.send_message("DMを既にお送りしております。ご確認ください！", ephemeral=True)
-
-      else:
-        embed = discord.Embed(title="あしたはこぶね・お問い合わせ", description="お問い合わせありがとうございます！\n現在問い合わせが立て込んでおり、今すぐに会話を開始できない状態となっております。\n順番になり次第こちらから連絡致します。今しばらくお待ちください", color=0x696969)
-        embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
-        embed_mod = discord.Embed(
-          title="Modmailの予約が入りました！",
-          description=
-          f"ニックネーム : {user.display_name}\nid : {user.id}\nアカウント作成日 : {user.created_at}",
-          color=user.accent_color)
-        embed_mod.set_author(name=user.name, icon_url=user.avatar.url)
-        await channel.send(embed=embed_mod)
-        if interaction.message.guild:
-          await user.send(embed=embed)
-          await interaction.response.send_message("DMをお送りしました。ご確認ください！", ephemeral=True)
-        else:
-          await interaction.response.send_message(embed=embed)
+    else:
+      return
   
   @client.tree.command(name = "help",
                        description = "現在実装されているコマンドの使い方を簡単に説明します！")
@@ -105,19 +119,6 @@ def run_discord_bot():
     embed.add_field(name = "「Modmail」", value = "運営スタッフへの問い合わせが簡単にできます\n・**/modmail**：運営スタッフへの問い合わせを開始します", inline = False)
     
     await interaction.followup.send(embed = embed, ephemeral = True)
-
-  @client.tree.command(name="modmail",
-                       description="サーバースタッフと会話を開始することが出来ます！お気軽にご利用ください！")
-  async def modmail(interaction: discord.Interaction):
-    if interaction.user == client.user:
-      return
-    embed = discord.Embed(title="あしたはこぶね・お問い合わせ",
-                          description="以下のボタンを押すと、スタッフとの会話が開始されます\nよろしいですか？",
-                          color=0x696969)
-    embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
-    await interaction.response.send_message(embed=embed,
-                                            ephemeral=True,
-                                            view=ModmailButton())
 
   @client.tree.command(name="rechat",
                        description="for dev only",
@@ -583,52 +584,6 @@ def run_discord_bot():
     await interaction.response.defer()
     maintenance = await maintenances.maintenance_list()
     await interaction.followup.send(maintenance)
-
-  @client.event
-  async def on_message(message):
-
-    if message.author == client.user:
-      return
-
-    messageuser = await modmails.modmail_get_user()
-    username = str(message.author)
-    user_message = str(message.content)
-    channel = str(message.channel)
-    channelID = int(message.channel.id)
-
-
-    if messageuser and message.channel.id == config.modchannnel:
-      if message.content == "終了":
-        await modmails.modmail_finish(messageuser)
-      else:
-        mail = discord.Embed(title=f"【スタッフ】{message.author.name}からのメッセージ",
-                             description=message.content)
-        mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
-        await messageuser.send(embed=mail)
-
-    if not message.guild:
-      logger.info(f"{username}に「{user_message}」と言われました。")
-      if message.author == messageuser:
-        channel = client.get_channel(config.modchannnel)
-        mail = discord.Embed(title=f"{message.author.name}からのメッセージ",
-                             description=message.content)
-        mail.set_footer(text="Modmailを終わらせるには「終了」と送信してください")
-        await channel.send(embed=mail)
-
-      else:
-        mail = discord.Embed(
-          title="お問い合わせの場合は、/modmailをご利用ください！",
-          description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！\n私とお話ししたい場合は、<#1072158278634713108>までどうぞ！")
-        mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
-        await message.author.send(embed=mail)
-    
-    if channelID == config.chat:
-      clean_message = re.sub('<.*?>', '', user_message)
-      logger.info("返事をします")
-      await send_message(message, clean_message)
-
-    else:
-      return
 
   @tasks.loop(time=config.morningtime)
   async def morning():

@@ -10,7 +10,7 @@ logger = log.setup_logger(__name__)
 dir = os.path.abspath(__file__ + "/../")
 request_json = "jsons/requests.json"
 operators_json = "jsons/operators.json"
-doctors_json = "jsons/doctors.json"
+doctors_json = "jsons/doctors.json"    
 
 class RequestConfirm(discord.ui.View):
     def __init__(self, original_message, request_index):

@@ -1,7 +1,8 @@
-import os
 import discord
 from discord import app_commands
+from extentions import log
 
+logger = log.setup_logger(__name__)
 
 class Rhodolite(discord.Client):
 
@@ -16,6 +17,5 @@ class Rhodolite(discord.Client):
     self.tree = app_commands.CommandTree(self)
     self.activity = discord.Activity(type=discord.ActivityType.watching,
                                      name="DISCOVERED TERRA")
-
 
 client = Rhodolite()
