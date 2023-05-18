@@ -77,8 +77,8 @@ def run_discord_bot():
             userID = int(channel.name[idx:])
             user = await client.fetch_user(userID)
         
-            mail = discord.Embed(title=f"【スタッフ】{author.name}からのメッセージ", description=user_message, color = 0x979C9F)
-            mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
+            mail = discord.Embed(title=f"【スタッフ】{author.display_name}からのメッセージ", description=user_message, color = 0x979C9F)
+            mail.set_author(name=author.display_name, icon_url=author.avatar)
             await user.send(embed=mail)
         
     else:
