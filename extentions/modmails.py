@@ -87,7 +87,7 @@ class ModmailFinish(discord.ui.View):
                 Moderator: discord.PermissionOverwrite(read_messages = True, send_messages = False)
             }
             
-            await mod_channel.edit(name = f"closed-{interaction.user.id}", overwrites = closed_overwrite)
+            await mod_channel.edit(name = f"closed-{userID}", overwrites = closed_overwrite)
             
             embed_control = discord.Embed(description = "スタッフのコントロールはこちら")
             await mod_channel.send(embed = embed_control, view = ModmailControl())
