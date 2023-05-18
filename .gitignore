@@ -17,3 +17,4 @@ venv
 chat.json
 *.log
 *.log.*
+modmail.json
