@@ -9,7 +9,7 @@ from typing import List
 
 logger = log.setup_logger(__name__)
 dir = os.path.abspath(__file__ + "/../")
-modmail_json_path = "jsons/modmail.txt"
+modmail_json_path = "jsons/modmail.json"
 
 class ModmailButton(discord.ui.View):
     def __init__(self):
@@ -20,7 +20,7 @@ class ModmailButton(discord.ui.View):
         
         result = await create_modmail(user = interaction.user)
         
-        embed = discord.Embed(title="あしたはこぶね・お問い合わせ", description="お問い合わせありがとうございます！\nこのDMにメッセージを送ることで、スタッフとの会話を開始できます\nお問い合わせを終了する場合は、下の「終了」ボタンを押してください。", color=0x696969)
+        embed = discord.Embed(title="あしたはこぶね・お問い合わせ", description="お問い合わせありがとうございます！\nこのDMにメッセージを送ることで、スタッフとの会話を開始できます\nお問い合わせを終了する場合は、下の「終了」ボタンを押してください。", color=discord.Color.green())
         embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
         
         if result == "created":
@@ -65,9 +65,9 @@ class ModmailFinish(discord.ui.View):
             
         if mod_channel.name == f"mail-{userID}":
                 
-            embed = discord.Embed(title = "お問い合わせが終了しました", description = "お問い合わせ頂き、ありがとうございました！\nなお、スタッフの判断によってお問い合わせが再開され、スタッフからの返信が来る場合があります。", color=0x696969)
+            embed = discord.Embed(title = "お問い合わせが終了しました", description = "お問い合わせ頂き、ありがとうございました！\nなお、スタッフの判断によってお問い合わせが再開され、スタッフからの返信が来る場合があります。", color=discord.Color.yellow())
             embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
-            embed_mod = discord.Embed(title = "ModMailが終了しました", description = f"ModMailは{interaction.user.mention}によって終了しました。")
+            embed_mod = discord.Embed(title = "ModMailが終了しました", description = f"ModMailは{interaction.user.mention}によって終了しました。", color = discord.Color.yellow())
             
             if target == "member":
                 await interaction.response.send_message(embed = embed)
@@ -124,11 +124,11 @@ class ModmailControl(discord.ui.View):
         
             await mod_channel.edit(name = f"mail-{userID}", overwrites = reopen_overwrite)
             
-            embed = discord.Embed(title = "お問い合わせが再開されました", description = f"{user.name}さんのお問い合わせが再開されました。スタッフからの返信が来る場合があります。", color=0x696969)
+            embed = discord.Embed(title = "お問い合わせが再開されました", description = f"{user.name}さんのお問い合わせが再開されました。スタッフからの返信が来る場合があります。", color=discord.Color.green())
             embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
             await user.send(embed = embed)
             
-            embed_mod = discord.Embed(description = "ModMailが再開されました", color=0x696969)
+            embed_mod = discord.Embed(description = "ModMailが再開されました", color=discord.Color.green())
             await interaction.response.send_message(embed = embed_mod)
             
         else:
@@ -176,8 +176,8 @@ async def create_modmail(user: discord.User):
         }
         mod_channel = await guild.create_text_channel(f"mail-{user.id}", category = categoty, overwrites = role_overwrite, reason = f"ModMailが開始されました:{user.id}")
         
-        embed_mod = discord.Embed(title="Modmailが開始されました！", description=f"ニックネーム : {user.display_name}\nid : {user.id}\nアカウント作成日 : {user.created_at}", color=user.accent_color)
-        embed_mod.set_author(name=user.name, icon_url=user.avatar.url)
+        embed_mod = discord.Embed(title="ModMailが開始されました！", description=f"ニックネーム : {user.display_name}\nid : {user.id}\nアカウント作成日 : {user.created_at}", color=user.accent_color)
+        embed_mod.set_author(name=str(user), icon_url=user.avatar.url)
         
         await mod_channel.send(embed=embed_mod, view = ModmailFinish())
         
@@ -227,7 +227,7 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
         json.dump(messages, f, indent=2, ensure_ascii=False)
     
     with open(os.path.join(dir, modmail_json_path), mode = "r", encoding="utf-8") as f:
-        messages_json = discord.File(fp = f, filename = "messages.txt")
+        messages_json = discord.File(fp = f, filename = "messages.json")
     
     speakers = ""
     
@@ -252,6 +252,18 @@ async def modmail(interaction:  discord.Interaction):
     
     embed = discord.Embed(title="あしたはこぶね・お問い合わせ",
                           description="以下のボタンを押すと、スタッフとの会話が開始されます\nよろしいですか？",
-                          color=0x696969)
+                          color=discord.Color.blue())
     embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
     await interaction.followup.send(embed=embed, ephemeral=True, view=ModmailButton())
+    
+@client.tree.command(name = "modmail_form", description = "send modmail form", guild=config.testserverid)
+async def modmail_form(interaction: discord.Interaction):
+    await interaction.response.defer()
+    channel = client.get_channel(1108227854245830706)
+    
+    embed = discord.Embed(title = "あしたはこぶね・お問い合わせ",
+                          description = "サーバーに関するご意見やご要望、その他のお問い合わせは下のボタンを押すと開始できます！",
+                          color = discord.Color.blue())
+    embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
+    await channel.send(embed = embed, view = ModmailButton())
+    

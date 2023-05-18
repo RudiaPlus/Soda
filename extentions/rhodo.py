@@ -77,7 +77,7 @@ def run_discord_bot():
             userID = int(channel.name[idx:])
             user = await client.fetch_user(userID)
         
-            mail = discord.Embed(title=f"【スタッフ】{author.name}からのメッセージ", description=user_message, color = author.accent_color)
+            mail = discord.Embed(title=f"【スタッフ】{author.name}からのメッセージ", description=user_message, color = 0x979C9F)
             mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
             await user.send(embed=mail)
         
@@ -86,14 +86,15 @@ def run_discord_bot():
         logger.info(f"{username}に「{user_message}」と言われました。")
         mod_channel = await modmails.fetch_mod_channel(guild = guild, user = author)
         if mod_channel is not None:
-            mail = discord.Embed(title=f"{message.author.name}さんからのメッセージ", description=message.content)
+            mail = discord.Embed(title=f"{message.author.name}さんからのメッセージ", description=message.content, color = message.author.accent_color)
             mail.set_author(name = str(message.author), icon_url = message.author.avatar)
             await mod_channel.send(embed=mail)
 
         else:
             mail = discord.Embed(
                 title="お問い合わせの場合は、/modmailをご利用ください！",
-                description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！\n私とお話ししたい場合は、<#1072158278634713108>までどうぞ！")
+                description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！\n私とお話ししたい場合は、<#1072158278634713108>までどうぞ！",
+                color = 0x979C9F)
             mail.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
             await message.author.send(embed=mail)
     
@@ -113,7 +114,7 @@ def run_discord_bot():
     await interaction.response.defer(ephemeral = True)
     embed = discord.Embed(title = "コマンドヘルプ",
                           description = "以下が現在実装されているコマンドになります。",
-                          color = 0x696969)
+                          color = 0x979C9F)
     embed.add_field(name = "「ドクターネーム」", value = "ゲーム内のドクターネーム(Dr.xxxx#0000の形のゲーム内ID)を紐づけします\n・**/doctorname set**：ドクターネームを登録/変更します\n・**/doctorname show**：指定した人のドクターネームを表示します\n・**/doctorname delete**：登録したドクターネームを削除します", inline = False)  
     embed.add_field(name = "「サポートリクエスト」", value = "チャンネルを使ってサポートオペレーターのリクエストができます。攻略に詰まったら是非使ってください！\n・**/request**：サポートのリクエストを送信します", inline = False)
     embed.add_field(name = "「Modmail」", value = "運営スタッフへの問い合わせが簡単にできます\n・**/modmail**：運営スタッフへの問い合わせを開始します", inline = False)
