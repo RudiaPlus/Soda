@@ -2,11 +2,22 @@
     "act20side": {
         "id": "act20side",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": "True",
         "name": "シラクザーノ",
-        "link": "",
-        "pic": "",
+        "link": "https://00m.in/8xoB4",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/43c93dd20bb1b5380567af398aba1e02.png",
         "startTime": 1684825200,
-        "endTime": 1686596399
+        "endTime": 1686596399,
+        "rewardEndTime": 1687201199,
+        "additionalStage": [
+            {
+                "name": "「銃と秩序」",
+                "startTime": 1685430000
+            },
+            {
+                "name": "「荒野を名乗る者」",
+                "startTime": 1686034800
+            }
+        ]
     }
 }

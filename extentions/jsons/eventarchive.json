@@ -192,15 +192,19 @@
         "type": "SIDESTORY",
         "stageAdd": "True",
         "name": "シラクザーノ",
-        "link": "https://00m.in/HmmmR",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/c4b6d5f46a142ab6650796eaed375a37.png",
-        "startTime": 1678777200,
-        "endTime": 1679943599,
-        "rewardEndTime": 1680548399,
+        "link": "https://00m.in/8xoB4",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/43c93dd20bb1b5380567af398aba1e02.png",
+        "startTime": 1684825200,
+        "endTime": 1686596399,
+        "rewardEndTime": 1687201199,
         "additionalStage": [
             {
-                "name": "",
-                "startTime": 1679382000
+                "name": "「銃と秩序」",
+                "startTime": 1685430000
+            },
+            {
+                "name": "「荒野を名乗る者」",
+                "startTime": 1686034800
             }
         ]
     }
