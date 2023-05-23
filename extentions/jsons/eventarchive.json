@@ -1,6 +1,6 @@
 {
-    "act18side": {
-        "id": "act20side",
+    "act19side": {
+        "id": "act19side",
         "type": "SIDESTORY",
         "stageAdd": "False",
         "name": "理想都市-エンドレスカーニバル-",
@@ -127,8 +127,8 @@
         "endTime": 1678388399,
         "rewardEndTime": 1678733999
     },
-    "act19side": {
-        "id": "act19side",
+    "act20side": {
+        "id": "act20side",
         "type": "SIDESTORY",
         "stageAdd": "True",
         "name": "翠玉の夢",
@@ -187,8 +187,8 @@
         "startTime": 1682578800,
         "endTime": 1683745199
     },
-    "act20side": {
-        "id": "act20side",
+    "act21side": {
+        "id": "act21side",
         "type": "SIDESTORY",
         "stageAdd": "True",
         "name": "シラクザーノ",
