@@ -157,6 +157,7 @@ def run_discord_bot():
   @client.tree.command(name="maintenance",
                        description="メンテナンスについて",
                        guild=config.testserverid)
+  @app_commands.describe(number = "0からの参照番号", status = "ruined(中止)/end(終了)", name = "告知する名前。デフォルトは「メンテナンス」")
   async def maintenance(interaction: discord.Interaction,
                         number: int,
                         status: str,
