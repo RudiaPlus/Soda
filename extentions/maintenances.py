@@ -68,7 +68,7 @@ async def maintenance_timer():
                 maint_name = "メンテナンス"
                 
             elif maintenances[entry]["type"] == "EMERGENCY":
-                maint_name = "緊急メンテナンス"
+                maint_name = "臨時メンテナンス"
                     
             maint_start = maintenances[entry]["startTime"]
             maint_end = maintenances[entry]["endTime"]
