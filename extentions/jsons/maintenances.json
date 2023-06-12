@@ -1,1 +1,8 @@
-[]
+[
+    {
+        "type": "DATA",
+        "startTime": 1686636000,
+        "endTime": 1686636600,
+        "doing": "False"
+    }
+]
