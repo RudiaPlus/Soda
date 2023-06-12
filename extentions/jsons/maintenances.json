@@ -1,8 +1,8 @@
 [
     {
-        "type": "EMERGENCY",
-        "startTime": 1685347200,
-        "endTime": 1685354400,
+        "type": "DATA",
+        "startTime": 1686636000,
+        "endTime": 1686636600,
         "doing": "False"
     }
 ]
