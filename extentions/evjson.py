@@ -106,7 +106,7 @@ def eventget():
                         
                 elif additionalStage[-1]["startTime"] > time.time():
                     nextStageName = additionalStage[1]["name"]
-                    nextAddTime = "<t:{0}:F>( <t:{0}:R> )".format(additionalStage[0]["startTime"])
+                    nextAddTime = "<t:{0}:F>( <t:{0}:R> )".format(additionalStage[1]["startTime"])
                 
                 else:
                     stageAdd = "False"
