@@ -246,7 +246,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
             
         if reason != "無し" and member:
             embed = discord.Embed(title = "⚠️あなたはサーバーからBanされました",
-                                  description = f"{member_got.name}さん、あなたはスタッフの判断によってサーバーからBanされました。処罰の理由は以下になります\n{reason}\n\nあなたはもう二度とサーバーに入りなおす事が出来ませんが、この処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。")
+                                  description = f"{member_got.name}さん、あなたはスタッフの判断によってサーバーからBanされました。処罰の理由は以下になります\n{reason}\n\nあなたはもう二度とサーバーに入りなおす事が出来ません。")
             embed.set_author(name = "あしたはこぶね", url = config.server_invite_link, icon_url=config.server_icon)
             logger.info(f"DMを送信しました。: {embed.description}")
             await member_got.send(embed=embed)
