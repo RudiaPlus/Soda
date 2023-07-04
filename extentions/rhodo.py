@@ -676,7 +676,7 @@ def run_discord_bot():
                                 value=events[i]["contractAddTime"],
                                 inline=False)
                 embed.set_image(url=eventpic)
-                await channel.send(files=file, embed=embed)
+                await channel.send(file=file, embed=embed)
 
               else:
                 try:
