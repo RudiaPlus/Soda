@@ -1,15 +1,4 @@
 {
-    "act14sre": {
-        "id": "act14sre",
-        "type": "SIDESTORY",
-        "stageAdd": "False",
-        "name": "風雪一過(復刻)",
-        "link": "https://00m.in/4D2hV",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/f93f0b6dc5a4bd6ce7a7d0e1f859cd05.png",
-        "startTime": 1686639600,
-        "endTime": 1687460399,
-        "rewardEndTime": 1687805999
-    },
     "cc#11": {
         "id": "cc11",
         "type": "CRISIS",
