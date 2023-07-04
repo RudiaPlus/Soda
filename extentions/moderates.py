@@ -84,7 +84,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
                               color = member_got.accent_color)
         embed.set_author(name = str(member_got), icon_url = member_got.avatar)
         embed.set_footer(text = f"{now} | このメッセージは削除しないでください。")
-        message = await interaction.followup.send(embed = embed)
+        message = await interaction.followup.send(content = member_got.mention, embed = embed)
         
         punishment = {"id": message.id, "type": "warn", "date": now, "reason": reason, "by": interaction.user.id}
         
@@ -110,8 +110,8 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
             embed = discord.Embed(title = "⚠️あなたはスタッフから警告されました",
                                   description = f"{member_got.name}さん、あなたはスタッフの判断によって警告が科されました。警告の理由は以下になります\n{reason}\n\nこれは{len(member_punishments)}回目の処罰です。「警告」が数回重なるとサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの理由に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。")
             embed.set_author(name = "あしたはこぶね", url = config.server_invite_link, icon_url=config.server_icon)
-            logger.log(f"DMを送信しました。: {embed.description}")
-            await member_got.send(content = member_got.mention, embed=embed)
+            logger.info(f"DMを送信しました。: {embed.description}")
+            await member_got.send(embed=embed)
     
     except Exception as e:
         embed = discord.Embed(title = "⚠️メンバーへの警告に失敗しました！",
@@ -178,7 +178,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
             embed = discord.Embed(title = "⚠️あなたはサーバーから追放されました",
                                   description = f"{member_got.name}さん、あなたはスタッフの判断によってサーバーから追放されました。処罰の理由は以下になります\n{reason}\n\nあなたはまたサーバーに入りなおすことが出来ますが、これは{len(member_punishments)}回目の処罰です。回数が重なると、あなたはサーバーに入りなおすことが出来なくなります。\nこの理由に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
             embed.set_author(name = "あしたはこぶね", url = config.server_invite_link, icon_url=config.server_icon)
-            logger.log(f"DMを送信しました。: {embed.description}")
+            logger.info(f"DMを送信しました。: {embed.description}")
             await member_got.send(embed=embed)
             
         await interaction.guild.kick(user= member_got, reason = reason)
@@ -248,7 +248,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
             embed = discord.Embed(title = "⚠️あなたはサーバーからBanされました",
                                   description = f"{member_got.name}さん、あなたはスタッフの判断によってサーバーからBanされました。処罰の理由は以下になります\n{reason}\n\nあなたはもう二度とサーバーに入りなおす事が出来ませんが、この処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。")
             embed.set_author(name = "あしたはこぶね", url = config.server_invite_link, icon_url=config.server_icon)
-            logger.log(f"DMを送信しました。: {embed.description}")
+            logger.info(f"DMを送信しました。: {embed.description}")
             await member_got.send(embed=embed)
             
         await interaction.guild.ban(user = member_got, reason = reason)
@@ -308,7 +308,7 @@ async def unban(interaction:  discord.Interaction, member:  discord.Member = Non
             embed = discord.Embed(title = "✅あなたのBanは解除されました",
                                   description = f"{member_got.name}さん、あなたはスタッフの判断によってサーバーからのBanを解除されました。\nBanの経歴も削除されます。\n「あしたはこぶね」をクリックすると、サーバーに入りなおすことができます。")
             embed.set_author(name = "あしたはこぶね", url = config.server_invite_link, icon_url=config.server_icon)
-            logger.log(f"DMを送信しました。: {embed.description}")
+            logger.info(f"DMを送信しました。: {embed.description}")
             await member_got.send(embed=embed)
     
     except Exception as e:
