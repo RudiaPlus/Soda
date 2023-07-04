@@ -14,5 +14,4 @@ docker-compose.yml
 .replit
 venv
 chat.json
-*.log.*
 modmail.json
