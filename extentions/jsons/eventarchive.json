@@ -304,5 +304,22 @@
                 "stageName": "凍原の鉱場"
             }
         ]
+    },
+    "act22side": {
+        "id": "act22side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "この炎が照らす先",
+        "link": "https://00m.in/xj1pL",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/de0bde6cd33e6459b60c0cfbeb866743.png",
+        "startTime": 1689231600,
+        "endTime": 1690397999,
+        "rewardEndTime": 1691002799,
+        "additionalStage": [
+            {
+                "name": "記憶の燃え殻",
+                "startTime": 1689836400
+            }
+        ]
     }
 }

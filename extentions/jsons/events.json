@@ -1,87 +1,18 @@
 {
-    "cc#11": {
-        "id": "cc11",
-        "type": "CRISIS",
-        "name": "危機契約#11 作戦コード「贋波」",
-        "link": "https://00m.in/348wf",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/0f403a4bb822ce6f226870df3ad7baa4.png",
-        "stageAdd":"CRISIS",
-        "startTime": 1687503600,
-        "firstAddTime": 1688065200,
-        "endTime": 1688669999,
-        "eventColor": "295160",
-        "permStage": {
-            "stageType": "PERM",
-            "stageName": "建設中のビーチ",
-            "startTime": 1687503600,
-            "firstAddTime": 1688065200,
-            "endTime": 1688669999
-        },
-        "dailyStage": [
+    "act22side": {
+        "id": "act22side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "この炎が照らす先",
+        "link": "https://00m.in/xj1pL",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/de0bde6cd33e6459b60c0cfbeb866743.png",
+        "startTime": 1689231600,
+        "endTime": 1690397999,
+        "rewardEndTime": 1691002799,
+        "additionalStage": [
             {
-                "stageType": "DAILY",
-                "dailyNumber": 1,
-                "stageName": "凍原の鉱場"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 2,
-                "stageName": "砂海の遺跡"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 3,
-                "stageName": "大騎士領バー通り"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 4,
-                "stageName": "サルヴィエントの洞窟"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 5,
-                "stageName": "尚蜀山道"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 6,
-                "stageName": "ロンディニウム辺縁区画"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 7,
-                "stageName": "ヒロック郡物流拠点"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 8,
-                "stageName": "大騎士領バー通り"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 9,
-                "stageName": "サルヴィエントの洞窟"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 10,
-                "stageName": "尚蜀山道"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 11,
-                "stageName": "ロンディニウム辺縁区画"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 12,
-                "stageName": "ヒロック郡物流拠点"
-            },
-            {
-                "stageType": "DAILY_FINAL",
-                "dailyNumber": 13,
-                "stageName": "凍原の鉱場"
+                "name": "記憶の燃え殻",
+                "startTime": 1689836400
             }
         ]
     }
