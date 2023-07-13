@@ -18,20 +18,18 @@ class ModmailButton(discord.ui.View):
     @discord.ui.button(label="開始する", custom_id = "modmailbutton", style=discord.ButtonStyle.success, emoji="✅")
     async def modmailbutton(self, interaction: discord.Interaction, button: discord.ui.Button):
         
+        await interaction.response.send_message("")
+        
         result = await create_modmail(user = interaction.user)
         
         embed = discord.Embed(title="あしたはこぶね・お問い合わせ", description="お問い合わせありがとうございます！\nこのDMにメッセージを送ることで、スタッフとの会話を開始できます\nお問い合わせを終了する場合は、下の「終了」ボタンを押してください。", color=discord.Color.green())
         embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
         
         if result == "created":
-            if interaction.message.guild:
-                await interaction.user.send(embed=embed, view=ModmailFinish())
-                await interaction.response.send_message("DMをお送りしました。ご確認ください！", ephemeral=True)
-            else:
-                await interaction.response.send_message(embed=embed, view=ModmailFinish())
+            await interaction.user.send(embed=embed, view=ModmailFinish())
                 
         if result == "duplicated":
-            await interaction.response.send_message("DMを既にお送りしております。ご確認ください！", ephemeral=True)    
+            await interaction.user.send("DMを既にお送りしております。ご確認ください！", ephemeral=True)    
             
                
 
