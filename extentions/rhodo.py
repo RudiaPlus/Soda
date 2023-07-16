@@ -2,6 +2,7 @@ import discord
 from extentions import (moderates, responses, config, evjson, JSTTime, modmails, log, maintenances, requests)
 from extentions.aclient import client
 import re
+import time
 import datetime
 import unicodedata
 import os
@@ -121,6 +122,20 @@ def run_discord_bot():
     
     await interaction.followup.send(embed = embed, ephemeral = True)
 
+  @client.tree.command(name="ping",
+                       description="botの応答時間を確認します",
+                       guild=config.testserverid)
+  async def ping(interaction: discord.Interaction):
+      await interaction.response.defer()
+      
+      raw_ping = client.latency
+      ping_ms = round(raw_ping * 1000)
+      response = await interaction.followup.send(f"latency:{ping_ms}")
+      rap = datetime.datetime.now(datetime.timezone.utc)
+      waittime = rap - response.created_at
+      waittime_ms = round(waittime.total_seconds() * 1000)
+      await response.edit(content = f"latency:{ping_ms}\nwaittime:{waittime_ms}")
+  
   @client.tree.command(name="rechat",
                        description="for dev only",
                        guild=config.testserverid)
