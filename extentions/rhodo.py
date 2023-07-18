@@ -36,6 +36,8 @@ def run_discord_bot():
     async def on_ready():
         logger.info("準備を始めます")
         try:
+            
+            #コマンド登録
             doctorname = DoctorNameCommand(
                 name="doctorname", description="ドクターネームに関するコマンド")
             moderate = moderates.ModerateCommand(
@@ -45,10 +47,32 @@ def run_discord_bot():
             synced = await client.tree.sync()
             await client.tree.sync(guild=config.testserverid)
             logger.info(f"{len(synced)}個のコマンドを同期しました。")
+            
+            #ボタン登録
             client.add_view(requests.RequestComplete())
             client.add_view(modmails.ModmailButton())
             client.add_view(modmails.ModmailFinish())
             client.add_view(modmails.ModmailControl())
+            
+            #リマインド確認
+            if config.morning == True:
+                remind_channel = client.get_channel(config.announce)
+                logger.info("リマインドチャンネルを確認中")
+                
+                async for message in remind_channel.history(limit=1):
+                    last_remind = message
+                
+                last_remind_time_delta = (last_remind.created_at - datetime.timedelta(hours = 21, minutes = 30))
+                now_time_delta = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours = 21, minutes = 30))
+                
+                if last_remind_time_delta.day == now_time_delta.day + 1:
+                    logger.info("リマインド未送信のため、送信します")
+                    await send_remind()
+                    
+                else:
+                    logger.info("リマインドは送信済です")
+                
+            logger.info("リマインドチャンネル確認終了")
         except Exception as e:
             logger.exception(f"[on_ready]にて エラー：{e}")
         logger.info(f"{client.user} 、準備完了です！")
@@ -56,7 +80,7 @@ def run_discord_bot():
     @client.event
     async def setup_hook() -> None:
         morning.start()
-        maintenances.maintenance_timer.start()
+        maintenances.maintenance_timer.start()   
         logger.info("タスクを開始しました")
 
     @client.event
@@ -180,7 +204,7 @@ def run_discord_bot():
         if interaction.user == client.user:
             return
         await interaction.response.defer()
-        await morning()
+        await send_remind()
         await interaction.followup.send("完了しました！")
 
     @client.tree.command(name="eventtest",
@@ -302,154 +326,145 @@ def run_discord_bot():
     async def morning():
         try:
             logger.info("時間になりました。モーニングルーティンを始めます")
+            await send_remind()
+            await responses.get_response("reset", reset=True)
 
-            if config.morning == True:
-                events = evjson.eventget()
-                eventcount = evjson.eventcount()
-                maintenance = await maintenances.maintenance_list()
-                channel = client.get_channel(config.announce)
-                embeds = []
-                file = None
+        except Exception as e:
+            logger.exception(f"[morning]にてエラー：{e}")  
 
-                if eventcount[0] == 0:
-                    if eventcount[3] != 0:
-                        eventnow = "本日からイベントが開催されます！"
-                    else:
-                        eventnow = "本日は少し休める日ですね！"
-                elif eventcount[0] == 1:
-                    eventnow = f"\n・イベントが進行中です:sparkles: 頑張りましょう！"
+    async def send_remind():
+        if config.morning == True:
+            events = evjson.eventget()
+            eventcount = evjson.eventcount()
+            maintenance = await maintenances.maintenance_list()
+            channel = client.get_channel(config.announce)
+            embeds = []
+            file = None
+
+            if eventcount[0] == 0:
+                if eventcount[3] != 0:
+                    eventnow = "本日からイベントが開催されます！"
                 else:
-                    eventnow = f"\n・本日は{eventcount[0]}個のイベントが進行中です:sparkles: 頑張りましょう！"
+                    eventnow = "本日は少し休める日ですね！"
+            elif eventcount[0] == 1:
+                eventnow = f"\n・イベントが進行中です:sparkles: 頑張りましょう！"
+            else:
+                eventnow = f"\n・本日は{eventcount[0]}個のイベントが進行中です:sparkles: 頑張りましょう！"
 
-                if eventcount[1] == 0:
-                    eventend = ""
-                elif eventcount[1] == 1:
-                    eventend = f"\n・終了したイベントがあります！ 報酬の受け取りを忘れずに！:eyes:"
+            if eventcount[1] == 0:
+                eventend = ""
+            elif eventcount[1] == 1:
+                eventend = f"\n・終了したイベントがあります！ 報酬の受け取りを忘れずに！:eyes:"
+            else:
+                eventend = f"\n・{eventcount[1]}個のイベントが終了しています。報酬の受け取りを忘れずに！:eyes:"
+
+            if eventcount[2] == 0:
+                eventfuture = ""
+            elif eventcount[2] == 1:
+                eventfuture = f"\n・開催予定のイベントがあります！ 楽しみですね！:star2:"
+            else:
+                eventfuture = f"\n・{eventcount[2]}個のイベントがこの先やってきます！準備は出来ていますか？"
+
+            if JSTTime.timeJST("weekday") == "日":
+                weekday = "\n・本日は日曜日です！ 殲滅作戦は終わらせましたか？"
+            else:
+                weekday = ""
+
+            json_name = "jsons/birthday.json"
+            with open(os.path.join(dir, json_name), encoding="utf-8") as f:
+                birthday = json.load(f)
+                today = JSTTime.timeJST("m/d")
+                if today in birthday:
+                    bdayop = f"\n・本日は{birthday[today]}が誕生日です:birthday: おめでとうございます！"
                 else:
-                    eventend = f"\n・{eventcount[1]}個のイベントが終了しています。報酬の受け取りを忘れずに！:eyes:"
+                    bdayop = ""
 
-                if eventcount[2] == 0:
-                    eventfuture = ""
-                elif eventcount[2] == 1:
-                    eventfuture = f"\n・開催予定のイベントがあります！ 楽しみですね！:star2:"
-                else:
-                    eventfuture = f"\n・{eventcount[2]}個のイベントがこの先やってきます！準備は出来ていますか？"
+            for i in range(len(maintenance)):
+                embed = discord.Embed(title=maintenance[i]["name"],
+                                        description=maintenance[i]["time"],
+                                        color=0xf5b642)
+                embed.set_author(name="メンテナンス")
+                embeds.append(embed)
 
-                if JSTTime.timeJST("weekday") == "日":
-                    weekday = "\n・本日は日曜日です！ 殲滅作戦は終わらせましたか？"
-                else:
-                    weekday = ""
+            for i in range(len(events)):
+                if events[i]["dif"] == "present":
+                    if events[i]["type"] == "CRISIS":
+                        if events[i]["contractAdd"] == False:
+                            try:
+                                link = events[i]["link"]
+                                eventpic = events[i]["pic"]
+                            except Exception:
+                                pass
 
-                json_name = "jsons/birthday.json"
-                with open(os.path.join(dir, json_name), encoding="utf-8") as f:
-                    birthday = json.load(f)
-                    today = JSTTime.timeJST("m/d")
-                    if today in birthday:
-                        bdayop = f"\n・本日は{birthday[today]}が誕生日です:birthday: おめでとうございます！"
-                    else:
-                        bdayop = ""
+                            png_name = "images/contingencycontract.png"
+                            file = discord.File(os.path.join(dir, png_name),
+                                                filename="image.png")
+                            embed = discord.Embed(title=events[i]["name"],
+                                                    description=events[i]["time"],
+                                                    color=0x6d2727,
+                                                    url=link)
+                            embed.set_author(name="危機契約",
+                                                icon_url="attachment://image.png")
+                            embed.add_field(name="・常設ステージ",
+                                            value=events[i]["permStage"],
+                                            inline=False)
+                            embed.add_field(name="・本日のデイリーステージ",
+                                            value=events[i]["todaysDaily"]["stageName"],
+                                            inline=False)
+                            embed.add_field(name="・契約追加日",
+                                            value=events[i]["contractAddTime"],
+                                            inline=False)
+                            embed.set_image(url=eventpic)
+                            embeds.append(embed)
 
-                for i in range(len(maintenance)):
-                    embed = discord.Embed(title=maintenance[i]["name"],
-                                          description=maintenance[i]["time"],
-                                          color=0xf5b642)
-                    embed.set_author(name="メンテナンス")
-                    embeds.append(embed)
+                        else:
+                            try:
+                                link = events[i]["link"]
+                                eventpic = events[i]["pic"]
+                            except Exception:
+                                pass
 
-                for i in range(len(events)):
-                    if events[i]["dif"] == "present":
-                        if events[i]["type"] == "CRISIS":
-                            if events[i]["contractAdd"] == False:
-                                try:
-                                    link = events[i]["link"]
-                                    eventpic = events[i]["pic"]
-                                except Exception:
-                                    pass
+                            png_name = "images/contingencycontract.png"
+                            file = discord.File(os.path.join(dir, png_name),
+                                                filename="image.png")
+                            embed = discord.Embed(title=events[i]["name"],
+                                                    description=events[i]["time"],
+                                                    color=0x6d2727,
+                                                    url=link)
+                            embed.set_author(name="危機契約",
+                                                icon_url="attachment://image.png")
+                            embed.add_field(name="・常設ステージ",
+                                            value=events[i]["permStage"],
+                                            inline=False)
+                            embed.add_field(name="・本日のデイリーステージ",
+                                            value=events[i]["todaysDaily"]["stageName"],
+                                            inline=False)
+                            embed.add_field(name="・契約が追加されています！",
+                                            value="危機契約も後半戦です！一緒に頑張りましょう！！",
+                                            inline=False)
+                            embed.set_image(url=eventpic)
+                            embeds.append(embed)
 
-                                png_name = "images/contingencycontract.png"
-                                file = discord.File(os.path.join(dir, png_name),
-                                                    filename="image.png")
-                                embed = discord.Embed(title=events[i]["name"],
-                                                      description=events[i]["time"],
-                                                      color=0x6d2727,
-                                                      url=link)
-                                embed.set_author(name="危機契約",
-                                                 icon_url="attachment://image.png")
-                                embed.add_field(name="・常設ステージ",
-                                                value=events[i]["permStage"],
-                                                inline=False)
-                                embed.add_field(name="・本日のデイリーステージ",
-                                                value=events[i]["todaysDaily"]["stageName"],
-                                                inline=False)
-                                embed.add_field(name="・契約追加日",
-                                                value=events[i]["contractAddTime"],
-                                                inline=False)
-                                embed.set_image(url=eventpic)
-                                embeds.append(embed)
+                    elif events[i]["type"] == "SIDESTORY":
+                        if events[i]["stageAdd"] == "True":
+                            try:
+                                nextStageName = events[i]["nextStageName"]
+                                nextAddTime = events[i]["nextAddTime"]
+                                link = events[i]["link"]
+                                eventpic = events[i]["pic"]
+                            except Exception:
+                                pass
 
-                            else:
-                                try:
-                                    link = events[i]["link"]
-                                    eventpic = events[i]["pic"]
-                                except Exception:
-                                    pass
-
-                                png_name = "images/contingencycontract.png"
-                                file = discord.File(os.path.join(dir, png_name),
-                                                    filename="image.png")
-                                embed = discord.Embed(title=events[i]["name"],
-                                                      description=events[i]["time"],
-                                                      color=0x6d2727,
-                                                      url=link)
-                                embed.set_author(name="危機契約",
-                                                 icon_url="attachment://image.png")
-                                embed.add_field(name="・常設ステージ",
-                                                value=events[i]["permStage"],
-                                                inline=False)
-                                embed.add_field(name="・本日のデイリーステージ",
-                                                value=events[i]["todaysDaily"]["stageName"],
-                                                inline=False)
-                                embed.add_field(name="・契約が追加されています！",
-                                                value="危機契約も後半戦です！一緒に頑張りましょう！！",
-                                                inline=False)
-                                embed.set_image(url=eventpic)
-                                embeds.append(embed)
-
-                        elif events[i]["type"] == "SIDESTORY":
-                            if events[i]["stageAdd"] == "True":
-                                try:
-                                    nextStageName = events[i]["nextStageName"]
-                                    nextAddTime = events[i]["nextAddTime"]
-                                    link = events[i]["link"]
-                                    eventpic = events[i]["pic"]
-                                except Exception:
-                                    pass
-
-                                embed = discord.Embed(title=events[i]["name"],
-                                                      description=events[i]["time"],
-                                                      color=0x24ab12,
-                                                      url=link)
-                                embed.set_author(name="サイドストーリー")
-                                embed.add_field(name=f"次のステージ追加 「{nextStageName}」",
-                                                value=nextAddTime)
-                                embed.set_image(url=eventpic)
-                                embeds.append(embed)
-                            else:
-                                try:
-                                    link = events[i]["link"]
-                                    eventpic = events[i]["pic"]
-                                except Exception:
-                                    pass
-
-                                embed = discord.Embed(title=events[i]["name"],
-                                                      description=events[i]["time"],
-                                                      color=0x368ad9,
-                                                      url=link)
-                                embed.set_author(name="サイドストーリー")
-                                embed.set_image(url=eventpic)
-                                embeds.append(embed)
-
-                        elif events[i]["type"] == "MINISTORY":
+                            embed = discord.Embed(title=events[i]["name"],
+                                                    description=events[i]["time"],
+                                                    color=0x24ab12,
+                                                    url=link)
+                            embed.set_author(name="サイドストーリー")
+                            embed.add_field(name=f"次のステージ追加 「{nextStageName}」",
+                                            value=nextAddTime)
+                            embed.set_image(url=eventpic)
+                            embeds.append(embed)
+                        else:
                             try:
                                 link = events[i]["link"]
                                 eventpic = events[i]["pic"]
@@ -457,55 +472,69 @@ def run_discord_bot():
                                 pass
 
                             embed = discord.Embed(title=events[i]["name"],
-                                                  description=events[i]["time"],
-                                                  color=0xCAC531,
-                                                  url=link)
-                            embed.set_author(name="オムニバスストーリー")
+                                                    description=events[i]["time"],
+                                                    color=0x368ad9,
+                                                    url=link)
+                            embed.set_author(name="サイドストーリー")
                             embed.set_image(url=eventpic)
                             embeds.append(embed)
 
-                        elif events[i]["type"] == "MAIN":
-                            try:
-                                link = events[i]["link"]
-                                eventpic = events[i]["pic"]
-                            except Exception as e:
-                                logger.warn(f"[morning:main]: {e}")
+                    elif events[i]["type"] == "MINISTORY":
+                        try:
+                            link = events[i]["link"]
+                            eventpic = events[i]["pic"]
+                        except Exception:
+                            pass
 
-                            embed = discord.Embed(title=events[i]["name"],
-                                                  description=events[i]["time"],
-                                                  color=0x353536,
-                                                  url=link)
-                            embed.set_author(name="理性保護&物資回収キャンペーン")
-                            embed.set_image(url=eventpic)
-                            embeds.append(embed)
-
-                        else:
-                            embed = discord.Embed(title=events[i]["name"],
-                                                  description=events[i]["time"],
-                                                  color=0xf29382)
-                            embed.set_author(name="イベント")
-                            embeds.append(embed)
-
-                    elif events[i]["dif"] == "past":
-                        eventpic = events[i]["pic"]
-                        rewardEndTime = events[i]["rewardEndTime"]
                         embed = discord.Embed(title=events[i]["name"],
-                                              description=f"報酬受取期限：{rewardEndTime}",
-                                              color=0x454545)
-                        embed.set_author(name="終了したイベント")
+                                                description=events[i]["time"],
+                                                color=0xCAC531,
+                                                url=link)
+                        embed.set_author(name="オムニバスストーリー")
+                        embed.set_image(url=eventpic)
+                        embeds.append(embed)
+
+                    elif events[i]["type"] == "MAIN":
+                        try:
+                            link = events[i]["link"]
+                            eventpic = events[i]["pic"]
+                        except Exception as e:
+                            logger.warn(f"[morning:main]: {e}")
+
+                        embed = discord.Embed(title=events[i]["name"],
+                                                description=events[i]["time"],
+                                                color=0x353536,
+                                                url=link)
+                        embed.set_author(name="理性保護&物資回収キャンペーン")
                         embed.set_image(url=eventpic)
                         embeds.append(embed)
 
                     else:
-                        eventpic = events[i]["pic"]
                         embed = discord.Embed(title=events[i]["name"],
-                                              description=events[i]["time"],
-                                              color=0xba80ea)
-                        embed.set_author(name="開催予定のイベント")
-                        embed.set_image(url=eventpic)
+                                                description=events[i]["time"],
+                                                color=0xf29382)
+                        embed.set_author(name="イベント")
                         embeds.append(embed)
 
-            await responses.get_response("reset", reset=True)
+                elif events[i]["dif"] == "past":
+                    eventpic = events[i]["pic"]
+                    rewardEndTime = events[i]["rewardEndTime"]
+                    embed = discord.Embed(title=events[i]["name"],
+                                            description=f"報酬受取期限：{rewardEndTime}",
+                                            color=0x454545)
+                    embed.set_author(name="終了したイベント")
+                    embed.set_image(url=eventpic)
+                    embeds.append(embed)
+
+                else:
+                    eventpic = events[i]["pic"]
+                    embed = discord.Embed(title=events[i]["name"],
+                                            description=events[i]["time"],
+                                            color=0xba80ea)
+                    embed.set_author(name="開催予定のイベント")
+                    embed.set_image(url=eventpic)
+                    embeds.append(embed)
+
             content = f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！  {eventnow}{eventend}{eventfuture}{weekday}{bdayop}"
             if embeds:
                 if file:
@@ -513,8 +542,7 @@ def run_discord_bot():
                 else:
                     await channel.send(content = content, embeds=embeds)
 
-        except Exception as e:
-            logger.exception(f"[morning]にてエラー：{e}")
+      
 
     TOKEN = config.token
     client.run(TOKEN)

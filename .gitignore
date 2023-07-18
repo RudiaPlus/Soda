@@ -7,7 +7,7 @@ __pycache__
 .vscode
 myvenv
 .breakpoints
-bot.log
+logs
 poetry.lock
 replit.nix
 pyproject.toml
