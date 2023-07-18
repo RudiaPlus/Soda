@@ -233,13 +233,7 @@ async def doctor_add(user, name, tag):
     return (f"Dr. {name}#{tag}")
 
 
-async def send_request(user,
-                       operator,
-                       skill,
-                       skillLevel,
-                       module: str = None,
-                       module_rank: str = None,
-                       lv: int = None):
+async def send_request(user, operator, skill, skillLevel, module: str = None, module_rank: str = None, lv: int = None):
     if module == None:
         module_name = ""
         module_rank = ""
@@ -302,10 +296,7 @@ class OperatorSkillButton(discord.ui.View):
         async def button_callback(interaction: discord.Interaction):
             embed = discord.Embed(
                 title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"「{label}」を選択しました。\nスキルレベルの条件を選んでください。")
-            await interaction.response.edit_message(embed=embed,
-                                                    view=OperatorLevelButton(
-                                                        self.operators, label,
-                                                        self.operator, self.lv))
+            await interaction.response.edit_message(embed=embed, view=OperatorLevelButton(self.operators, label, self.operator, self.lv))
 
         button_skill.callback = button_callback
         self.add_item(button_skill)

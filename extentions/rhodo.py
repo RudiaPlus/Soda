@@ -138,11 +138,11 @@ def run_discord_bot():
 
         raw_ping = client.latency
         ping_ms = round(raw_ping * 1000)
-        response = await interaction.followup.send(f"WebSocket待ち時間:{ping_ms}")
+        response = await interaction.followup.send(f"WebSocket待ち時間:{ping_ms}ms")
         rap = datetime.datetime.now(datetime.timezone.utc)
         waittime = rap - response.created_at
         waittime_ms = round(waittime.total_seconds() * 1000)
-        await response.edit(content=f"WebSocket待機時間:{ping_ms}\n送信までの待機時間:{waittime_ms}")
+        await response.edit(content=f"WebSocket待機時間:{ping_ms}ms\n送信までの待機時間:{waittime_ms}ms")
 
     @client.tree.command(name="rechat",
                          description="for dev only",
