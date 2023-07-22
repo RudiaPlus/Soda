@@ -321,5 +321,26 @@
                 "startTime": 1689836400
             }
         ]
+    },
+    "act23side": {
+        "id": "act21side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "登臨意",
+        "link": "link",
+        "pic": "pic",
+        "startTime": 1690527600,
+        "endTime": 1691693999,
+        "rewardEndTime": 1692298799,
+        "additionalStage": [
+            {
+                "name": "追加1",
+                "startTime": 1685430000
+            },
+            {
+                "name": "追加2",
+                "startTime": 1686034800
+            }
+        ]
     }
 }
