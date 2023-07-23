@@ -8,6 +8,7 @@ __pycache__
 myvenv
 .breakpoints
 logs
+.log
 poetry.lock
 replit.nix
 pyproject.toml
