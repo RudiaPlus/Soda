@@ -65,12 +65,14 @@ def run_discord_bot():
                 last_remind_time_delta = (last_remind.created_at - datetime.timedelta(hours = 21, minutes = 30))
                 now_time_delta = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours = 21, minutes = 30))
                 
-                if last_remind_time_delta.day == now_time_delta.day + 1:
+                if last_remind_time_delta.day == now_time_delta.day - 1:
                     logger.info("リマインド未送信のため、送信します")
                     await send_remind()
                     
                 else:
-                    logger.info("リマインドは送信済です")
+                    JST = JSTTime.timeJST("JST")
+                    last_remind_time_JST = (last_remind.created_at.astimezone(tz = JST))
+                    logger.info(f"リマインドは{last_remind_time_JST}に送信済です")
                 
             logger.info("リマインドチャンネル確認終了")
         except Exception as e:
