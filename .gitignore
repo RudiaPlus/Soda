@@ -14,3 +14,4 @@ docker-compose.yml
 .replit
 venv
 extentions/logs/bot.log
+extentions/jsons/modmail.json
