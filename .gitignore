@@ -7,7 +7,7 @@ __pycache__
 .vscode
 myvenv
 .breakpoints
-logs
+extentions\logs
 .log
 poetry.lock
 replit.nix
