@@ -7,13 +7,10 @@ __pycache__
 .vscode
 myvenv
 .breakpoints
-extentions\logs
-.log
 poetry.lock
 replit.nix
 pyproject.toml
 docker-compose.yml
 .replit
 venv
-chat.json
-modmail.json
+extentions/logs/bot.log
