@@ -18,7 +18,7 @@ class ModmailButton(discord.ui.View):
     @discord.ui.button(label="開始する", custom_id = "modmailbutton", style=discord.ButtonStyle.success, emoji="✅")
     async def modmailbutton(self, interaction: discord.Interaction, button: discord.ui.Button):
         
-        await interaction.response.send_message("")
+        await interaction.response.send_message("お問い合わせを開始します", ephemeral=True, delete_after=1.0)
         
         result = await create_modmail(user = interaction.user)
         
