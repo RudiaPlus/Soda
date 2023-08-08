@@ -254,7 +254,7 @@ async def modmail(interaction:  discord.Interaction):
     embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
     await interaction.followup.send(embed=embed, ephemeral=True, view=ModmailButton())
     
-@client.tree.command(name = "modmail_form", description = "send modmail form", guild=config.testserverid)
+"""@client.tree.command(name = "modmail_form", description = "send modmail form", guild=config.testserverid)
 async def modmail_form(interaction: discord.Interaction):
     await interaction.response.defer()
     channel = client.get_channel(1108227854245830706)
@@ -263,5 +263,5 @@ async def modmail_form(interaction: discord.Interaction):
                           description = "サーバーに関するご意見やご要望、その他のお問い合わせは下のボタンを押すと開始できます！",
                           color = discord.Color.blue())
     embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
-    await channel.send(embed = embed, view = ModmailButton())
+    await channel.send(embed = embed, view = ModmailButton())"""
     
