@@ -1,4 +1,3 @@
-from pyvcroid2 import pyvcroid2
 import discord
 import json
 import asyncio
@@ -26,7 +25,7 @@ channel_register = {
 
 def speak(text: str):
      
-    with pyvcroid2.VcRoid2(install_path = os.path.join(dir, voice_name)) as voice:
+    """with pyvcroid2.VcRoid2(install_path = os.path.join(dir, voice_name)) as voice:
         # Load language library
         lang_list = voice.listLanguages()
         if "standard" in lang_list:
@@ -60,7 +59,7 @@ def speak(text: str):
     
         with open(file, mode = "wb") as f:
             f.write(speech)
-        return f"{filepath}voice.wav"
+        return f"{filepath}voice.wav"""
 
 async def channels_write(dic):
     with open(os.path.join(dir, channel_json_path), "w", encoding="UTF-8") as f:
