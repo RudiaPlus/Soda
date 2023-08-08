@@ -1,9 +1,9 @@
 import discord
-from extentions import (moderates, responses, config,
+from extentions import (moderates, responses, config, voicechat,
                         evjson, JSTTime, modmails, log, maintenances, requests)
 from extentions.aclient import client
 import re
-import time
+import asyncio
 import datetime
 import unicodedata
 import os
@@ -40,12 +40,15 @@ def run_discord_bot():
             #コマンド登録
             doctorname = DoctorNameCommand(
                 name="doctorname", description="ドクターネームに関するコマンド")
+            client.tree.add_command(doctorname)
+            
             moderate = moderates.ModerateCommand(
                 name="moderate", description="モデレートに関するコマンド")
-            client.tree.add_command(doctorname)
             client.tree.add_command(moderate)
+            
             synced = await client.tree.sync()
             await client.tree.sync(guild=config.testserverid)
+            
             logger.info(f"{len(synced)}個のコマンドを同期しました。")
             
             #ボタン登録
@@ -75,8 +78,10 @@ def run_discord_bot():
                     logger.info(f"リマインドは{last_remind_time_JST}に送信済です")
                 
             logger.info("リマインドチャンネル確認終了")
+            
         except Exception as e:
             logger.exception(f"[on_ready]にて エラー：{e}")
+            
         logger.info(f"{client.user} 、準備完了です！")
 
     @client.event
@@ -110,7 +115,15 @@ def run_discord_bot():
                 mail.set_author(name=author.display_name,
                                 icon_url=author.avatar)
                 await user.send(embed=mail)
-
+                
+            if message.guild.voice_client:
+                target_channels = await voicechat.get_target_channels(message.guild.voice_client.channel)
+                if channelID in target_channels:
+                    while message.guild.voice_client.is_playing():
+                        await asyncio.sleep(0.1)
+                    source = discord.FFmpegPCMAudio(voicechat.speak(message.content))
+                    message.guild.voice_client.play(source)
+                    
         else:
             guild = client.get_guild(config.main_server)
             logger.info(f"{username}に「{user_message}」と言われました。")
@@ -135,9 +148,32 @@ def run_discord_bot():
             clean_message = re.sub('<.*?>', '', user_message)
             logger.info("返事をします")
             await send_message(message, clean_message)
-
+            
         else:
             return
+        
+    @client.event
+    async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+        
+        if member == client.user:
+            return
+        
+        #join
+        if after.channel and not before.channel:
+            logger.info(f"{str(member)}が{after.channel.name}({after.channel.id})に接続しました。")
+        
+        #leave
+        elif before.channel and not after.channel:
+            logger.info(f"{str(member)}が{before.channel.name}({before.channel.id})から切断しました。")
+            
+            if len(before.channel.members) < 2 and member.guild.voice_client:
+                if member.guild.voice_client.channel == before.channel:
+                    await member.guild.voice_client.disconnect()
+        
+        #move
+        elif before.channel != after.channel:
+            logger.info(f"{str(member)}が{before.channel.name}({before.channel.id})から{after.channel.name}({after.channel.id})に接続しました。")
+            
 
     @client.tree.command(name="help",
                          description="現在実装されているコマンドの使い方を簡単に説明します！")

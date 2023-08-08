@@ -338,5 +338,16 @@
                 "startTime": 1691132400
             }
         ]
+    },
+    "act15sre": {
+        "id": "act15sre",
+        "type": "SIDESTORY",
+        "stageAdd": "False",
+        "name": "将進酒(復刻)",
+        "link": "https://00m.in/6n4Qf",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/26d663c7aba752280f7692237c360a28.png",
+        "startTime": 1691737200,
+        "endTime": 1692557999,
+        "rewardEndTime": 1692903599
     }
 }
