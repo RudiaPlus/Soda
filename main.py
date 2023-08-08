@@ -1,5 +1,4 @@
-from extentions import (rhodo, keep_alive)
+from extentions import (rhodo)
 
 if __name__ == "__main__":
-  keep_alive.keep_alive()
   rhodo.run_discord_bot()
