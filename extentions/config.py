@@ -38,3 +38,6 @@ modmail_save_channel = 1108480334024167514 #議事録
 
 #categories
 feedback_category = 1108189699715125268
+
+#Voicechat
+#アークナイツ1
