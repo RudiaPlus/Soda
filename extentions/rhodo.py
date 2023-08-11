@@ -65,8 +65,8 @@ def run_discord_bot():
                 async for message in remind_channel.history(limit=1):
                     last_remind = message
                 
-                last_remind_time_delta = (last_remind.created_at - datetime.timedelta(hours = 21, minutes = 30))
-                now_time_delta = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours = 21, minutes = 30))
+                last_remind_time_delta = (last_remind.created_at - datetime.timedelta(hours = 21, minutes = 29))
+                now_time_delta = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours = 21, minutes = 29))
                 
                 if last_remind_time_delta.day == now_time_delta.day - 1:
                     logger.info("リマインド未送信のため、送信します")
@@ -160,11 +160,11 @@ def run_discord_bot():
         
         #join
         if after.channel and not before.channel:
-            logger.info(f"{str(member)}が{after.channel.name}({after.channel.id})に接続しました。")
+            logger.info(f"{member.display_name}({str(member)})が{after.channel.name}({after.channel.id})に接続しました。")
         
         #leave
         elif before.channel and not after.channel:
-            logger.info(f"{str(member)}が{before.channel.name}({before.channel.id})から切断しました。")
+            logger.info(f"{member.display_name}({str(member)})が{before.channel.name}({before.channel.id})から切断しました。")
             
             if len(before.channel.members) < 2 and member.guild.voice_client:
                 if member.guild.voice_client.channel == before.channel:
