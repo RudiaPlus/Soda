@@ -16,9 +16,15 @@ testserverid = discord.Object(1059155328584908810)
 chat = 1072158278634713108  #1072158278634713108
 me = 870729549833465917
 server_icon = "https://cdn.discordapp.com/icons/1018858818345631745/a_8025349dd827dee56db7088ef01ccae7.webp?size=1024"
-announce = 1081251314958344313  #1081251314958344313
+
+
+announce = 1140326740158333048  #1081251314958344313
 request = 1093849433621401600 #1093849433621401600
+
+#tasks
 morningtime = datetime.time(hour=6, minute=30, tzinfo=JST)
+afternoontime = datetime.time(hour=10, minute=00, tzinfo=JST)
+eveningtime = datetime.time(hour=16, minute=00, tzinfo=JST)
 
 
 morning = True

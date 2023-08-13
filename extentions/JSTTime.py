@@ -19,7 +19,9 @@ def timeJST(type: str) -> str:
     elif type == "weekday":
         return(weekday)
     elif type == "m/d":
-        return(f"{now.month}/{now.day}")
+        month = str(now.month).zfill(2)
+        day = str(now.day).zfill(2)
+        return(f"{month}/{day}")
     else :
         return("3時12分")
     
