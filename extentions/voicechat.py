@@ -4,13 +4,17 @@ import asyncio
 from extentions import log, config, JSTTime
 from extentions.aclient import client
 import os
+import requests
+import time
+import re
 
 logger = log.setup_logger(__name__)
 dir = os.path.abspath(__file__ + "\\..\\")
-voice_name = "voiceroid\\VOICEROID2"
 channel_json_path = "jsons\\channels.json"
 
-print(os.path.join(dir, voice_name))
+host = "127.0.0.1"
+port = "50021"
+sleep_time = 0.5
 
 with open(os.path.join(dir, channel_json_path), encoding="UTF-8") as f:
     channels = json.load(f)
@@ -23,43 +27,45 @@ channel_register = {
     "general2_vc": ["general2_vc", "general2_vc_chat"],
 }
 
-def speak(text: str):
-     
-    """with pyvcroid2.VcRoid2(install_path = os.path.join(dir, voice_name)) as voice:
-        # Load language library
-        lang_list = voice.listLanguages()
-        if "standard" in lang_list:
-            voice.loadLanguage("standard")
-        elif 0 < len(lang_list):
-            voice.loadLanguage(lang_list[0])
-        else:
-            raise Exception("No language library")
+def audio_query(text, speaker, max_retry):
+    # 音声合成用のクエリを作成する
+    query_payload = {"text": text, "speaker": speaker}
+    for query_i in range(max_retry):
+        r = requests.post(f"http://{host}:{port}/audio_query", 
+                        params=query_payload, timeout=(10.0, 300.0))
+        if r.status_code == 200:
+            query_data = r.json()
+            break
+        time.sleep(1)
+    else:
+        raise ConnectionError("リトライ回数が上限に到達しました。 audio_query : ", "/", text[:30], r.text)
+    return query_data
+def synthesis(speaker, query_data,max_retry):
+    synth_payload = {"speaker": speaker}
+    for synth_i in range(max_retry):
+        r = requests.post(f"http://{host}:{port}/synthesis", params=synth_payload, 
+                          data=json.dumps(query_data), timeout=(10.0, 300.0))
+        if r.status_code == 200:
+            #音声ファイルを返す
+            return r.content
+        time.sleep(1)
+    else:
+        raise ConnectionError("音声エラー：リトライ回数が上限に到達しました。 synthesis : ", r)
 
-        # Load Voice
-        voice_list = voice.listVoices()
-        if 0 < len(voice_list):
-            voice.loadVoice(voice_list[0])
-        else:
-            raise Exception("No voice library")
+def text_to_speech(texts, speaker=8, max_retry=20):
+    if texts==False:
+        texts=""
+    texts=re.split("(?<=！|。|？)",texts)
+    for i, text in enumerate(texts):
+        # audio_query
+        query_data = audio_query(text,speaker,max_retry)
+        # synthesis
+        voice_data=synthesis(speaker,query_data,max_retry)
+        filepath = "TTS\\voice.wav"
+        with open(os.path.join(dir, filepath), mode = "wb") as f:
+            f.write(voice_data)
+        return os.path.join(dir, filepath)
         
-        # Set parameters
-        voice.param.volume = 1.00
-        voice.param.speed = 1.2
-        voice.param.pitch = 1.1
-        voice.param.emphasis = 0.95
-        voice.param.pauseMiddle = 80
-        voice.param.pauseLong = 100
-        voice.param.pauseSentence = 100
-        voice.param.masterVolume = 1.123
-        
-        filepath = "voiceroid\\"
-        filename = "voice.wav"
-        file = filepath + filename
-        speech, tts_events = voice.textToSpeech(text)
-    
-        with open(file, mode = "wb") as f:
-            f.write(speech)
-        return f"{filepath}voice.wav"""
 
 async def channels_write(dic):
     with open(os.path.join(dir, channel_json_path), "w", encoding="UTF-8") as f:
@@ -74,7 +80,7 @@ async def get_target_channels(vc_channel) -> list:
             target_chat_id = [channels[d][id_] for d in target_chat]
             return(target_chat_id)
 
-"""       
+      
 @client.tree.command(name="join", description="チャット読み上げを開始します")
 @discord.app_commands.describe(channel="参加するチャンネル(任意)")
 async def join(interaction:  discord.Interaction, channel:  discord.VoiceChannel = None):
@@ -147,4 +153,4 @@ async def leave(interaction:  discord.Interaction):
         logger.error(f"[leave]にてエラー{e}")
         embed = discord.Embed(title="ボイスチャンネルを退出出来ませんでした", description= "もう一度お試しください。このエラーが繰り返す場合、Botが落ちている可能性があります。",color = discord.Color.red())
         embed.set_author(name = "チャット読み上げ")
-        await interaction.followup.send(embed = embed)"""
+        await interaction.followup.send(embed = embed)

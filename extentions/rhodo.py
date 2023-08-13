@@ -121,7 +121,7 @@ def run_discord_bot():
                 if channelID in target_channels:
                     while message.guild.voice_client.is_playing():
                         await asyncio.sleep(0.1)
-                    source = discord.FFmpegPCMAudio(voicechat.speak(message.content))
+                    source = discord.FFmpegPCMAudio(executable="C:\\Program Files\\FFmpeg\\bin\\ffmpeg.exe",source=voicechat.text_to_speech(message.content))
                     message.guild.voice_client.play(source)
                     
         else:

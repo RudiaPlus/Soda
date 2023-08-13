@@ -15,4 +15,4 @@ docker-compose.yml
 venv
 extentions/logs/bot.log
 extentions/jsons/modmail.json
-extentions/voiceroid
+extentions/TTS
