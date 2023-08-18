@@ -384,8 +384,8 @@ class ModerateCommand(discord.app_commands.Group):
                     member_stats = "ユーザー(通常)アカウントです"
                 embed.add_field(name = "アカウントの種類", value = member_stats)
                 embed.add_field(name = "ID", value = member_got.id, inline = False)
-                embed.add_field(name = "サーバー参加日", value = "<t:{0}:F>( <t:{0}:R> )".format(member_got.joined_at.timestamp), inline = False)
-                embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(member_got.created_at.timestamp), inline = False)
+                embed.add_field(name = "サーバー参加日", value = "<t:{0}:F>( <t:{0}:R> )".format(member_got.joined_at.timestamp()), inline = False)
+                embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(member_got.created_at.timestamp()), inline = False)
                 embed.add_field(name = "所持しているロール", value = role, inline = True)
                 embed.add_field(name = "最高のロール", value = member_got.top_role, inline = True)
                 if member_got.is_timed_out() == True:
