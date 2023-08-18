@@ -22,9 +22,10 @@ announce = 1140326740158333048  #1081251314958344313
 request = 1093849433621401600 #1093849433621401600
 
 #tasks
-morningtime = datetime.time(hour=6, minute=30, tzinfo=JST)
+morningtime = datetime.time(hour=4, minute=00, tzinfo=JST)
 afternoontime = datetime.time(hour=10, minute=00, tzinfo=JST)
 eveningtime = datetime.time(hour=16, minute=00, tzinfo=JST)
+newdaytime = datetime.time(hour=0, minute=00, tzinfo=JST)
 
 
 morning = True

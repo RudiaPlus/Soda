@@ -65,7 +65,10 @@ def run_discord_bot():
     @client.event
     async def setup_hook() -> None:
         morning.start()
-        maintenances.maintenance_timer.start()   
+        afternoon.start()
+        evening.start()
+        new_days.start()
+        maintenances.maintenance_timer.start()  
         logger.info("タスクを開始しました")
 
     @client.event
@@ -380,6 +383,16 @@ def run_discord_bot():
 
         except Exception as e:
             logger.exception(f"[evening]にてエラー：{e}") 
+            
+    @tasks.loop(time=config.newdaytime)
+    async def new_days():
+        try:
+            logger.info("時間になりました。０時ルーティンを始めます")
+            await reminder.remind("evening")
+            await responses.get_response("reset", reset=True)
+
+        except Exception as e:
+            logger.exception(f"[new_days]にてエラー：{e}") 
 
     TOKEN = config.token
     client.run(TOKEN)
