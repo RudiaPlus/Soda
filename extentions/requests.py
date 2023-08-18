@@ -233,13 +233,26 @@ async def doctor_add(user, name, tag):
     return (f"Dr. {name}#{tag}")
 
 
-async def send_request(user, operator, skill, skillLevel, module: str = None, module_rank: str = None, lv: int = None):
+async def send_request(user, operator, skill = None, skill_level = None, module: str = None, module_rank: str = None, lv: int = None, rarity = None):
     if module == None:
         module_name = ""
         module_rank = ""
     else:
         module_name = f"・{module}/{module_rank}"
+        
+    if skill == None:
+        skill_name = ""
+        skill_level = ""
+    else:
+        skill_name = f"・{skill}/{skill_level}"
     lv_name = "" if lv == None else f"・昇進2/レベル{lv}以上"
+    
+    if rarity == 2:
+        v_name = "" if lv == None else f"・昇進1/レベル{lv}以上"
+        
+    elif rarity <= 1:
+        v_name = "" if lv == None else f"・レベル{lv}以上"
+    
     requests = await request_load()
     id = 0 if not requests else (requests[-1]["id"] + 1)
     request = {
@@ -247,7 +260,7 @@ async def send_request(user, operator, skill, skillLevel, module: str = None, mo
         "userID": user.id,
         "operator": operator,
         "skill": skill,
-        "skillLevel": skillLevel,
+        "skillLevel": skill_level,
         "module": module,
         "module_rank": module_rank,
         "lv": lv,
@@ -258,7 +271,7 @@ async def send_request(user, operator, skill, skillLevel, module: str = None, mo
     channel = client.get_channel(config.request)
     embed = discord.Embed(
         title=f"サポートオペレーター「{operator}」のリクエスト",
-        description=f"リクエスト者：{user.mention}\n\n**希望条件**\n{lv_name}\n・{skill}/{skillLevel}\n{module_name}\n\n**是非ご協力ください！**"
+        description=f"リクエスト者：{user.mention}\n\n**希望条件**\n{lv_name}\n{skill_name}\n{module_name}\n\n**是非ご協力ください！**"
     )
     embed.set_author(name=str(user), icon_url=user.avatar)
     embed.set_footer(
@@ -281,8 +294,9 @@ async def request_complete(id):
 
 class OperatorSkillButton(discord.ui.View):
 
-    def __init__(self, operators, skills, operator, lv):
+    def __init__(self, operators, skills, operator, lv, rarity):
         self.lv = lv
+        self.rarity = rarity
         self.operators = operators
         self.operator = operator
         super().__init__(timeout=300)
@@ -294,11 +308,28 @@ class OperatorSkillButton(discord.ui.View):
                                          style=discord.ButtonStyle.primary)
 
         async def button_callback(interaction: discord.Interaction):
+            
+            if self.rarity == 2:
+                if self.lv == 0:
+                    level = ""
+                else:
+                    level = f"昇進1/レベル{self.lv}"
+                embed = discord.Embed(
+                    title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{label}/レベル7\n")
+                # リクエスト
+                await send_request(user=interaction.user,
+                                operator=self.operator,
+                                skill=label,
+                                skill_level="レベル7",
+                                lv=self.lv,
+                                rarity = 2)
+            
             embed = discord.Embed(
                 title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"「{label}」を選択しました。\nスキルレベルの条件を選んでください。")
-            await interaction.response.edit_message(embed=embed, view=OperatorLevelButton(self.operators, label, self.operator, self.lv))
+            await interaction.response.edit_message(embed=embed, view=OperatorLevelButton(self.operators, label, self.operator, self.lv, self.rarity))
 
         button_skill.callback = button_callback
+        
         self.add_item(button_skill)
 
     @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
@@ -348,7 +379,7 @@ class OperatorLevelButton(discord.ui.View):
             await send_request(user=interaction.user,
                                operator=self.operator,
                                skill=self.skill,
-                               skillLevel=skillLevel,
+                               skill_level=skillLevel,
                                lv=self.lv)
             await interaction.response.edit_message(embed=embed, view=None)
 
@@ -375,7 +406,7 @@ class OperatorLevelButton(discord.ui.View):
             await send_request(user=interaction.user,
                                operator=self.operator,
                                skill=self.skill,
-                               skillLevel=skillLevel,
+                               skill_level=skillLevel,
                                lv=self.lv)
             await interaction.response.edit_message(embed=embed, view=None)
 
@@ -430,7 +461,7 @@ class OperatorModuleButton(discord.ui.View):
         await send_request(user=interaction.user,
                            operator=self.operator,
                            skill=self.skill,
-                           skillLevel=self.skillLevel,
+                           skill_level=self.skillLevel,
                            lv=self.lv)
         await interaction.response.edit_message(embed=embed, view=None)
 
@@ -466,7 +497,7 @@ class OperatorModuleLevelButton(discord.ui.View):
         await send_request(user=interaction.user,
                            operator=self.operator,
                            skill=self.skill,
-                           skillLevel=self.skillLevel,
+                           skill_level=self.skillLevel,
                            module=self.module,
                            module_rank="ランク1以上",
                            lv=self.lv)
@@ -485,7 +516,7 @@ class OperatorModuleLevelButton(discord.ui.View):
         await send_request(user=interaction.user,
                            operator=self.operator,
                            skill=self.skill,
-                           skillLevel=self.skillLevel,
+                           skill_level=self.skillLevel,
                            module=self.module,
                            module_rank="ランク2以上",
                            lv=self.lv)
@@ -504,7 +535,7 @@ class OperatorModuleLevelButton(discord.ui.View):
         await send_request(user=interaction.user,
                            operator=self.operator,
                            skill=self.skill,
-                           skillLevel=self.skillLevel,
+                           skill_level=self.skillLevel,
                            module=self.module,
                            module_rank="ランク3",
                            lv=self.lv)
@@ -548,6 +579,22 @@ async def support_request(interaction: discord.Interaction,
     correct = 0
     for index in operators:
         if operators[index]["name"] == operator:
+            if operators[index]["rarity"] <= 1:
+                if level > 30:
+                    break
+                elif level == 0:
+                    level = ""
+                else:
+                    level = f"レベル{level}"
+                    embed = discord.Embed(
+                    title=f"サポートオペレーター「{operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{operator} {level}")
+                correct = 1
+                # リクエスト
+                await send_request(user=interaction.user,
+                                operator=operator,
+                                lv=level,
+                                rarity = operators[index]["rarity"])
+                await interaction.response.edit_message(embed=embed, view=None)
             if operators[index]["rarity"] == 2 and level > 55:
                 break
             if operators[index]["rarity"] == 3 and level > 70:
@@ -570,7 +617,7 @@ async def support_request(interaction: discord.Interaction,
 
             embed = discord.Embed(title=f"サポートオペレーター「{operator}」のリクエスト",
                                   description=f"スキルの選択をしてください\n{skill_name}")
-            await interaction.followup.send(embed=embed, view=OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=level), ephemeral=True)
+            await interaction.followup.send(embed=embed, view=OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=level, rarity = operators[index]["rarity"]), ephemeral=True)
     if correct == 0:
         await interaction.followup.send(
-            "正しいオペレーター名、またはレアリティごとの最大値を超えないレベルを入力してください！", ephemeral=True)
+            "正しいオペレーター名、またはレアリティごとの最大値を超えないレベルを入力してください！\nまた、☆1、☆2のオペレーターは対応していません！", ephemeral=True)
