@@ -379,9 +379,9 @@ class ModerateCommand(discord.app_commands.Group):
                 if member_got.system == True:
                     member_stats = "システム(Discord公式)アカウントです"
                 elif member_got.bot == True:
-                    member_stats = "Botアカウントです"
+                    member_stats = "Botアカウント"
                 else:
-                    member_stats = "ユーザー(通常)アカウントです"
+                    member_stats = "ユーザー(通常)アカウント"
                 embed.add_field(name = "アカウントの種類", value = member_stats)
                 embed.add_field(name = "ID", value = member_got.id, inline = False)
                 embed.add_field(name = "サーバー参加日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.joined_at.timestamp())), inline = False)
@@ -400,11 +400,11 @@ class ModerateCommand(discord.app_commands.Group):
                 embed.set_author(name=str(member_got),
                                  icon_url=member_got.avatar)
                 if member_got.system == True:
-                    member_stats = "システム(Discord公式)アカウントです"
+                    member_stats = "システム(Discord公式)アカウント"
                 elif member_got.bot == True:
-                    member_stats = "Botアカウントです"
+                    member_stats = "Botアカウント"
                 else:
-                    member_stats = "ユーザー(通常)アカウントです"
+                    member_stats = "ユーザー(通常)アカウント"
                 embed.add_field(name = "アカウントの種類", value = member_stats)
                 embed.add_field(name = "ID", value = member_got.id, inline = False)
                 embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.created_at.timestamp())), inline = False)
