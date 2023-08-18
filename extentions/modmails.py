@@ -224,8 +224,7 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
     with open(os.path.join(dir, modmail_json_path), mode = "w", encoding="utf-8") as f:
         json.dump(messages, f, indent=2, ensure_ascii=False)
     
-    with open(os.path.join(dir, modmail_json_path), mode = "r", encoding="utf-8") as f:
-        messages_json = discord.File(fp = f, filename = "messages.json")
+    messages_json = discord.File(fp = os.path.join(dir, modmail_json_path), filename = "messages.json")
     
     speakers = ""
     

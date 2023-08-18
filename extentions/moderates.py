@@ -10,7 +10,7 @@ from typing import List
 logger = log.setup_logger(__name__)
 dir = os.path.abspath(__file__ + "/../")
 puni_json_path = "jsons/punishments.json"
-
+jst_tz = JSTTime.timeJST("JST")
 
 async def punishment_delete(member, id):
     punishments = await punishment_load()
@@ -340,7 +340,7 @@ async def unban(interaction:  discord.Interaction, member:  discord.Member = Non
         logger.error(f"[unban]にてエラー：{e}")
 
 
-@discord.app_commands.default_permissions(administrator=True)
+@discord.app_commands.default_permissions(view_audit_log=True)
 @discord.app_commands.guild_only()
 class ModerateCommand(discord.app_commands.Group):
     @discord.app_commands.command(name="show", description="指定されたメンバーの情報/処罰履歴を確認します。#botmoderate限定")
@@ -372,15 +372,24 @@ class ModerateCommand(discord.app_commands.Group):
                 role = "\n".join(roles)
 
                 embed = discord.Embed(title=f"{member_got.display_name}さんの情報",
-                                      description=f"{member_got.mention}\nID: {member_got.id}\nアカウント作成日: {member_got.created_at}\n", color=member_got.accent_color)
+                                      description=f"{member_got.mention}\nユーザーネーム: {member_got.global_name}", color=member_got.accent_color)
                 embed.set_thumbnail(url=member_got.display_avatar)
                 embed.set_author(name=str(member_got),
                                  icon_url=member_got.avatar)
-                embed.add_field(name="所持しているロール", value=role, inline=True)
-                embed.add_field(
-                    name="最高のロール", value=member_got.top_role, inline=True)
+                if member_got.system == True:
+                    member_stats = "システム(Discord公式)アカウントです"
+                elif member_got.bot == True:
+                    member_stats = "Botアカウントです"
+                else:
+                    member_stats = "ユーザー(通常)アカウントです"
+                embed.add_field(name = "アカウントの種類", value = member_stats)
+                embed.add_field(name = "ID", value = member_got.id, inline = False)
+                embed.add_field(name = "サーバー参加日", value = "<t:{0}:F>( <t:{0}:R> )".format(member_got.joined_at.timestamp), inline = False)
+                embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(member_got.created_at.timestamp), inline = False)
+                embed.add_field(name = "所持しているロール", value = role, inline = True)
+                embed.add_field(name = "最高のロール", value = member_got.top_role, inline = True)
                 if member_got.is_timed_out() == True:
-                    embed.add_field(name="タイムアウト状態", value=f"<t:{0}:F>( <t:{0}:R> )まで".format(
+                    embed.add_field(name="タイムアウト状態", value="<t:{0}:F>( <t:{0}:R> )まで".format(
                         member_got.timed_out_until.timestamp), inline=False)
 
             else:
