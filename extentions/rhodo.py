@@ -1,6 +1,6 @@
 import discord
 from extentions import (moderates, reminder, responses, config, voicechat,
-                        evjson, JSTTime, modmails, log, maintenances, requests)
+                        evjson, JSTTime, modmails, log, maintenances, requests, recruit)
 from extentions.aclient import client
 import re
 import asyncio
@@ -56,6 +56,7 @@ def run_discord_bot():
             client.add_view(modmails.ModmailButton())
             client.add_view(modmails.ModmailFinish())
             client.add_view(modmails.ModmailControl())
+            client.add_view(ToolButtons())
             
         except Exception as e:
             logger.exception(f"[on_ready]にて エラー：{e}")
@@ -171,9 +172,36 @@ def run_discord_bot():
         embed.add_field(
             name="「Modmail」", value="運営スタッフへの問い合わせが簡単にできます\n・**/modmail**：運営スタッフへの問い合わせを開始します", inline=False)
         embed.add_field(name="「ボイスチャット読み上げ」", value="対応したチャットの読み上げをします\n・**/join**：読み上げを開始します\n・**/leave**：ボイスチャットから切断します", inline=False)
+        embed.add_field(name = "「公開求人シミュレーター」", value = "公開求人のタグから獲得できるオペレーターを表示します。ドロップダウンメニューからタグを一つずつ指定してください。")
 
         await interaction.followup.send(embed=embed, ephemeral=True)
 
+    class ToolButtons(discord.ui.View):
+        def __init__(self):
+            super().__init__(timeout = None)
+        
+        @discord.ui.button(label = "公開求人ツール", custom_id = "recruitbutton", style = discord.ButtonStyle.primary, emoji = "📄")
+        async def recruitbutton(self, interaction: discord.Interaction, button: discord.ui.Button):
+            await interaction.response.defer(ephemeral=True)
+            
+            selected_tags = []
+            view = recruit.TagSelectView(selected_tags=selected_tags)
+            
+            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+            await interaction.followup.send(embed = embed, view = view, ephemeral=True)            
+    
+    @client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = config.testserverid)
+    async def tool_form(interaction: discord.Interaction, channelid: int = 1142491583757951036):
+        await interaction.response.defer(ephemeral = True)
+        
+        channel = await client.fetch_channel(channelid)
+        embed = discord.Embed(title = "コミュニティツール", description = "下のボタンから私の便利ツールをご利用できます！", color = discord.Color.red())
+        embed.add_field(name = "公開求人ツール", value = "公開求人のタグから獲得できるオペレーターを表示します。\nタイムアウトが設定されているので、リセットする時はボタンを押し直してください！")
+        embed.set_author(name = "ロード", icon_url=client.user.avatar)
+        await channel.send(embed = embed, view = ToolButtons())
+        
+        await interaction.followup.send("完了しました！")
+    
     @client.tree.command(name="ping",
                          description="botの応答時間を確認します",
                          guild=config.testserverid)

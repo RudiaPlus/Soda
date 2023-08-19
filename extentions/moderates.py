@@ -366,8 +366,10 @@ class ModerateCommand(discord.app_commands.Group):
 
                 # ロール
                 roles = []
-                for index in member_got.roles:
-                    roles.append(index.name)
+                
+                for index, role in enumerate(member_got.roles):
+                    role_mention = role.name if index == 0 else role.mention
+                    roles.append(role_mention)
 
                 role = "\n".join(roles)
 
@@ -387,7 +389,7 @@ class ModerateCommand(discord.app_commands.Group):
                 embed.add_field(name = "サーバー参加日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.joined_at.timestamp())), inline = False)
                 embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.created_at.timestamp())), inline = False)
                 embed.add_field(name = "所持しているロール", value = role, inline = True)
-                embed.add_field(name = "最高のロール", value = member_got.top_role, inline = True)
+                embed.add_field(name = "最高のロール", value = "<@&{0}>".format(member_got.top_role.id), inline = True)
                 if member_got.is_timed_out() == True:
                     embed.add_field(name="タイムアウト状態", value="<t:{0}:F>( <t:{0}:R> )まで".format(
                         round(member_got.timed_out_until.timestamp())), inline=False)
