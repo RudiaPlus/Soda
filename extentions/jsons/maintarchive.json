@@ -34,5 +34,11 @@
         "startTime": 1689210000,
         "endTime": 1689231600,
         "doing": "False"
+    },
+    {
+        "type": "MAINTENANCE",
+        "startTime": 1694048400,
+        "endTime": 1694070000,
+        "doing": "False"
     }
 ]
