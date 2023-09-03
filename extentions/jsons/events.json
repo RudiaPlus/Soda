@@ -1,24 +1,13 @@
 {
-    "act15sre": {
-        "id": "act15sre",
-        "type": "SIDESTORY",
+    "act2bossrush": {
+        "id": "act2bossrush",
+        "type": "BOSS_RUSH",
         "stageAdd": "False",
-        "name": "将進酒(復刻)",
-        "link": "https://00m.in/6n4Qf",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/26d663c7aba752280f7692237c360a28.png",
-        "startTime": 1691737200,
-        "endTime": 1692557999,
-        "rewardEndTime": 1692903599
-    },
-    "act14mini": {
-        "id": "act14mini",
-        "type": "MINISTORY",
-        "stageAdd": "False",
-        "name": "春分",
-        "link": "https://arknights.jp/news/347",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/52cd2f623e11ce408eae2c19f828de75.png",
-        "startTime": 1692687600,
-        "endTime": 1693249199,
-        "rewardEndTime": 1693508399
+        "name": "導灯の試練 #2",
+        "link": "https://00m.in/0DOz7",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/b8d23ee4192fc200918b7e919a9203f5.png",
+        "startTime": 1693465200,
+        "endTime": 1694026799,
+        "rewardEndTime": 1694285999
     }
 }

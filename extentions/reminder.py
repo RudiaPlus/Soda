@@ -172,6 +172,21 @@ async def remind(mode = "morning"):
                 embed.set_author(name="オムニバスストーリー")
                 embed.set_image(url=eventpic)
                 embeds.append(embed)
+                
+            elif events[i]["type"] == "BOSS_RUSH":
+                try:
+                    link = events[i]["link"]
+                    eventpic = events[i]["pic"]
+                except Exception:
+                    pass
+
+                embed = discord.Embed(title=events[i]["name"],
+                                        description=events[i]["time"],
+                                        color=0xFFBA00,
+                                        url=link)
+                embed.set_author(name="導灯の試練")
+                embed.set_image(url=eventpic)
+                embeds.append(embed)
 
             elif events[i]["type"] == "MAIN":
                 try:
