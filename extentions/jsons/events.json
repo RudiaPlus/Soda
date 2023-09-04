@@ -9,5 +9,33 @@
         "startTime": 1693465200,
         "endTime": 1694026799,
         "rewardEndTime": 1694285999
+    },
+    "act24side": {
+        "id": "act24side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "紅炎遣らう落葉",
+        "link": "https://arknights.jp/news/352",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/e2c3f764a7e941c4762ea21fff52b8ce.png",
+        "startTime": 1694070000,
+        "endTime": 1695236399,
+        "rewardEndTime": 1695841199,
+        "additionalStage": [
+            {
+                "name": "アイルーの受付カウンター",
+                "startTime": 1694674800
+            }
+        ]
+    },
+    "act1sandbox": {
+        "id": "act1sandbox",
+        "type": "SANDBOX",
+        "stageAdd": "False",
+        "name": "導灯の試練 #2",
+        "link": "https://arknights.jp/news/353",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/d72e197a853da6c2767d59c2121d3edf.png",
+        "startTime": 1694070000,
+        "endTime": 1697050799,
+        "rewardEndTime": 1697655599
     }
 }
