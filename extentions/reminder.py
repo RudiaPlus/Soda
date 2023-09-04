@@ -217,6 +217,33 @@ async def remind(mode = "morning"):
                 embed.set_author(name="理性保護&物資回収キャンペーン")
                 embed.set_image(url=eventpic)
                 embeds.append(embed)
+                
+            elif events[i]["type"] == "ROGUELIKE":
+                try:
+                    link = events[i]["link"]
+                    eventpic = events[i]["pic"]
+                except Exception as e:
+                    logger.warn(f"[morning:main]: {e}")
+                    
+                embed = discord.Embed(title=events[i]["name"],
+                                        color=0xFFFFFF,
+                                        url=link)
+                embed.set_author(name="統合戦略")
+                embed.set_image(url=eventpic)
+                
+                if events[i]["month"]:
+                    month = events[i]["month"]
+                    content = events[i]["content"]
+                    updateTime = events[i]["updateTime"]
+                    embed.add_field(name = f"{month}月の更新内容", value = f"{content}\n\n{updateTime}", inline = False)
+                    
+                    if events[i]["nextmonth"]:
+                        nextmonth = events[i]["nextmonth"]
+                        nextcontent = events[i]["nextcontent"]
+                        nextUpdateTime = events[i]["nextUpdateTime"]
+                        embed.add_field(name = f"{nextmonth}月の更新内容", value = f"{nextcontent}\n\n{nextUpdateTime}", inline = False)
+                
+                embeds.append(embed)                
 
             else:
                 embed = discord.Embed(title=events[i]["name"],

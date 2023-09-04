@@ -1,4 +1,28 @@
 {
+    "dis_rogue_2": {
+        "id": "dis_rogue_2",
+        "type": "ROGUELIKE",
+        "name": "統合戦略「ミヅキと紺碧の樹」",
+        "news": "https://arknights.jp/news/331",
+        "link": "https://00m.in/aJUjd",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/0c5650dae8b62bf4df01aeb63a6198b7.png",
+        "startTime": 1684825200,
+        "endTime": 1706727599,
+        "monthlyUpdate": [
+            {
+                "month": 8,
+                "startTime": 1690830000,
+                "endTime": 1693508399,
+                "contents": "8月ph"
+            },
+            {
+                "month": 9,
+                "startTime": 1693508400,
+                "endTime":  1696100399,
+                "contents": "- 【多面探索】モード実装\n- 追憶映写04: ハイモア「星海の泡沫」"
+            }
+        ]
+    },
     "act2bossrush": {
         "id": "act2bossrush",
         "type": "BOSS_RUSH",
