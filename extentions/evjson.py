@@ -137,12 +137,13 @@ def eventget():
                 type = event_dic[event_value_list[i]]["type"]
                 startTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_value_list[i]]["startTime"])
                 endTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_value_list[i]]["endTime"])
+                news = event_dic[event_end_list[i]]["news"]
                 pic = event_dic[event_value_list[i]]["pic"]
             
             except KeyError as e:
                 logger.exception(f"[event_value_list]にてエラー：{e}")
             
-            events.append({"name": name, "dif": "future", "type": type, "time": f"開始: {startTime}\n終了: {endTime}", "pic": pic})
+            events.append({"name": name, "dif": "future", "type": type, "time": f"開始: {startTime}\n終了: {endTime}", "news": news, "pic": pic})
             
     return(events)
 

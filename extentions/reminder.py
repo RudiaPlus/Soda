@@ -237,9 +237,11 @@ async def remind(mode = "morning"):
 
         else:
             eventpic = events[i]["pic"]
+            eventnews = events[i]["news"]
             embed = discord.Embed(title=events[i]["name"],
                                     description=events[i]["time"],
-                                    color=0xba80ea)
+                                    color=0xba80ea,
+                                    url = eventnews)
             embed.set_author(name="開催予定のイベント")
             embed.set_image(url=eventpic)
             embeds.append(embed)
