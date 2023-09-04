@@ -187,6 +187,21 @@ async def remind(mode = "morning"):
                 embed.set_author(name="導灯の試練")
                 embed.set_image(url=eventpic)
                 embeds.append(embed)
+                
+            elif events[i]["type"] == "SANDBOX":
+                try:
+                    link = events[i]["link"]
+                    eventpic = events[i]["pic"]
+                except Exception:
+                    pass
+
+                embed = discord.Embed(title=events[i]["name"],
+                                        description=events[i]["time"],
+                                        color=0xB0DB34,
+                                        url=link)
+                embed.set_author(name="生息演算")
+                embed.set_image(url=eventpic)
+                embeds.append(embed)
 
             elif events[i]["type"] == "MAIN":
                 try:
