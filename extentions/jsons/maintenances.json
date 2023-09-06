@@ -3,6 +3,7 @@
     "type": "MAINTENANCE",
     "startTime": 1694048400,
     "endTime": 1694070000,
-    "doing": "False"
+    "doing": false,
+    "link": "https://www.arknights.jp/news/351"
     }
 ]

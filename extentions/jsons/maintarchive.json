@@ -3,42 +3,49 @@
         "type": "DATA",
         "startTime": 1681452000,
         "endTime": 1681452600,
-        "doing": "False"
+        "doing": false,
+        "link": null
     },
     {
         "type": "DATA",
         "startTime": 1682575200,
         "endTime": 1682575800,
-        "doing": "False"
+        "doing": false,
+        "link": null
     },
     {
         "type": "MAINTENANCE",
         "startTime": 1684803600,
         "endTime": 1684825200,
-        "doing": "False"
+        "doing": false,
+        "link": null
     },
     {
         "type": "EMERGENCY",
         "startTime": 1685347200,
         "endTime": 1685354400,
-        "doing": "False"
+        "doing": false,
+        "link": null
     },
     {
         "type": "DATA",
         "startTime": 1686636000,
         "endTime": 1686636600,
-        "doing": "False"
+        "doing": false,
+        "link": null
     },
     {
         "type": "MAINTENANCE",
         "startTime": 1689210000,
         "endTime": 1689231600,
-        "doing": "False"
+        "doing": false,
+        "link": null
     },
     {
         "type": "MAINTENANCE",
         "startTime": 1694048400,
         "endTime": 1694070000,
-        "doing": "False"
+        "doing": false,
+        "link": "https://www.arknights.jp/news/351"
     }
 ]

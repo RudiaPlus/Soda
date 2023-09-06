@@ -33,19 +33,23 @@ async def maintenance_list():
                     
             elif maintenances[entry]["type"] == "EMERGENCY":
                 maint_name = "緊急メンテナンス"
+                
+            link = maintenances[entry]["link"]
                         
             maint_start = "<t:{0}:F>( <t:{0}:R> )".format(maintenances[entry]["startTime"])
             maint_end = "<t:{0}:F>( <t:{0}:R> )".format(maintenances[entry]["endTime"])
-            maint_list.append({"name": maint_name, "time": f"開始:{maint_start}\n終了:{maint_end}"})
+            maint_list.append({"name": maint_name, "time": f"開始:{maint_start}\n終了:{maint_end}", "link": link})
     
     return maint_list
     
 async def maintenance_end(maint_name: str, entry: int):
     channel = client.get_channel(config.announce)
     maintenances = await read_json()
+    link = maintenances[entry]["link"]
     embed = discord.Embed(title = f"{maint_name}が終了しました！",
                                       description = "サーバーに入れる状態です！",
-                                      color = 0x8dbf9d
+                                      color = 0x8dbf9d,
+                                      url = link
                                       )
     await channel.send("<@&1090976873774854177>", embed = embed)
     del maintenances[entry]
@@ -72,20 +76,22 @@ async def maintenance_timer():
                     
             maint_start = maintenances[entry]["startTime"]
             maint_end = maintenances[entry]["endTime"]
+            link = maintenances[entry]["link"]
                 
-            if maintenances[entry]["doing"] == "False" and maint_start < time.time():
+            if maintenances[entry]["doing"] == False and maint_start < time.time():
                 #メンテナンス開始
                 channel = client.get_channel(config.announce)
                 start = "<t:{0}:F>( <t:{0}:R> )".format(maint_start)
                 end = "<t:{0}:F>( <t:{0}:R> )".format(maint_end)
                 embed = discord.Embed(title = f"{maint_name}が開始されました！",
                                       description = f"開始:{start}\n終了:{end}",
-                                      color = 0xf5b642
+                                      color = 0xf5b642,
+                                      url = link
                                       )
                 await channel.send("<@&1090976873774854177>", embed = embed)    
                     
                 #ここまで
-                maintenances[entry]["doing"] = "True"
+                maintenances[entry]["doing"] = True
                 await write_json(maintenances)
                                     
             if maint_end < time.time():
