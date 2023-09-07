@@ -47,7 +47,7 @@ async def maintenance_list():
     return maint_list
     
 async def maintenance_end(maint_name: str, entry: int):
-    channel = client.get_channel(config.announce)
+    channel = client.get_channel(config.maintenance)
     maintenances = await read_json()
     link = maintenances[entry]["link"]
     embed = discord.Embed(title = f"{maint_name}が終了しました！",
