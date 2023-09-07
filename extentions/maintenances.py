@@ -6,10 +6,12 @@ import time
 import os
 from extentions import log, config, JSTTime
 from extentions.aclient import client
+from datetime import datetime
 
 logger = log.setup_logger(__name__)
 dir = os.path.abspath(__file__ + "/../")
 json_dir = "jsons/maintenances.json"
+tz_JST = JSTTime.tz_JST
 
 async def write_json(dic):
     with open(os.path.join(dir, json_dir), "w", encoding = "UTF-8") as f:
@@ -24,7 +26,9 @@ async def maintenance_list():
     maintenances = await read_json()
     maint_list = []
     for entry in range(len(maintenances)):
-        if JSTTime.timetoJST(maintenances[entry]["startTime"], "m/d") == JSTTime.timeJST("m/d"):
+        now = datetime.now(tz_JST)
+        startTime = datetime.fromtimestamp(maintenances[entry]["startTime"])
+        if now.month == startTime.month and now.day == startTime.day:
             if maintenances[entry]["type"] == "DATA":
                 maint_name = "データ更新"
                     
@@ -43,7 +47,7 @@ async def maintenance_list():
     return maint_list
     
 async def maintenance_end(maint_name: str, entry: int):
-    channel = client.get_channel(config.announce)
+    channel = client.get_channel(config.maintenance)
     maintenances = await read_json()
     link = maintenances[entry]["link"]
     embed = discord.Embed(title = f"{maint_name}が終了しました！",
@@ -80,7 +84,7 @@ async def maintenance_timer():
                 
             if maintenances[entry]["doing"] == False and maint_start < time.time():
                 #メンテナンス開始
-                channel = client.get_channel(config.announce)
+                channel = client.get_channel(config.maintenance)
                 start = "<t:{0}:F>( <t:{0}:R> )".format(maint_start)
                 end = "<t:{0}:F>( <t:{0}:R> )".format(maint_end)
                 embed = discord.Embed(title = f"{maint_name}が開始されました！",
