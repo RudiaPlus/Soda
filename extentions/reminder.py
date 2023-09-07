@@ -61,7 +61,8 @@ async def remind(mode = "morning"):
     for i in range(len(maintenance)):
         embed = discord.Embed(title=maintenance[i]["name"],
                                 description=maintenance[i]["time"],
-                                color=0xf5b642)
+                                color=0xf5b642,
+                                url = maintenance[i]["link"])
         embed.set_author(name="メンテナンス")
         embeds.append(embed)
 

@@ -58,6 +58,8 @@ def run_discord_bot():
             client.add_view(modmails.ModmailControl())
             client.add_view(ToolButtons())
             
+            maintenances.maintenance_timer.start()  
+            
         except Exception as e:
             logger.exception(f"[on_ready]にて エラー：{e}")
             
@@ -69,7 +71,7 @@ def run_discord_bot():
         afternoon.start()
         evening.start()
         new_days.start()
-        maintenances.maintenance_timer.start()  
+        
         logger.info("タスクを開始しました")
 
     @client.event

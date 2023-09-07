@@ -1,10 +1,10 @@
 import datetime
+t_delta = datetime.timedelta(hours=9)
+tz_JST = datetime.timezone(t_delta, 'JST')
 
 def timeJST(type: str) -> str:
     
-    t_delta = datetime.timedelta(hours=9)
-    JST = datetime.timezone(t_delta, 'JST')
-    now = datetime.datetime.now(JST)
+    now = datetime.datetime.now(tz_JST)
     week = ["月","火","水","木","金","土","日"]
     weekday = week[now.weekday()]
 
@@ -15,7 +15,7 @@ def timeJST(type: str) -> str:
     elif type == "hour":
         return(f"{now.hour}時{now.minute}分")
     elif type == "JST":
-        return(JST)
+        return(tz_JST)
     elif type == "weekday":
         return(weekday)
     elif type == "m/d":
@@ -27,9 +27,7 @@ def timeJST(type: str) -> str:
     
 def timetoJST(timestamp: int, type: str) -> str:
     
-    t_delta = datetime.timedelta(hours=9)
-    JST = datetime.timezone(t_delta, 'JST')
-    time = (datetime.datetime.fromtimestamp(timestamp, JST))
+    time = (datetime.datetime.fromtimestamp(timestamp, tz_JST))
     week = ["月","火","水","木","金","土","日"]
     weekday = week[time.weekday()]
     
