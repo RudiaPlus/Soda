@@ -48,5 +48,15 @@
         "type": "vc_chat",
         "id": 1095336603976749228,
         "name": "🔇雑談2チャット"
+    },
+    "afk_vc": {
+        "type": "vc",
+        "id": 1018910694374113373,
+        "name": "🪦石棺(AFK)"
+    },
+    "moderator_vc": {
+        "type": "vc",
+        "id": 1099612573021778000,
+        "name": "moderator-voice"
     }
 }

@@ -25,6 +25,7 @@ channel_register = {
     "spoiler_vc": ["spoiler_vc", "spoiler_vc_chat"],
     "general1_vc": ["general1_vc", "general1_vc_chat"],
     "general2_vc": ["general2_vc", "general2_vc_chat"],
+    "moderator_vc": ["moderator_vc"]
 }
 
 def audio_query(text, speaker, max_retry):
