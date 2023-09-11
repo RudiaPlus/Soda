@@ -16,6 +16,7 @@ async def remind(mode = "morning"):
     eventcount = evjson.eventcount()
     maintenance = await maintenances.maintenance_list()
     channel = client.get_channel(config.announce)
+    print(channel.last_message_id)
     message = await channel.fetch_message(channel.last_message_id)
     embeds = []
     file = None
