@@ -135,6 +135,33 @@ def run_discord_bot():
             
         else:
             return
+    
+    class VoiceSpeechButtons(discord.ui.View):
+        def __init__(self, join_channel, target_chat_id):
+            super().__init__(timeout = 60)
+            self.vc_channels = voicechat.channels
+            self.join_channel = join_channel
+            self.target_chat_id = target_chat_id
+            
+        @discord.ui.button(label = "はい", style = discord.ButtonStyle.success, emoji = "✅")
+        async def speechstart(self, interaction: discord.Interaction, button: discord.ui.Button):
+                    
+            await self.join_channel.connect(timeout = 5, self_deaf = True)
+            
+            target_chat_str = "<#" + ">, <#".join(map(str,self.target_chat_id)) + ">"
+            
+            embed = discord.Embed(title="ボイスチャンネルに接続しました", description= f"チャット読み上げを開始します。\n`/leave`で読み上げを終了します。", color = discord.Color.green())
+            embed.add_field(name = "接続したチャンネル", value = f"<#{self.join_channel.id}>")
+            embed.add_field(name = "読み上げ対象のチャンネル", value = target_chat_str)
+            embed.set_author(name = "チャット読み上げ")
+            await interaction.message.edit(embed = embed, view = None)
+    
+        @discord.ui.button(label = "いいえ", style = discord.ButtonStyle.danger)
+        async def dontspeech(self, interaction: discord.Interaction, button: discord.ui.Button):
+            
+            await interaction.message.delete()
+            
+            
         
     @client.event
     async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
@@ -157,6 +184,32 @@ def run_discord_bot():
         #move
         elif before.channel != after.channel:
             logger.info(f"{str(member)}が{before.channel.name}({before.channel.id})から{after.channel.name}({after.channel.id})に接続しました。")
+            
+        #suggest
+        vc_channels = voicechat.channels
+        
+        if after.channel and len(after.channel.members) == 1 and not before.channel and not member.guild.voice_client:
+            
+            join_channel = after.channel
+            
+            target_chat_id = await voicechat.get_target_channels(join_channel)
+                    
+            if len(target_chat_id) > 1:
+            
+                for index in vc_channels.values():
+                    
+                    if index["id"] == join_channel.id and index["type"] == "vc":
+                        
+                        
+                            send_channel = client.get_channel(target_chat_id[-1])
+                        
+                            embed = discord.Embed(title = "ボイスチャットに接続しました！", description = "聞き専チャットを読み上げる機能を有効にしますか？\n後で`/join`コマンドを使用することでも読み上げを始めます！", color = discord.Color.blue())
+                            embed.set_author(name = "チャット読み上げ")
+                            await send_channel.send(embed = embed, view = VoiceSpeechButtons(join_channel = join_channel, target_chat_id=target_chat_id))
+                                 
+                    
+            
+        
             
 
     @client.tree.command(name="help",

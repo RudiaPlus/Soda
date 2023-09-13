@@ -19,6 +19,8 @@ sleep_time = 0.5
 with open(os.path.join(dir, channel_json_path), encoding="UTF-8") as f:
     channels = json.load(f)
 
+#新しいVCを登録する場合、channels.jsonも忘れずに
+#二つ以上の場合、最後がVC_chatが望ましい
 channel_register = {
     "ak1_vc": ["ak1_vc", "ak1_vc_chat"],
     "ak2_vc": ["ak2_vc", "ak2_vc_chat"],
