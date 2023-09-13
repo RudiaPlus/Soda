@@ -4,7 +4,7 @@ import os
 from extentions import log, config
 from extentions.aclient import client
 from typing import List
-from itertools import combinations
+import itertools
 
 logger = log.setup_logger(__name__)
 dir = os.path.abspath(__file__ + "/../")
@@ -44,115 +44,73 @@ async def recruit_operators():
             
     return operators_list
 
-async def find_common_operator(reference_tags: list, operators: list):
-    if not reference_tags:
-        return
-
-    matching_sort = sorted(
-        (ope_d for ope_d in operators if any(tag_d in ope_d["tags"] for tag_d in reference_tags)),
-        key = lambda x: (x["rarity"], len(set(x["tags"]) & set(reference_tags))),
-        reverse=True
-        )
-    i = 0
-    while i < len(matching_sort):
-        match_tags = list(set(matching_sort[i]["tags"]) & set(reference_tags))
-        matching_sort[i]["matching_tags"] = match_tags
-        for tag_a in matching_sort[i]["tags"]:
-            if (matching_sort[i]["rarity"] == 5 and not any(taga == "上級エリート" for taga in reference_tags )) or (matching_sort[i]["rarity"] == 0 and not any(taga == "ロボット" for taga in reference_tags )):
-                matching_sort.remove(matching_sort[i])
-                i -= 1
-                break
-        i += 1
-    return matching_sort
-             
-
-
-async def find_high_rarity(reference_tags: list, operators: list):
-    result = []
+async def find_common_tags(reference_tags, operators):
+    
+    all_combinations = []
     for r in range(1, len(reference_tags) + 1):
-        for tag_combination in combinations(reference_tags, r):
-            rarity_dict_list = [{"name": d["name"], "rarity": d["rarity"]} for d in operators if all(tag in d["tags"] for tag in tag_combination)]
-            if rarity_dict_list and all((d["rarity"] >= 3 or d["rarity"] == 0) for d in rarity_dict_list) and len(tag_combination) <= 3:
-                result.append({"tag": tag_combination, "operator": rarity_dict_list})
-    return result
+        combinations = itertools.combinations(reference_tags, r)
+        all_combinations.extend(combinations)
+    
+    matching_combinations = []
+    for combination in all_combinations:
+        for ope in range(len(operators)):
+            if set(operators[ope]["tags"]) & set(combination):
+                matchtag = set(operators[ope]["tags"]) & set(combination)
+                
+                if (operators[ope]["rarity"] == 0 and not "ロボット" in combination) or (operators[ope]["rarity"] == 4 and not "エリート" in combination) or (operators[ope]["rarity"] == 5 and not "上級エリート" in combination) or (operators[ope]["name"] == "アーミヤ"):
+                    pass
+                
+                else:
+                                        
+                    there = False
+                    for collection in matching_combinations:
+                        if collection["tags"] == list(matchtag):
+                            there = True
+                            if not operators[ope] in collection["operators"]:
+                                collection["operators"].append(operators[ope])
+                            break
+                    if there == False:   
+                        matching_combinations.append({"tags": list(matchtag), "operators": [operators[ope]]})
+        for i in range(len(matching_combinations)):
+            matching_combinations[i]["operators"] = sorted(matching_combinations[i]["operators"], key = lambda x: x["rarity"])
+    
+    for tag in matching_combinations:
+        rarity = 99
+        for operator in tag["operators"]:
+            rarity = operator["rarity"] if rarity > operator["rarity"] else rarity
+        tag["min_rarity"] = rarity
+        
+    sorted_match = sorted(matching_combinations, key = lambda item: (-item["min_rarity"], len(item["operators"])))
+                
+    return sorted_match 
 
 async def output_results(selected_tags):
     try:
         operators_list = await recruit_operators()
-        result_operators = await find_common_operator(reference_tags=selected_tags, operators = operators_list)
-        high_rarity_results = await find_high_rarity(reference_tags = selected_tags, operators = operators_list)
+        result_operators = await find_common_tags(reference_tags=selected_tags, operators = operators_list)
         
         goodresult_list = ""
         list_tags = []
         
-        for result in high_rarity_results:
-            logger.debug(result)
+        for result in result_operators:
 
-            goodresult_tags = ""
-            maximum = 0
-            can_not = 0
+            tag_rarity = result["min_rarity"]
             
-            for tagb in result["tag"]:
-                
-                if not set(result["tag"]) & set(config.tag_rarity):
-                    goodresult_tags += f"{tagb} "
-                else:
-                    if not any(set(result["tag"]) & set(tagsa) for tagsa in list_tags):
-                        goodresult_tags += f"{tagb} "
-                
-            for high_ope in result["operator"]:
-                if (high_ope["rarity"] == 5 and not any(taga == "上級エリート" for taga in list(result["tag"]))) or (high_ope["rarity"] == 0 and not any(taga == "ロボット" for taga in list(result["tag"]))):
-                    can_not += 1
-                maximum = high_ope["rarity"] if high_ope["rarity"] < maximum or maximum == 0 else maximum
-                logger.debug(high_ope["name"])
-                logger.debug(high_ope["rarity"])
-                logger.debug(maximum)
-                logger.debug(can_not)
-                    
-            if len(goodresult_tags) > 0 and not can_not == len(result["operator"]):
-                goodresult_list += f"{goodresult_tags}: ☆{maximum+1}確定\n"
-
-            list_tags.append(result["tag"])
+            tag_str = " ".join(result["tags"])
+            
+            
+            if tag_rarity == 0 or tag_rarity > 2:
+                goodresult_list += f"{tag_str}: ☆{tag_rarity+1}確定\n"
             
         over_20 = False
-        
-        result_list = []
-        if result_operators:
-
-            for ope in result_operators:
-                duplicate = 0
-                rarity = ope["rarity"]
-                name = ope["name"]
-                matching_tag = ope["matching_tags"]
-                tag = "、".join(ope["tags"])
-                for index in result_list:
-                    
-                    if index[0]["matching_tags"] == ope["matching_tags"]:
-                        index.append({
-                            "name": name,
-                            "rarity": rarity,
-                            "tag": tag,
-                            "matching_tags": matching_tag
-                        })
-                        duplicate = 1
-                        break
-                if duplicate == 0:
-                    result_list.append([
-                            {
-                                "name": name,
-                                "rarity": rarity,
-                                "tag": tag,
-                                "matching_tags": matching_tag
-                            }
-                        ])
             
-            if len(result_list)>20:
-                while len(result_list)>20:
-                    result_list.popitem()
-                over_20 = True
+        if len(result_operators)>20:
+            while len(result_operators)>20:
+                result_operators.popitem()
+            over_20 = True
         
         logger.info(f"公開求人シミュレートを行います：{selected_tags}")        
-        return result_list, goodresult_list, over_20
+        return result_operators, goodresult_list, over_20
     except Exception as e:
         logger.exception(f"[output_results]にてエラー：{e}")
 
@@ -175,15 +133,13 @@ class TagUndoOnly(discord.ui.View):
         
         if result_list:
             embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
-            for index in result_list:
+            for tag in result_list:
                 value = ""
-                field_name = ""
-                for ope in index:
+                field_name = " ".join(tag["tags"])
+                for ope in tag["operators"]:
                     rarity = ope["rarity"]
                     name = ope["name"]
-                    value += f"☆{rarity+1}{name} "   
-                for  matching_tag in index[0]["matching_tags"]:
-                    field_name += f"{matching_tag} "
+                    value += f"☆{rarity+1}{name} "
                 embed_ope.add_field(name = field_name, value = value, inline = False)
         
             if over_20 == True:
@@ -229,15 +185,13 @@ class TagSelectView(discord.ui.View):
         
         if result_list:
             embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
-            for index in result_list:
+            for tag in result_list:
                 value = ""
-                field_name = ""
-                for ope in index:
+                field_name = " ".join(tag["tags"])
+                for ope in tag["operators"]:
                     rarity = ope["rarity"]
                     name = ope["name"]
-                    value += f"☆{rarity+1}{name} "   
-                for  matching_tag in index[0]["matching_tags"]:
-                    field_name += f"{matching_tag} "
+                    value += f"☆{rarity+1}{name} "
                 embed_ope.add_field(name = field_name, value = value, inline = False)
         
             if over_20 == True:
@@ -279,15 +233,13 @@ class TagSelectView(discord.ui.View):
         
         if result_list:
             embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
-            for index in result_list:
+            for tag in result_list:
                 value = ""
-                field_name = ""
-                for ope in index:
+                field_name = " ".join(tag["tags"])
+                for ope in tag["operators"]:
                     rarity = ope["rarity"]
                     name = ope["name"]
-                    value += f"☆{rarity+1}{name} "   
-                for  matching_tag in index[0]["matching_tags"]:
-                    field_name += f"{matching_tag} "
+                    value += f"☆{rarity+1}{name} "
                 embed_ope.add_field(name = field_name, value = value, inline = False)
         
             if over_20 == True:
@@ -329,15 +281,13 @@ class TagSelectView(discord.ui.View):
         
         if result_list:
             embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
-            for index in result_list:
+            for tag in result_list:
                 value = ""
-                field_name = ""
-                for ope in index:
+                field_name = " ".join(tag["tags"])
+                for ope in tag["operators"]:
                     rarity = ope["rarity"]
                     name = ope["name"]
-                    value += f"☆{rarity+1}{name} "   
-                for  matching_tag in index[0]["matching_tags"]:
-                    field_name += f"{matching_tag} "
+                    value += f"☆{rarity+1}{name} "
                 embed_ope.add_field(name = field_name, value = value, inline = False)
         
             if over_20 == True:
@@ -379,15 +329,13 @@ class TagSelectView(discord.ui.View):
         
         if result_list:
             embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
-            for index in result_list:
+            for tag in result_list:
                 value = ""
-                field_name = ""
-                for ope in index:
+                field_name = " ".join(tag["tags"])
+                for ope in tag["operators"]:
                     rarity = ope["rarity"]
                     name = ope["name"]
-                    value += f"☆{rarity+1}{name} "   
-                for  matching_tag in index[0]["matching_tags"]:
-                    field_name += f"{matching_tag} "
+                    value += f"☆{rarity+1}{name} "
                 embed_ope.add_field(name = field_name, value = value, inline = False)
         
             if over_20 == True:
@@ -428,15 +376,13 @@ class TagSelectView(discord.ui.View):
             
             if result_list:
                 embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
-                for index in result_list:
+                for tag in result_list:
                     value = ""
-                    field_name = ""
-                    for ope in index:
+                    field_name = " ".join(tag["tags"])
+                    for ope in tag["operators"]:
                         rarity = ope["rarity"]
                         name = ope["name"]
-                        value += f"☆{rarity+1}{name} "   
-                    for  matching_tag in index[0]["matching_tags"]:
-                        field_name += f"{matching_tag} "
+                        value += f"☆{rarity+1}{name} "
                     embed_ope.add_field(name = field_name, value = value, inline = False)
             
                 if over_20 == True:
@@ -466,6 +412,8 @@ async def recruit(interaction: discord.Interaction):
     
     selected_tags = []
     view = TagSelectView(selected_tags=selected_tags)
+    
+    logger.info(f"{interaction.user.name}がコマンド/recruitを使用しました")
     
     embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
     await interaction.followup.send(embed = embed, view = view, ephemeral=True)

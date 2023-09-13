@@ -229,6 +229,8 @@ def run_discord_bot():
         embed.add_field(name="「ボイスチャット読み上げ」", value="対応したチャットの読み上げをします\n・**/join**：読み上げを開始します\n・**/leave**：ボイスチャットから切断します", inline=False)
         embed.add_field(name = "「公開求人シミュレーター」", value = "公開求人のタグから獲得できるオペレーターを表示します。ドロップダウンメニューからタグを一つずつ指定してください。")
 
+        logger.info(f"{interaction.user.name}がコマンド/helpを使用しました")
+
         await interaction.followup.send(embed=embed, ephemeral=True)
 
     class ToolButtons(discord.ui.View):
@@ -243,6 +245,7 @@ def run_discord_bot():
             view = recruit.TagSelectView(selected_tags=selected_tags)
             
             embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+            logger.info(f"{interaction.user.name}がrecruitbuttonを使用しました")
             await interaction.followup.send(embed = embed, view = view, ephemeral=True)            
     
     @client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = config.testserverid)

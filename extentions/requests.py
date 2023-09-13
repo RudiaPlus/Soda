@@ -633,6 +633,7 @@ async def support_request(interaction: discord.Interaction,
             embed = discord.Embed(title=f"サポートオペレーター「{operator}」のリクエスト",
                                   description=f"スキルの選択をしてください\n{skill_name}")
             embed.set_footer(text=f"入力した備考：{remarks}")
+            logger.info(f"{interaction.user.name}がコマンド/requestを使用しました")
             await interaction.followup.send(embed=embed, view=OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=level, rarity = operators[index]["rarity"], remarks = remarks), ephemeral=True)
     if correct == 0:
         await interaction.followup.send(
