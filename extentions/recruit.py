@@ -212,15 +212,15 @@ class TagUndoOnly(discord.ui.View):
         self.rare = rare
         super().__init__(timeout=300)
         
+        self.add_back_button()
+        
         if self.all == True and self.rare == True:
             self.add_rare_only_button()
         elif self.all == False:
             self.add_show_all_button()
         
-        
-        
     def add_show_all_button(self):
-        button_show_all = discord.ui.Button(label = "全てのオペレーターを表示する", style = discord.ButtonStyle.primary, emoji = "▶️")
+        button_show_all = discord.ui.Button(label = "全てのタグを表示する", style = discord.ButtonStyle.primary, emoji = "▶️")
         
         async def button_show_all_callback(interaction: discord.Interaction):
             self.all = True
@@ -245,7 +245,9 @@ class TagUndoOnly(discord.ui.View):
                 
             if goodresult_list:
                 self.rare = True
-                embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+                embed_tags.add_field(name = "高レア確定タグ", value = goodresult_list)
+            else:
+                self.rare = False
             
             embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
             
@@ -259,7 +261,7 @@ class TagUndoOnly(discord.ui.View):
         self.add_item(button_show_all)
             
     def add_rare_only_button(self):
-        button_rare_only = discord.ui.Button(label = "高レアのみ表示する", style = discord.ButtonStyle.primary, emoji = "🔽")
+        button_rare_only = discord.ui.Button(label = "高レア確定タグのみ表示する", style = discord.ButtonStyle.primary, emoji = "🔽")
         
         async def button_rare_only_callback(interaction: discord.Interaction):
             self.all = False
@@ -284,7 +286,9 @@ class TagUndoOnly(discord.ui.View):
                 
             if goodresult_list:
                 self.rare = True
-                embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+                embed_tags.add_field(name = "高レア確定タグ", value = goodresult_list)
+            else:
+                self.rare = False
             
             embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
             
@@ -296,40 +300,47 @@ class TagUndoOnly(discord.ui.View):
         
         button_rare_only.callback = button_rare_only_callback
         self.add_item(button_rare_only)
-        
-    @discord.ui.button(label = "戻る", style = discord.ButtonStyle.secondary, emoji = "↩️")  
-    async def button_undo_only(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.selected_tags.pop()
-        
-        embeds = []
-        view = None
-        
-        tags_view = "、 ".join(self.selected_tags)
-        embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
-        embeds.append(embed)
-        result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
-        
-
-        
-        #結果があるとき
-        if result_list:
+    
+    def add_back_button(self):
+        back_button = discord.ui.Button(label = "戻る", style = discord.ButtonStyle.secondary, emoji = "↩️")    
+        async def back_button_callback(interaction: discord.Interaction):
+            self.selected_tags.pop()
             
-            embeds_ope = await result_embed_maker(result_list = result_list)
-            embeds.extend(embeds_ope)
+            embeds = []
+            view = None
+            
+            tags_view = "、 ".join(self.selected_tags)
+            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+            embeds.append(embed)
+            result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
+            
 
             
-        embed_tags = discord.Embed(title = "タグ")
+            #結果があるとき
+            if result_list:
+                
+                embeds_ope = await result_embed_maker(result_list = result_list, all = self.all)
+                embeds.extend(embeds_ope)
+
+                
+            embed_tags = discord.Embed(title = "タグ")
+                
+            if goodresult_list:
+                self.rare = True
+                embed_tags.add_field(name = "高レア確定タグ", value = goodresult_list)
+            else:
+                self.rare = False
             
-        if goodresult_list:
-            embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+            embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
+            
+            embeds.append(embed_tags)
+            
+            view = TagSelectView(self.selected_tags, all = self.all, rare = self.rare)
+            
+            await interaction.response.edit_message(embeds = embeds, view = view)
         
-        embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
-        
-        embeds.append(embed_tags)
-        
-        view = TagSelectView(self.selected_tags)
-        
-        await interaction.response.edit_message(embeds = embeds, view = view)
+        back_button.callback = back_button_callback
+        self.add_item(back_button)
         
     
 class TagSelectView(discord.ui.View):
@@ -339,17 +350,15 @@ class TagSelectView(discord.ui.View):
         self.rare = rare
         self.disable = False
         super().__init__(timeout=300)
-        
-        if (not self.selected_tags) or len(self.selected_tags) > 4:
-            self.disable = True
+                    
+        if self.selected_tags:
+            self.add_undo_button()
         
         if self.all == True and self.rare == True:
             self.add_rare_only_button()
         elif self.all == False:
             self.add_show_all_button()
-            
-        if self.selected_tags:
-            self.add_undo_button()
+
             
     @discord.ui.select(cls = discord.ui.Select, placeholder = "レアタグ(エリート等)", options=tag_rarity_list)
     async def tagRaritySelect(self, interaction: discord.Interaction, select: discord.ui.Select):
@@ -377,7 +386,9 @@ class TagSelectView(discord.ui.View):
             
         if goodresult_list:
             self.rare = True
-            embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+            embed_tags.add_field(name = "高レア確定タグ", value = goodresult_list)
+        else:
+            self.rare = False
         
         embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
         
@@ -417,7 +428,9 @@ class TagSelectView(discord.ui.View):
             
         if goodresult_list:
             self.rare = True
-            embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+            embed_tags.add_field(name = "高レア確定タグ", value = goodresult_list)
+        else:
+            self.rare = False
         
         embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
         
@@ -457,7 +470,9 @@ class TagSelectView(discord.ui.View):
             
         if goodresult_list:
             self.rare = True
-            embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+            embed_tags.add_field(name = "高レア確定タグ", value = goodresult_list)
+        else:
+            self.rare = False
         
         embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
         
@@ -497,7 +512,9 @@ class TagSelectView(discord.ui.View):
             
         if goodresult_list:
             self.rare = True
-            embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+            embed_tags.add_field(name = "高レア確定タグ", value = goodresult_list)
+        else:
+            self.rare = False
         
         embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
         
@@ -536,7 +553,9 @@ class TagSelectView(discord.ui.View):
                 
             if goodresult_list:
                 self.rare = True
-                embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+                embed_tags.add_field(name = "高レア確定タグ", value = goodresult_list)
+            else:
+                self.rare = False
             
             embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
             
@@ -575,7 +594,7 @@ class TagSelectView(discord.ui.View):
                 
             if goodresult_list:
                 self.rare = True
-                embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+                embed_tags.add_field(name = "高レア確定タグ", value = goodresult_list)
             
             embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
             
@@ -614,7 +633,9 @@ class TagSelectView(discord.ui.View):
                 
             if goodresult_list:
                 self.rare = True
-                embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+                embed_tags.add_field(name = "高レア確定タグ", value = goodresult_list)
+            else:
+                self.rare = False
             
             embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
             
