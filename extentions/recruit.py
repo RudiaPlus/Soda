@@ -528,7 +528,7 @@ class TagSelectView(discord.ui.View):
         await interaction.response.edit_message(embeds = embeds, view = view)
         
     def add_show_all_button(self):
-        button_show_all = discord.ui.Button(label = "全てのオペレーターを表示する", style = discord.ButtonStyle.primary, emoji = "▶️")
+        button_show_all = discord.ui.Button(label = "全てのタグを表示する", style = discord.ButtonStyle.primary, emoji = "▶️")
         
         async def button_show_all_callback(interaction: discord.Interaction):
             self.all = True
@@ -569,7 +569,7 @@ class TagSelectView(discord.ui.View):
         self.add_item(button_show_all)
             
     def add_rare_only_button(self):
-        button_rare_only = discord.ui.Button(label = "高レアのみ表示する", style = discord.ButtonStyle.primary, emoji = "🔽")
+        button_rare_only = discord.ui.Button(label = "高レア確定タグのみ表示する", style = discord.ButtonStyle.primary, emoji = "🔽")
         
         async def button_rare_only_callback(interaction: discord.Interaction):
             self.all = False
