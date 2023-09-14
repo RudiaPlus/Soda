@@ -242,7 +242,7 @@ def run_discord_bot():
             await interaction.response.defer(ephemeral=True)
             
             selected_tags = []
-            view = recruit.TagSelectView(selected_tags=selected_tags)
+            view = recruit.TagSelectView(selected_tags=selected_tags, all = True)
             
             embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
             logger.info(f"{interaction.user.name}がrecruitbuttonを使用しました")

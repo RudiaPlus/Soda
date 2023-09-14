@@ -81,9 +81,6 @@ async def find_common_tags(reference_tags, operators):
         tag["min_rarity"] = rarity
         
     sorted_match = sorted(matching_combinations, key = lambda item: (-item["min_rarity"], len(item["operators"])))
-    
-    with open("a.json", "w", encoding="utf-8") as f:
-        json.dump(sorted_match, f, indent=2, ensure_ascii=True)
                 
     return sorted_match 
 
@@ -109,67 +106,217 @@ async def output_results(selected_tags):
         return result_operators, goodresult_list
     except Exception as e:
         logger.exception(f"[output_results]にてエラー：{e}")
+        
+async def result_embed_maker(result_list: list, all: bool) -> list:
+    embeds = []
+    
+    if all == True:
+        
+        if len(result_list)<20:
+            embed_ope = discord.Embed(title = "獲得できる全てのオペレーター", color = discord.Color.blue())
+            for tag in result_list:
+                value = ""
+                field_name = " ".join(tag["tags"])
+                for ope in tag["operators"]:
+                    rarity = ope["rarity"]
+                    name = ope["name"]
+                    value += f"☆{rarity+1}{name} "
+                embed_ope.add_field(name = field_name, value = value, inline = False)
+                                
+            embeds.append(embed_ope)
+
+        else:
+            max = len(result_list)//15
+            remain = len(result_list)%15
+            index = 0
+            for i in range(1, max+1):
+                embed_ope = discord.Embed(title = f"獲得できる全てのオペレーター({i}/{max+1})", color = discord.Color.blue())
+                for index in range(0, 15):
+                    tag = result_list[(i-1)*15+index]
+                    value = ""
+                    field_name = " ".join(tag["tags"])
+                    for ope in tag["operators"]:
+                        rarity = ope["rarity"]
+                        name = ope["name"]
+                        value += f"☆{rarity+1}{name} "
+                    embed_ope.add_field(name = field_name, value = value, inline = False)
+                embeds.append(embed_ope)
+                    
+            embed_ope = discord.Embed(title = f"獲得できる全てのオペレーター({max+1}/{max+1})", color = discord.Color.blue())
+            for index in range(0, remain):
+                tag = result_list[(max)*15+index]
+                value = ""
+                field_name = " ".join(tag["tags"])
+                for ope in tag["operators"]:
+                    rarity = ope["rarity"]
+                    name = ope["name"]
+                    value += f"☆{rarity+1}{name} "
+                embed_ope.add_field(name = field_name, value = value, inline = False)
+            embeds.append(embed_ope)
+            
+    else:
+        rare_list = []
+        for result in result_list:
+            if (result["min_rarity"] == 0 or result["min_rarity"] > 2):
+                rare_list.append(result)
+                
+        if len(rare_list)<20:
+            embed_ope = discord.Embed(title = "獲得できる高レアなオペレーター", color = discord.Color.blue())
+            for tag in rare_list:
+                value = ""
+                field_name = " ".join(tag["tags"])
+                for ope in tag["operators"]:
+                    rarity = ope["rarity"]
+                    name = ope["name"]
+                    value += f"☆{rarity+1}{name} "
+                embed_ope.add_field(name = field_name, value = value, inline = False)
+                                
+            embeds.append(embed_ope)
+
+        else:
+            max = len(rare_list)//15
+            remain = len(rare_list)%15
+            index = 0
+            for i in range(1, max+1):
+                embed_ope = discord.Embed(title = f"獲得できる高レアなオペレーター({i}/{max+1})", color = discord.Color.blue())
+                for index in range(0, 15):
+                    tag = rare_list[(i-1)*15+index]
+                    value = ""
+                    field_name = " ".join(tag["tags"])
+                    for ope in tag["operators"]:
+                        rarity = ope["rarity"]
+                        name = ope["name"]
+                        value += f"☆{rarity+1}{name} "
+                    embed_ope.add_field(name = field_name, value = value, inline = False)
+                embeds.append(embed_ope)
+                    
+            embed_ope = discord.Embed(title = f"獲得できる高レアなオペレーター({max+1}/{max+1})", color = discord.Color.blue())
+            for index in range(0, remain):
+                tag = rare_list[(max)*15+index]
+                value = ""
+                field_name = " ".join(tag["tags"])
+                for ope in tag["operators"]:
+                    rarity = ope["rarity"]
+                    name = ope["name"]
+                    value += f"☆{rarity+1}{name} "
+                embed_ope.add_field(name = field_name, value = value, inline = False)
+            embeds.append(embed_ope)
+    
+    return(embeds)
+        
 
 class TagUndoOnly(discord.ui.View):
-    def __init__(self, selected_tags: List):
+    def __init__(self, selected_tags: list, all: bool, rare: bool = False):
         self.selected_tags = selected_tags
+        self.all = all
+        self.rare = rare
         super().__init__(timeout=300)
+        
+        if self.all == True and self.rare == True:
+            self.add_rare_only_button()
+        elif self.all == False:
+            self.add_show_all_button()
+        
+        
+        
+    def add_show_all_button(self):
+        button_show_all = discord.ui.Button(label = "全てのオペレーターを表示する", style = discord.ButtonStyle.primary, emoji = "▶️")
+        
+        async def button_show_all_callback(interaction: discord.Interaction):
+            self.all = True
+            
+            embeds = []
+            view = None
+            
+            tags_view = "、 ".join(self.selected_tags)
+            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+
+            result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
+            
+            embeds.append(embed)
+            
+            #結果があるとき
+            if result_list:
+                
+                embeds_ope = await result_embed_maker(result_list = result_list, all = self.all)
+                embeds.extend(embeds_ope)
+            
+            embed_tags = discord.Embed(title = "タグ")
+                
+            if goodresult_list:
+                self.rare = True
+                embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+            
+            embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
+            
+            embeds.append(embed_tags)            
+            
+            view = TagUndoOnly(self.selected_tags,all=self.all,rare = self.rare)
+            
+            await interaction.response.edit_message(embeds = embeds, view = view)
+        
+        button_show_all.callback = button_show_all_callback
+        self.add_item(button_show_all)
+            
+    def add_rare_only_button(self):
+        button_rare_only = discord.ui.Button(label = "高レアのみ表示する", style = discord.ButtonStyle.primary, emoji = "🔽")
+        
+        async def button_rare_only_callback(interaction: discord.Interaction):
+            self.all = False
+            
+            embeds = []
+            view = None
+            
+            tags_view = "、 ".join(self.selected_tags)
+            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+
+            result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
+            
+            embeds.append(embed)
+            
+            #結果があるとき
+            if result_list:
+                
+                embeds_ope = await result_embed_maker(result_list = result_list, all = self.all)
+                embeds.extend(embeds_ope)
+            
+            embed_tags = discord.Embed(title = "タグ")
+                
+            if goodresult_list:
+                self.rare = True
+                embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+            
+            embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
+            
+            embeds.append(embed_tags)            
+            
+            view = TagUndoOnly(self.selected_tags,all=self.all, rare = self.rare)
+            
+            await interaction.response.edit_message(embeds = embeds, view = view)
+        
+        button_rare_only.callback = button_rare_only_callback
+        self.add_item(button_rare_only)
+        
     @discord.ui.button(label = "戻る", style = discord.ButtonStyle.secondary, emoji = "↩️")  
     async def button_undo_only(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.selected_tags.pop()
         
         embeds = []
+        view = None
         
         tags_view = "、 ".join(self.selected_tags)
         embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
-
+        embeds.append(embed)
         result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
         
-        embeds.append(embed)
+
         
+        #結果があるとき
         if result_list:
-            embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
             
-            if len(result_list)<20:
-                for tag in result_list:
-                    value = ""
-                    field_name = " ".join(tag["tags"])
-                    for ope in tag["operators"]:
-                        rarity = ope["rarity"]
-                        name = ope["name"]
-                        value += f"☆{rarity+1}{name} "
-                    embed_ope.add_field(name = field_name, value = value, inline = False)
-                                    
-                embeds.append(embed_ope)
-        
-            else:
-                max = len(result_list)//15
-                remain = len(result_list)%15
-                index = 0
-                for i in range(1, max+1):
-                    embed_ope = discord.Embed(title = f"獲得できるオペレーター({i}/{max+1})", color = discord.Color.blue())
-                    for index in range(0, 15):
-                        tag = result_list[(i-1)*15+index]
-                        value = ""
-                        field_name = " ".join(tag["tags"])
-                        for ope in tag["operators"]:
-                            rarity = ope["rarity"]
-                            name = ope["name"]
-                            value += f"☆{rarity+1}{name} "
-                        embed_ope.add_field(name = field_name, value = value, inline = False)
-                    embeds.append(embed_ope)
-                        
-                embed_ope = discord.Embed(title = f"獲得できるオペレーター({max+1}/{max+1})", color = discord.Color.blue())
-                for index in range(0, remain):
-                    tag = result_list[(max)*15+index]
-                    value = ""
-                    field_name = " ".join(tag["tags"])
-                    for ope in tag["operators"]:
-                        rarity = ope["rarity"]
-                        name = ope["name"]
-                        value += f"☆{rarity+1}{name} "
-                    embed_ope.add_field(name = field_name, value = value, inline = False)
-                embeds.append(embed_ope)
+            embeds_ope = await result_embed_maker(result_list = result_list)
+            embeds.extend(embeds_ope)
+
             
         embed_tags = discord.Embed(title = "タグ")
             
@@ -186,12 +333,24 @@ class TagUndoOnly(discord.ui.View):
         
     
 class TagSelectView(discord.ui.View):
-    def __init__(self, selected_tags: List):
+    def __init__(self, selected_tags: list, all: bool, rare: bool = False):
         self.selected_tags = selected_tags
+        self.all = all
+        self.rare = rare
+        self.disable = False
         super().__init__(timeout=300)
+        
+        if (not self.selected_tags) or len(self.selected_tags) > 4:
+            self.disable = True
+        
+        if self.all == True and self.rare == True:
+            self.add_rare_only_button()
+        elif self.all == False:
+            self.add_show_all_button()
+            
         if self.selected_tags:
             self.add_undo_button()
-        
+            
     @discord.ui.select(cls = discord.ui.Select, placeholder = "レアタグ(エリート等)", options=tag_rarity_list)
     async def tagRaritySelect(self, interaction: discord.Interaction, select: discord.ui.Select):
         if any(value in self.selected_tags for value in select.values):
@@ -199,6 +358,7 @@ class TagSelectView(discord.ui.View):
             return
         self.selected_tags += select.values
         embeds = []
+        view = None
         
         tags_view = "、 ".join(self.selected_tags)
         embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
@@ -207,53 +367,16 @@ class TagSelectView(discord.ui.View):
         
         embeds.append(embed)
         
+        #結果があるとき
         if result_list:
-            embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
             
-            if len(result_list)<20:
-                for tag in result_list:
-                    value = ""
-                    field_name = " ".join(tag["tags"])
-                    for ope in tag["operators"]:
-                        rarity = ope["rarity"]
-                        name = ope["name"]
-                        value += f"☆{rarity+1}{name} "
-                    embed_ope.add_field(name = field_name, value = value, inline = False)
-                                    
-                embeds.append(embed_ope)
-        
-            else:
-                max = len(result_list)//15
-                remain = len(result_list)%15
-                index = 0
-                for i in range(1, max+1):
-                    embed_ope = discord.Embed(title = f"獲得できるオペレーター({i}/{max+1})", color = discord.Color.blue())
-                    for index in range(0, 15):
-                        tag = result_list[(i-1)*15+index]
-                        value = ""
-                        field_name = " ".join(tag["tags"])
-                        for ope in tag["operators"]:
-                            rarity = ope["rarity"]
-                            name = ope["name"]
-                            value += f"☆{rarity+1}{name} "
-                        embed_ope.add_field(name = field_name, value = value, inline = False)
-                    embeds.append(embed_ope)
-                        
-                embed_ope = discord.Embed(title = f"獲得できるオペレーター({max+1}/{max+1})", color = discord.Color.blue())
-                for index in range(0, remain):
-                    tag = result_list[(max)*15+index]
-                    value = ""
-                    field_name = " ".join(tag["tags"])
-                    for ope in tag["operators"]:
-                        rarity = ope["rarity"]
-                        name = ope["name"]
-                        value += f"☆{rarity+1}{name} "
-                    embed_ope.add_field(name = field_name, value = value, inline = False)
-                embeds.append(embed_ope)
+            embeds_ope = await result_embed_maker(result_list = result_list, all = self.all)
+            embeds.extend(embeds_ope)
                  
         embed_tags = discord.Embed(title = "タグ")
             
         if goodresult_list:
+            self.rare = True
             embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
         
         embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
@@ -261,9 +384,9 @@ class TagSelectView(discord.ui.View):
         embeds.append(embed_tags)
         
         if len(self.selected_tags) > 4:
-            view = TagUndoOnly(self.selected_tags)
+            view = TagUndoOnly(self.selected_tags, all=self.all, rare = self.rare)
         else:
-            view = TagSelectView(self.selected_tags)
+            view = TagSelectView(self.selected_tags, all=self.all, rare = self.rare)
         
         await interaction.response.edit_message(embeds = embeds, view = view)
         
@@ -275,6 +398,7 @@ class TagSelectView(discord.ui.View):
             return
         self.selected_tags += select.values
         embeds = []
+        view = None
         
         tags_view = "、 ".join(self.selected_tags)
         embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
@@ -283,53 +407,16 @@ class TagSelectView(discord.ui.View):
         
         embeds.append(embed)
         
+        #結果があるとき
         if result_list:
-            embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
             
-            if len(result_list)<20:
-                for tag in result_list:
-                    value = ""
-                    field_name = " ".join(tag["tags"])
-                    for ope in tag["operators"]:
-                        rarity = ope["rarity"]
-                        name = ope["name"]
-                        value += f"☆{rarity+1}{name} "
-                    embed_ope.add_field(name = field_name, value = value, inline = False)
-                                    
-                embeds.append(embed_ope)
-        
-            else:
-                max = len(result_list)//15
-                remain = len(result_list)%15
-                index = 0
-                for i in range(1, max+1):
-                    embed_ope = discord.Embed(title = f"獲得できるオペレーター({i}/{max+1})", color = discord.Color.blue())
-                    for index in range(0, 15):
-                        tag = result_list[(i-1)*15+index]
-                        value = ""
-                        field_name = " ".join(tag["tags"])
-                        for ope in tag["operators"]:
-                            rarity = ope["rarity"]
-                            name = ope["name"]
-                            value += f"☆{rarity+1}{name} "
-                        embed_ope.add_field(name = field_name, value = value, inline = False)
-                    embeds.append(embed_ope)
-                        
-                embed_ope = discord.Embed(title = f"獲得できるオペレーター({max+1}/{max+1})", color = discord.Color.blue())
-                for index in range(0, remain):
-                    tag = result_list[(max)*15+index]
-                    value = ""
-                    field_name = " ".join(tag["tags"])
-                    for ope in tag["operators"]:
-                        rarity = ope["rarity"]
-                        name = ope["name"]
-                        value += f"☆{rarity+1}{name} "
-                    embed_ope.add_field(name = field_name, value = value, inline = False)
-                embeds.append(embed_ope)
+            embeds_ope = await result_embed_maker(result_list = result_list, all = self.all)
+            embeds.extend(embeds_ope)
 
         embed_tags = discord.Embed(title = "タグ")
             
         if goodresult_list:
+            self.rare = True
             embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
         
         embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
@@ -337,9 +424,9 @@ class TagSelectView(discord.ui.View):
         embeds.append(embed_tags)                 
         
         if len(self.selected_tags) > 4:
-            view = TagUndoOnly(self.selected_tags)
+            view = TagUndoOnly(self.selected_tags, all=self.all, rare = self.rare)
         else:
-            view = TagSelectView(self.selected_tags)
+            view = TagSelectView(self.selected_tags, all=self.all, rare = self.rare)
         
         await interaction.response.edit_message(embeds = embeds, view = view)
         
@@ -351,6 +438,7 @@ class TagSelectView(discord.ui.View):
             return
         self.selected_tags += select.values
         embeds = []
+        view = None
         
         tags_view = "、 ".join(self.selected_tags)
         embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
@@ -359,53 +447,16 @@ class TagSelectView(discord.ui.View):
         
         embeds.append(embed)
         
+        #結果があるとき
         if result_list:
-            embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
             
-            if len(result_list)<20:
-                for tag in result_list:
-                    value = ""
-                    field_name = " ".join(tag["tags"])
-                    for ope in tag["operators"]:
-                        rarity = ope["rarity"]
-                        name = ope["name"]
-                        value += f"☆{rarity+1}{name} "
-                    embed_ope.add_field(name = field_name, value = value, inline = False)
-                                    
-                embeds.append(embed_ope)
-        
-            else:
-                max = len(result_list)//15
-                remain = len(result_list)%15
-                index = 0
-                for i in range(1, max+1):
-                    embed_ope = discord.Embed(title = f"獲得できるオペレーター({i}/{max+1})", color = discord.Color.blue())
-                    for index in range(0, 15):
-                        tag = result_list[(i-1)*15+index]
-                        value = ""
-                        field_name = " ".join(tag["tags"])
-                        for ope in tag["operators"]:
-                            rarity = ope["rarity"]
-                            name = ope["name"]
-                            value += f"☆{rarity+1}{name} "
-                        embed_ope.add_field(name = field_name, value = value, inline = False)
-                    embeds.append(embed_ope)
-                        
-                embed_ope = discord.Embed(title = f"獲得できるオペレーター({max+1}/{max+1})", color = discord.Color.blue())
-                for index in range(0, remain):
-                    tag = result_list[(max)*15+index]
-                    value = ""
-                    field_name = " ".join(tag["tags"])
-                    for ope in tag["operators"]:
-                        rarity = ope["rarity"]
-                        name = ope["name"]
-                        value += f"☆{rarity+1}{name} "
-                    embed_ope.add_field(name = field_name, value = value, inline = False)
-                embeds.append(embed_ope)
+            embeds_ope = await result_embed_maker(result_list = result_list, all = self.all)
+            embeds.extend(embeds_ope)
                  
         embed_tags = discord.Embed(title = "タグ")
             
         if goodresult_list:
+            self.rare = True
             embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
         
         embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
@@ -413,9 +464,9 @@ class TagSelectView(discord.ui.View):
         embeds.append(embed_tags)
         
         if len(self.selected_tags) > 4:
-            view = TagUndoOnly(self.selected_tags)
+            view = TagUndoOnly(self.selected_tags,all=self.all, rare = self.rare)
         else:
-            view = TagSelectView(self.selected_tags)
+            view = TagSelectView(self.selected_tags, all=self.all, rare = self.rare)
         
         await interaction.response.edit_message(embeds = embeds, view = view)
         
@@ -427,6 +478,7 @@ class TagSelectView(discord.ui.View):
             return
         self.selected_tags += select.values
         embeds = []
+        view = None
         
         tags_view = "、 ".join(self.selected_tags)
         embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
@@ -435,53 +487,16 @@ class TagSelectView(discord.ui.View):
         
         embeds.append(embed)
         
+        #結果があるとき
         if result_list:
-            embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
             
-            if len(result_list)<20:
-                for tag in result_list:
-                    value = ""
-                    field_name = " ".join(tag["tags"])
-                    for ope in tag["operators"]:
-                        rarity = ope["rarity"]
-                        name = ope["name"]
-                        value += f"☆{rarity+1}{name} "
-                    embed_ope.add_field(name = field_name, value = value, inline = False)
-                                    
-                embeds.append(embed_ope)
-        
-            else:
-                max = len(result_list)//15
-                remain = len(result_list)%15
-                index = 0
-                for i in range(1, max+1):
-                    embed_ope = discord.Embed(title = f"獲得できるオペレーター({i}/{max+1})", color = discord.Color.blue())
-                    for index in range(0, 15):
-                        tag = result_list[(i-1)*15+index]
-                        value = ""
-                        field_name = " ".join(tag["tags"])
-                        for ope in tag["operators"]:
-                            rarity = ope["rarity"]
-                            name = ope["name"]
-                            value += f"☆{rarity+1}{name} "
-                        embed_ope.add_field(name = field_name, value = value, inline = False)
-                    embeds.append(embed_ope)
-                        
-                embed_ope = discord.Embed(title = f"獲得できるオペレーター({max+1}/{max+1})", color = discord.Color.blue())
-                for index in range(0, remain):
-                    tag = result_list[(max)*15+index]
-                    value = ""
-                    field_name = " ".join(tag["tags"])
-                    for ope in tag["operators"]:
-                        rarity = ope["rarity"]
-                        name = ope["name"]
-                        value += f"☆{rarity+1}{name} "
-                    embed_ope.add_field(name = field_name, value = value, inline = False)
-                embeds.append(embed_ope)
+            embeds_ope = await result_embed_maker(result_list = result_list, all = self.all)
+            embeds.extend(embeds_ope)
 
         embed_tags = discord.Embed(title = "タグ")
             
         if goodresult_list:
+            self.rare = True
             embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
         
         embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
@@ -489,19 +504,20 @@ class TagSelectView(discord.ui.View):
         embeds.append(embed_tags)                 
         
         if len(self.selected_tags) > 4:
-            view = TagUndoOnly(self.selected_tags)
+            view = TagUndoOnly(self.selected_tags, all=self.all, rare = self.rare)
         else:
-            view = TagSelectView(self.selected_tags)
+            view = TagSelectView(self.selected_tags,all=self.all, rare = self.rare)
         
         await interaction.response.edit_message(embeds = embeds, view = view)
-    
-    def add_undo_button(self):
-        button_undo = discord.ui.Button(label = "戻る", style = discord.ButtonStyle.secondary, emoji = "↩️")
         
-        async def button_undo_callback(interaction: discord.Interaction):
-            self.selected_tags.pop()
+    def add_show_all_button(self):
+        button_show_all = discord.ui.Button(label = "全てのオペレーターを表示する", style = discord.ButtonStyle.primary, emoji = "▶️")
+        
+        async def button_show_all_callback(interaction: discord.Interaction):
+            self.all = True
             
             embeds = []
+            view = None
             
             tags_view = "、 ".join(self.selected_tags)
             embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
@@ -510,60 +526,101 @@ class TagSelectView(discord.ui.View):
             
             embeds.append(embed)
             
+            #結果があるとき
             if result_list:
-                embed_ope = discord.Embed(title = "獲得できるオペレーター", color = discord.Color.blue())
                 
-                if len(result_list)<20:
-                    for tag in result_list:
-                        value = ""
-                        field_name = " ".join(tag["tags"])
-                        for ope in tag["operators"]:
-                            rarity = ope["rarity"]
-                            name = ope["name"]
-                            value += f"☆{rarity+1}{name} "
-                        embed_ope.add_field(name = field_name, value = value, inline = False)
-                                        
-                    embeds.append(embed_ope)
-            
-                else:
-                    max = len(result_list)//15
-                    remain = len(result_list)%15
-                    index = 0
-                    for i in range(1, max+1):
-                        embed_ope = discord.Embed(title = f"獲得できるオペレーター({i}/{max+1})", color = discord.Color.blue())
-                        for index in range(0, 15):
-                            tag = result_list[(i-1)*15+index]
-                            value = ""
-                            field_name = " ".join(tag["tags"])
-                            for ope in tag["operators"]:
-                                rarity = ope["rarity"]
-                                name = ope["name"]
-                                value += f"☆{rarity+1}{name} "
-                            embed_ope.add_field(name = field_name, value = value, inline = False)
-                        embeds.append(embed_ope)
-                            
-                    embed_ope = discord.Embed(title = f"獲得できるオペレーター({max+1}/{max+1})", color = discord.Color.blue())
-                    for index in range(0, remain):
-                        tag = result_list[(max)*15+index]
-                        value = ""
-                        field_name = " ".join(tag["tags"])
-                        for ope in tag["operators"]:
-                            rarity = ope["rarity"]
-                            name = ope["name"]
-                            value += f"☆{rarity+1}{name} "
-                        embed_ope.add_field(name = field_name, value = value, inline = False)
-                    embeds.append(embed_ope)
+                embeds_ope = await result_embed_maker(result_list = result_list, all = self.all)
+                embeds.extend(embeds_ope)
             
             embed_tags = discord.Embed(title = "タグ")
                 
             if goodresult_list:
+                self.rare = True
                 embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
             
             embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
             
             embeds.append(embed_tags)            
             
-            view = TagSelectView(self.selected_tags)
+            view = TagSelectView(self.selected_tags,all=self.all, rare = self.rare)
+            
+            await interaction.response.edit_message(embeds = embeds, view = view)
+        
+        button_show_all.callback = button_show_all_callback
+        self.add_item(button_show_all)
+            
+    def add_rare_only_button(self):
+        button_rare_only = discord.ui.Button(label = "高レアのみ表示する", style = discord.ButtonStyle.primary, emoji = "🔽")
+        
+        async def button_rare_only_callback(interaction: discord.Interaction):
+            self.all = False
+            
+            embeds = []
+            view = None
+            
+            tags_view = "、 ".join(self.selected_tags)
+            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+
+            result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
+            
+            embeds.append(embed)
+            
+            #結果があるとき
+            if result_list:
+                
+                embeds_ope = await result_embed_maker(result_list = result_list, all = self.all)
+                embeds.extend(embeds_ope)
+            
+            embed_tags = discord.Embed(title = "タグ")
+                
+            if goodresult_list:
+                self.rare = True
+                embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+            
+            embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
+            
+            embeds.append(embed_tags)            
+            
+            view = TagSelectView(self.selected_tags,all=self.all, rare = self.rare)
+            
+            await interaction.response.edit_message(embeds = embeds, view = view)
+        
+        button_rare_only.callback = button_rare_only_callback
+        self.add_item(button_rare_only)
+    
+    def add_undo_button(self):
+        button_undo = discord.ui.Button(label = "戻る", style = discord.ButtonStyle.secondary, emoji = "↩️")
+        
+        async def button_undo_callback(interaction: discord.Interaction):
+            self.selected_tags.pop()
+            
+            embeds = []
+            view = None
+            
+            tags_view = "、 ".join(self.selected_tags)
+            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+
+            result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
+            
+            embeds.append(embed)
+            
+            #結果があるとき
+            if result_list:
+                
+                embeds_ope = await result_embed_maker(result_list = result_list, all = self.all)
+                embeds.extend(embeds_ope)
+            
+            embed_tags = discord.Embed(title = "タグ")
+                
+            if goodresult_list:
+                self.rare = True
+                embed_tags.add_field(name = "レア確定タグ", value = goodresult_list)
+            
+            embed_tags.add_field(name = "選択中のタグ", value = tags_view, inline=False)        
+            
+            embeds.append(embed_tags)            
+            
+            view = TagSelectView(self.selected_tags, all=self.all, rare = self.rare)
             
             await interaction.response.edit_message(embeds = embeds, view = view)
             
@@ -575,19 +632,9 @@ async def recruit(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     
     selected_tags = []
-    view = TagSelectView(selected_tags=selected_tags)
+    view = TagSelectView(selected_tags=selected_tags, all = True)
     
     logger.info(f"{interaction.user.name}がコマンド/recruitを使用しました")
-    
-    embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
-    await interaction.followup.send(embed = embed, view = view, ephemeral=True)
-
-@client.tree.context_menu(name = "公開求人シミュレーター")
-async def recruit_menu(interaction: discord.Interaction, member: discord.Member):
-    await interaction.response.defer(ephemeral=True)
-    
-    selected_tags = []
-    view = TagSelectView(selected_tags=selected_tags)
     
     embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
     await interaction.followup.send(embed = embed, view = view, ephemeral=True)
