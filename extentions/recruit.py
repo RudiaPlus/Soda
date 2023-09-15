@@ -57,7 +57,7 @@ async def find_common_tags(reference_tags, operators):
             if set(operators[ope]["tags"]) & set(combination):
                 matchtag = set(operators[ope]["tags"]) & set(combination)
                 
-                if (operators[ope]["rarity"] == 0 and not "ロボット" in combination) or (operators[ope]["rarity"] == 5 and not "上級エリート" in combination) or (operators[ope]["name"] == "アーミヤ"):
+                if (operators[ope]["rarity"] == 5 and not "上級エリート" in combination) or (operators[ope]["name"] == "アーミヤ"):
                     pass
                 
                 else:
