@@ -204,9 +204,12 @@ def run_discord_bot():
                         
                             send_channel = client.get_channel(target_chat_id[-1])
                         
-                            embed = discord.Embed(title = "ボイスチャットに接続しました！", description = "聞き専チャットを読み上げる機能を有効にしますか？\n後で`/join`コマンドを使用することでも読み上げを始めます！", color = discord.Color.blue())
+                            embed = discord.Embed(title = "ボイスチャットに接続しました！", description = "聞き専チャットを読み上げる機能を有効にしますか？\nこのメッセージは60秒で削除されます！\n後で`/join`コマンドを使用することでも読み上げを始めます！", color = discord.Color.blue())
                             embed.set_author(name = "チャット読み上げ")
-                            await send_channel.send(embed = embed, view = VoiceSpeechButtons(join_channel = join_channel, target_chat_id=target_chat_id))
+                            message = await send_channel.send(embed = embed, view = VoiceSpeechButtons(join_channel = join_channel, target_chat_id=target_chat_id))
+                            asyncio.sleep(60)
+                            await message.delete()
+                            
                                  
                     
             
