@@ -75,9 +75,9 @@ async def find_common_tags(reference_tags, operators):
             matching_combinations[i]["operators"] = sorted(matching_combinations[i]["operators"], key = lambda x: x["rarity"])
     
     for tag in matching_combinations:
-        rarity = 99
+        rarity = 99 #99 means only 1 star
         for operator in tag["operators"]:
-            rarity = operator["rarity"] if rarity > operator["rarity"] else rarity
+            rarity = operator["rarity"] if rarity > operator["rarity"] and operator["rarity"] != 0 else rarity
         tag["min_rarity"] = rarity
         
     sorted_match = sorted(matching_combinations, key = lambda item: (-item["min_rarity"], len(item["operators"])))
@@ -99,7 +99,7 @@ async def output_results(selected_tags):
             tag_str = " ".join(result["tags"])
             
             
-            if tag_rarity == 0 or tag_rarity > 2:
+            if ("ロボット" in result["tags"]) or tag_rarity > 2:
                 goodresult_list += f"{tag_str}: ☆{tag_rarity+1}確定\n"
         
         logger.info(f"公開求人シミュレートを行います：{selected_tags}")        
@@ -157,7 +157,7 @@ async def result_embed_maker(result_list: list, all: bool) -> list:
     else:
         rare_list = []
         for result in result_list:
-            if (result["min_rarity"] == 0 or result["min_rarity"] > 2):
+            if ("ロボット" in result["tags"] or result["min_rarity"] > 2):
                 rare_list.append(result)
                 
         if len(rare_list)<20:
