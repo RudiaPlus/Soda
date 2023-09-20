@@ -23,16 +23,23 @@
             }
         ]
     },
-    "act2bossrush": {
-        "id": "act2bossrush",
-        "type": "BOSS_RUSH",
-        "stageAdd": "False",
-        "name": "導灯の試練 #2",
-        "link": "https://00m.in/0DOz7",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/b8d23ee4192fc200918b7e919a9203f5.png",
-        "startTime": 1693465200,
-        "endTime": 1694026799,
-        "rewardEndTime": 1694285999
+    "act24side": {
+        "id": "act24side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "紅炎遣らう落葉",
+        "news": "https://arknights.jp/news/352",
+        "link": "https://00m.in/kT9M9",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/e2c3f764a7e941c4762ea21fff52b8ce.png",
+        "startTime": 1694070000,
+        "endTime": 1695236399,
+        "rewardEndTime": 1695841199,
+        "additionalStage": [
+            {
+                "name": "アイルーの受付カウンター",
+                "startTime": 1694674800
+            }
+        ]
     },
     "act16sre": {
         "id": "act16sre",
