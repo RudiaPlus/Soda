@@ -34,23 +34,17 @@
         "endTime": 1694026799,
         "rewardEndTime": 1694285999
     },
-    "act24side": {
-        "id": "act24side",
+    "act16sre": {
+        "id": "act16sre",
         "type": "SIDESTORY",
-        "stageAdd": "True",
-        "name": "紅炎遣らう落葉",
-        "news": "https://arknights.jp/news/352",
-        "link": "https://00m.in/kT9M9",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/e2c3f764a7e941c4762ea21fff52b8ce.png",
-        "startTime": 1694070000,
-        "endTime": 1695236399,
-        "rewardEndTime": 1695841199,
-        "additionalStage": [
-            {
-                "name": "アイルーの受付カウンター",
-                "startTime": 1694674800
-            }
-        ]
+        "stageAdd": "False",
+        "name": "吾れ先導者たらん(復刻)",
+        "news":"https://arknights.jp/news/354",
+        "link": "https://00m.in/OUgcV",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/26d663c7aba752280f7692237c360a28.png",
+        "startTime": 1695279600,
+        "endTime": 1696100399,
+        "rewardEndTime": 1696445999
     },
     "act1sandbox": {
         "id": "act1sandbox",
