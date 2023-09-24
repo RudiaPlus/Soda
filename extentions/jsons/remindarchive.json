@@ -1,0 +1,22 @@
+{
+    "WeeklyRemind": {
+        "name": "各種報酬期限",
+        "description": "- 週間任務、殲滅作戦(合成玉)の報酬期限まで:\n - {0}\n- 保全駐在の報酬期限まで:\n - {1}",
+        "type": "regular",
+        "link": null,
+        "startTime": null,
+        "endTime": null
+    },
+    "SenmetuRemind1": {
+        "name": "殲滅依頼「龍門商店街」",
+        "description": null,
+        "type": "special",
+        "link": "https://00m.in/hyYtg",
+        "startTime": 
+    },
+    "HozenRemind1": {
+        "name": "極西保全駐在",
+        "description": null,
+
+    }
+}
