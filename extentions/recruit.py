@@ -100,6 +100,7 @@ async def output_results(selected_tags):
             
             
             if ("ロボット" in result["tags"]) or tag_rarity > 2:
+                tag_rarity = 0 if tag_rarity == 99 else tag_rarity
                 goodresult_list += f"{tag_str}: ☆{tag_rarity+1}確定\n"
         
         logger.info(f"公開求人シミュレートを行います：{selected_tags}")        
