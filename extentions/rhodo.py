@@ -30,6 +30,7 @@ async def send_message(message, user_message):
 
 def run_discord_bot():
 
+    test = config.test
     dir = os.path.abspath(__file__ + "/../")
 
     @client.event
@@ -208,13 +209,7 @@ def run_discord_bot():
                             embed.set_author(name = "チャット読み上げ")
                             message = await send_channel.send(embed = embed, view = VoiceSpeechButtons(join_channel = join_channel, target_chat_id=target_chat_id))
                             asyncio.sleep(60)
-                            await message.delete()
-                            
-                                 
-                    
-            
-        
-            
+                            await message.delete()         
 
     @client.tree.command(name="help",
                          description="現在実装されているコマンドの使い方を簡単に説明します！")
@@ -288,17 +283,6 @@ def run_discord_bot():
         await interaction.response.defer()
         await responses.get_response("reset", reset=True)
         await interaction.followup.send("完了しました！")
-
-    @client.tree.command(name="set_remind",
-                         description="リマインドを作り直します",
-                         guild=config.testserverid)
-    @app_commands.describe(version="リマインドの時間 morning/afternoon/evening")
-    async def set_remind(interaction: discord.Interaction, version: str):
-        await interaction.response.defer()
-        channel = client.get_channel(config.announce)
-        await channel.send("リマインダーを作り直します")
-        await reminder.remind(version)
-        await interaction.followup("完了しました")
 
     @client.tree.command(name="maintenance",
                          description="メンテナンスについて",
@@ -454,6 +438,16 @@ def run_discord_bot():
 
         except Exception as e:
             logger.exception(f"[morning]にてエラー：{e}")  
+            
+    @tasks.loop(time=config.threadtime)
+    async def morning():
+        try:
+            logger.info("時間になりました。メンバーにリマインドを送ります。")
+            await reminder.remind("thread")
+            await responses.get_response("reset", reset=True)
+
+        except Exception as e:
+            logger.exception(f"[morning]にてエラー：{e}") 
     
     @tasks.loop(time=config.afternoontime)
     async def afternoon():
@@ -485,5 +479,12 @@ def run_discord_bot():
         except Exception as e:
             logger.exception(f"[new_days]にてエラー：{e}") 
 
-    TOKEN = config.token
+    if test == True:
+
+        logger.warn("テストモードで実行しています！")
+        TOKEN = config.test_client
+    
+    else:
+        TOKEN = config.token
+    
     client.run(TOKEN)

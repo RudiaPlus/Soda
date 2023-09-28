@@ -2,22 +2,29 @@ import discord
 import datetime
 import os
 
+#ABILITY SWITCH
+test = True #TESTMODE(Switch to OverRein), default = False
+logging = True #Write log to your file, default = True
+
+#MAIN
 t_delta = datetime.timedelta(hours=9)
 JST = datetime.timezone(t_delta, 'JST')
+
+test_client = os.environ["TEST_DISCORD_TOKEN"]
+token = os.environ["DISCORD_TOKEN"]
 
 server_invite_link = "https://discord.gg/RgcbYFZfnm"
 server_rule_link = "https://discord.com/channels/1018858818345631745/1018858818932842589/1018863690914729986"
 community_guideline_link = "https://discord.com/guidelines"
 main_server = 1018858818345631745
-logging = True
-token = os.environ["DISCORD_TOKEN"]
+
+
 openAI_key = os.environ["OPENAI_API_KEY"]
-testserverid = discord.Object(1059155328584908810)
-chat = 1072158278634713108  #1072158278634713108
-me = 870729549833465917
+testserverid = discord.Object(1059155328584908810) #メンテナンス部屋
+me = 870729549833465917 #rudiaのユーザーID　分かりにくくてごめん
 server_icon = "https://cdn.discordapp.com/icons/1018858818345631745/a_8025349dd827dee56db7088ef01ccae7.webp?size=1024"
 
-#公開求人
+#RECRUIT
 tagList = ["上級エリート", "エリート", "初期", "ロボット", "前衛タイプ", "狙撃タイプ", "重装タイプ", "医療タイプ", "補助タイプ", 
            "術師タイプ", "特殊タイプ", "先鋒タイプ", "近距離", "遠距離", "治療", "支援", "生存", "火力", "減速", "COST回復", 
            "強制移動", "高速再配置", "弱化", "防御", "範囲攻撃", "爆発力" , "召喚" ,"牽制"]
@@ -45,34 +52,32 @@ recruitList = ["Lancet-2", "Castle-3", "THRM-EX", "ジャスティスナイト",
                "ホシグマ", "サリア", "シルバーアッシュ", "スカジ", "チェン", "シュヴァルツ", "ヘラグ", "マゼラン", "モスティマ", 
                "ブレイズ", "ア", "ケオベ", "バグパイプ", "ファントム", "ウィーディ", "ロサ"]
 
-announce = 1140326740158333048  #1081251314958344313
-maintenance = 1081251314958344313
-request = 1093849433621401600 #1093849433621401600
 
-#tasks
+
+#TASK TIME
 morningtime = datetime.time(hour=4, minute=00, tzinfo=JST)
+threadtime = datetime.time(hour=6, minute=30, tzinfo=JST)
 afternoontime = datetime.time(hour=10, minute=00, tzinfo=JST)
 eveningtime = datetime.time(hour=16, minute=00, tzinfo=JST)
 newdaytime = datetime.time(hour=0, minute=00, tzinfo=JST)
 
 
-morning = True
-command = False
+#ROLE
+administrator_role = 1019295385967149057 #Administrator(赤)
+Moderator_role = 1093773233410547735 #Moderator(橙)
 
 
-#Role
-administrator_role = 1019295385967149057
-Moderator_role = 1093773233410547735
+#CHANNEL
 
-#channels
-speechChannel_1 = 1018908115711836162  #1018908115711836162
-speechChannel_2 = 1018908446176849992
+remind = 1140326740158333048  #リマインド
+remind_TEST = 1156850119451353110 #メンテナンス部屋/リマインド
+maintenance = 1081251314958344313 #メンテナンス
+request = 1093849433621401600 #サポートリクエスト
 
+chat = 1072158278634713108  #bot/ロードの部屋
 moderatorchannel = 1093777243601371157 #botmoderate
 modmail_save_channel = 1108480334024167514 #議事録
 
+
 #categories
 feedback_category = 1108189699715125268
-
-#Voicechat
-#アークナイツ1

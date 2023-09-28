@@ -1,0 +1,143 @@
+{
+  "remindMessage": {
+    "id": 1156855671493505025,
+    "thread_id": 1156855671493505025
+  },
+  "dailyStageRemind": {
+    "name": "本日解放の資源ステージ",
+    "description": null,
+    "type": "stage",
+    "link": null,
+    "allStartTime": null,
+    "allEndTime": null,
+    "allAvailable": false,
+    "stage": [
+      {
+        "id": "LS",
+        "type": "資源調達",
+        "name": "戦術演習(作戦記録)",
+        "available": [
+          "月",
+          "火",
+          "水",
+          "木",
+          "金",
+          "土",
+          "日"
+        ]
+      },
+      {
+        "id": "AP",
+        "type": "資源調達",
+        "name": "防御突破(購買資格証)",
+        "available": [
+          "月",
+          "木",
+          "土",
+          "日"
+        ]
+      },
+      {
+        "id": "SK",
+        "type": "資源調達",
+        "name": "資源確保(炭素材)",
+        "available": [
+          "月",
+          "水",
+          "金",
+          "土"
+        ]
+      },
+      {
+        "id": "CA",
+        "type": "資源調達",
+        "name": "空軍迎撃(アーツ学)",
+        "available": [
+          "火",
+          "水",
+          "金",
+          "日"
+        ]
+      },
+      {
+        "id": "CE",
+        "type": "資源調達",
+        "name": "貨物輸送(龍門幣)",
+        "available": [
+          "火",
+          "木",
+          "土",
+          "日"
+        ]
+      },
+      {
+        "id": "PR-A",
+        "type": "SoC探索",
+        "name": "重装・医療SoC",
+        "available": [
+          "月",
+          "木",
+          "金",
+          "日"
+        ]
+      },
+      {
+        "id": "PR-B",
+        "type": "SoC探索",
+        "name": "狙撃・術師SoC",
+        "available": [
+          "月",
+          "火",
+          "金",
+          "土"
+        ]
+      },
+      {
+        "id": "PR-C",
+        "type": "SoC探索",
+        "name": "先鋒・補助SoC",
+        "available": [
+          "水",
+          "木",
+          "土",
+          "日"
+        ]
+      },
+      {
+        "id": "PR-D",
+        "type": "SoC探索",
+        "name": "前衛・特殊SoC",
+        "available": [
+          "火",
+          "水",
+          "土",
+          "日"
+        ]
+      }
+    ]
+  },
+  "weeklyRemind": {
+    "name": "各種報酬期限",
+    "description": "- 週間任務、殲滅作戦(合成玉)の報酬期限まで:\n  {0}\n- 保全駐在の報酬期限まで:\n  {1}",
+    "type": "regular",
+    "link": null,
+    "startTime": null,
+    "endTime": null
+  },
+  "anniRemind1": {
+    "name": "殲滅依頼「龍門商店街」",
+    "description": null,
+    "type": "anni",
+    "link": "https://00m.in/hyYtg",
+    "startTime": 1694372400,
+    "endTime": 1699210799
+  },
+  "sssRemind1": {
+    "name": "極西保全駐在",
+    "description": null,
+    "type": "sss",
+    "link": "https://00m.in/u4H4P",
+    "startTime": 1689447600,
+    "endTime": 1700074799
+  }
+}

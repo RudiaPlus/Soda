@@ -1,4 +1,8 @@
 {
+    "remindMessage": {
+        "id": 0,
+        "thread_id": 0
+    },
     "dailyStageRemind": {
         "name": "本日解放の資源ステージ",
         "description": null,
@@ -66,7 +70,7 @@
     },
     "weeklyRemind": {
         "name": "各種報酬期限",
-        "description": "- 週間任務、殲滅作戦(合成玉)の報酬期限まで:\n - {0}\n- 保全駐在の報酬期限まで:\n - {1}",
+        "description": "- 週間任務、殲滅作戦(合成玉)の報酬期限まで:\n  {0}\n- 保全駐在の報酬期限まで:\n  {1}",
         "type": "regular",
         "link": null,
         "startTime": null,
