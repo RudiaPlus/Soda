@@ -53,6 +53,12 @@ class RequestConfirm(discord.ui.View):
                 thread = await self.original_message.create_thread(
                     name=f"{request_user.name}さんのリクエスト #{self.original_message.id}",
                     auto_archive_duration=1440)
+                
+                thread_create_message = await thread.channel.fetch_message(thread.channel.last_message_id)
+                if not thread_create_message.id == self.original_message.id:
+                    await thread_create_message.delete()
+                else:
+                    logger.warn("スレッド作成のメッセージが送信されていませんので、削除しませんでした。")
 
                 requests = await request_load()
                 requests[self.request_index]["respondUserID"] = interaction.user.id

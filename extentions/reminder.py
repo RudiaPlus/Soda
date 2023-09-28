@@ -157,9 +157,9 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
                     stagename = stage["name"]
                     
                     if type == "資源調達":
-                        material_stages.append(f"{stageid}:{stagename}")
+                        material_stages.append(f"**{stageid}**:{stagename}")
                     elif type == "SoC探索":
-                        soc_stages.append(f"{stageid}:{stagename}")
+                        soc_stages.append(f"**{stageid}**:{stagename}")
             
         
         next_weekly_limit = await weekly_limit()

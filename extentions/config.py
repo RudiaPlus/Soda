@@ -3,7 +3,7 @@ import datetime
 import os
 
 #ABILITY SWITCH
-test = True #TESTMODE(Switch to OverRein), default = False
+test = False #TESTMODE(Switch to OverRein), default = False
 logging = True #Write log to your file, default = True
 
 #MAIN
