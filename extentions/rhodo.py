@@ -342,7 +342,8 @@ def run_discord_bot():
     @client.tree.command(name="send",
                          description="dev only",
                          guild=config.testserverid)
-    async def send(interaction: discord.Interaction, channelid: int, text: str):
+    async def send(interaction: discord.Interaction, channelid: str, text: str):
+        channelid = int(unicodedata.normalize("NFKC", channelid))
         channel = client.get_channel(channelid)
         await channel.send(text)
         await interaction.response.send_message("完了しました")
