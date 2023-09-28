@@ -208,13 +208,7 @@ def run_discord_bot():
                             embed.set_author(name = "チャット読み上げ")
                             message = await send_channel.send(embed = embed, view = VoiceSpeechButtons(join_channel = join_channel, target_chat_id=target_chat_id))
                             asyncio.sleep(60)
-                            await message.delete()
-                            
-                                 
-                    
-            
-        
-            
+                            await message.delete()          
 
     @client.tree.command(name="help",
                          description="現在実装されているコマンドの使い方を簡単に説明します！")
