@@ -17,21 +17,6 @@ logger = log.setup_logger(__name__)
 remindThreadID = 0
 guildID = config.main_server
 
-
-async def send_message(message, user_message):
-    try:
-        response = await responses.get_response(user_message, reset=False)
-        logger.info(f"返信を取得しました「{response}」")
-
-        if len(response) > 1900:
-            await message.channel.send("文字数制限を超えてしまいました！すみませんがもう一度お願いします！")
-        else:
-            await message.channel.send(response)
-
-    except Exception as e:
-        logger.exception(f"[send_message]にてエラー：{e}")
-
-
 def run_discord_bot():
 
     test = config.test
@@ -160,14 +145,6 @@ def run_discord_bot():
                 mail.set_author(name="あしたはこぶねスタッフ",
                                 icon_url=config.server_icon)
                 await message.author.send(embed=mail)
-
-        if channelID == config.chat:
-            clean_message = re.sub('<.*?>', '', user_message)
-            logger.info("返事をします")
-            await send_message(message, clean_message)
-            
-        else:
-            return
     
     class VoiceSpeechButtons(discord.ui.View):
         def __init__(self, join_channel, target_chat_id):
