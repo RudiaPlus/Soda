@@ -476,7 +476,7 @@ async def remind(mode = "morning"):
                 eventnews = events[i]["news"]
                 eventTime =  events[i]["time"]
                 embed = discord.Embed(title=events[i]["name"],
-                                        description=f"- 詳細: [公式サイト]({news})\n{eventTime}",
+                                        description=f"- 詳細: [公式サイト]({eventnews})\n{eventTime}",
                                         color=0xba80ea,
                                         url = eventnews)
                 embed.set_author(name="開催予定のイベント")
