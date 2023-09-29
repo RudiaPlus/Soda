@@ -405,17 +405,17 @@
     "cc#12": {
         "id": "cc12",
         "type": "CRISIS",
-        "name": "危機契約#11 作戦コード「起源」",
-        "link": "https://00m.in/348wf",
+        "name": "https://arknights.jp/news/357",
+        "link": "https://00m.in/qDt35",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/0f403a4bb822ce6f226870df3ad7baa4.png",
         "stageAdd":"CRISIS",
         "startTime": 1696143600,
         "firstAddTime": 1696705200,
         "endTime": 1697309999,
-        "eventColor": "295160",
+        "eventColor": "441312",
         "permStage": {
             "stageType": "PERM",
-            "stageName": "建設中のビーチ",
+            "stageName": "名も無き庇護所",
             "startTime": 1696143600,
             "firstAddTime": 1696705200,
             "endTime": 1697309999
@@ -424,67 +424,67 @@
             {
                 "stageType": "DAILY",
                 "dailyNumber": 1,
-                "stageName": "凍原の鉱場"
+                "stageName": "霧の戦場"
             },
             {
                 "stageType": "DAILY",
                 "dailyNumber": 2,
-                "stageName": "砂海の遺跡"
+                "stageName": "尚蜀山道"
             },
             {
                 "stageType": "DAILY",
                 "dailyNumber": 3,
-                "stageName": "大騎士領バー通り"
+                "stageName": "サルヴィエントの洞窟"
             },
             {
                 "stageType": "DAILY",
                 "dailyNumber": 4,
-                "stageName": "サルヴィエントの洞窟"
+                "stageName": "ロンディニウム辺縁区画"
             },
             {
                 "stageType": "DAILY",
                 "dailyNumber": 5,
-                "stageName": "尚蜀山道"
+                "stageName": "ヒロック郡物流拠点"
             },
             {
                 "stageType": "DAILY",
                 "dailyNumber": 6,
-                "stageName": "ロンディニウム辺縁区画"
+                "stageName": "建設中のビーチ"
             },
             {
                 "stageType": "DAILY",
                 "dailyNumber": 7,
-                "stageName": "ヒロック郡物流拠点"
+                "stageName": "凍原の鉱場"
             },
             {
                 "stageType": "DAILY",
                 "dailyNumber": 8,
-                "stageName": "大騎士領バー通り"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 9,
                 "stageName": "サルヴィエントの洞窟"
             },
             {
                 "stageType": "DAILY",
-                "dailyNumber": 10,
-                "stageName": "尚蜀山道"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 11,
+                "dailyNumber": 9,
                 "stageName": "ロンディニウム辺縁区画"
             },
             {
                 "stageType": "DAILY",
-                "dailyNumber": 12,
+                "dailyNumber": 10,
                 "stageName": "ヒロック郡物流拠点"
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 11,
+                "stageName": "建設中のビーチ"
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 12,
+                "stageName": "凍原の鉱場"
             },
             {
                 "stageType": "DAILY_FINAL",
                 "dailyNumber": 13,
-                "stageName": "凍原の鉱場"
+                "stageName": "霧の戦場"
             }
         ]
     },
