@@ -230,13 +230,17 @@ async def remind(mode = "morning"):
         try:
             threadid = remind_dic["remindMessage"]["thread_id"]
             thread = channel.get_thread(threadid)
+            
+            if not thread:
+                logger.warn("リマインドスレッドが見つかりません。作成を試みます。")
+                thread = await create_thread(channel, message)
+                
+                remind_dic["remindMessage"]["thread_id"] = thread.id
+                await write_remind_dic(remind_dic)
 
         except Exception:
-            logger.warn("リマインドスレッドが見つかりません。作成を試みます。")
-            thread = await create_thread(channel, message)
-            
-            remind_dic["remindMessage"]["thread_id"] = thread.id
-            await write_remind_dic(remind_dic)
+            logger.error("スレッドの取得と作成に失敗しました")
+            return
             
         await send_remind_to_thread(thread, remind_dic, events)
         return
