@@ -13,6 +13,10 @@ from discord.ext import tasks
 
 logger = log.setup_logger(__name__)
 
+#global関数
+remindThreadID = 0
+guildID = config.main_server
+
 
 async def send_message(message, user_message):
     try:
@@ -61,6 +65,25 @@ def run_discord_bot():
             
             maintenances.maintenance_timer.start()  
             
+            #リマインダー(スレッド)の確認
+            try:
+                global remindThreadID
+                channel = client.get_channel(config.remind)
+                remindThreadID = await reminder.reminder_message("thread")
+                remind_thread = channel.get_thread(remindThreadID)
+                
+                last_message = await remind_thread.fetch_message(remind_thread.last_message_id)
+                
+                now_utc = datetime.datetime.utcnow().timestamp()
+                tz_JST = JSTTime.tz_JST
+                logger.info(f"前回のリマインダーは{last_message.created_at.astimezone(tz_JST)}に投稿されています")
+                if now_utc - last_message.created_at.timestamp() > 86400:
+                    logger.warn("前回のリマインダー投稿から1日以上が経過していました。リマインダーを投稿します。")
+                    await reminder.remind("thread")
+                
+            except Exception as e:
+                logger.error("リマインダースレッドの確認に失敗しました！")
+            
         except Exception as e:
             logger.exception(f"[on_ready]にて エラー：{e}")
             
@@ -89,6 +112,14 @@ def run_discord_bot():
         channelID = message.channel.id
 
         if message.guild:
+            
+            if channelID == remindThreadID:
+                
+                greet_pattern = ".*(お(は(よ|ー|～)|早)|こんにち(は|わ)|こんばん(は|わ)).*"
+                result = re.match(greet_pattern, message.content)
+                if result:
+                    logger.info(f"{author.name}さんが挨拶しました！")
+                    message.add_reaction(":star2:")
 
             if channel.category_id == config.feedback_category and channel.name.startswith("mail"):
 
@@ -196,7 +227,8 @@ def run_discord_bot():
             logger.info(f"{member.name}にボイス読み上げの提案を行います")
             
             target_chat_id = await voicechat.get_target_channels(join_channel)
-                    
+            if not target_chat_id:
+                return        
             if len(target_chat_id) > 1:
             
                 for index in vc_channels.values():
@@ -325,11 +357,15 @@ def run_discord_bot():
         await interaction.followup.send(events)
 
     @client.tree.command(name="send",
-                         description="dev only",
+                         description="channelIDが空欄の場合、リマインダースレッドに投稿します！",
                          guild=config.testserverid)
-    async def send(interaction: discord.Interaction, channelid: str, text: str):
-        channelid = int(unicodedata.normalize("NFKC", channelid))
-        channel = client.get_channel(channelid)
+    async def send(interaction: discord.Interaction, text: str, channelid: str = None):
+        if not channelid:
+            guild = client.get_guild(guildID)
+            channel = guild.get_thread(remindThreadID)
+        else:
+            channelid = int(unicodedata.normalize("NFKC", channelid))
+            channel = client.get_channel(channelid)
         await channel.send(text)
         await interaction.response.send_message("完了しました")
 

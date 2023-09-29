@@ -1,4 +1,5 @@
 import datetime
+import math
 t_delta = datetime.timedelta(hours=9)
 tz_JST = datetime.timezone(t_delta, 'JST')
 
@@ -22,6 +23,8 @@ def timeJST(type: str) -> str:
         month = str(now.month).zfill(2)
         day = str(now.day).zfill(2)
         return(f"{month}/{day}")
+    elif type == "timestamp":
+        return(math.floor(now.timestamp()))
     else :
         return("3時12分")
     

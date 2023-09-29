@@ -78,7 +78,11 @@ async def channels_write(dic):
 async def get_target_channels(vc_channel) -> list:
     for index in channels:
         if channels[index]["id"] == vc_channel.id:
-            target_chat = channel_register[index]
+            try:
+                target_chat = channel_register[index]
+            except KeyError:
+                logger.warn(f"{index}は登録されていません。")
+                return
             id_ = "id"
             target_chat_id = [channels[d][id_] for d in target_chat]
             return(target_chat_id)

@@ -27,6 +27,14 @@ async def set_remind(interaction: discord.Interaction, version: str):
     await remind(version)
     await interaction.followup.send("完了しました")
     
+async def reminder_message(type: str = "message") -> int:
+    
+    remind_dic = await load_remind_dic()
+    if type == "message":
+        return(remind_dic["remindMessage"]["id"])
+    elif type == "thread":
+        return(remind_dic["remindMessage"]["thread_id"])
+        
 async def load_remind_dic() -> dict:
     
     json_name = "jsons/reminds.json"
@@ -80,11 +88,47 @@ async def monthly_limit(limit_day: int) -> datetime.datetime:
 
 async def daily_message_maker():
     eventcount = evjson.eventcount()
+    today = JSTTime.timeJST("raw")
+    weekday_today = JSTTime.timeJST("weekday")
+    first = f"本日は{today.month}月{today.day}日({weekday_today})です。"
+    
+    if today.day == 1:
+        special_day = f"\n今日から{today.month}月が始まりますね！"
+        if today.month == 1:
+            special_day = f"\nあけましておめでとうございます！{today.year}年もどうかよろしくお願いしますね！"
+            
+    if today.month == 2 and today.day == 14:
+        special_day = "\n本日はバレンタインデーです！皆さんはチョコ、好きでしょうか……？"
+        
+    if today.month == 2 and today.day == 22:
+        special_day = "\n本日は猫の日です！:cat: フェリーンの皆さんにも優しくしてあげましょうね！"
+        
+    if today.month == 3 and today.day == 14:
+        special_day = "\n本日はホワイトデーらしいですよ！"
+        
+    if today.month == 4 and today.day == 1:
+        special_day = "ただ、何やら様子がおかしいですね……？"
+        
+    if today.month == 10 and today.day == 31:
+        special_day = "\nハッピーハロウィン！何かお菓子が欲しい気分です……！"
+        
+    if today.month == 12 and today.day == 24:
+        special_day = "\n本日はクリスマスイヴです！私も良い子にしていたから、何かもらえるでしょうか……？"
+        
+    if today.month == 12 and today.day == 25:
+        special_day = "\n本日はクリスマス！素敵な日をお過ごし下さい！"
+        
+    if today.month == 12 and today.day == 31:
+        special_day = "\n大晦日ですね！今年の目標、皆さんは叶えられましたか……？私は……忘れちゃいました……。"
+        
+    else:
+        special_day = ""
+    
     if eventcount[0] == 0:
         if eventcount[3] != 0:
-            eventnow = "**本日からイベントが開催されます！**"
+            eventnow = "\n**本日からイベントが開催されます！**"
         else:
-            eventnow = "本日は少し休める日ですね！"
+            eventnow = ""
     elif eventcount[0] == 1:
         eventnow = f"\n- イベントが進行中です:sparkles: 頑張りましょう！"
     else:
@@ -109,7 +153,7 @@ async def daily_message_maker():
     else:
         eventfuture = f"\n- {eventcount[2]}個のイベントがこの先やってきます！準備は出来ていますか？"
 
-    if JSTTime.timeJST("weekday") == "日":
+    if weekday_today == "日":
         weekday = "\n- **本日は日曜日です！ 殲滅作戦は終わらせましたか？**"
     else:
         weekday = ""
@@ -118,7 +162,7 @@ async def daily_message_maker():
     else:
         monthly = ""
     
-    content = f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！  {eventnow}{eventendToday}{eventend}{eventfuture}{weekday}{monthly}\n- イベント情報はこちら！→<#{config.remind}>"
+    content = f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！  {first}{special_day}{eventnow}{eventendToday}{eventend}{eventfuture}{weekday}{monthly}\n- イベント情報はこちら！→<#{config.remind}>"
     return content
 
 async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_dic: dict) -> None:
@@ -232,15 +276,21 @@ async def remind(mode = "morning"):
             thread = channel.get_thread(threadid)
             
             if not thread:
-                logger.warn("リマインドスレッドが見つかりません。作成を試みます。")
-                thread = await create_thread(channel, message)
+                logger.warn("リマインドスレッドが見つかりません。作成します")
+            
+            else:
+                logger.info("リマインドスレッドが存在するので、作り直します。")
+                await thread.delete()
                 
-                remind_dic["remindMessage"]["thread_id"] = thread.id
-                await write_remind_dic(remind_dic)
-
+            thread = await create_thread(channel, message)
+            
+            remind_dic["remindMessage"]["thread_id"] = thread.id
+            await write_remind_dic(remind_dic)
+            
         except Exception:
             logger.error("スレッドの取得と作成に失敗しました")
             return
+        
             
         await send_remind_to_thread(thread, remind_dic, events)
         return
@@ -427,7 +477,7 @@ async def remind(mode = "morning"):
                                             description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})",
                                             color=0xFFFFFF,
                                             url=link)
-                    embed.set_author(name="統合戦略")
+                    embed.set_author(name="統合戦略(常設)")
                     embed.set_image(url=eventpic)
                     
                     if events[i]["month"]:
