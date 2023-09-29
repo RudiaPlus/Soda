@@ -69,6 +69,7 @@ def run_discord_bot():
     @client.event
     async def setup_hook() -> None:
         morning.start()
+        send_remind.start()
         afternoon.start()
         evening.start()
         new_days.start()
@@ -440,14 +441,14 @@ def run_discord_bot():
             logger.exception(f"[morning]にてエラー：{e}")  
             
     @tasks.loop(time=config.threadtime)
-    async def morning():
+    async def send_remind():
         try:
             logger.info("時間になりました。メンバーにリマインドを送ります。")
             await reminder.remind("thread")
             await responses.get_response("reset", reset=True)
 
         except Exception as e:
-            logger.exception(f"[morning]にてエラー：{e}") 
+            logger.exception(f"[send_remind]にてエラー：{e}") 
     
     @tasks.loop(time=config.afternoontime)
     async def afternoon():
