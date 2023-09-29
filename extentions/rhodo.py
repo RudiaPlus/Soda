@@ -82,7 +82,7 @@ def run_discord_bot():
                     await reminder.remind("thread")
                 
             except Exception as e:
-                logger.error("リマインダースレッドの確認に失敗しました！")
+                logger.error(f"リマインダースレッドの確認に失敗しました！\n{e}")
             
         except Exception as e:
             logger.exception(f"[on_ready]にて エラー：{e}")
@@ -119,7 +119,7 @@ def run_discord_bot():
                 result = re.match(greet_pattern, message.content)
                 if result:
                     logger.info(f"{author.name}さんが挨拶しました！")
-                    message.add_reaction(":star2:")
+                    await message.add_reaction("🌟")
 
             if channel.category_id == config.feedback_category and channel.name.startswith("mail"):
 
@@ -338,12 +338,21 @@ def run_discord_bot():
     @client.tree.command(name="remind",
                          description="リマインドのテストを送ります",
                          guild=config.testserverid)
-    @app_commands.describe(version="リマインドの時間 morning/afternoon/evening")
+    @app_commands.describe(version="リマインドの時間 morning/afternoon/evening/thread")
     async def remind(interaction: discord.Interaction, version: str):
         if interaction.user == client.user:
             return
         await interaction.response.defer()
-        await reminder.remind(version)
+        if not version == "thread":
+
+            await reminder.remind(version)
+            
+        else:
+            
+            global remindThreadID
+            thread = await reminder.remind(version)
+            remindThreadID = thread.id
+            
         await interaction.followup.send("完了しました！")
 
     @client.tree.command(name="eventtest",
@@ -479,8 +488,10 @@ def run_discord_bot():
     @tasks.loop(time=config.threadtime)
     async def send_remind():
         try:
+            global remindThreadID
             logger.info("時間になりました。メンバーにリマインドを送ります。")
-            await reminder.remind("thread")
+            thread = await reminder.remind("thread")
+            remindThreadID = thread.id
             await responses.get_response("reset", reset=True)
 
         except Exception as e:

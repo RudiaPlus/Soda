@@ -293,7 +293,7 @@ async def remind(mode = "morning"):
         
             
         await send_remind_to_thread(thread, remind_dic, events)
-        return
+        return thread
         
     else:
 

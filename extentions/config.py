@@ -69,8 +69,9 @@ Moderator_role = 1093773233410547735 #Moderator(橙)
 
 #CHANNEL
 
-remind = 1140326740158333048  #リマインド
 remind_TEST = 1156850119451353110 #メンテナンス部屋/リマインド
+remind = 1140326740158333048 if test == False else remind_TEST  #リマインド
+
 maintenance = 1081251314958344313 #メンテナンス
 request = 1093849433621401600 #サポートリクエスト
 
