@@ -247,7 +247,12 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
         embeds.append(embed)
         
     content = await daily_message_maker()
-    await thread.send(content = content, embeds = embeds)
+    pinned_messages = await thread.pins()
+    if pinned_messages:
+        for message in pinned_messages:
+            await message.unpin()
+    message = await thread.send(content = content, embeds = embeds)
+    await message.pin()
                 
 
 async def remind(mode = "morning"):
@@ -277,15 +282,10 @@ async def remind(mode = "morning"):
             
             if not thread:
                 logger.warn("リマインドスレッドが見つかりません。作成します")
+                thread = await create_thread(channel, message)
             
-            else:
-                logger.info("リマインドスレッドが存在するので、作り直します。")
-                await thread.delete()
-                
-            thread = await create_thread(channel, message)
-            
-            remind_dic["remindMessage"]["thread_id"] = thread.id
-            await write_remind_dic(remind_dic)
+                remind_dic["remindMessage"]["thread_id"] = thread.id
+                await write_remind_dic(remind_dic)
             
         except Exception:
             logger.error("スレッドの取得と作成に失敗しました")
