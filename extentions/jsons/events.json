@@ -44,7 +44,8 @@
     "cc#12": {
         "id": "cc12",
         "type": "CRISIS",
-        "name": "https://arknights.jp/news/357",
+        "name": "危機契約#12 作戦コード「起源」",
+        "news": "https://arknights.jp/news/357",
         "link": "https://00m.in/qDt35",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/0f403a4bb822ce6f226870df3ad7baa4.png",
         "stageAdd":"CRISIS",
