@@ -56,13 +56,18 @@ def run_discord_bot():
                 channel = client.get_channel(config.remind)
                 remindThreadID = await reminder.reminder_message("thread")
                 remind_thread = channel.get_thread(remindThreadID)
+                now_utc = datetime.datetime.utcnow()
+                yesterday_utc = datetime.datetime(now_utc.year, now_utc.month, now_utc.day-1, 6, 25)
                 
-                last_message = await remind_thread.fetch_message(remind_thread.last_message_id)
+                async for message in remind_thread.history(after = yesterday_utc, oldest_first=True):
+
+                    if message.author == client.user:
+                        last_message = message
                 
-                now_utc = datetime.datetime.utcnow().timestamp()
+                now_utc_timestamp = now_utc.timestamp()
                 tz_JST = JSTTime.tz_JST
                 logger.info(f"前回のリマインダーは{last_message.created_at.astimezone(tz_JST)}に投稿されています")
-                if now_utc - last_message.created_at.timestamp() > 86400:
+                if now_utc_timestamp - last_message.created_at.timestamp() > 86400:
                     logger.warn("前回のリマインダー投稿から1日以上が経過していました。リマインダーを投稿します。")
                     await reminder.remind("thread")
                 

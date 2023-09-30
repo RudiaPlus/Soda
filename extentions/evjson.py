@@ -50,10 +50,6 @@ def eventget():
             elif time.time() < eventRewardEndTime:
                 event_end += 1
                 event_end_list.append(k)
-
-            
-        logger.info(f"現在{event_now}個のイベントが進行中です")
-        logger.info(f"開催予定のイベントは{event_value}個、終了したイベントは{event_end}個あります")
         
         for i in range(len(event_now_list)):
             #開催中リストから「名前(name)、イベントの種類(type)、開始時間(startTime)、*終了時間(endTime)*、公式告知(news)、攻略リンク(link)、*ステージ追加(stageAdd)*」の有無を取得する←これらは必須です！
@@ -249,7 +245,7 @@ def eventcount():
                 
                 now = JSTTime.timeJST("raw")
                     
-                if timeDay(eventEndtime, type="m/d") == timeDay(time.time()+86400, type="m/d"):
+                if timeDay(eventEndtime, type="m/d") == timeDay(JSTTime.timeJST("timestamp")+86400, type="m/d"):
                     event_end_today += 1
                 
             elif time.time() < eventEndtime and not type == "ROGUELIKE":
@@ -257,6 +253,10 @@ def eventcount():
             
             elif time.time() < eventRewardEndTime:
                 event_end += 1
+                
+    logger.info(f"現在{event_now}個のイベントが進行中です")
+    logger.info(f"開催予定のイベントは{event_value}個、終了したイベントは{event_end}個あります")
+    logger.info(f"本日から始まるイベントは{event_today}個、本日で終了するイベントは{event_end_today}個です。")
     
     event_count = [event_now, event_end, event_value, event_today, event_end_today]        
     return(event_count)
