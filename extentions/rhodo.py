@@ -58,12 +58,13 @@ def run_discord_bot():
                 remind_thread = channel.get_thread(remindThreadID)
                 now_utc = datetime.datetime.utcnow()
                 yesterday_utc = datetime.datetime(now_utc.year, now_utc.month, now_utc.day-1, 6, 25)
-                
+                fetch_number = 0
                 async for message in remind_thread.history(after = yesterday_utc, oldest_first=True):
-
+                    fetch_number += 1
                     if message.author == client.user:
                         last_message = message
                 
+                logger.info(f"リマインダーの確認をします。昨日の6:25から{fetch_number}個のメッセージを取得しました")
                 now_utc_timestamp = now_utc.timestamp()
                 tz_JST = JSTTime.tz_JST
                 logger.info(f"前回のリマインダーは{last_message.created_at.astimezone(tz_JST)}に投稿されています")
