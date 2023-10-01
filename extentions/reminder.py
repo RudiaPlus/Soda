@@ -40,13 +40,13 @@ async def load_remind_dic() -> dict:
     json_name = "jsons/reminds.json"
     with open(os.path.join(dir, json_name), "r", encoding="utf-8") as f:
         remind_dic = json.load(f)
-    if remind_dic["dailyStageRemind"]["alaAvailable"] == False:
+    if remind_dic["dailyStageRemind"]["allAvailable"] == False:
         if remind_dic["dailyStageRemind"]["allStartTime"] < today_timestamp and today_timestamp < remind_dic["dailyStageRemind"]["allEndTime"]:
-            remind_dic["dailyStageRemind"]["alaAvailable"] = True
+            remind_dic["dailyStageRemind"]["allAvailable"] = True
             await write_remind_dic(remind_dic)
     else:
         if remind_dic["dailyStageRemind"]["allEndTime"] < today_timestamp:
-            remind_dic["dailyStageRemind"]["alaAvailable"] = False
+            remind_dic["dailyStageRemind"]["allAvailable"] = False
             await write_remind_dic(remind_dic)
        
     return remind_dic
