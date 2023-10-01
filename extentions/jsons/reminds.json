@@ -8,8 +8,8 @@
     "description": null,
     "type": "stage",
     "link": null,
-    "allStartTime": null,
-    "allEndTime": null,
+    "allStartTime": 1696143600,
+    "allEndTime": 1697309999,
     "allAvailable": false,
     "stage": [
       {

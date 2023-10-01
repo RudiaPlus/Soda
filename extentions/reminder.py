@@ -36,10 +36,19 @@ async def reminder_message(type: str = "message") -> int:
         return(remind_dic["remindMessage"]["thread_id"])
         
 async def load_remind_dic() -> dict:
-    
+    today_timestamp = JSTTime.timeJST("timestamp")
     json_name = "jsons/reminds.json"
     with open(os.path.join(dir, json_name), "r", encoding="utf-8") as f:
         remind_dic = json.load(f)
+    if remind_dic["dailyStageRemind"]["alaAvailable"] == False:
+        if remind_dic["dailyStageRemind"]["allStartTime"] < today_timestamp and today_timestamp < remind_dic["dailyStageRemind"]["allEndTime"]:
+            remind_dic["dailyStageRemind"]["alaAvailable"] = True
+            await write_remind_dic(remind_dic)
+    else:
+        if remind_dic["dailyStageRemind"]["allEndTime"] < today_timestamp:
+            remind_dic["dailyStageRemind"]["alaAvailable"] = False
+            await write_remind_dic(remind_dic)
+       
     return remind_dic
 
 async def write_remind_dic(dic):
@@ -93,46 +102,47 @@ async def daily_message_maker():
     first = f"本日は{today.month}月{today.day}日({weekday_today})です。"
     
     if today.day == 1:
-        special_day = f"\n今日から{today.month}月が始まりますね！"
+        special_day = f"\n今日から{today.month}月が始まりますね！資格証交換が更新されているのでご確認ください！"
         if today.month == 1:
             special_day = f"\nあけましておめでとうございます！{today.year}年もどうかよろしくお願いしますね！"
             
-    if today.month == 2 and today.day == 14:
+        if today.month == 4:
+            special_day = f"\n今日から{today.month}月が始まりますね！資格証交換が更新されているのでご確認ください！ただ、何やら様子がおかしいですね……？"        
+            
+    elif today.month == 2 and today.day == 14:
         special_day = "\n本日はバレンタインデーです！皆さんはチョコ、好きでしょうか……？"
         
-    if today.month == 2 and today.day == 22:
+    elif today.month == 2 and today.day == 22:
         special_day = "\n本日は猫の日です！:cat: フェリーンの皆さんにも優しくしてあげましょうね！"
         
-    if today.month == 3 and today.day == 14:
+    elif today.month == 3 and today.day == 14:
         special_day = "\n本日はホワイトデーらしいですよ！"
         
-    if today.month == 4 and today.day == 1:
-        special_day = "ただ、何やら様子がおかしいですね……？"
-        
-    if today.month == 10 and today.day == 31:
+    elif today.month == 10 and today.day == 31:
         special_day = "\nハッピーハロウィン！何かお菓子が欲しい気分です……！"
         
-    if today.month == 12 and today.day == 24:
+    elif today.month == 12 and today.day == 24:
         special_day = "\n本日はクリスマスイヴです！私も良い子にしていたから、何かもらえるでしょうか……？"
         
-    if today.month == 12 and today.day == 25:
+    elif today.month == 12 and today.day == 25:
         special_day = "\n本日はクリスマス！素敵な日をお過ごし下さい！"
         
-    if today.month == 12 and today.day == 31:
+    elif today.month == 12 and today.day == 31:
         special_day = "\n大晦日ですね！今年の目標、皆さんは叶えられましたか……？私は……忘れちゃいました……。"
         
     else:
         special_day = ""
-    
-    if eventcount[0] == 0:
-        if eventcount[3] != 0:
-            eventnow = "\n**本日からイベントが開催されます！**"
-        else:
-            eventnow = ""
-    elif eventcount[0] == 1:
-        eventnow = f"\n- イベントが進行中です:sparkles: 頑張りましょう！"
+
+
+    if eventcount[3] != 0:
+        eventnow = "- \n**本日からイベントが開催されます！**"
     else:
-        eventnow = f"\n- 本日は{eventcount[0]}個のイベントが進行中です:sparkles: 頑張りましょう！"
+        eventnow = ""
+        
+    if eventcount[0] == 1:
+        eventnow += f"\n- イベントが進行中です:sparkles: 頑張りましょう！"
+    else:
+        eventnow += f"\n- 本日は{eventcount[0]}個のイベントが進行中です:sparkles: 頑張りましょう！"
         
     if eventcount[4] != 0:
         eventendToday = "\n- **本日で終了するイベントがあります！ご注意ください！**"
@@ -157,7 +167,7 @@ async def daily_message_maker():
         weekday = "\n- **本日は日曜日です！ 殲滅作戦は終わらせましたか？**"
     else:
         weekday = ""
-    if JSTTime.timeJST("raw").day == 15:
+    if today.day == 15:
         monthly = "\n- **保全駐在の報酬期限は今日までです！報酬は受け取りましたか？**"
     else:
         monthly = ""
