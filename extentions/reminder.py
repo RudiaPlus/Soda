@@ -95,11 +95,14 @@ async def monthly_limit(limit_day: int) -> datetime.datetime:
             
     return limit_day
 
-async def daily_message_maker():
+async def daily_message_maker(remind_dic: dict):
     eventcount = evjson.eventcount()
     today = JSTTime.timeJST("raw")
     weekday_today = JSTTime.timeJST("weekday")
     first = f"本日は{today.month}月{today.day}日({weekday_today})です。"
+    
+    if remind_dic["dailyStageRemind"]["allAvailable"] == True:
+        first += f"\n**危機契約が始まっています！無理せずに頑張りましょう！！**"
     
     if today.day == 1:
         special_day = f"\n今日から{today.month}月が始まりますね！資格証交換が更新されているのでご確認ください！"
@@ -256,7 +259,7 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
         
         embeds.append(embed)
         
-    content = await daily_message_maker()
+    content = await daily_message_maker(remind_dic=remind_dic)
     pinned_messages = await thread.pins()
     if pinned_messages:
         for message in pinned_messages:
@@ -270,7 +273,7 @@ async def remind(mode = "morning"):
     maintenance = await maintenances.maintenance_list()
     channel = client.get_channel(config.remind) if test == False else client.get_channel(config.remind_TEST)
     embeds = []
-    file = None
+    files = []
 
     remind_dic = await load_remind_dic()
     try:
@@ -328,13 +331,14 @@ async def remind(mode = "morning"):
                         news =  events[i]["news"]
                         link = events[i]["link"]
                         eventpic = events[i]["pic"]
-                        eventColor = events[i]["eventColor"]
+                        eventColor = int(events[i]["eventColor"], 16)
                     except Exception:
                         pass
 
                     png_name = "images/contingencycontract.png"
                     file = discord.File(os.path.join(dir, png_name),
                                         filename="image.png")
+                    files.append(file)
                     embed = discord.Embed(title=title,
                                             description=f"- **高難易度のイベントです！**\n- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}",
                                             color=eventColor,
@@ -546,7 +550,7 @@ async def remind(mode = "morning"):
         refreshTime = "<t:{0}:F>( <t:{0}:R> )".format(round(time.time()))
             
         if embeds:
-            if file:
-                await message.edit(content = f"最終更新: {refreshTime}", file = file, embeds = embeds)
+            if files:
+                await message.edit(content = f"最終更新: {refreshTime}", attachments = files, embeds = embeds)
             else:
                 await message.edit(content = f"最終更新: {refreshTime}", embeds=embeds)

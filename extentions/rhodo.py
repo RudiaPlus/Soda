@@ -57,9 +57,10 @@ def run_discord_bot():
                 remindThreadID = await reminder.reminder_message("thread")
                 remind_thread = channel.get_thread(remindThreadID)
                 now_utc = datetime.datetime.utcnow()
-                yesterday_utc = datetime.datetime(now_utc.year, now_utc.month, now_utc.day-1, 6, 25)
+                yesterday_utc = now_utc - datetime.timedelta(days = 1)
+                yesterday_625 = yesterday_utc.replace(hour = 6, minute = 25, second= 0, microsecond=0)
                 fetch_number = 0
-                async for message in remind_thread.history(after = yesterday_utc, oldest_first=True):
+                async for message in remind_thread.history(after = yesterday_625, oldest_first=True):
                     fetch_number += 1
                     if message.author == client.user:
                         last_message = message
