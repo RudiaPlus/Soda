@@ -1,7 +1,8 @@
 {
   "remindMessage": {
     "id": 1156979471182729308,
-    "thread_id": 1156979471182729308
+    "thread_id": 1156979471182729308,
+    "last_remind_id": 1157791504698450050
   },
   "dailyStageRemind": {
     "name": "本日解放の資源ステージ",

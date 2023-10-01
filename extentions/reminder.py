@@ -34,6 +34,8 @@ async def reminder_message(type: str = "message") -> int:
         return(remind_dic["remindMessage"]["id"])
     elif type == "thread":
         return(remind_dic["remindMessage"]["thread_id"])
+    elif type == "last_remind":
+        return(remind_dic["remindMessage"]["last_remind_id"])
         
 async def load_remind_dic() -> dict:
     today_timestamp = JSTTime.timeJST("timestamp")
@@ -266,6 +268,8 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
             await message.unpin()
     message = await thread.send(content = content, embeds = embeds)
     await message.pin()
+    remind_dic["remindMessage"]["last_remind_id"] = message.id
+    await write_remind_dic(remind_dic)
                 
 
 async def remind(mode = "morning"):
