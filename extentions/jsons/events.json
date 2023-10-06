@@ -29,18 +29,6 @@
             }
         ]
     },
-    "act16sre": {
-        "id": "act16sre",
-        "type": "SIDESTORY",
-        "stageAdd": "False",
-        "name": "吾れ先導者たらん(復刻)",
-        "news":"https://arknights.jp/news/354",
-        "link": "https://00m.in/OUgcV",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/36c9464a9d759286be7718ed7d395962.png",
-        "startTime": 1695279600,
-        "endTime": 1696100399,
-        "rewardEndTime": 1696445999
-    },
     "cc#12": {
         "id": "cc12",
         "type": "CRISIS",
@@ -139,5 +127,17 @@
         "startTime": 1694070000,
         "endTime": 1697050799,
         "rewardEndTime": 1697655599
+    },
+    "act1exmain": {
+        "id": "act1exmain",
+        "type": "SUPPORT",
+        "stageAdd": "False",
+        "name": "作戦支援",
+        "news": "https://arknights.jp/news/353",
+        "link": null,
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/366680710f630a2e999f83bfa494d79a.png",
+        "startTime": 1696878000,
+        "endTime": 1699297199,
+        "rewardEndTime": 1699297199
     }
 }

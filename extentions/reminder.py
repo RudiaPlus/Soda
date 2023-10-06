@@ -482,6 +482,23 @@ async def remind(mode = "morning"):
                     embed.set_image(url=eventpic)
                     embeds.append(embed)
                     
+                elif events[i]["type"] == "SUPPORT":
+                    try:
+                        title = events[i]["name"]
+                        eventTime =  events[i]["time"]
+                        news = events[i]["news"]
+                        eventpic = events[i]["pic"]
+                    except Exception as e:
+                        logger.warn(f"[morning:main]: {e}")
+                        
+                    embed = discord.Embed(title=title,
+                                            description=f"- 詳細: [公式サイト]({news})\n{eventTime}",
+                                            color=0x5C7CA8,
+                                            url=link)
+                    embed.set_author(name="新章公開 - 事前準備")
+                    embed.set_image(url=eventpic)
+                    embeds.append(embed)
+                    
                 elif events[i]["type"] == "ROGUELIKE":
                     try:
                         title = events[i]["name"]

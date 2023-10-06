@@ -500,6 +500,18 @@
         "endTime": 1697050799,
         "rewardEndTime": 1697655599
     },
+    "act1exmain": {
+        "id": "act1exmain",
+        "type": "SUPPORT",
+        "stageAdd": "False",
+        "name": "作戦支援",
+        "news": "https://arknights.jp/news/353",
+        "link": null,
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/366680710f630a2e999f83bfa494d79a.png",
+        "startTime": 1696878000,
+        "endTime": 1699297199,
+        "rewardEndTime": 1699297199
+    },
     "dis_rogue_2": {
         "id": "dis_rogue_2",
         "type": "ROGUELIKE",
