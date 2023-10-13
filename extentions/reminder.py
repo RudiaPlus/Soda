@@ -313,6 +313,8 @@ async def remind(mode = "morning"):
         return thread
         
     else:
+        
+        #print(events)
 
         for i in range(len(maintenance)):
             title = maintenance[i]["name"]
@@ -494,7 +496,7 @@ async def remind(mode = "morning"):
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n{eventTime}",
                                             color=0x5C7CA8,
-                                            url=link)
+                                            url=news)
                     embed.set_author(name="新章公開 - 事前準備")
                     embed.set_image(url=eventpic)
                     embeds.append(embed)

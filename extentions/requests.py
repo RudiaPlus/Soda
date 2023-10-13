@@ -51,7 +51,7 @@ class RequestConfirm(discord.ui.View):
                     name=str(interaction.user), icon_url=interaction.user.avatar)
 
                 thread = await self.original_message.create_thread(
-                    name=f"{request_user.name}さんのリクエスト #{self.original_message.id}",
+                    name=f"{request_user.display_name}さんのリクエスト #{self.original_message.id}",
                     auto_archive_duration=1440)
                 
                 channel = self.original_message.channel
@@ -611,6 +611,7 @@ async def support_request(interaction: discord.Interaction,
     if interaction.user == client.user:
         return
     await interaction.response.defer(ephemeral=True)
+    remarks = remarks if remarks else "無し"
     operators = await operators_load()
     correct = 0
     for index in operators:
@@ -642,6 +643,7 @@ async def support_request(interaction: discord.Interaction,
             embed.set_footer(text=f"入力した備考：{remarks}")
             logger.info(f"{interaction.user.name}がコマンド/requestを使用しました")
             await interaction.followup.send(embed=embed, view=OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=level, rarity = operators[index]["rarity"], remarks = remarks), ephemeral=True)
+            return
     if correct == 0:
         await interaction.followup.send(
             "正しいオペレーター名、またはレアリティごとの最大値を超えないレベルを入力してください！\nまた、☆1、☆2のオペレーターは対応していません！", ephemeral=True)

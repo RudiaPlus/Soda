@@ -13,7 +13,7 @@ from discord.ext import tasks
 
 logger = log.setup_logger(__name__)
 
-#global関数
+#global変数
 remindThreadID = 0
 guildID = config.main_server
 
@@ -343,6 +343,16 @@ def run_discord_bot():
         await interaction.response.defer()
         events = evjson.eventget()
         await interaction.followup.send(events)
+        
+    @client.tree.command(name="eventcounttest",
+                         description="イベントカウントのテストを行います",
+                         guild=config.testserverid)
+    async def eventtest(interaction: discord.Interaction):
+        if interaction.user == client.user:
+            return
+        await interaction.response.defer()
+        eventcount = evjson.eventcount()
+        await interaction.followup.send(f"- eventnow: {eventcount[0]}\n- eventend: {eventcount[1]}\n- eventvalue: {eventcount[2]}\n- eventtoday: {eventcount[3]}\n- eventendtoday: {eventcount[4]}")       
 
     @client.tree.command(name="send",
                          description="channelIDが空欄の場合、リマインダースレッドに投稿します！",

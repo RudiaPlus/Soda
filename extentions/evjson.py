@@ -243,13 +243,11 @@ def eventcount():
                 if timeDay(eventtime, type="m/d") == timeDay(time.time(), type="m/d"):
                     event_today += 1
                 
-                now = JSTTime.timeJST("raw")
-                    
-                if timeDay(eventEndtime, type="m/d") == timeDay(JSTTime.timeJST("timestamp")+86400, type="m/d"):
-                    event_end_today += 1
-                
             elif time.time() < eventEndtime and not type == "ROGUELIKE":
                 event_now += 1
+                
+                if timeDay(eventEndtime, type="m/d") == timeDay(time.time()+86400, type="m/d"):
+                    event_end_today += 1
             
             elif time.time() < eventRewardEndTime:
                 event_end += 1
