@@ -2,7 +2,7 @@
   "remindMessage": {
     "id": 1156979471182729308,
     "thread_id": 1156979471182729308,
-    "last_remind_id": 1162140162822770698
+    "last_remind_id": 1162864937551528177
   },
   "dailyStageRemind": {
     "name": "本日解放の資源ステージ",
@@ -11,7 +11,7 @@
     "link": null,
     "allStartTime": 1696143600,
     "allEndTime": 1697309999,
-    "allAvailable": true,
+    "allAvailable": false,
     "stage": [
       {
         "id": "LS",

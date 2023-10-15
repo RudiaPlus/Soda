@@ -138,10 +138,10 @@ class RequestComplete(discord.ui.View):
                     skill = requests[index]["skill"]
 
                     respond_embed = discord.Embed(title="リクエストに応えていただきありがとうございます！",
-                                                  description=f"{str(request_user)}さんのサポートリクエストが終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator} | {skill}")
+                                                  description=f"{request_user.display_name}さんのサポートリクエストが終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator} | {skill}")
                     respond_embed.set_author(
-                        name=str(request_user), icon_url=request_user.avatar)
-                    respond_embed.set_footer(text="これからも宜しくお願い致します！")
+                        name=request_user.display_name, icon_url=request_user.avatar)
+                    respond_embed.set_footer(text="これからも「あしたはこぶね」を宜しくお願い致します！")
                     await respond_user.send(embed=respond_embed)
 
         if interaction.user.id == request_user.id or interaction.user.guild_permissions.manage_messages == True:

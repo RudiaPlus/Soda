@@ -576,4 +576,4 @@ async def remind(mode = "morning"):
             if files:
                 await message.edit(content = f"最終更新: {refreshTime}", attachments = files, embeds = embeds)
             else:
-                await message.edit(content = f"最終更新: {refreshTime}", embeds=embeds)
+                await message.edit(content = f"最終更新: {refreshTime}", attachments = [], embeds=embeds)
