@@ -1,7 +1,7 @@
 import discord
 from discord.ext import tasks
 import json
-import time
+import datetime
 import os
 from extentions import log, config, JSTTime
 from extentions.aclient import client
@@ -9,7 +9,7 @@ from typing import List
 
 logger = log.setup_logger(__name__)
 dir = os.path.abspath(__file__ + "/../")
-modmail_json_path = "jsons/modmail.json"
+modmail_html_path = "htmls/modmail.html"
 
 class ModmailButton(discord.ui.View):
     def __init__(self):
@@ -40,7 +40,7 @@ class ModmailFinish(discord.ui.View):
     @discord.ui.button(label = "終了", custom_id = "modmailfinish", emoji = "🔒")
     async def modmailfinish(self, interaction: discord.Interaction, button: discord.ui.Button):
         
-        guild = client.get_guild(config.main_server)
+        guild = client.get_guild(config.main_server) if config.test == False else client.get_guild(config.testserverid)
         
         if not interaction.guild:
             
@@ -74,17 +74,23 @@ class ModmailFinish(discord.ui.View):
             else:
                 await user.send(embed = embed)
                 await interaction.response.send_message(embed = embed_mod)
+
+            if config.test == False:
             
-            Administrator = guild.get_role(config.administrator_role)
-            Moderator = guild.get_role(config.Moderator_role)
-            
-            closed_overwrite = {
-                guild.me: discord.PermissionOverwrite(read_messages = True, send_messages = True, manage_channels = True),
-                guild.default_role: discord.PermissionOverwrite(read_messages = False, send_messages = False),
-                Administrator: discord.PermissionOverwrite(read_messages = True, send_messages = True),
-                Moderator: discord.PermissionOverwrite(read_messages = True, send_messages = False)
-            }
-            
+                Administrator = guild.get_role(config.administrator_role)
+                Moderator = guild.get_role(config.Moderator_role)
+                
+
+                closed_overwrite = {
+                    guild.me: discord.PermissionOverwrite(read_messages = True, send_messages = True, manage_channels = True),
+                    guild.default_role: discord.PermissionOverwrite(read_messages = False, send_messages = False),
+                    Administrator: discord.PermissionOverwrite(read_messages = True, send_messages = True),
+                    Moderator: discord.PermissionOverwrite(read_messages = True, send_messages = False)
+                }
+                
+            else:
+                closed_overwrite = {}
+                
             await mod_channel.edit(name = f"closed-{userID}", overwrites = closed_overwrite)
             
             embed_control = discord.Embed(description = "スタッフのコントロールはこちら")
@@ -157,21 +163,26 @@ async def fetch_mod_channel(guild: discord.Guild, user: discord.User) -> discord
 
 async def create_modmail(user: discord.User):
 
-    guild = client.get_guild(config.main_server)
+    guild = client.get_guild(config.main_server) if config.test == False else client.get_guild(config.testserverid)
     mod_channel = await fetch_mod_channel(guild=guild, user=user)
     
     if mod_channel is None:
     
         categoty = discord.utils.get(guild.categories, name = "────フィードバック────")
-        Administrator = guild.get_role(config.administrator_role)
-        Moderator = guild.get_role(config.Moderator_role)
         
-        role_overwrite = {
-                guild.me: discord.PermissionOverwrite(read_messages = True, send_messages = True, manage_channels = True),
-                guild.default_role: discord.PermissionOverwrite(read_messages = False, send_messages = False),
-                Administrator: discord.PermissionOverwrite(read_messages = True, send_messages = True),
-                Moderator: discord.PermissionOverwrite(read_messages = True, send_messages = True)
-        }
+        if config.test == False:
+            Administrator = guild.get_role(config.administrator_role)
+            Moderator = guild.get_role(config.Moderator_role)
+        
+            role_overwrite = {
+                    guild.me: discord.PermissionOverwrite(read_messages = True, send_messages = True, manage_channels = True),
+                    guild.default_role: discord.PermissionOverwrite(read_messages = False, send_messages = False),
+                    Administrator: discord.PermissionOverwrite(read_messages = True, send_messages = True),
+                    Moderator: discord.PermissionOverwrite(read_messages = True, send_messages = True)
+            }
+        else:
+            role_overwrite = {}
+            
         mod_channel = await guild.create_text_channel(f"mail-{user.id}", category = categoty, overwrites = role_overwrite, reason = f"ModMailが開始されました:{user.id}")
         
         embed_mod = discord.Embed(title="ModMailが開始されました！", description=f"ニックネーム : {user.display_name}\nid : {user.id}\nアカウント作成日 : {user.created_at}", color=user.accent_color)
@@ -189,13 +200,21 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
     idx = channel.name.find("-") + 1
     userID = int(channel.name[idx:])
     user = await client.fetch_user(userID)
+    channel_name = channel.name
+    channel_id = channel.id
     
-    messages = []
     users = {}
+    html_header = f"<!DOCTYPE html>\n<html lang='ja'>\n<head>\n<meta charset='utf-8'>\n<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n<title>Modmail-{channel_id}</title>\n<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>\n</head>\n<body class='bg-gray-700 text-gray-300'>\n<h1 class='text-2xl font-bold text-center my-4'>\n{channel_name} (チャンネルID: {channel_id})\n</h1>\n<div class='container mx-auto px-4'>\n"
+    html_body = ""
+    html_hooter = "</div>\n</body>\n</html>\n"
     
     async for message in channel.history(oldest_first = True):
-        author = str(message.author)
-        content = message.content
+        author = f"{str(message.author)} (スタッフ)"
+        author_avatar = message.author.display_avatar.url
+        content = message.embeds[0].description if message.embeds else message.content
+        timestamp = message.created_at + datetime.timedelta(hours=9)
+        
+        date_format = "%Y-%m-%d %H:%M:%S"
         
         if message.author != client.user:
             
@@ -209,7 +228,8 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
         else:
             content = message.embeds[0].description
             if message.embeds[0].author.name is not None:
-                author = message.embeds[0].author.name
+                author = f"{message.embeds[0].author.name} (メンバー)"
+                author_avatar = message.embeds[0].author.icon_url
                 
                 if author in users:
                 
@@ -217,14 +237,19 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
                 
                 else:
                     users[author] = 1 
+            else:
+                author = f"{str(message.author)} (bot)"
         
-        user_message = {author: content}
-        messages.append(user_message)
+        html_tag = f"<div class='flex items-start my-2'>\n<img src='{author_avatar}' alt='{author}' class='w-12 h-12 rounded-full mr-2'>\n<div class='flex flex-col'>\n<p class='text-lg font-semibold'>{author}</p>\n<p class='text-sm text-gray-400'>{timestamp.strftime(date_format)}</p>\n<p class='text-base'>{content}</p>\n</div>\n</div>\n"
         
-    with open(os.path.join(dir, modmail_json_path), mode = "w", encoding="utf-8") as f:
-        json.dump(messages, f, indent=2, ensure_ascii=False)
+        html_body += html_tag
     
-    messages_json = discord.File(fp = os.path.join(dir, modmail_json_path), filename = "messages.json")
+    html = html_header + html_body + html_hooter
+        
+    with open(os.path.join(dir, modmail_html_path), mode = "w", encoding="utf-8") as f:
+        f.write(html)
+    
+    messages_json = discord.File(fp = os.path.join(dir, modmail_html_path), filename = f"Modmail-{channel_id}.html")
     
     speakers = ""
     
@@ -238,7 +263,7 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
     embed.add_field(name = "発言者", value = speakers, inline = False)
     embed.add_field(name = "削除者", value = delete_user.mention)
     
-    save_channel = client.get_channel(config.modmail_save_channel)
+    save_channel = client.get_channel(config.modmail_save_channel) if config.test == False else client.get_channel(1163715007503151144)
     await save_channel.send(embed = embed, file = messages_json)
         
     

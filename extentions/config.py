@@ -3,7 +3,7 @@ import datetime
 import os
 
 #ABILITY SWITCH
-test = False #TESTMODE(Switch to OverRein), default = False
+test = True #TESTMODE(Switch to OverRein), default = False
 logging = True #Write log to your file, default = True
 voice_suggest = False #suggest text speech to voicechat user
 
@@ -18,10 +18,10 @@ server_invite_link = "https://discord.gg/RgcbYFZfnm"
 server_rule_link = "https://discord.com/channels/1018858818345631745/1018858818932842589/1018863690914729986"
 community_guideline_link = "https://discord.com/guidelines"
 main_server = 1018858818345631745
-
+testserverid = 1059155328584908810 #メンテナンス部屋
 
 openAI_key = os.environ["OPENAI_API_KEY"]
-testserverid = discord.Object(1059155328584908810) #メンテナンス部屋
+
 me = 870729549833465917 #rudiaのユーザーID　分かりにくくてごめん
 server_icon = "https://cdn.discordapp.com/icons/1018858818345631745/a_8025349dd827dee56db7088ef01ccae7.webp?size=1024"
 

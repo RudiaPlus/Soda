@@ -15,7 +15,7 @@ test = config.test
 
 @client.tree.command(name="set_remind",
                         description="リマインドを作り直します",
-                        guild=config.testserverid)
+                        guild=discord.Object(config.testserverid))
 @discord.app_commands.describe(version="リマインドの時間 morning/afternoon/evening")
 async def set_remind(interaction: discord.Interaction, version: str):
     await interaction.response.defer()

@@ -37,7 +37,7 @@ def run_discord_bot():
             client.tree.add_command(moderate)
             
             synced = await client.tree.sync()
-            await client.tree.sync(guild=config.testserverid)
+            await client.tree.sync(guild=discord.Object(config.testserverid))
             
             logger.info(f"{len(synced)}個のコマンドを同期しました。")
             
@@ -129,7 +129,7 @@ def run_discord_bot():
                     message.guild.voice_client.play(source)
                     
         else:
-            guild = client.get_guild(config.main_server)
+            guild = client.get_guild(config.main_server) if config.test == False else client.get_guild(config.testserverid)
             logger.info(f"{username}に「{user_message}」と言われました。")
             mod_channel = await modmails.fetch_mod_channel(guild=guild, user=author)
             if mod_channel is not None:
@@ -259,7 +259,7 @@ def run_discord_bot():
             logger.info(f"{interaction.user.name}がrecruitbuttonを使用しました")
             await interaction.followup.send(embed = embed, view = view, ephemeral=True)            
     
-    @client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = config.testserverid)
+    @client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = discord.Object(config.testserverid))
     async def tool_form(interaction: discord.Interaction, channelid: int = 1142491583757951036):
         await interaction.response.defer(ephemeral = True)
         
@@ -273,7 +273,7 @@ def run_discord_bot():
     
     @client.tree.command(name="ping",
                          description="botの応答時間を確認します",
-                         guild=config.testserverid)
+                         guild=discord.Object(config.testserverid))
     async def ping(interaction: discord.Interaction):
         await interaction.response.defer()
 
@@ -287,7 +287,7 @@ def run_discord_bot():
 
     @client.tree.command(name="rechat",
                          description="for dev only",
-                         guild=config.testserverid)
+                         guild=discord.Object(config.testserverid))
     async def rechat(interaction: discord.Interaction):
         if interaction.user == client.user:
             return
@@ -298,7 +298,7 @@ def run_discord_bot():
 
     @client.tree.command(name="maintenance",
                          description="メンテナンスについて",
-                         guild=config.testserverid)
+                         guild=discord.Object(config.testserverid))
     @app_commands.describe(number="0からの参照番号", status="ruined(中止)/end(終了)", name="告知する名前。デフォルトは「メンテナンス」")
     async def maintenance(interaction: discord.Interaction,
                           number: int,
@@ -316,7 +316,7 @@ def run_discord_bot():
 
     @client.tree.command(name="remind",
                          description="リマインドのテストを送ります",
-                         guild=config.testserverid)
+                         guild=discord.Object(config.testserverid))
     @app_commands.describe(version="リマインドの時間 morning/afternoon/evening/thread")
     async def remind(interaction: discord.Interaction, version: str):
         if interaction.user == client.user:
@@ -336,7 +336,7 @@ def run_discord_bot():
 
     @client.tree.command(name="eventtest",
                          description="イベントリストのテストを行います",
-                         guild=config.testserverid)
+                         guild=discord.Object(config.testserverid))
     async def eventtest(interaction: discord.Interaction):
         if interaction.user == client.user:
             return
@@ -346,7 +346,7 @@ def run_discord_bot():
         
     @client.tree.command(name="eventcounttest",
                          description="イベントカウントのテストを行います",
-                         guild=config.testserverid)
+                         guild=discord.Object(config.testserverid))
     async def eventtest(interaction: discord.Interaction):
         if interaction.user == client.user:
             return
@@ -356,7 +356,7 @@ def run_discord_bot():
 
     @client.tree.command(name="send",
                          description="channelIDが空欄の場合、リマインダースレッドに投稿します！",
-                         guild=config.testserverid)
+                         guild=discord.Object(config.testserverid))
     async def send(interaction: discord.Interaction, text: str, channelid: str = None):
         if not channelid:
             guild = client.get_guild(guildID)
@@ -456,7 +456,7 @@ def run_discord_bot():
 
     @client.tree.command(name="mainttest",
                          description="メンテナンスリストのテストを行います",
-                         guild=config.testserverid)
+                         guild=discord.Object(config.testserverid))
     async def mainttest(interaction: discord.Interaction):
         if interaction.user == client.user:
             return
