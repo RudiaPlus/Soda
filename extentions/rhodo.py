@@ -200,7 +200,7 @@ def run_discord_bot():
         #suggest
         vc_channels = voicechat.channels
         
-        if after.channel and len(after.channel.members) == 1 and not before.channel and not member.guild.voice_client:
+        if config.voice_suggest and after.channel and len(after.channel.members) == 1 and not before.channel and not member.guild.voice_client:
             
             join_channel = after.channel
             logger.info(f"{member.name}にボイス読み上げの提案を行います")

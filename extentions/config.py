@@ -5,6 +5,7 @@ import os
 #ABILITY SWITCH
 test = False #TESTMODE(Switch to OverRein), default = False
 logging = True #Write log to your file, default = True
+voice_suggest = False #suggest text speech to voicechat user
 
 #MAIN
 t_delta = datetime.timedelta(hours=9)
