@@ -512,6 +512,24 @@
         "endTime": 1699297199,
         "rewardEndTime": 1699297199
     },
+    "act12main": {
+        "id": "act12main",
+        "type": "MAIN",
+        "stageAdd": "True",
+        "name": "12章「驚靂蕭然」実装",
+        "news": "https://arknights.jp/news/362",
+        "link": "https://00m.in/KDIGw",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/e1290d9c8f4d0f10099d0d82bef11d5e.png",
+        "startTime": 1698130800,
+        "endTime": 1699297199,
+        "rewardEndTime": 1699297199,
+        "additionalStage": [
+            {
+                "name": "高難易度ステージ",
+                "startTime": 1698735600
+            }
+        ]
+    },
     "dis_rogue_2": {
         "id": "dis_rogue_2",
         "type": "ROGUELIKE",
@@ -539,6 +557,12 @@
                 "startTime": 1696100400,
                 "endTime":  1698778799,
                 "contents": "- 追憶映写05: スペクター「虚無よりきたる」"
+            },
+            {
+                "month": 11,
+                "startTime": 1698778800,
+                "endTime": 1701370799,
+                "contents": "- 追憶映写06: グレイディーア「」"
             }
         ]
     }
