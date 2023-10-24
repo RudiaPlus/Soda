@@ -124,10 +124,10 @@ async def daily_message_maker(remind_dic: dict):
         special_day = "\n本日はホワイトデーらしいですよ！"
         
     elif today.month == 10 and today.day == 31:
-        special_day = "\nハッピーハロウィン！何かお菓子が欲しい気分です……！"
+        special_day = "\n**ハッピーハロウィン**！何かお菓子が欲しい気分です……あ、いたずらはしませんのでご安心ください！本当ですよ！"
         
     elif today.month == 12 and today.day == 24:
-        special_day = "\n本日はクリスマスイヴです！私も良い子にしていたから、何かもらえるでしょうか……？"
+        special_day = "\n本日はクリスマスイヴです！私も良い子にしていたら、何かもらえるでしょうか……？"
         
     elif today.month == 12 and today.day == 25:
         special_day = "\n本日はクリスマス！素敵な日をお過ごし下さい！"
@@ -140,7 +140,7 @@ async def daily_message_maker(remind_dic: dict):
 
 
     if eventcount[3] != 0:
-        eventnow = "- \n**本日からイベントが開催されます！**"
+        eventnow = "\n- **本日からイベントが開催されます！**"
     else:
         eventnow = ""
         
