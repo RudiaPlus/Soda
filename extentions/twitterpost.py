@@ -30,7 +30,7 @@ if config.web == True:
     last_tweet_url = last_tweet.find_element(By.XPATH, ".//a").get_attribute('href')
     logger.info(f"@AKEndfieldJPの最後のツイートをnitterにて取得しました: {last_tweet_url}")
     
-@tasks.loop(seconds=60)
+@tasks.loop(minutes=10)
 async def ake_tweet_retrieve():
     try:
         driver.refresh()

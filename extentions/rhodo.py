@@ -67,9 +67,11 @@ def run_discord_bot():
                 now_utc_timestamp = now_utc.timestamp()
                 tz_JST = JSTTime.tz_JST
 
-                logger.info(f"前回のリマインダーは{last_remind.created_at.astimezone(tz_JST)}に投稿されています")
-                if now_utc_timestamp - last_remind.created_at.timestamp() > 86400:
-                    logger.warn("前回のリマインダー投稿から1日以上が経過していました。リマインダーを投稿します。")
+                passed_second = now_utc_timestamp - last_remind.created_at.timestamp()                
+                logger.info(f"前回のリマインダーは{last_remind.created_at.astimezone(tz_JST)}({passed_second}秒前)に投稿されています")
+
+                if passed_second > 86400:
+                    logger.warn(f"前回のリマインダー投稿から1日以上({passed_second}秒)が経過していました。リマインダーを投稿します。")
                     await reminder.remind("thread")
                 
             except Exception as e:
