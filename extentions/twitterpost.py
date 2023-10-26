@@ -11,6 +11,7 @@ import os
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger(__name__)
 test = config.test
+last_tweet_url = ""
 
 if config.web == True:
     options = webdriver.ChromeOptions()
@@ -30,20 +31,21 @@ if config.web == True:
     last_tweet_url = last_tweet.find_element(By.XPATH, ".//a").get_attribute('href')
     logger.info(f"@AKEndfieldJPの最後のツイートをnitterにて取得しました: {last_tweet_url}")
     
-@tasks.loop(minutes=10)
+@tasks.loop(minutes=3)
 async def ake_tweet_retrieve():
+    global last_tweet_url
     try:
         new_tweet_urls = []
         driver.refresh()
         new_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "]')))
         
+        new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
+        
         try:
-            pinned = new_tweet.find_element(By.XPATH, ".//div//div[@class='pinned']")
             new_tweet=wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "][2]')))
+            new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
         except:
             pass
-        
-        new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
         
         if new_tweet_url != last_tweet_url:
             current_tweet_url = new_tweet_url
@@ -58,7 +60,6 @@ async def ake_tweet_retrieve():
                 
                 current_tweet_url = current_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
             
-            global last_tweet_url
             last_tweet_url = new_tweet_urls[0]
             
             logger.info(f"@AKEndfieldJPの最新ツイートを{count-1}個nitterにて取得しました: {new_tweet_urls}")
@@ -71,7 +72,8 @@ async def ake_tweet_retrieve():
                 new_tweet_url_splitted = url[target+5:target_end]
                 new_tweet_url_vx = f"https://vxtwitter.com/{new_tweet_url_splitted}"
                 channel = client.get_channel(config.ake_news)
-                await channel.send(new_tweet_url_vx)
+                message = await channel.send(new_tweet_url_vx)
+                await message.publish()
             
     except Exception as e:
         print(f"error: {e}")
