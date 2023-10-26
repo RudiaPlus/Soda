@@ -1,13 +1,10 @@
 import discord
 import json
-import asyncio
 from extentions import log, config, JSTTime, evjson, maintenances
 from extentions.aclient import client
 import os
-import requests
 import datetime
 import time
-import re
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger(__name__)
