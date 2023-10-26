@@ -6,6 +6,7 @@ import os
 test = False #TESTMODE(Switch to OverRein), default = False
 logging = True #Write log to your file, default = True
 voice_suggest = False #suggest text speech to voicechat user
+web = True #using browser to collect new tweet from AKE
 
 #MAIN
 t_delta = datetime.timedelta(hours=9)
@@ -72,6 +73,8 @@ Moderator_role = 1093773233410547735 #Moderator(橙)
 
 remind_TEST = 1156850119451353110 #メンテナンス部屋/リマインド
 remind = 1140326740158333048 if test == False else remind_TEST  #リマインド
+ake_news_test = 1166921222785859684 #メンテナンス部屋/ニューステスト
+ake_news = 1166620310750113802 if test == False else ake_news_test #ニュース
 
 maintenance = 1081251314958344313 #メンテナンス
 request = 1093849433621401600 #サポートリクエスト
