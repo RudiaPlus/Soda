@@ -8,6 +8,7 @@ import datetime
 import unicodedata
 import os
 import json
+from math import floor
 from discord import app_commands
 from discord.ext import tasks
 
@@ -67,7 +68,7 @@ def run_discord_bot():
                 now_utc_timestamp = now_utc.timestamp()
                 tz_JST = JSTTime.tz_JST
 
-                passed_second = now_utc_timestamp - last_remind.created_at.timestamp()                
+                passed_second = floor(now_utc_timestamp - last_remind.created_at.timestamp())               
                 logger.info(f"前回のリマインダーは{last_remind.created_at.astimezone(tz_JST)}({passed_second}秒前)に投稿されています")
 
                 if passed_second > 86400:
