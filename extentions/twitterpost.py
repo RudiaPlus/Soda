@@ -33,6 +33,7 @@ if config.web == True:
 @tasks.loop(minutes=10)
 async def ake_tweet_retrieve():
     try:
+        new_tweet_urls = []
         driver.refresh()
         new_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "]')))
         
@@ -45,13 +46,32 @@ async def ake_tweet_retrieve():
         new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
         
         if new_tweet_url != last_tweet_url:
-            logger.info(f"@AKEndfieldJPの最新ツイートをnitterにて取得しました: {new_tweet_url}")
-            target = new_tweet_url.find(".net/")
-            target_end = new_tweet_url.find("#m")
-            new_tweet_url_splitted = new_tweet_url[target+5:target_end]
-            new_tweet_url_vx = f"https://vxtwitter.com/{new_tweet_url_splitted}"
-            channel = client.get_channel(config.ake_news)
-            await channel.send(new_tweet_url_vx)
+            current_tweet_url = new_tweet_url
+            count = 1
+            while current_tweet_url != last_tweet_url and count < 10:
+                count += 1
+                new_tweet_urls.append(current_tweet_url)
+                if pinned:
+                    current_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, f'//div[@class="timeline-item "][{count+1}]')))
+                else:
+                    current_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, f'//div[@class="timeline-item "][{count}]')))
+                
+                current_tweet_url = current_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
+            
+            global last_tweet_url
+            last_tweet_url = new_tweet_urls[0]
+            
+            logger.info(f"@AKEndfieldJPの最新ツイートを{count-1}個nitterにて取得しました: {new_tweet_urls}")
+            
+            new_tweet_urls = list(reversed(new_tweet_urls))
+            
+            for url in new_tweet_urls:
+                target = url.find(".net/")
+                target_end = url.find("#m")
+                new_tweet_url_splitted = url[target+5:target_end]
+                new_tweet_url_vx = f"https://vxtwitter.com/{new_tweet_url_splitted}"
+                channel = client.get_channel(config.ake_news)
+                await channel.send(new_tweet_url_vx)
             
     except Exception as e:
         print(f"error: {e}")
