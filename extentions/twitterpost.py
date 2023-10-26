@@ -8,6 +8,8 @@ from extentions import log, config
 from extentions.aclient import client
 import os
 
+options = webdriver.ChromeOptions()
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger(__name__)
