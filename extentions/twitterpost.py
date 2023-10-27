@@ -7,30 +7,51 @@ from discord.ext import tasks
 from extentions import log, config
 from extentions.aclient import client
 import os
+import json
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger(__name__)
 test = config.test
 last_tweet_url = ""
+web = True # Switch of web
 
-if config.web == True:
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    driver = webdriver.Chrome()
-    driver.get("https://nitter.net/AKEndfieldJP")
-    
-    wait = WebDriverWait(driver, 20)
-    last_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "]')))
-    
+if web == True:
     try:
-        pinned = last_tweet.find_element(By.XPATH, ".//div//div[@class='pinned']")
-        last_tweet=wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "][2]')))
-    except:
-        pass
-    
-    last_tweet_url = last_tweet.find_element(By.XPATH, ".//a").get_attribute('href')
-    logger.info(f"@AKEndfieldJPの最後のツイートをnitterにて取得しました: {last_tweet_url}")
-    
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        driver = webdriver.Chrome()
+        driver.get("https://nitter.net/AKEndfieldJP")
+        
+        wait = WebDriverWait(driver, 20)
+        last_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "]')))
+        
+        try:
+            pinned = last_tweet.find_element(By.XPATH, ".//div//div[@class='pinned']")
+            last_tweet=wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "][2]')))
+        except:
+            pass
+        
+        last_tweet_url = last_tweet.find_element(By.XPATH, ".//a").get_attribute('href')
+        logger.info(f"@AKEndfieldJPの最後のツイートをnitterにて取得しました: {last_tweet_url}")
+    except Exception as e:
+        web=False
+        logger.error(f"nitterにてエラー: {e}")
+        
+async def check_duplicate(url: str) -> bool:
+    json_name = "jsons/tweeted.json"
+    with open(os.path.join(dir, json_name), "r", encoding = "UTF-8") as f:
+        tweeted_list = json.load(f)
+    if url in tweeted_list:
+        duplicate = True
+    else:
+        duplicate = False
+        tweeted_list.append(url)
+        if len(tweeted_list) > 10:
+            tweeted_list.pop(0)
+        with open(os.path.join(dir, json_name), "w", encoding = "UTF-8") as f:
+            json.dump(tweeted_list, f, indent=4, ensure_ascii=False)
+    return duplicate
+   
 @tasks.loop(minutes=3)
 async def ake_tweet_retrieve():
     global last_tweet_url
@@ -42,6 +63,7 @@ async def ake_tweet_retrieve():
         new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
         
         try:
+            pinned = new_tweet.find_element(By.XPATH, ".//div//div[@class='pinned']")
             new_tweet=wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "][2]')))
             new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
         except:
@@ -71,9 +93,13 @@ async def ake_tweet_retrieve():
                 target_end = url.find("#m")
                 new_tweet_url_splitted = url[target+5:target_end]
                 new_tweet_url_vx = f"https://vxtwitter.com/{new_tweet_url_splitted}"
-                channel = client.get_channel(config.ake_news)
-                message = await channel.send(new_tweet_url_vx)
-                await message.publish()
+                check_duplicate = await check_duplicate(new_tweet_url_vx)
+                if check_duplicate == False:
+                    channel = client.get_channel(config.ake_news)
+                    message = await channel.send(new_tweet_url_vx)
+                    await message.publish()
+                else:
+                    logger.warn(f"新規ツイート({new_tweet_url_vx})は既にアナウンスされています。投稿を中止しました。")
             
     except Exception as e:
         print(f"error: {e}")

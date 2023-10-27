@@ -6,7 +6,6 @@ import os
 test = False #TESTMODE(Switch to OverRein), default = False
 logging = True #Write log to your file, default = True
 voice_suggest = False #suggest text speech to voicechat user
-web = True #using browser to collect new tweet from AKE
 
 #MAIN
 t_delta = datetime.timedelta(hours=9)

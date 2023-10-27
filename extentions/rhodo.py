@@ -52,7 +52,7 @@ def run_discord_bot():
             #ルーティン
             maintenances.maintenance_timer.start()
             
-            if config.web == True:
+            if twitterpost.web == True:
                 twitterpost.ake_tweet_retrieve.start()
             
             #リマインダー(スレッド)の確認
