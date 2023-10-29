@@ -10,22 +10,16 @@
         "endTime": 1706727599,
         "monthlyUpdate": [
             {
-                "month": 8,
-                "startTime": 1690830000,
-                "endTime": 1693508399,
-                "contents": "8月ph"
-            },
-            {
-                "month": 9,
-                "startTime": 1693508400,
-                "endTime":  1696100399,
-                "contents": "- 【多面探索】モード実装\n- 追憶映写04: ハイモア「星海の泡沫」"
-            },
-            {
                 "month": 10,
                 "startTime": 1696100400,
                 "endTime":  1698778799,
                 "contents": "- 追憶映写05: スペクター「虚無よりきたる」"
+            },
+            {
+                "month": 11,
+                "startTime": 1698778800,
+                "endTime": 1701370799,
+                "contents": "- 追憶映写06: グレイディーア「海葬」"
             }
         ]
     },
