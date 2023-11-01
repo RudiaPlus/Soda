@@ -104,7 +104,7 @@ async def maintenance_timer():
                     
                 #ここまで
                                
-        logger.debug("maintenance(s) exist")
+        logger.debug("メンテナンスがあります")
         await asyncio.sleep(5)
         maintenances = await read_json()
-    logger.debug("no maintenances!")
+    logger.debug("メンテナンスはありません！")

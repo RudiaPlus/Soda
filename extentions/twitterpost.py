@@ -33,6 +33,7 @@ if web == True:
         
         last_tweet_url = last_tweet.find_element(By.XPATH, ".//a").get_attribute('href')
         logger.info(f"@AKEndfieldJPの最後のツイートをnitterにて取得しました: {last_tweet_url}")
+        
     except Exception as e:
         web=False
         logger.error(f"nitterにてエラー: {e}")
@@ -51,11 +52,26 @@ async def check_duplicate(url: str) -> bool:
         with open(os.path.join(dir, json_name), "w", encoding = "UTF-8") as f:
             json.dump(tweeted_list, f, indent=4, ensure_ascii=False)
     return duplicate
+
+async def publish_tweet_from_nitter_url(url: str) -> None:
+    target = url.find(".net/")
+    target_end = url.find("#m")
+    new_tweet_url_splitted = url[target+5:target_end]
+    new_tweet_url_vx = f"https://vxtwitter.com/{new_tweet_url_splitted}"
+    duplicate = await check_duplicate(new_tweet_url_vx)
+    if duplicate == False:
+        channel = client.get_channel(config.ake_news)
+        message = await channel.send(new_tweet_url_vx)
+        await message.publish()
+        logger.info(f"新規ツイート({new_tweet_url_vx})をアナウンスしました。")
+    else:
+        logger.info(f"新規ツイート({new_tweet_url_vx})は既にアナウンスされています。投稿を中止しました。")
    
 @tasks.loop(minutes=3)
 async def ake_tweet_retrieve():
     global last_tweet_url
     try:
+        logger.debug("ツイートを取得します")
         new_tweet_urls = []
         driver.refresh()
         new_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "]')))
@@ -89,17 +105,8 @@ async def ake_tweet_retrieve():
             new_tweet_urls = list(reversed(new_tweet_urls))
             
             for url in new_tweet_urls:
-                target = url.find(".net/")
-                target_end = url.find("#m")
-                new_tweet_url_splitted = url[target+5:target_end]
-                new_tweet_url_vx = f"https://vxtwitter.com/{new_tweet_url_splitted}"
-                check_duplicate = await check_duplicate(new_tweet_url_vx)
-                if check_duplicate == False:
-                    channel = client.get_channel(config.ake_news)
-                    message = await channel.send(new_tweet_url_vx)
-                    await message.publish()
-                else:
-                    logger.warn(f"新規ツイート({new_tweet_url_vx})は既にアナウンスされています。投稿を中止しました。")
+                await publish_tweet_from_nitter_url(url)
+
             
     except Exception as e:
         print(f"error: {e}")

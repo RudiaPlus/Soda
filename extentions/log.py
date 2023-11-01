@@ -41,10 +41,12 @@ def setup_logger(module_name: str) -> logging.Logger:
     logger = logging.getLogger(library)
 
     if not logger.hasHandlers():
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
 
         log_level = "INFO"
+        log_level_DEBUG = "DEBUG"
         level = logging.getLevelName(log_level.upper())
+        level_file = logging.getLevelName(log_level_DEBUG.upper())
 
         # create console handler
         console_handler = logging.StreamHandler()

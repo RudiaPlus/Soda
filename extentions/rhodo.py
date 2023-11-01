@@ -53,6 +53,8 @@ def run_discord_bot():
             maintenances.maintenance_timer.start()
             
             if twitterpost.web == True:
+                url = twitterpost.last_tweet_url
+                await twitterpost.publish_tweet_from_nitter_url(url)
                 twitterpost.ake_tweet_retrieve.start()
             
             #リマインダー(スレッド)の確認
