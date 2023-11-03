@@ -39,14 +39,15 @@ def setup_logger(module_name: str) -> logging.Logger:
     # create logger
     library, _, _ = module_name.partition('.py')
     logger = logging.getLogger(library)
+    log_level = "INFO"
+    log_level_DEBUG = "DEBUG"
+    level = logging.getLevelName(log_level.upper())
+    level_file = logging.getLevelName(log_level_DEBUG.upper())
 
     if not logger.hasHandlers():
         logger.setLevel(logging.DEBUG)
 
-        log_level = "INFO"
-        log_level_DEBUG = "DEBUG"
-        level = logging.getLevelName(log_level.upper())
-        level_file = logging.getLevelName(log_level_DEBUG.upper())
+
 
         # create console handler
         console_handler = logging.StreamHandler()
@@ -63,11 +64,15 @@ def setup_logger(module_name: str) -> logging.Logger:
         # create local log handler
         log_handler = logging.handlers.RotatingFileHandler(
             filename=log_path,
+            mode="a",
             encoding='utf-8',
             maxBytes=256 * 1024,  # 32 MiB
             backupCount=5,  # Rotate through 5 files
+            delay = True
         )
-        log_handler.setFormatter(CustomFormatter())
+        log_handler.setFormatter(logging.Formatter(
+            f'%(asctime)s %(levelname)-8s %(name)s %(message)s',
+            '%Y-%m-%d %H:%M:%S'))
         log_handler.setLevel(level)
         logger.addHandler(log_handler)
 

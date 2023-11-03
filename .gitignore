@@ -13,7 +13,7 @@ pyproject.toml
 docker-compose.yml
 .replit
 venv
-extentions/logs/bot.log
+extentions/logs
 extentions/jsons/modmail.json
 extentions/TTS
 extentions/htmls
