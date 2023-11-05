@@ -189,6 +189,17 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
         bdayop = f"本日は{birthday[today]}が誕生日です:birthday: おめでとうございます！"
         embed = discord.Embed(title = "ハッピーバースデー！", description=bdayop, color = discord.Color.green())
         embeds.append(embed)
+        
+    next_weekly_limit = await weekly_limit()
+    next_weekly_limit_timestamp = round(next_weekly_limit.timestamp())
+    wlimit_embed = "<t:{0}:R>".format(next_weekly_limit_timestamp)
+    
+    next_module_limit = await monthly_limit(limit_day=16)
+    next_module_limit_timestamp = round(next_module_limit.timestamp())
+    mlimit_embed = "<t:{0}:R>".format(next_module_limit_timestamp)
+    
+    now_timestamp = JSTTime.timeJST("timestamp")
+    today = JSTTime.timeJST("weekday")
     
     for key in remind_dic:
         
@@ -201,7 +212,6 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
         if key == "dailyStageRemind":
             color = 0xA08A87
             dailyStage = value
-            today = JSTTime.timeJST("weekday")
             
             material_stages = []
             soc_stages = []
@@ -216,15 +226,6 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
                         material_stages.append(f"**{stageid}**:{stagename}")
                     elif type == "SoC探索":
                         soc_stages.append(f"**{stageid}**:{stagename}")
-            
-        
-        next_weekly_limit = await weekly_limit()
-        next_weekly_limit_timestamp = round(next_weekly_limit.timestamp())
-        wlimit_embed = "<t:{0}:R>".format(next_weekly_limit_timestamp)
-        
-        next_module_limit = await monthly_limit(limit_day=16)
-        next_module_limit_timestamp = round(next_module_limit.timestamp())
-        mlimit_embed = "<t:{0}:R>".format(next_module_limit_timestamp)
         
         now = datetime.datetime.now(tz=JSTTime.tz_JST)
         description = value["description"]
@@ -234,19 +235,19 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
             description = description.format(wlimit_embed, mlimit_embed)
             
         if value["type"] == "anni" or value["type"] == "sss":
+            if now_timestamp > value["endTime"]:
+                continue
             color = 0xF65555 if value["type"] == "anni" else 0x669676
             startTime = "<t:{0}:F>( <t:{0}:R> )".format(value["startTime"])
             endTime = "<t:{0}:F>( <t:{0}:R> )".format(value["endTime"])
             eventTime = f"開始: {startTime}\n終了: {endTime}"
-            if now.timestamp() < value["startTime"]:
-                description = eventTime
-                
-            elif value["startTime"] < now.timestamp() and now.timestamp() < value["endTime"]:
-                link = value["link"]
-                description = f"- 攻略情報: [有志Wiki]({link})\n{eventTime}"
+            
+            if now_timestamp < value["startTime"]:
+                description = f"- 実装予定\n{eventTime}"
                 
             else:
-                continue
+                link = value["link"]
+                description = f"- 攻略情報: [有志Wiki]({link})\n{eventTime}"
         
         embed = discord.Embed(title = value["name"], description=description, color = color)
         

@@ -76,7 +76,7 @@
         "startTime": null,
         "endTime": null
     },
-    "anniRemind1": {
+    "anniRemind_1": {
         "name": "殲滅依頼「龍門商店街」",
         "description": null,
         "type": "anni",
@@ -85,12 +85,29 @@
         "endTime": 1699210799
 
     },
-    "sssRemind1": {
+    "sssRemind_1": {
         "name": "極西保全駐在",
         "description": null,
         "type": "sss",
         "link": "https://00m.in/u4H4P",
         "startTime": 1689447600,
         "endTime": 1700074799
+    },
+    "anniRemind_2": {
+        "name": "殲滅依頼「フェルマーテ通り」",
+        "description": null,
+        "type": "anni",
+        "link": "https://00m.in/99r0q",
+        "startTime": 1699210800,
+        "endTime": 1705258799
+
+    },
+    "sssRemind_2": {
+        "name": "掠地保全駐在",
+        "description": null,
+        "type": "sss",
+        "link": "https://00m.in/u4H4P",
+        "startTime": 1700074800,
+        "endTime": 1710529199
     }
 }

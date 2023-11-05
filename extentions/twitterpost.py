@@ -22,7 +22,7 @@ if web == True:
         driver = webdriver.Chrome()
         driver.get("https://nitter.net/AKEndfieldJP")
         
-        wait = WebDriverWait(driver, 20)
+        wait = WebDriverWait(driver, 9)
         last_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "]')))
         
         try:

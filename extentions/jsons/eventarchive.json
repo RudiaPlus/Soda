@@ -530,6 +530,28 @@
             }
         ]
     },
+    "act25side": {
+        "id": "act25side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "孤星",
+        "news": "",
+        "link": "https://00m.in/m87L3",
+        "pic": "",
+        "startTime": 1699340400,
+        "endTime": 1701111599,
+        "rewardEndTime": 1701716399,
+        "additionalStage": [
+            {
+                "name": "",
+                "startTime": 1699945200
+            },
+            {
+                "name": "",
+                "startTime": 1700550000
+            }
+        ]
+    },
     "dis_rogue_2": {
         "id": "dis_rogue_2",
         "type": "ROGUELIKE",
