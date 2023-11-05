@@ -109,6 +109,14 @@ def run_discord_bot():
 
         if message.guild:
             
+            embeds, video_urls = await twitterpost.create_embed(content = user_message)
+            if embeds:
+                await message.reply(embeds = embeds)
+                if video_urls:
+                    for url in video_urls:
+                        await message.reply(content = f"[ブラウザで開く]({url})")
+                        
+            
             if channelID == remindThreadID:
                 
                 greet_pattern = ".*(お(は(よ|ー|～)|早)|こんにち(は|わ)|こんばん(は|わ)).*"
