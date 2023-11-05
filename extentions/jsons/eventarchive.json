@@ -535,19 +535,19 @@
         "type": "SIDESTORY",
         "stageAdd": "True",
         "name": "孤星",
-        "news": "",
+        "news": "https://arknights.jp/news/364",
         "link": "https://00m.in/m87L3",
-        "pic": "",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/097adb79deedc08688bfe25785f91e81.png",
         "startTime": 1699340400,
         "endTime": 1701111599,
         "rewardEndTime": 1701716399,
         "additionalStage": [
             {
-                "name": "",
+                "name": "「過ぎぬ過去」",
                 "startTime": 1699945200
             },
             {
-                "name": "",
+                "name": "「在るべき今」",
                 "startTime": 1700550000
             }
         ]
