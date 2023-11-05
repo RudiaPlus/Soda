@@ -260,11 +260,11 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
         embeds.append(embed)
         
     content = await daily_message_maker(remind_dic=remind_dic)
+    message = await thread.send(content = content, embeds = embeds)
     pinned_messages = await thread.pins()
     if pinned_messages:
         for message in pinned_messages:
             await message.unpin()
-    message = await thread.send(content = content, embeds = embeds)
     await message.pin()
     remind_dic["remindMessage"]["last_remind_id"] = message.id
     await write_remind_dic(remind_dic)

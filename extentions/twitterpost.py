@@ -57,7 +57,7 @@ async def publish_tweet_from_nitter_url(url: str) -> None:
     target = url.find(".net/")
     target_end = url.find("#m")
     new_tweet_url_splitted = url[target+5:target_end]
-    new_tweet_url_vx = f"https://vxtwitter.com/{new_tweet_url_splitted}"
+    new_tweet_url_vx = f"https://fxtwitter.com/{new_tweet_url_splitted}"
     duplicate = await check_duplicate(new_tweet_url_vx)
     if duplicate == False:
         channel = client.get_channel(config.ake_news)
