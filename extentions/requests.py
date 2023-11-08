@@ -1,5 +1,4 @@
 import discord
-from discord import app_commands
 import json
 import os
 from extentions import JSTTime, log, config
@@ -192,7 +191,7 @@ async def doctors_write(dic):
         logger.info(f"doctors.jsonに新しく書き込みを行いました")
 
 
-async def doctor_check(user):
+async def doctor_check(user: discord.User):
     doctors = await doctors_load()
     include = False
     for index in range(len(doctors)):

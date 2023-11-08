@@ -1,6 +1,6 @@
 import discord
 from extentions import (moderates, reminder, responses, config, voicechat,
-                        evjson, JSTTime, modmails, log, maintenances, requests, recruit, twitterpost)
+                        evjson, JSTTime, modmails, log, maintenances, requests, recruit, twitterpost, communitytool)
 from extentions.aclient import client
 import re
 import asyncio
@@ -47,7 +47,7 @@ def run_discord_bot():
             client.add_view(modmails.ModmailButton())
             client.add_view(modmails.ModmailFinish())
             client.add_view(modmails.ModmailControl())
-            client.add_view(ToolButtons())
+            client.add_view(communitytool.ToolButtons())
             
             #ルーティン
             maintenances.maintenance_timer.start()
@@ -260,33 +260,6 @@ def run_discord_bot():
         logger.info(f"{interaction.user.name}がコマンド/helpを使用しました")
 
         await interaction.followup.send(embed=embed, ephemeral=True)
-
-    class ToolButtons(discord.ui.View):
-        def __init__(self):
-            super().__init__(timeout = None)
-        
-        @discord.ui.button(label = "公開求人ツール", custom_id = "recruitbutton", style = discord.ButtonStyle.primary, emoji = "📄")
-        async def recruitbutton(self, interaction: discord.Interaction, button: discord.ui.Button):
-            await interaction.response.defer(ephemeral=True)
-            
-            selected_tags = []
-            view = recruit.TagSelectView(selected_tags=selected_tags, all = True)
-            
-            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
-            logger.info(f"{interaction.user.name}がrecruitbuttonを使用しました")
-            await interaction.followup.send(embed = embed, view = view, ephemeral=True)            
-    
-    @client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = discord.Object(config.testserverid))
-    async def tool_form(interaction: discord.Interaction, channelid: int = 1142491583757951036):
-        await interaction.response.defer(ephemeral = True)
-        
-        channel = await client.fetch_channel(channelid)
-        embed = discord.Embed(title = "コミュニティツール", description = "下のボタンから私の便利ツールをご利用できます！", color = discord.Color.red())
-        embed.add_field(name = "公開求人ツール", value = "公開求人のタグから獲得できるオペレーターを表示します。\nタイムアウトが設定されているので、リセットする時はボタンを押し直してください！")
-        embed.set_author(name = "ロード", icon_url=client.user.avatar)
-        await channel.send(embed = embed, view = ToolButtons())
-        
-        await interaction.followup.send("完了しました！")
     
     @client.tree.command(name="ping",
                          description="botの応答時間を確認します",
