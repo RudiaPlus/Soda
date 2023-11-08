@@ -108,7 +108,7 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     
     #ツールの説明
     embed.add_field(name = "- 公開求人ツール", value = "公開求人のタグから獲得できるオペレーターを表示します。\nリセットする時はボタンを押し直してください！", inline=False)
-    embed.add_field(name = "- ドクター情報登録", value = "アークナイツのホーム画面等から確認できるゲーム内IDをサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n機能は「/doctorname add」コマンドとほぼ同じです。\n※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
+    embed.add_field(name = "- ドクター情報登録", value = "アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n機能は「/doctorname add」コマンドとほぼ同じです。\n※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
     
     embed.set_author(name = "ロード", icon_url=client.user.avatar)
     if not edit:
