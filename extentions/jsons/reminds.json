@@ -2,7 +2,7 @@
   "remindMessage": {
     "id": 1156979471182729308,
     "thread_id": 1156979471182729308,
-    "last_remind_id": 1170475079877021766
+    "last_remind_id": 1171562219071356980
   },
   "dailyStageRemind": {
     "name": "本日解放の資源ステージ",
@@ -142,20 +142,19 @@
     "endTime": 1700074799
   },
   "anniRemind_2": {
-      "name": "殲滅依頼「フェルマーテ通り」",
-      "description": null,
-      "type": "anni",
-      "link": "https://00m.in/99r0q",
-      "startTime": 1699210800,
-      "endTime": 1705258799
-
+    "name": "殲滅依頼「フェルマーテ通り」",
+    "description": null,
+    "type": "anni",
+    "link": "https://00m.in/99r0q",
+    "startTime": 1699210800,
+    "endTime": 1705258799
   },
   "sssRemind_2": {
-      "name": "掠地保全駐在",
-      "description": null,
-      "type": "sss",
-      "link": "https://00m.in/u4H4P",
-      "startTime": 1700074800,
-      "endTime": 1710529199
+    "name": "掠地保全駐在",
+    "description": null,
+    "type": "sss",
+    "link": "https://00m.in/u4H4P",
+    "startTime": 1700074800,
+    "endTime": 1710529199
   }
 }

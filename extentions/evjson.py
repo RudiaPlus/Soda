@@ -132,9 +132,9 @@ def eventget():
                     nextStageName = additionalStage[0]["name"]
                     nextAddTime = "<t:{0}:F>( <t:{0}:R> )".format(additionalStage[0]["startTime"])
                     if len(additionalStage) == 1:
-                        remark = "このイベントはEXステージ登場予定です"
+                        remark = "**このイベントはEXステージが登場予定です**\n"
                     elif len(additionalStage) == 2:
-                        remark = "このイベントはEXステージ、Sステージが登場予定です"
+                        remark = "**このイベントはEXステージ、Sステージが登場予定です**\n"
                     else:
                         logger.error("予期されていないイベント内容です。")
                         continue
@@ -142,18 +142,18 @@ def eventget():
                 elif additionalStage[-1]["startTime"] > time.time():
                     nextStageName = additionalStage[1]["name"]
                     nextAddTime = "<t:{0}:F>( <t:{0}:R> )".format(additionalStage[1]["startTime"])
-                    remark = "EXステージが追加されました！"
+                    remark = "**EXステージが追加されました！**\n"
                     if len(additionalStage) == 2:
-                        remark = "EXステージが追加されました！Sステージが今後登場予定です"
+                        remark = "**EXステージが追加されました！Sステージが今後登場予定です**\n"
                 
                 elif len(additionalStage) == 1:
                     stageAdd = "False"
-                    remark = "EXステージが追加されました！"
+                    remark = "**EXステージが追加されました！**\n"
                     nextStageName = ""
                     nextAddTime = ""
                 elif len(additionalStage) == 2:
                     stageAdd = "False"
-                    remark = "EXステージ、Sステージが追加されました！"
+                    remark = "**EXステージ、Sステージが追加されました！**\n"
                     nextStageName = ""
                     nextAddTime = ""
                 else:

@@ -143,7 +143,7 @@ async def daily_message_maker(remind_dic: dict):
         
     if eventcount[0] == 1:
         eventnow += f"\n- イベントが進行中です:sparkles: 頑張りましょう！"
-    else:
+    elif eventcount[0] > 1:
         eventnow += f"\n- 本日は{eventcount[0]}個のイベントが進行中です:sparkles: 頑張りましょう！"
         
     if eventcount[4] != 0:
@@ -260,13 +260,13 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
         embeds.append(embed)
         
     content = await daily_message_maker(remind_dic=remind_dic)
-    message = await thread.send(content = content, embeds = embeds)
+    last_remind_message = await thread.send(content = content, embeds = embeds)
     pinned_messages = await thread.pins()
     if pinned_messages:
         for message in pinned_messages:
             await message.unpin()
-    await message.pin()
-    remind_dic["remindMessage"]["last_remind_id"] = message.id
+    await last_remind_message.pin()
+    remind_dic["remindMessage"]["last_remind_id"] = last_remind_message.id
     await write_remind_dic(remind_dic)
                 
 
@@ -370,6 +370,7 @@ async def remind(mode = "morning"):
                 elif events[i]["type"] == "SIDESTORY":
                     if events[i]["stageAdd"] == "True":
                         try:
+                            title = events[i]["name"]
                             nextStageName = events[i]["nextStageName"]
                             nextAddTime = events[i]["nextAddTime"]
                             eventTime =  events[i]["time"]
@@ -377,7 +378,7 @@ async def remind(mode = "morning"):
                             news = events[i]["news"]
                             link = events[i]["link"]
                             eventpic = events[i]["pic"]
-                            remark = f"\n- **{remark}**" if remark else ""
+                            remark = f"\n- {remark}" if remark else ""
                         except Exception:
                             pass
 

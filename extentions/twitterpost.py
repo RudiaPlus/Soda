@@ -63,7 +63,7 @@ async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
             if response.status_code == 200:
                 tweet_data = response.json()["tweet"]
                 
-                url = tweet_data["url"]
+                tweet_url = tweet_data["url"]
                 
                 author = tweet_data["author"]
                 
@@ -82,6 +82,8 @@ async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
                 if "media" in tweet_data:
                     
                     for key in tweet_data["media"]:
+                        if key != "external" and key != "photos" and key != "videos":
+                            continue
                         tweet_medias = tweet_data["media"][key]
                         for media in tweet_medias:
                             url = media["url"]
@@ -90,7 +92,7 @@ async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
                             elif key == "videos" or key == "external":
                                 video_urls.append(url)
                 
-                tweet_dict = {"id": id, "url": url, "author_name": author["name"], "screen_name": author["screen_name"], "author_avatar": avatar_url, "text": tweet_text, "created_at": created_at, "media_urls": media_urls, "video_urls": video_urls}
+                tweet_dict = {"id": id, "url": tweet_url, "author_name": author["name"], "screen_name": author["screen_name"], "author_avatar": avatar_url, "text": tweet_text, "created_at": created_at, "media_urls": media_urls, "video_urls": video_urls}
                 responses.append(tweet_dict)
         
         embeds = []
@@ -99,7 +101,7 @@ async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
         for dic in responses:
             timestamp = datetime.datetime.fromtimestamp(dic["created_at"])
             tweet_embed = Embed(color = Color.blue(), description=dic["text"], timestamp = timestamp)
-            tweet_embed.set_author(name = dic["author_name"], url = dic["url"], icon_url=dic["author_avatar"])
+            tweet_embed.set_author(name = f"{dic['author_name']} @{dic['screen_name']}", url = dic["url"], icon_url=dic["author_avatar"])
             embeds.append(tweet_embed)
             
             if dic["media_urls"]:
@@ -116,6 +118,7 @@ async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
 
     except Exception as e:
         logger.error(f"[create_embed]にてエラー: {e}")
+        return [], []
             
         
 async def check_duplicate(url: str) -> bool:
@@ -141,10 +144,9 @@ async def publish_tweet_from_nitter_url(url: str) -> None:
     duplicate = await check_duplicate(new_tweet_url_twitter)
     if duplicate == False:
         channel = client.get_channel(config.ake_news)
-
-        await message.publish()
         embeds, video_urls = await create_embed(new_tweet_url_twitter)
         message = await channel.send(f"<{new_tweet_url_twitter}>", embeds = embeds)
+        await message.publish()
         if video_urls:
             for url in video_urls:
                 await message.reply(content = f"[ブラウザで開く]({url})")
