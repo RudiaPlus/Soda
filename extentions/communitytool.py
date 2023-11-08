@@ -54,8 +54,8 @@ class AddInformationModal(discord.ui.Modal):
                                 description=f"新しく設定された貴方のドクターネームは「{added}」です！",
                                 color=0x5cb85c)
 
-        embed.set_author(name=interaction.user.name,
-                            icon_url=interaction.user.avatar)
+        embed.set_author(name=interaction.user.display_name,
+                            icon_url=interaction.user.display_avatar)
         embed.set_footer(text="変更する場合はもう一度「ドクター名登録」、登録を削除する場合は「/doctorname delete」コマンドをご利用ください")
         await interaction.response.send_message(ephemeral= True, embed = embed)
         
@@ -82,7 +82,7 @@ class ToolButtons(discord.ui.View):
         logger.info(f"{interaction.user.name}がrecruitbuttonを使用しました")
         await interaction.followup.send(embed = embed, view = view, ephemeral=True)  
         
-    @discord.ui.button(label = "ドクター名登録", custom_id = "addinformationbutton", style = discord.ButtonStyle.primary, emoji = "📝")
+    @discord.ui.button(label = "ドクター情報登録", custom_id = "addinformationbutton", style = discord.ButtonStyle.primary, emoji = "📝")
     async def addinformationbutton(self, interaction: discord.Interaction, button: discord.ui.Button):
         doctorname = await requests.doctor_check(user = interaction.user)
         if not doctorname:

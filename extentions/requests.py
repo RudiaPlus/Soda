@@ -47,7 +47,7 @@ class RequestConfirm(discord.ui.View):
                 user_embed.set_footer(
                     text=f"作戦を無事に終わらせたら、リンク先から「リクエスト終了」ボタンを押してリクエストの終了をお願いします！")
                 user_embed.set_author(
-                    name=str(interaction.user), icon_url=interaction.user.avatar)
+                    name=interaction.user.display_name, icon_url=interaction.user.display_avatar)
 
                 thread = await self.original_message.create_thread(
                     name=f"{request_user.display_name}さんのリクエスト #{self.original_message.id}",
@@ -139,15 +139,15 @@ class RequestComplete(discord.ui.View):
                     respond_embed = discord.Embed(title="リクエストに応えていただきありがとうございます！",
                                                   description=f"{request_user.display_name}さんのサポートリクエストが終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator} | {skill}")
                     respond_embed.set_author(
-                        name=request_user.display_name, icon_url=request_user.avatar)
+                        name=request_user.display_name, icon_url=request_user.display_avatar)
                     respond_embed.set_footer(text="これからも「あしたはこぶね」を宜しくお願い致します！")
                     await respond_user.send(embed=respond_embed)
 
         if interaction.user.id == request_user.id or interaction.user.guild_permissions.manage_messages == True:
             embed = discord.Embed(title="リクエストを終了しました！",
                                   description="この投稿は5秒後に削除されます！")
-            embed.set_author(name=interaction.user.name,
-                             icon_url=interaction.user.avatar)
+            embed.set_author(name=interaction.user.display_name,
+                             icon_url=interaction.user.display_avatar)
             await original_message.edit(embed=embed, view=None)
 
             await request_complete(request_id)
@@ -282,7 +282,7 @@ async def send_request(user, operator, skill = None, skill_level = None, module:
         title=f"サポートオペレーター「{operator}」のリクエスト",
         description=f"リクエスト者：{user.mention}\n\n**希望条件**\n{lv_name}{skill_name}{module_name}{remarks_name}\n\n**是非ご協力ください！**"
     )
-    embed.set_author(name=str(user), icon_url=user.avatar)
+    embed.set_author(name=user.display_name, icon_url=user.display_avatar)
     embed.set_footer(
         text="・対象のオペレーターをサポートに出せる場合、「リクエストに応える」ボタンを押してください！\n・【リクエスト者のみ可能】リクエストを終了したい場合は「リクエスト終了」ボタンを押してください！"
     )
