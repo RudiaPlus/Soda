@@ -14,7 +14,7 @@ JST = datetime.timezone(t_delta, 'JST')
 test_client = os.environ["TEST_DISCORD_TOKEN"]
 token = os.environ["DISCORD_TOKEN"]
 
-server_invite_link = "https://discord.gg/RgcbYFZfnm"
+server_invite_link = "https://discord.gg/AshC"
 server_rule_link = "https://discord.com/channels/1018858818345631745/1018858818932842589/1018863690914729986"
 community_guideline_link = "https://discord.com/guidelines"
 main_server = 1018858818345631745

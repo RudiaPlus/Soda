@@ -128,7 +128,7 @@ class ModmailControl(discord.ui.View):
         
             await mod_channel.edit(name = f"mail-{userID}", overwrites = reopen_overwrite)
             
-            embed = discord.Embed(title = "お問い合わせが再開されました", description = f"{user.name}さんのお問い合わせが再開されました。スタッフからの返信が来る場合があります。", color=discord.Color.green())
+            embed = discord.Embed(title = "お問い合わせが再開されました", description = f"{user.display_name}さんのお問い合わせが再開されました。スタッフからの返信が来る場合があります。", color=discord.Color.green())
             embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
             await user.send(embed = embed)
             
