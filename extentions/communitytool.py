@@ -64,7 +64,33 @@ class AddInformationModal(discord.ui.Modal):
         await interaction.response.send_message("エラーが発生しました！")
         traceback.print_exception(type(error), error, error.__traceback__)
         
+class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
+    name_input = discord.ui.TextInput(label = f"検索するオペレーター名")
     
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True, thinking=True)
+        operators = await requests.operators_load()
+        name = self.name_input.value
+        matched_operators = [operators[key]["name"] for key in operators if name in operators[key]["name"]]
+
+        if not matched_operators:
+            embed = discord.Embed(title = "Wiki検索 - 不明なオペレーター", description=f"「{name}」を含むオペレーターが見つかりませんでした。", color = discord.Color.red())
+            await interaction.followup.send(embed = embed, ephemeral=True)
+            return
+        sorted_operators = sorted(matched_operators, key = len)[0:9]
+        logger.info(f"{name}を検索しました。結果: {sorted_operators}")   
+        embeds = []
+        if len(matched_operators) > 9:
+            embed = discord.Embed(title = "Wiki検索 - 最大数超過", description=f"「{name}」を含むオペレーターが10名以上居ます。\n結果の上位9名のみ表示します。", color = discord.Color.red())
+            embeds.append(embed)
+        else:
+            embed = discord.Embed(title = "Wiki検索", description = f"「{name}」を含むオペレーターは{len(matched_operators)}名います。", color = discord.Color.green())
+            embeds.append(embed)
+        for operator_name in sorted_operators:
+            url = f"https://arknights.wikiru.jp/?{operator_name}"
+            embed = discord.Embed(title = f"検索結果 - {operator_name}", description=f"{operator_name}の詳細・評価: [有志Wiki]({url})", url = url, color = discord.Color.blue())
+            embeds.append(embed)
+        await interaction.followup.send(embeds = embeds, ephemeral=True)
 
 class ToolButtons(discord.ui.View):
     def __init__(self):
@@ -92,6 +118,11 @@ class ToolButtons(discord.ui.View):
             modal = AddInformationModal(title = f"ドクター情報({doctorname})の編集", doctorname = doctorname)
             await interaction.response.send_modal(modal)
         logger.info(f"{interaction.user.name}がaddinformationbuttonを使用しました")
+        
+    @discord.ui.button(label = "Wiki検索", custom_id="searchwikibutton", style = discord.ButtonStyle.primary, emoji = "🔎")
+    async def searchwikibutton(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(OperatorSearchModal())
+        logger.info(f"{interaction.user.name}がsearchwikibuttonを使用しました")
                
 
 @client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = discord.Object(config.testserverid))
@@ -107,8 +138,9 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     embed = discord.Embed(title = "コミュニティツール", description = "下のボタンから私の便利ツールをご利用できます！", color = discord.Color.red())
     
     #ツールの説明
-    embed.add_field(name = "- 公開求人ツール", value = "公開求人のタグから獲得できるオペレーターを表示します。\nリセットする時はボタンを押し直してください！", inline=False)
-    embed.add_field(name = "- ドクター情報登録", value = "アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n機能は「/doctorname add」コマンドとほぼ同じです。\n※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
+    embed.add_field(name = "・公開求人ツール", value = "公開求人のタグから獲得できるオペレーターを表示します。\nリセットする時はボタンを押し直してください！", inline=False)
+    embed.add_field(name = "・ドクター情報登録", value = "アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n機能は「/doctorname add」コマンドとほぼ同じです。\n※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
+    embed.add_field(name = "・Wiki検索", value = "オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。", inline = False)
     
     embed.set_author(name = "ロード", icon_url=client.user.avatar)
     if not edit:
