@@ -31,33 +31,34 @@ class AddInformationModal(discord.ui.Modal):
             self.add_item(self.number_input)
     
     async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral = True, thinking=True)
         tag = self.number_input.value
         name = self.name_input.value
         num_tag = normalize("NFKC", tag)
 
         if len(tag) > 6 or len(name) > 16:
-            embed = discord.Embed(title="名前が長すぎます！",
-                                    description="なにかの間違いで無かったら、スタッフまでお問い合わせください",
-                                    color=0xf45d5d)
-            await interaction.response.send_message(ephemeral = True, embed=embed)
+            embed = discord.Embed(title="ドクター情報登録 - エラー",
+                                    description=f"入力された名前「{name}」が長すぎます！\nなにかの間違いで無かったら、スタッフまでお問い合わせください",
+                                    color=discord.Color.red())
+            await interaction.followup.send(ephemeral = True, embed=embed)
             return
 
         if tag.isdecimal() == False or match(r"[0-9]{1,6}$", num_tag) is None:
-            embed = discord.Embed(title="タグは数字のみを入力してください！",
-                                    description="なにかの間違いで無かったら、スタッフまでお問い合わせください",
-                                    color=0xf45d5d)
-            await interaction.response.send_message(ephemeral = True, embed=embed)
+            embed = discord.Embed(title="ドクター情報登録 - エラー",
+                                    description="番号部分には数字のみを入力してください！\nなにかの間違いで無かったら、スタッフまでお問い合わせください",
+                                    color=discord.Color.red())
+            await interaction.followup.send(ephemeral = True, embed=embed)
             return
         
         added = await requests.doctor_add(interaction.user, name, num_tag)
         embed = discord.Embed(title="ドクター情報の登録が完了しました！",
                                 description=f"新しく設定された貴方のドクターネームは「{added}」です！",
-                                color=0x5cb85c)
+                                color=discord.Color.green())
 
         embed.set_author(name=interaction.user.display_name,
                             icon_url=interaction.user.display_avatar)
         embed.set_footer(text="変更する場合はもう一度「ドクター名登録」、登録を削除する場合は「/doctorname delete」コマンドをご利用ください")
-        await interaction.response.send_message(ephemeral= True, embed = embed)
+        await interaction.followup.send(ephemeral= True, embed = embed)
         
         
     async def on_errror(self, interaction: discord.Interaction, error: Exception):
@@ -81,7 +82,7 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
         logger.info(f"{name}を検索しました。結果: {sorted_operators}")   
         embeds = []
         if len(matched_operators) > 9:
-            embed = discord.Embed(title = "Wiki検索 - 最大数超過", description=f"「{name}」を含むオペレーターが10名以上居ます。\n結果の上位9名のみ表示します。", color = discord.Color.red())
+            embed = discord.Embed(title = "Wiki検索 - 最大数超過", description=f"「{name}」を含むオペレーターが10名以上居ます。\n検索結果の上位9名のみ表示します。", color = discord.Color.red())
             embeds.append(embed)
         else:
             embed = discord.Embed(title = "Wiki検索", description = f"「{name}」を含むオペレーターは{len(matched_operators)}名います。", color = discord.Color.green())
@@ -91,6 +92,98 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
             embed = discord.Embed(title = f"検索結果 - {operator_name}", description=f"{operator_name}の詳細・評価: [有志Wiki]({url})", url = url, color = discord.Color.blue())
             embeds.append(embed)
         await interaction.followup.send(embeds = embeds, ephemeral=True)
+
+class OperatorSelectButton(discord.ui.View):
+    def __init__(self, operators: list, level: int, remarks: str):
+        super().__init__(timeout = 300)
+        self.level = level
+        self.remarks = remarks
+        for operator in operators:
+            self.add_buttons(operator)
+            
+    def add_buttons(self, label):
+        
+        button_operator = discord.ui.Button(label=label, style=discord.ButtonStyle.primary)
+        
+        async def button_callback(interaction: discord.Interaction):
+            
+            operator = label
+            operators = await requests.operators_load()
+            correct = 0
+            for index in operators:
+                if operators[index]["name"] == operator:
+                    if operators[index]["rarity"] <= 1:
+                        break
+                    if operators[index]["rarity"] == 2 and self.level > 55:
+                        break
+                    if operators[index]["rarity"] == 3 and self.level > 70:
+                        break
+                    if operators[index]["rarity"] == 4 and self.level > 80:
+                        break
+                    if operators[index]["rarity"] == 5 and self.level > 90:
+                        break
+
+                    operator_dic = operators[index]
+                    correct = 1
+
+                    skills = {
+                        k: v
+                        for k, v in operator_dic["skills"].items() if v is not None
+                    }
+                    skill_name = ""
+                    for i in skills:
+                        skill_name += f"・スキル{i}: {skills[i]}\n"
+
+                    embed = discord.Embed(title=f"サポートオペレーター「{operator}」のリクエスト",
+                                        description=f"スキルの選択をしてください\n{skill_name}")
+                    embed.set_footer(text=f"入力した備考：{self.remarks}")
+                    logger.info(f"{interaction.user.name}がリクエストを開始しました")
+                    await interaction.response.send_message(embed=embed, view=requests.OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=self.level, rarity = operators[index]["rarity"], remarks = self.remarks), ephemeral=True)
+                    return
+                
+            if correct == 0:
+                await interaction.response.send_message("正しいオペレーター名、またはレアリティごとの最大値を超えないレベルを入力してください！\nまた、☆1、☆2のオペレーターは対応していません！", ephemeral=True)
+        
+        button_operator.callback = button_callback
+        self.add_item(button_operator)
+            
+
+class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
+    name_input = discord.ui.TextInput(label = "リクエストするオペレーター(名前の一部のみでも可)", placeholder="アーミヤ")
+    level_input = discord.ui.TextInput(label = "昇進2でのレベル条件(数字のみ、任意)", required=False)
+    remarks_input = discord.ui.TextInput(label = "備考(潜在等その他の条件があれば)", required=False)
+    
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True, thinking=True)
+        operators = await requests.operators_load()
+        
+        name = self.name_input.value
+        if self.level_input.value and self.level_input.value.isdecimal() == False:
+            embed = discord.Embed(title = "サポートリクエスト - エラー", description=f"レベル条件には数字のみを入力してください。", color = discord.Color.red())
+            await interaction.followup.send(embed = embed)
+            return
+        
+        level = int(self.level_input.value) if self.level_input.value else 0
+        remarks = self.remarks_input.value if self.remarks_input.value else "無し"
+            
+        matched_operators = [operators[key]["name"] for key in operators if name in operators[key]["name"]]
+        
+        if not matched_operators:
+            embed = discord.Embed(title = "サポートリクエスト - 不明なオペレーター", description=f"「{name}」を含むオペレーターが見つかりませんでした。", color = discord.Color.red())
+            await interaction.followup.send(embed = embed, ephemeral=True)
+            return
+        sorted_operators = sorted(matched_operators, key = len)[0:5]
+        logger.info(f"{name}を検索しました。結果: {sorted_operators}")
+        embeds = []
+        if len(matched_operators) > 3:
+            embed = discord.Embed(title = "サポートリクエスト - 最大数超過", description=f"「{name}」を含むオペレーターが6名以上居ます。\n検索結果の上位5名のみ表示します。", color = discord.Color.red())
+            embeds.append(embed)
+        else:
+            embed = discord.Embed(title = "サポートリクエスト - 検索結果", description = f"「{name}」を含むオペレーターは{len(matched_operators)}名います。リクエストしたいオペレーターを選択してください。", color = discord.Color.green())
+            embeds.append(embed)
+        
+        await interaction.followup.send(embeds = embeds, view = OperatorSelectButton(operators=sorted_operators, level = level, remarks = remarks))
+            
 
 class ToolButtons(discord.ui.View):
     def __init__(self):
@@ -106,7 +199,12 @@ class ToolButtons(discord.ui.View):
         
         embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
         logger.info(f"{interaction.user.name}がrecruitbuttonを使用しました")
-        await interaction.followup.send(embed = embed, view = view, ephemeral=True)  
+        await interaction.followup.send(embed = embed, view = view, ephemeral=True)
+        
+    @discord.ui.button(label= "サポートリクエスト", custom_id= "requestsupportbutton", style= discord.ButtonStyle.primary, emoji = "📮")
+    async def requestsupportbutton(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(RequestSendModal())
+        logger.info(f"{interaction.user.name}がrequestsupportbuttonを使用しました")
         
     @discord.ui.button(label = "ドクター情報登録", custom_id = "addinformationbutton", style = discord.ButtonStyle.primary, emoji = "📝")
     async def addinformationbutton(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -139,6 +237,7 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     
     #ツールの説明
     embed.add_field(name = "・公開求人ツール", value = "公開求人のタグから獲得できるオペレーターを表示します。\nリセットする時はボタンを押し直してください！", inline=False)
+    embed.add_field(name = "・サポートリクエスト", value = "サポートリクエストを送信します。テスト中", inline = False)
     embed.add_field(name = "・ドクター情報登録", value = "アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n機能は「/doctorname add」コマンドとほぼ同じです。\n※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
     embed.add_field(name = "・Wiki検索", value = "オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。", inline = False)
     
