@@ -313,7 +313,12 @@ async def remind(mode = "morning"):
         
     else:
         
-        #print(events)
+        png_name = "images/banner_event.png"
+        file = discord.File(os.path.join(dir, png_name), filename="banner.png")
+        files.append(file)
+        embed = discord.Embed(color = discord.Color.dark_grey())
+        embed.set_image(url = "attachment://banner.png")
+        embeds.append(embed)
 
         for i in range(len(maintenance)):
             title = maintenance[i]["name"]
