@@ -154,7 +154,7 @@ async def publish_tweet_from_nitter_url(url: str) -> None:
     else:
         logger.info(f"新規ツイート({new_tweet_url_twitter})は既にアナウンスされています。投稿を中止しました。")
    
-@tasks.loop(minutes=3)
+@tasks.loop(minutes=7)
 async def ake_tweet_retrieve():
     global last_tweet_url
     try:

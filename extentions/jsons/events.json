@@ -38,5 +38,17 @@
                 "startTime": 1700550000
             }
         ]
+    },
+    "act17sre": {
+        "id": "act17sre",
+        "type": "SIDESTORY",
+        "stageAdd": "False",
+        "name": "狂人号(復刻)",
+        "news":"https://arknights.jp/news/369",
+        "link": "https://00m.in/OUgcV",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/bbfe3562ff514654d67b4880a4678a79.png",
+        "startTime": 1701154800,
+        "endTime": 1701975599,
+        "rewardEndTime": 1702321199
     }
 }
