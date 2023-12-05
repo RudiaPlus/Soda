@@ -98,6 +98,26 @@
       "Y": null
     }
   },
+  "char_4093_frston": {
+    "name": "Friston-3",
+    "rarity": 0,
+    "skills": {
+      "1": null,
+      "2": null,
+      "3": null
+    },
+    "tags": [
+      "ロボット",
+      "防御",
+      "近距離",
+      "重装タイプ"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
   "char_502_nblade": {
     "name": "ヤトウ",
     "rarity": 1,
