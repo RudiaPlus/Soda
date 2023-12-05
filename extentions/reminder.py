@@ -324,8 +324,9 @@ async def remind(mode = "morning"):
             title = maintenance[i]["name"]
             eventTime = maintenance[i]["time"]
             url = maintenance[i]["link"]
+            description = eventTime if not url else f"- 詳細: [公式サイト]({url})\n{eventTime}"
             embed = discord.Embed(title=title,
-                                    description=f"- 詳細: [公式サイト]({url})\n{eventTime}",
+                                    description=description,
                                     color=0xf5b642,
                                     url = url)
             embed.set_author(name="メンテナンス")
@@ -546,7 +547,6 @@ async def remind(mode = "morning"):
                     except Exception as e:
                         logger.warn(f"[morning:main]: {e}")
                     
-                    logger.warn(f"{title}は未知のイベントです")
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}",
                                             color=0xf29382)

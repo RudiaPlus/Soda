@@ -119,7 +119,7 @@ def eventget():
                             
                 events.append({"name": name, "dif": "present", "type": type, "news": news, "link": link, "pic": pic, "month": month, "content": content, "updateTime": f"今月の任務終了: {updateEndTime}",
                                "nextmonth": nextmonth, "nextcontent": nextcontent, "nextUpdateTime": f"開始: {nextUpdateStartTime}"})    
-                
+   
             elif stageAdd == "True":
                 try:
                     additionalStage = event_dic[event_now_list[i]]["additionalStage"]

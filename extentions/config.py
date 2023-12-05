@@ -17,12 +17,12 @@ token = os.environ["DISCORD_TOKEN"]
 server_invite_link = "https://discord.gg/AshC"
 server_rule_link = "https://discord.com/channels/1018858818345631745/1018858818932842589/1018863690914729986"
 community_guideline_link = "https://discord.com/guidelines"
-main_server = 1018858818345631745
+main_server = 1018858818345631745 #あしたはこぶね
 testserverid = 1059155328584908810 #メンテナンス部屋
 
 openAI_key = os.environ["OPENAI_API_KEY"]
 
-me = 870729549833465917 #rudiaのユーザーID　分かりにくくてごめん
+me = 870729549833465917 #rudiaのユーザーID
 server_icon = "https://cdn.discordapp.com/icons/1018858818345631745/a_8025349dd827dee56db7088ef01ccae7.webp?size=1024"
 
 #RECRUIT
@@ -51,7 +51,8 @@ recruitList = ["Lancet-2", "Castle-3", "THRM-EX", "ジャスティスナイト",
                "ワイフー", "グレースロート", "リード", "ブローカ", "ウン", "レイズ", "シェーシャ", "シャマレ", "エリジウム", 
                "アスベストス", "ツキノギ", "レオンハルト", "エクシア", "シージ", "イフリータ", "シャイニング", "ナイチンゲール", 
                "ホシグマ", "サリア", "シルバーアッシュ", "スカジ", "チェン", "シュヴァルツ", "ヘラグ", "マゼラン", "モスティマ", 
-               "ブレイズ", "ア", "ケオベ", "バグパイプ", "ファントム", "ウィーディ", "ロサ", "スズラン", "エアースカーペ", "カシャ"]
+               "ブレイズ", "ア", "ケオベ", "バグパイプ", "ファントム", "ウィーディ", "ロサ", "スズラン", "エアースカーペ", "カシャ",
+               "Friston-3"]
 
 
 

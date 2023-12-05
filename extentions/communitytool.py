@@ -138,7 +138,7 @@ class OperatorSelectButton(discord.ui.View):
                                         description=f"スキルの選択をしてください\n{skill_name}")
                     embed.set_footer(text=f"入力した備考：{self.remarks}")
                     logger.info(f"{interaction.user.name}がリクエストを開始しました")
-                    await interaction.response.send_message(embed=embed, view=requests.OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=self.level, rarity = operators[index]["rarity"], remarks = self.remarks), ephemeral=True)
+                    await interaction.response.edit_message(embed=embed, view=requests.OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=self.level, rarity = operators[index]["rarity"], remarks = self.remarks))
                     return
                 
             if correct == 0:
@@ -151,7 +151,7 @@ class OperatorSelectButton(discord.ui.View):
 class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
     name_input = discord.ui.TextInput(label = "リクエストするオペレーター(名前の一部のみでも可)", placeholder="アーミヤ")
     level_input = discord.ui.TextInput(label = "昇進2でのレベル条件(数字のみ、任意)", required=False)
-    remarks_input = discord.ui.TextInput(label = "備考(潜在等その他の条件があれば)", required=False)
+    remarks_input = discord.ui.TextInput(label = "備考(潜在等のその他の条件があれば。スキルやモジュールは後から選択します。)", required=False)
     
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
@@ -176,7 +176,7 @@ class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
         logger.info(f"{name}を検索しました。結果: {sorted_operators}")
         embeds = []
         if len(matched_operators) > 3:
-            embed = discord.Embed(title = "サポートリクエスト - 最大数超過", description=f"「{name}」を含むオペレーターが6名以上居ます。\n検索結果の上位5名のみ表示します。", color = discord.Color.red())
+            embed = discord.Embed(title = "サポートリクエスト - 最大数超過", description=f"「{name}」を含むオペレーターが6名以上居ます。\n検索結果の上位5名のみ表示します。リクエストしたいオペレーターを選択してください。", color = discord.Color.red())
             embeds.append(embed)
         else:
             embed = discord.Embed(title = "サポートリクエスト - 検索結果", description = f"「{name}」を含むオペレーターは{len(matched_operators)}名います。リクエストしたいオペレーターを選択してください。", color = discord.Color.green())
@@ -237,7 +237,7 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     
     #ツールの説明
     embed.add_field(name = "・公開求人ツール", value = "公開求人のタグから獲得できるオペレーターを表示します。\nリセットする時はボタンを押し直してください！", inline=False)
-    embed.add_field(name = "・サポートリクエスト", value = "サポートリクエストを送信します。テスト中", inline = False)
+    embed.add_field(name = "・サポートリクエスト", value = "サポートリクエストを送信します。\n機能は「/request」コマンドとほぼ同じです", inline = False)
     embed.add_field(name = "・ドクター情報登録", value = "アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n機能は「/doctorname add」コマンドとほぼ同じです。\n※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
     embed.add_field(name = "・Wiki検索", value = "オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。", inline = False)
     
