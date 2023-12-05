@@ -564,6 +564,18 @@
         "endTime": 1701975599,
         "rewardEndTime": 1702321199
     },
+    "act1po": {
+        "id": "act1po",
+        "type": "OTHER",
+        "stageAdd": "False",
+        "name": "尖滅試験作戦",
+        "news":"https://arknights.jp/news/373",
+        "link": "",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/a38d26a0da707c5496d5f65ee3efaee8.png",
+        "startTime": 1701759600,
+        "endTime": 1702925999,
+        "rewardEndTime": 1703185199
+    },
     "dis_rogue_2": {
         "id": "dis_rogue_2",
         "type": "ROGUELIKE",
@@ -597,6 +609,12 @@
                 "startTime": 1698778800,
                 "endTime": 1701370799,
                 "contents": "- 追憶映写06: グレイディーア「海葬」"
+            },
+            {
+                "month": 12,
+                "startTime": 1701370800,
+                "endTime": 1704049199,
+                "contents": "- コンテンツ追加(5日～)\n- 追憶映写07: スカジ「碑文の倒影」"
             }
         ]
     }

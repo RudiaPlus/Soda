@@ -30,19 +30,17 @@ for tag in config.tag_type:
     tag_type = discord.SelectOption(label = tag, value = tag)
     tag_type_list.append(tag_type)
     
-async def recruit_operators():
-    recruitList = config.recruitList
-    with open(os.path.join(dir, operators_json), "r", encoding="UTF-8") as f:
-        operators = json.load(f)
-        
-    operators_list = []
-        
-    for index in operators:
-        if operators[index]["name"] in recruitList:
-            dict_add = {"name": operators[index]["name"], "rarity": operators[index]["rarity"], "tags": operators[index]["tags"]}
-            operators_list.append(dict_add)
-            
-    return operators_list
+#create operators_list
+recruitList = config.recruitList
+with open(os.path.join(dir, operators_json), "r", encoding="UTF-8") as f:
+    operators = json.load(f)
+    
+operators_list = []
+    
+for index in operators:
+    if operators[index]["name"] in recruitList:
+        dict_add = {"name": operators[index]["name"], "rarity": operators[index]["rarity"], "tags": operators[index]["tags"]}
+        operators_list.append(dict_add)
 
 async def find_common_tags(reference_tags, operators):
     
@@ -86,7 +84,6 @@ async def find_common_tags(reference_tags, operators):
 
 async def output_results(selected_tags):
     try:
-        operators_list = await recruit_operators()
         result_operators = await find_common_tags(reference_tags=selected_tags, operators = operators_list)
         
         goodresult_list = ""
