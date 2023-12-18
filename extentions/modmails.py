@@ -6,6 +6,7 @@ import os
 from extentions import log, config, JSTTime
 from extentions.aclient import client
 from typing import List
+from html import escape
 
 logger = log.setup_logger(__name__)
 dir = os.path.abspath(__file__ + "/../")
@@ -211,7 +212,7 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
     async for message in channel.history(oldest_first = True):
         author = f"{str(message.author)} (スタッフ)"
         author_avatar = message.author.display_avatar.url
-        content = message.embeds[0].description if message.embeds else message.content
+        content = escape(message.embeds[0].description) if message.embeds else escape(message.content)
         timestamp = message.created_at + datetime.timedelta(hours=9)
         
         date_format = "%Y-%m-%d %H:%M:%S"

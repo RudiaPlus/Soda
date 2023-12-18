@@ -17,50 +17,34 @@
             }
         ]
     },
-    "act25side": {
-        "id": "act25side",
-        "type": "SIDESTORY",
-        "stageAdd": "True",
-        "name": "孤星",
-        "news": "https://arknights.jp/news/364",
-        "link": "https://00m.in/m87L3",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/097adb79deedc08688bfe25785f91e81.png",
-        "startTime": 1699340400,
-        "endTime": 1701111599,
-        "rewardEndTime": 1701716399,
-        "additionalStage": [
-            {
-                "name": "過ぎぬ過去",
-                "startTime": 1699945200
-            },
-            {
-                "name": "在るべき今",
-                "startTime": 1700550000
-            }
-        ]
-    },
-    "act17sre": {
-        "id": "act17sre",
-        "type": "SIDESTORY",
-        "stageAdd": "False",
-        "name": "狂人号(復刻)",
-        "news":"https://arknights.jp/news/369",
-        "link": "https://00m.in/OUgcV",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/bbfe3562ff514654d67b4880a4678a79.png",
-        "startTime": 1701154800,
-        "endTime": 1701975599,
-        "rewardEndTime": 1702321199
-    },
     "act1po": {
         "id": "act1po",
         "type": "OTHER",
         "stageAdd": "False",
         "name": "尖滅試験作戦",
         "news":"https://arknights.jp/news/373",
-        "link": "",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88103_%E5%B0%96%E6%BB%85%E8%A9%A6%E9%A8%93%E4%BD%9C%E6%88%A6",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/a38d26a0da707c5496d5f65ee3efaee8.png",
         "startTime": 1701759600,
         "endTime": 1702925999,
         "rewardEndTime": 1703185199
+    },
+    "act26side": {
+        "id": "act26side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "空想の花庭",
+        "news": "https://arknights.jp/news/380",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88104_%E7%A9%BA%E6%83%B3%E3%81%AE%E8%8A%B1%E5%BA%AD",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/4ebe3e5392f82fc88ffa372b35e0e99b.png",
+        "startTime": 1703142000,
+        "endTime": 1704308399,
+        "rewardEndTime": 1704913199,
+        "additionalStage": [
+            {
+                "name": "廃聖堂",
+                "startTime": 1703746800
+            }
+        ]
     }
 }

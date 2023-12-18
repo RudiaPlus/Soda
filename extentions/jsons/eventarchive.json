@@ -576,6 +576,24 @@
         "endTime": 1702925999,
         "rewardEndTime": 1703185199
     },
+    "act26side": {
+        "id": "act26side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "空想の花庭",
+        "news": "https://arknights.jp/news/380",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88104_%E7%A9%BA%E6%83%B3%E3%81%AE%E8%8A%B1%E5%BA%AD",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/4ebe3e5392f82fc88ffa372b35e0e99b.png",
+        "startTime": 1703142000,
+        "endTime": 1704308399,
+        "rewardEndTime": 1704913199,
+        "additionalStage": [
+            {
+                "name": "廃聖堂",
+                "startTime": 1703746800
+            }
+        ]
+    },
     "dis_rogue_2": {
         "id": "dis_rogue_2",
         "type": "ROGUELIKE",
