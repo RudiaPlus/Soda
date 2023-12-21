@@ -549,8 +549,9 @@ async def remind(mode = "morning"):
                     
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}",
-                                            color=0xf29382)
+                                            color=0xf29382, url = link)
                     embed.set_author(name="イベント")
+                    embed.set_image(url=eventpic)
                     embeds.append(embed)
 
             elif events[i]["dif"] == "past":

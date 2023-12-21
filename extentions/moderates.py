@@ -124,7 +124,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
             if timeout:
                 description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告とタイムアウト**」が科されました。\n- あなたはこれより**{timeout_minutes}**、メッセージの送信やVCへの参加が出来ません。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)}回目の処罰です。「警告」が数回重なるとより重いタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
             else:
-                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告**」が科されました。\n- メッセージの送信やVCへの参加は引き続き可能です。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)}回目の処罰です。「警告」が数回重なるとタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
+                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告**」が科されました。\n- メッセージの送信やVCへの参加は引き続き可能です。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
             embed = discord.Embed(title="⚠️あなたはスタッフから警告されました",
                                   description=description)
             embed.set_author(
@@ -205,7 +205,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
 
         if reason != "無し":
             embed = discord.Embed(title="⚠️あなたはサーバーから追放されました",
-                                  description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーから「**追放**」されました。\n- 処罰の理由: {reason}\n\nあなたはまたサーバーに入りなおすことが出来ますが、これは{len(member_punishments)}回目の処罰です。回数が重なると、あなたはサーバーに入りなおすことが出来なくなります。\nこの処罰に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
+                                  description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーから「**追放**」されました。\n- 処罰の理由: {reason}\n\nあなたはまたサーバーに入りなおすことが出来ますが、これは{len(member_punishments)+1}回目の処罰です。回数が重なると、あなたはサーバーに入りなおすことが出来なくなります。\nこの処罰に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
             embed.set_author(
                 name="あしたはこぶね", url=config.server_invite_link, icon_url=config.server_icon)
             logger.info(f"DMを送信しました。: {embed.description}")
@@ -390,8 +390,8 @@ class ModerateCommand(discord.app_commands.Group):
 
                 role = "\n".join(roles)
 
-                embed = discord.Embed(title=f"{member_got.display_name}({str(member_got)})さんの情報",
-                                      description=f"{member_got.mention}\nユーザーネーム: {member_got.global_name}", color=member_got.accent_color)
+                embed = discord.Embed(title=f"{member_got.display_name}(@{str(member_got)})さんの情報",
+                                      description=f"{member_got.mention}\nユーザー名: {str(member_got)}\nグローバルネーム: {member_got.global_name}", color=member_got.accent_color)
                 embed.set_thumbnail(url=member_got.display_avatar)
                 embed.set_author(name=member_got.display_name,
                                  icon_url=member_got.avatar)
@@ -413,10 +413,10 @@ class ModerateCommand(discord.app_commands.Group):
 
             else:
                 member_got = await client.fetch_user(int(member_id))
-                embed = discord.Embed(title=f"{member_got.display_name}さんの情報",
-                                      description=f"{member_got.mention}\nユーザーネーム: {member_got.global_name}", color=member_got.accent_color)
+                embed = discord.Embed(title=f"{member_got.display_name}(@{str(member_got)})さんの情報",
+                                      description=f"{member_got.mention}\nユーザー名: {str(member_got)}\nグローバルネーム: {member_got.global_name}", color=member_got.accent_color)
                 embed.set_thumbnail(url=member_got.display_avatar)
-                embed.set_author(name=str(member_got),
+                embed.set_author(name=member_got.display_name,
                                  icon_url=member_got.avatar)
                 if member_got.system == True:
                     member_stats = "システム(Discord公式)アカウント"

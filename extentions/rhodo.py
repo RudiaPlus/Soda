@@ -164,7 +164,121 @@ def run_discord_bot():
                 mail.set_author(name="あしたはこぶねスタッフ",
                                 icon_url=config.server_icon)
                 await message.author.send(embed=mail)
+                
+    async def load_reactions(reaction: discord.Reaction):
+        with open(os.path.join(dir, "jsons/reactions.json"), "r", encoding="utf-8") as f:
+            reactions = json.load(f)
+        JST_timestamp = JSTTime.timeJST("timestamp")
+        found = False
+        posted = 0
+        search_id = str(reaction.message.id)
+        for messageid in list(reactions.keys()):
+            
+            if JST_timestamp - reactions[messageid]["created_at"] > 86400:
+                del reactions[messageid]
+                continue
+                
+            if messageid == search_id:
+                found = True
+                if reactions[messageid]["count"] < reaction.count:
+                    reactions[messageid]["count"] = reaction.count
+                reaction_count = reactions[messageid]["count"]
+                if reactions[messageid]["posted"]:
+                    posted = reactions[messageid]["posted"]
+                    
+        if found == False:
+            reaction_count = reaction.count
+            created_at = floor(reaction.message.created_at.astimezone(tz = JSTTime.tz_JST).timestamp())
+            if JST_timestamp - created_at > 86400:
+                return 0, 0
+            reactions[reaction.message.id] = {"count": reaction_count, "created_at": created_at, "posted": 0}
+            
+        with open(os.path.join(dir, "jsons/reactions.json"), "w", encoding="utf-8") as f:
+            json.dump(reactions, f, indent=2, ensure_ascii=False)
+            
+        return reaction_count, posted
     
+    async def posted_reaction_message(search_message: int, posted_message: int):
+        with open(os.path.join(dir, "jsons/reactions.json"), "r", encoding="utf-8") as f:
+            reactions = json.load(f)
+        search_id = str(search_message)
+        if search_id in reactions:
+            reactions[search_id]["posted"] = posted_message
+        with open(os.path.join(dir, "jsons/reactions.json"), "w", encoding="utf-8") as f:
+            json.dump(reactions, f, indent=2, ensure_ascii=False)
+            
+    @client.event
+    async def on_raw_reaction_add(reaction_payload: discord.RawReactionActionEvent):
+        reaction_user = reaction_payload.user_id
+        message_channel = client.get_channel(reaction_payload.channel_id)
+        message = await message_channel.fetch_message(reaction_payload.message_id)
+        
+        if not message.guild:
+            return
+        found = False
+        for reaction in message.reactions:
+            if type(reaction.emoji) is str:
+                continue
+            emoji_name = reaction.emoji.name
+            if emoji_name == "I_agree":
+                found = True
+                break
+        if found == False:
+            return
+        
+        reaction_count, posted = await load_reactions(reaction)
+        
+        if reaction_count >= 3 and posted == 0:
+
+            message_id = message.id
+            message_guild = message.guild
+            message_attachments = message.attachments
+            message_jump_url = message.jump_url
+            message_created_at_JST = message.created_at.astimezone(tz = JSTTime.tz_JST)
+            message_content = message.content
+            message_author = message.author
+            is_private = False
+            
+            if type(message_channel) == discord.Thread:
+                if message_channel.is_private == True:
+                    is_private = True
+            else:
+                default_overwrites = message_channel.overwrites_for(message_guild.default_role)
+                if default_overwrites.read_messages == False:
+                    is_private = True
+            if is_private == True:
+                logger.info("プライベートチャンネルのため、聖堂入りを中止しました。")
+                return
+            if message_author.get_role(config.cathedral_NG_role):
+                logger.info("聖堂NGのロールを持っているため、聖堂入りを中止しました")
+                return
+            channel = client.get_channel(config.cathedral)
+            
+            embeds = []
+            embed = discord.Embed(description=message_content, timestamp=message_created_at_JST, color = discord.Color.yellow())
+            embed.set_author(name = message_author.display_name, icon_url=message_author.display_avatar, url = message_jump_url)
+            embed.set_footer(text = f"ID: {message_id}")
+            if message_attachments and "image" in message_attachments[0].content_type:
+                embed.set_image(url = message_attachments[0].url)
+            embeds.append(embed)
+            if message_attachments:
+                for number in range(1, len(message_attachments)):
+                    if "image" in message_attachments[number].content_type:
+                        embed = discord.Embed(color = discord.Color.yellow())
+                        embed.set_image(url = message_attachments[number].url)
+                        embeds.append(embed)
+
+            logger.info(f"メッセージ({message_id})が{reaction_user}の手で聖堂へ刻まれました")                        
+            posted_message = await channel.send(content = f"{message_author.mention} さんのメッセージが <:I_agree:1183255845497229442> を{reaction.count}個獲得しました！\nメッセージへのリンク: {message_jump_url}", embeds = embeds)
+            await posted_reaction_message(message_id, posted_message.id)
+        
+        if posted != 0:
+            channel = client.get_channel(config.cathedral)
+            edit_message = await channel.fetch_message(posted)
+            message_author = message.author
+            message_jump_url = message.jump_url
+            await edit_message.edit(content = f"{message_author.mention} さんのメッセージが <:I_agree:1183255845497229442> を{reaction.count}個獲得しました！\nメッセージへのリンク: {message_jump_url}")
+            
     class VoiceSpeechButtons(discord.ui.View):
         def __init__(self, join_channel, target_chat_id):
             super().__init__(timeout = 60)
