@@ -2,7 +2,7 @@
   "remindMessage": {
     "id": 1156979471182729308,
     "thread_id": 1156979471182729308,
-    "last_remind_id": 1191855946243256430
+    "last_remind_id": 1219397436615692360
   },
   "dailyStageRemind": {
     "name": "本日解放の資源ステージ",
@@ -119,26 +119,26 @@
   },
   "weeklyRemind": {
     "name": "各種報酬期限",
-    "description": "- 週間任務、殲滅作戦(合成玉)の報酬期限まで:\n  {0}\n- 保全駐在の報酬期限まで:\n  {1}",
+    "description": "- 週間任務、殲滅作戦(合成玉)の報酬期限:\n  {0}\n- 保全駐在の報酬期限:\n  {1}",
     "type": "regular",
     "link": null,
     "startTime": null,
     "endTime": null
   },
-  "anniRemind_2": {
-    "name": "殲滅依頼「フェルマーテ通り」",
+  "anniRemind_4": {
+    "name": "殲滅依頼「特製小さな水たまり」",
     "description": null,
     "type": "anni",
-    "link": "https://00m.in/99r0q",
-    "startTime": 1699210800,
-    "endTime": 1705258799
+    "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%B5%E3%83%AB%E3%82%B4%E3%83%B3%E3%80%8C%E7%89%B9%E8%A3%BD%E5%B0%8F%E3%81%95%E3%81%AA%E6%B0%B4%E3%81%9F%E3%81%BE%E3%82%8A%E3%80%8D",
+    "startTime": 1710097200,
+    "endTime": 1714935599
   },
-  "sssRemind_2": {
-    "name": "掠地保全駐在",
+  "sssRemind_3": {
+    "name": "南方保全駐在",
     "description": null,
     "type": "sss",
-    "link": "https://00m.in/u4H4P",
-    "startTime": 1700074800,
-    "endTime": 1710529199
+    "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#ib028f3e",
+    "startTime": 1710529200,
+    "endTime": 1721069999
   }
 }

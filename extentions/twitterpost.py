@@ -23,8 +23,9 @@ web = True # Switch of web
 if web == True:
     try:
         options = webdriver.ChromeOptions()
+        options.binary_location = r"C:\Windows\System32\chrome\win64-120.0.6099.109\chrome-win64\chrome.exe"
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        driver = webdriver.Chrome()
+        driver = webdriver.Chrome(options = options)
         driver.get("https://nitter.net/AKEndfieldJP")
         
         wait = WebDriverWait(driver, 9)
@@ -82,14 +83,15 @@ async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
                 if "media" in tweet_data:
                     
                     for key in tweet_data["media"]:
-                        if key != "external" and key != "photos" and key != "videos":
+                        if key != "photos" and key != "videos":
                             continue
-                        tweet_medias = tweet_data["media"][key]
+                        
+                        tweet_medias = tweet_data["media"][key]                        
                         for media in tweet_medias:
                             url = media["url"]
                             if key == "photos":
                                 media_urls.append(url)
-                            elif key == "videos" or key == "external":
+                            elif key == "videos":
                                 video_urls.append(url)
                 
                 tweet_dict = {"id": id, "url": tweet_url, "author_name": author["name"], "screen_name": author["screen_name"], "author_avatar": avatar_url, "text": tweet_text, "created_at": created_at, "media_urls": media_urls, "video_urls": video_urls}

@@ -1,10 +1,10 @@
-import discord
 import datetime
 import os
 
 #ABILITY SWITCH
 test = False #TESTMODE(Switch to OverRein), default = False
 logging = True #Write log to your file, default = True
+voicechat = False #Voicechat command
 voice_suggest = False #suggest text speech to voicechat user
 
 #MAIN
@@ -24,6 +24,7 @@ openAI_key = os.environ["OPENAI_API_KEY"]
 
 me = 870729549833465917 #rudiaのユーザーID
 server_icon = "https://cdn.discordapp.com/icons/1018858818345631745/a_8025349dd827dee56db7088ef01ccae7.webp?size=1024"
+
 
 #RECRUIT
 tagList = ["上級エリート", "エリート", "初期", "ロボット", "前衛タイプ", "狙撃タイプ", "重装タイプ", "医療タイプ", "補助タイプ", 
@@ -52,9 +53,10 @@ recruitList = ["Lancet-2", "Castle-3", "THRM-EX", "ジャスティスナイト",
                "アスベストス", "ツキノギ", "レオンハルト", "エクシア", "シージ", "イフリータ", "シャイニング", "ナイチンゲール", 
                "ホシグマ", "サリア", "シルバーアッシュ", "スカジ", "チェン", "シュヴァルツ", "ヘラグ", "マゼラン", "モスティマ", 
                "ブレイズ", "ア", "ケオベ", "バグパイプ", "ファントム", "ウィーディ", "ロサ", "スズラン", "エアースカーペ", "カシャ",
-               "Friston-3"]
+               "Friston-3", "ソーンズ", "アンドレアナ", "キアーベ", "ビーズワクス", "ジェイ"]
 
-
+#OPERATOR
+operator_classes = {"先鋒": "PIONEER", "前衛": "WARRIOR", "重装": "TANK", "狙撃": "SNIPER", "術師": "CASTER", "医療": "MEDIC", "補助": "SUPPORT", "特殊": "SPECIAL"}
 
 #TASK TIME
 morningtime = datetime.time(hour=4, minute=00, tzinfo=JST)
@@ -68,6 +70,7 @@ newdaytime = datetime.time(hour=0, minute=00, tzinfo=JST)
 administrator_role = 1019295385967149057 #Administrator(赤)
 Moderator_role = 1093773233410547735 #Moderator(橙)
 cathedral_NG_role = 1183346673469100043 #聖堂NG
+user_bot_role = 1207273509462736966 #私はbotです。追放してください。
 
 
 #CHANNEL
@@ -83,6 +86,8 @@ maintenance = 1081251314958344313 #メンテナンス
 request = 1093849433621401600 #サポートリクエスト
 
 chat = 1072158278634713108  #bot/ロードの部屋
+
+action_logs = 1111276658540937308 #action-logs
 moderatorchannel = 1093777243601371157 #botmoderate
 modmail_save_channel = 1108480334024167514 #議事録
 

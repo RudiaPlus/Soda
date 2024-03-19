@@ -1,6 +1,7 @@
 {
   "char_285_medic2": {
     "name": "Lancet-2",
+    "class": "MEDIC",
     "rarity": 0,
     "skills": {
       "1": null,
@@ -21,6 +22,7 @@
   },
   "char_286_cast3": {
     "name": "Castle-3",
+    "class": "WARRIOR",
     "rarity": 0,
     "skills": {
       "1": null,
@@ -41,6 +43,7 @@
   },
   "char_376_therex": {
     "name": "THRM-EX",
+    "class": "SPECIAL",
     "rarity": 0,
     "skills": {
       "1": null,
@@ -61,6 +64,7 @@
   },
   "char_4000_jnight": {
     "name": "ジャスティスナイト",
+    "class": "SNIPER",
     "rarity": 0,
     "skills": {
       "1": null,
@@ -81,6 +85,7 @@
   },
   "char_4077_palico": {
     "name": "テラ大陸調査団",
+    "class": "SNIPER",
     "rarity": 0,
     "skills": {
       "1": null,
@@ -98,8 +103,29 @@
       "Y": null
     }
   },
+  "char_4091_ulika": {
+    "name": "U-Official",
+    "class": "SUPPORT",
+    "rarity": 0,
+    "skills": {
+      "1": null,
+      "2": null,
+      "3": null
+    },
+    "tags": [
+      "牽制",
+      "遠距離",
+      "補助タイプ"
+    ],
+    "obtain": "イベント",
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
   "char_4093_frston": {
     "name": "Friston-3",
+    "class": "TANK",
     "rarity": 0,
     "skills": {
       "1": null,
@@ -120,6 +146,7 @@
   },
   "char_502_nblade": {
     "name": "ヤトウ",
+    "class": "PIONEER",
     "rarity": 1,
     "skills": {
       "1": null,
@@ -139,6 +166,7 @@
   },
   "char_500_noirc": {
     "name": "ノイルホーン",
+    "class": "TANK",
     "rarity": 1,
     "skills": {
       "1": null,
@@ -158,6 +186,7 @@
   },
   "char_503_rang": {
     "name": "レンジャー",
+    "class": "SNIPER",
     "rarity": 1,
     "skills": {
       "1": null,
@@ -177,6 +206,7 @@
   },
   "char_501_durin": {
     "name": "ドゥリン",
+    "class": "CASTER",
     "rarity": 1,
     "skills": {
       "1": null,
@@ -196,6 +226,7 @@
   },
   "char_009_12fce": {
     "name": "12F",
+    "class": "CASTER",
     "rarity": 1,
     "skills": {
       "1": null,
@@ -215,6 +246,7 @@
   },
   "char_123_fang": {
     "name": "フェン",
+    "class": "PIONEER",
     "rarity": 2,
     "skills": {
       "1": "突撃指令α",
@@ -234,6 +266,7 @@
   },
   "char_240_wyvern": {
     "name": "バニラ",
+    "class": "PIONEER",
     "rarity": 2,
     "skills": {
       "1": "突撃指令・援軍",
@@ -253,6 +286,7 @@
   },
   "char_192_falco": {
     "name": "プリュム",
+    "class": "PIONEER",
     "rarity": 2,
     "skills": {
       "1": "迅速攻撃α",
@@ -273,6 +307,7 @@
   },
   "char_208_melan": {
     "name": "メランサ",
+    "class": "WARRIOR",
     "rarity": 2,
     "skills": {
       "1": "攻撃力強化α",
@@ -293,6 +328,7 @@
   },
   "char_281_popka": {
     "name": "ポプカル",
+    "class": "WARRIOR",
     "rarity": 2,
     "skills": {
       "1": "攻撃力強化α",
@@ -313,6 +349,7 @@
   },
   "char_209_ardign": {
     "name": "カーディ",
+    "class": "TANK",
     "rarity": 2,
     "skills": {
       "1": "HP回復α",
@@ -332,6 +369,7 @@
   },
   "char_122_beagle": {
     "name": "ビーグル",
+    "class": "TANK",
     "rarity": 2,
     "skills": {
       "1": "防御力強化α",
@@ -351,6 +389,7 @@
   },
   "char_284_spot": {
     "name": "スポット",
+    "class": "TANK",
     "rarity": 2,
     "skills": {
       "1": "第二態勢・回復",
@@ -371,6 +410,7 @@
   },
   "char_124_kroos": {
     "name": "クルース",
+    "class": "SNIPER",
     "rarity": 2,
     "skills": {
       "1": "2点・バースト",
@@ -390,6 +430,7 @@
   },
   "char_211_adnach": {
     "name": "アドナキエル",
+    "class": "SNIPER",
     "rarity": 2,
     "skills": {
       "1": "攻撃力強化α",
@@ -409,6 +450,7 @@
   },
   "char_121_lava": {
     "name": "ラヴァ",
+    "class": "CASTER",
     "rarity": 2,
     "skills": {
       "1": "戦術詠唱α",
@@ -428,6 +470,7 @@
   },
   "char_120_hibisc": {
     "name": "ハイビスカス",
+    "class": "MEDIC",
     "rarity": 2,
     "skills": {
       "1": "回復力強化α",
@@ -447,6 +490,7 @@
   },
   "char_212_ansel": {
     "name": "アンセル",
+    "class": "MEDIC",
     "rarity": 2,
     "skills": {
       "1": "回復範囲強化",
@@ -466,6 +510,7 @@
   },
   "char_210_stward": {
     "name": "スチュワード",
+    "class": "CASTER",
     "rarity": 2,
     "skills": {
       "1": "強撃α",
@@ -485,6 +530,7 @@
   },
   "char_278_orchid": {
     "name": "オーキッド",
+    "class": "SUPPORT",
     "rarity": 2,
     "skills": {
       "1": "迅速攻撃α",
@@ -504,6 +550,7 @@
   },
   "char_141_nights": {
     "name": "ヘイズ",
+    "class": "CASTER",
     "rarity": 3,
     "skills": {
       "1": "攻撃力強化β",
@@ -524,6 +571,7 @@
   },
   "char_109_fmout": {
     "name": "ギターノ",
+    "class": "CASTER",
     "rarity": 3,
     "skills": {
       "1": "戦術詠唱β",
@@ -543,6 +591,7 @@
   },
   "char_253_greyy": {
     "name": "グレイ",
+    "class": "CASTER",
     "rarity": 3,
     "skills": {
       "1": "戦術詠唱β",
@@ -563,6 +612,7 @@
   },
   "char_328_cammou": {
     "name": "カシャ",
+    "class": "CASTER",
     "rarity": 3,
     "skills": {
       "1": "攻撃力強化β",
@@ -583,6 +633,7 @@
   },
   "char_469_indigo": {
     "name": "インディゴ",
+    "class": "CASTER",
     "rarity": 3,
     "skills": {
       "1": "導灯の守護者",
@@ -603,6 +654,7 @@
   },
   "char_4004_pudd": {
     "name": "プリン",
+    "class": "CASTER",
     "rarity": 3,
     "skills": {
       "1": "戦術詠唱β",
@@ -622,6 +674,7 @@
   },
   "char_235_jesica": {
     "name": "ジェシカ",
+    "class": "SNIPER",
     "rarity": 3,
     "skills": {
       "1": "強撃β",
@@ -642,6 +695,7 @@
   },
   "char_126_shotst": {
     "name": "メテオ",
+    "class": "SNIPER",
     "rarity": 3,
     "skills": {
       "1": "装甲砕き",
@@ -662,6 +716,7 @@
   },
   "char_190_clour": {
     "name": "ヴァーミル",
+    "class": "SNIPER",
     "rarity": 3,
     "skills": {
       "1": "攻撃力強化β",
@@ -681,6 +736,7 @@
   },
   "char_133_mm": {
     "name": "メイ",
+    "class": "SNIPER",
     "rarity": 3,
     "skills": {
       "1": "ストップショット",
@@ -701,6 +757,7 @@
   },
   "char_118_yuki": {
     "name": "シラユキ",
+    "class": "SNIPER",
     "rarity": 3,
     "skills": {
       "1": "ユキケムリ",
@@ -721,6 +778,7 @@
   },
   "char_440_pinecn": {
     "name": "パインコーン",
+    "class": "SNIPER",
     "rarity": 3,
     "skills": {
       "1": "RMAスパイク",
@@ -741,6 +799,7 @@
   },
   "char_302_glaze": {
     "name": "アンブリエル",
+    "class": "SNIPER",
     "rarity": 3,
     "skills": {
       "1": "妨害弾",
@@ -761,6 +820,7 @@
   },
   "char_366_acdrop": {
     "name": "アシッドドロップ",
+    "class": "SNIPER",
     "rarity": 3,
     "skills": {
       "1": "ファンシーショット",
@@ -780,6 +840,7 @@
   },
   "char_4062_totter": {
     "name": "トター",
+    "class": "SNIPER",
     "rarity": 3,
     "skills": {
       "1": "貫日の一射",
@@ -799,6 +860,7 @@
   },
   "char_198_blackd": {
     "name": "クーリエ",
+    "class": "PIONEER",
     "rarity": 3,
     "skills": {
       "1": "突撃指令β",
@@ -819,6 +881,7 @@
   },
   "char_149_scave": {
     "name": "スカベンジャー",
+    "class": "PIONEER",
     "rarity": 3,
     "skills": {
       "1": "突撃指令β",
@@ -839,6 +902,7 @@
   },
   "char_290_vigna": {
     "name": "ヴィグナ",
+    "class": "PIONEER",
     "rarity": 3,
     "skills": {
       "1": "攻撃力強化β",
@@ -859,6 +923,7 @@
   },
   "char_151_myrtle": {
     "name": "テンニンカ",
+    "class": "PIONEER",
     "rarity": 3,
     "skills": {
       "1": "支援指令β",
@@ -873,12 +938,13 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "「コレクション」",
       "Y": null
     }
   },
   "char_452_bstalk": {
     "name": "ビーンストーク",
+    "class": "PIONEER",
     "rarity": 3,
     "skills": {
       "1": "出動指令",
@@ -899,6 +965,7 @@
   },
   "char_130_doberm": {
     "name": "ドーベルマン",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "強撃β",
@@ -919,6 +986,7 @@
   },
   "char_289_gyuki": {
     "name": "マトイマル",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "HP回復β",
@@ -939,6 +1007,7 @@
   },
   "char_159_peacok": {
     "name": "コンビクション",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "断罪",
@@ -961,6 +1030,7 @@
   },
   "char_193_frostl": {
     "name": "フロストリーフ",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "降霜の刃",
@@ -981,6 +1051,7 @@
   },
   "char_127_estell": {
     "name": "エステル",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "攻撃力強化β",
@@ -996,11 +1067,12 @@
     "obtain": "人材募集",
     "modules": {
       "X": null,
-      "Y": null
+      "Y": "荒野の餞別"
     }
   },
   "char_185_frncat": {
     "name": "ムース",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "ひっかき！",
@@ -1020,6 +1092,7 @@
   },
   "char_301_cutter": {
     "name": "カッター",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "レッドシフト",
@@ -1040,6 +1113,7 @@
   },
   "char_337_utage": {
     "name": "ウタゲ",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "サボり",
@@ -1060,6 +1134,7 @@
   },
   "char_271_spikes": {
     "name": "アレーン",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "いたずら",
@@ -1079,6 +1154,7 @@
   },
   "char_4067_lolxh": {
     "name": "羅小黒",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "変化自在",
@@ -1098,6 +1174,7 @@
   },
   "char_4063_quartz": {
     "name": "クォーツ",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "攻撃力強化β",
@@ -1117,6 +1194,7 @@
   },
   "char_491_humus": {
     "name": "ヒューマス",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "廃棄物処理",
@@ -1137,6 +1215,7 @@
   },
   "char_237_gravel": {
     "name": "グラベル",
+    "class": "SPECIAL",
     "rarity": 3,
     "skills": {
       "1": "スニークガード",
@@ -1157,6 +1236,7 @@
   },
   "char_272_strong": {
     "name": "ジェイ",
+    "class": "SPECIAL",
     "rarity": 3,
     "skills": {
       "1": "蟹爪断ち",
@@ -1177,6 +1257,7 @@
   },
   "char_236_rope": {
     "name": "ロープ",
+    "class": "SPECIAL",
     "rarity": 3,
     "skills": {
       "1": "鉤縄投擲",
@@ -1196,6 +1277,7 @@
   },
   "char_117_myrrh": {
     "name": "ミルラ",
+    "class": "MEDIC",
     "rarity": 3,
     "skills": {
       "1": "二重治療",
@@ -1215,6 +1297,7 @@
   },
   "char_187_ccheal": {
     "name": "ガヴィル",
+    "class": "MEDIC",
     "rarity": 3,
     "skills": {
       "1": "回復力促進",
@@ -1234,6 +1317,7 @@
   },
   "char_298_susuro": {
     "name": "ススーロ",
+    "class": "MEDIC",
     "rarity": 3,
     "skills": {
       "1": "回復力強化β",
@@ -1253,6 +1337,7 @@
   },
   "char_181_flower": {
     "name": "パフューマー",
+    "class": "MEDIC",
     "rarity": 3,
     "skills": {
       "1": "回復力強化β",
@@ -1272,6 +1357,7 @@
   },
   "char_385_finlpp": {
     "name": "セイリュウ",
+    "class": "MEDIC",
     "rarity": 3,
     "skills": {
       "1": "ヒールウェーブ",
@@ -1292,6 +1378,7 @@
   },
   "char_4041_chnut": {
     "name": "チェストナット",
+    "class": "MEDIC",
     "rarity": 3,
     "skills": {
       "1": "積土成山",
@@ -1311,6 +1398,7 @@
   },
   "char_199_yak": {
     "name": "マッターホルン",
+    "class": "TANK",
     "rarity": 3,
     "skills": {
       "1": "肉体強化",
@@ -1330,6 +1418,7 @@
   },
   "char_150_snakek": {
     "name": "クオーラ",
+    "class": "TANK",
     "rarity": 3,
     "skills": {
       "1": "防御力強化β",
@@ -1349,6 +1438,7 @@
   },
   "char_381_bubble": {
     "name": "バブル",
+    "class": "TANK",
     "rarity": 3,
     "skills": {
       "1": "防御力強化β",
@@ -1368,6 +1458,7 @@
   },
   "char_196_sunbr": {
     "name": "グム",
+    "class": "TANK",
     "rarity": 3,
     "skills": {
       "1": "非常食",
@@ -1388,6 +1479,7 @@
   },
   "char_260_durnar": {
     "name": "ジュナー",
+    "class": "TANK",
     "rarity": 3,
     "skills": {
       "1": "攻撃力強化β",
@@ -1408,6 +1500,7 @@
   },
   "char_110_deepcl": {
     "name": "ディピカ",
+    "class": "SUPPORT",
     "rarity": 3,
     "skills": {
       "1": "光陰ノ触",
@@ -1427,6 +1520,7 @@
   },
   "char_183_skgoat": {
     "name": "アーススピリット",
+    "class": "SUPPORT",
     "rarity": 3,
     "skills": {
       "1": "攻撃力強化β",
@@ -1446,6 +1540,7 @@
   },
   "char_258_podego": {
     "name": "ポデンコ",
+    "class": "SUPPORT",
     "rarity": 3,
     "skills": {
       "1": "アロマセラピー",
@@ -1466,6 +1561,7 @@
   },
   "char_484_robrta": {
     "name": "ロベルタ",
+    "class": "SUPPORT",
     "rarity": 3,
     "skills": {
       "1": "シラクーザ式化粧術",
@@ -1486,6 +1582,7 @@
   },
   "char_355_ethan": {
     "name": "イーサン",
+    "class": "SPECIAL",
     "rarity": 3,
     "skills": {
       "1": "ループザループ",
@@ -1506,6 +1603,7 @@
   },
   "char_277_sqrrel": {
     "name": "ショウ",
+    "class": "SPECIAL",
     "rarity": 3,
     "skills": {
       "1": "消火ポンプ",
@@ -1525,6 +1623,7 @@
   },
   "char_128_plosis": {
     "name": "フィリオプシス",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "回復力強化γ",
@@ -1546,6 +1645,7 @@
   },
   "char_275_breeze": {
     "name": "ブリーズ",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "集中療法",
@@ -1567,6 +1667,7 @@
   },
   "char_115_headbr": {
     "name": "ズィマー",
+    "class": "PIONEER",
     "rarity": 4,
     "skills": {
       "1": "突撃指令γ",
@@ -1588,6 +1689,7 @@
   },
   "char_102_texas": {
     "name": "テキサス",
+    "class": "PIONEER",
     "rarity": 4,
     "skills": {
       "1": "突撃指令γ",
@@ -1609,6 +1711,7 @@
   },
   "char_349_chiave": {
     "name": "キアーベ",
+    "class": "PIONEER",
     "rarity": 4,
     "skills": {
       "1": "突撃指令γ",
@@ -1628,8 +1731,31 @@
       "Y": "手作りのジャッキ"
     }
   },
+  "char_488_buildr": {
+    "name": "ポンシラス",
+    "class": "PIONEER",
+    "rarity": 4,
+    "skills": {
+      "1": "突撃指令γ",
+      "2": "建築家の願い",
+      "3": null
+    },
+    "tags": [
+      "COST回復",
+      "防御",
+      "近距離",
+      "先鋒タイプ",
+      "エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": "故郷を示す明星",
+      "Y": null
+    }
+  },
   "char_261_sddrag": {
     "name": "リード",
+    "class": "PIONEER",
     "rarity": 4,
     "skills": {
       "1": "迅速攻撃γ",
@@ -1651,6 +1777,7 @@
   },
   "char_496_wildmn": {
     "name": "ワイルドメイン",
+    "class": "PIONEER",
     "rarity": 4,
     "skills": {
       "1": "ラピッドランス",
@@ -1672,6 +1799,7 @@
   },
   "char_401_elysm": {
     "name": "エリジウム",
+    "class": "PIONEER",
     "rarity": 4,
     "skills": {
       "1": "支援指令γ",
@@ -1687,12 +1815,13 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "応急通信マニュアル",
       "Y": null
     }
   },
   "char_476_blkngt": {
     "name": "ブラックナイト",
+    "class": "PIONEER",
     "rarity": 4,
     "skills": {
       "1": "うたた寝",
@@ -1714,6 +1843,7 @@
   },
   "char_497_ctable": {
     "name": "カンタービレ",
+    "class": "PIONEER",
     "rarity": 4,
     "skills": {
       "1": "洞見",
@@ -1735,6 +1865,7 @@
   },
   "char_4017_puzzle": {
     "name": "パズル",
+    "class": "PIONEER",
     "rarity": 4,
     "skills": {
       "1": "証拠追跡",
@@ -1756,6 +1887,7 @@
   },
   "char_308_swire": {
     "name": "スワイヤー",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "統括指揮",
@@ -1777,6 +1909,7 @@
   },
   "char_265_sophia": {
     "name": "ウィスラッシュ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "激励の美学",
@@ -1796,8 +1929,31 @@
       "Y": null
     }
   },
+  "char_4106_bryota": {
+    "name": "ブライオファイタ",
+    "class": "WARRIOR",
+    "rarity": 4,
+    "skills": {
+      "1": "強撃β",
+      "2": "岩石の根気",
+      "3": null
+    },
+    "tags": [
+      "火力",
+      "支援",
+      "近距離",
+      "前衛タイプ",
+      "エリート"
+    ],
+    "obtain": "イベント",
+    "modules": {
+      "X": "食後のお楽しみ",
+      "Y": null
+    }
+  },
   "char_106_franka": {
     "name": "フランカ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "迅速攻撃γ",
@@ -1819,6 +1975,7 @@
   },
   "char_131_flameb": {
     "name": "エンカク",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "血化粧",
@@ -1840,6 +1997,7 @@
   },
   "char_154_morgan": {
     "name": "モーガン",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "ストリートパンク",
@@ -1860,6 +2018,7 @@
   },
   "char_155_tiger": {
     "name": "インドラ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "砕甲拳",
@@ -1881,6 +2040,7 @@
   },
   "char_415_flint": {
     "name": "フリント",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "ストマックブロー",
@@ -1901,6 +2061,7 @@
   },
   "char_157_dagda": {
     "name": "ダグザ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "カウンターテクニック",
@@ -1922,6 +2083,7 @@
   },
   "char_140_whitew": {
     "name": "ラップランド",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "影落とす時針",
@@ -1943,6 +2105,7 @@
   },
   "char_294_ayer": {
     "name": "エアースカーペ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "多目標型散弾",
@@ -1964,6 +2127,7 @@
   },
   "char_4083_chimes": {
     "name": "ウィンドチャイム",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -1984,6 +2148,7 @@
   },
   "char_252_bibeak": {
     "name": "バイビーク",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "剣羽飛針",
@@ -2005,6 +2170,7 @@
   },
   "char_459_tachak": {
     "name": "Tachanka",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "焼夷弾",
@@ -2026,6 +2192,7 @@
   },
   "char_143_ghost": {
     "name": "スペクター",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -2041,12 +2208,13 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "幽々たる蝋燭の灯り",
       "Y": null
     }
   },
   "char_356_broca": {
     "name": "ブローカ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "ターンオン",
@@ -2062,12 +2230,13 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "「兄弟」",
       "Y": null
     }
   },
   "char_274_astesi": {
     "name": "アステシア",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "星座の守護",
@@ -2089,6 +2258,7 @@
   },
   "char_333_sidero": {
     "name": "シデロカ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "HP回復γ",
@@ -2110,6 +2280,7 @@
   },
   "char_475_akafyu": {
     "name": "アカフユ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "信影流・雷刀之勢",
@@ -2131,6 +2302,7 @@
   },
   "char_1030_noirc2": {
     "name": "レウスSノイルホーン",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "居合抜刀気刃斬り",
@@ -2152,6 +2324,7 @@
   },
   "char_421_crow": {
     "name": "ラ・プルマ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "ソニックスラッシュ",
@@ -2172,6 +2345,7 @@
   },
   "char_4066_highmo": {
     "name": "ハイモア",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "懐古、別れ",
@@ -2192,6 +2366,7 @@
   },
   "char_486_takila": {
     "name": "テキーラ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "即断即決",
@@ -2212,6 +2387,7 @@
   },
   "char_129_bluep": {
     "name": "アズリウス",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "ダブルショット",
@@ -2232,6 +2408,7 @@
   },
   "char_204_platnm": {
     "name": "プラチナ",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -2252,6 +2429,7 @@
   },
   "char_367_swllow": {
     "name": "グレースロート",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "風切",
@@ -2272,6 +2450,7 @@
   },
   "char_365_aprl": {
     "name": "エイプリル",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "精密射撃",
@@ -2292,6 +2471,7 @@
   },
   "char_1021_kroos2": {
     "name": "寒芒クルース",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "無痕",
@@ -2312,6 +2492,7 @@
   },
   "char_498_inside": {
     "name": "インサイダー",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "「トラブル回避」",
@@ -2332,6 +2513,7 @@
   },
   "char_219_meteo": {
     "name": "メテオリーテ",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "散弾装填",
@@ -2353,6 +2535,7 @@
   },
   "char_379_sesa": {
     "name": "シェーシャ",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -2374,6 +2557,7 @@
   },
   "char_4078_bdhkgt": {
     "name": "ジエユン",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "前路を調べ",
@@ -2395,6 +2579,7 @@
   },
   "char_279_excu": {
     "name": "イグゼキュター",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "フルチョーク",
@@ -2415,6 +2600,7 @@
   },
   "char_346_aosta": {
     "name": "アオスタ",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "迅速攻撃γ",
@@ -2435,6 +2621,7 @@
   },
   "char_002_amiya": {
     "name": "アーミヤ",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "戦術詠唱γ",
@@ -2455,6 +2642,7 @@
   },
   "char_405_absin": {
     "name": "アブサント",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "執行態勢",
@@ -2475,6 +2663,7 @@
   },
   "char_411_tomimi": {
     "name": "トミミ",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "部族の教え",
@@ -2496,6 +2685,7 @@
   },
   "char_466_qanik": {
     "name": "カニパラート",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "吹きすさぶ凍風",
@@ -2517,6 +2707,7 @@
   },
   "char_166_skfire": {
     "name": "スカイフレア",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -2538,6 +2729,7 @@
   },
   "char_306_leizi": {
     "name": "レイズ",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -2558,6 +2750,7 @@
   },
   "char_135_halo": {
     "name": "アステジーニ",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "ボルテージダブラー",
@@ -2578,6 +2771,7 @@
   },
   "char_344_beewax": {
     "name": "ビーズワクス",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "砂嵐拡散",
@@ -2599,6 +2793,7 @@
   },
   "char_373_lionhd": {
     "name": "レオンハルト",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -2618,8 +2813,31 @@
       "Y": null
     }
   },
+  "char_341_sntlla": {
+    "name": "サンタラ",
+    "class": "CASTER",
+    "rarity": 4,
+    "skills": {
+      "1": "迅速攻撃γ",
+      "2": "「魔女の涙」",
+      "3": null
+    },
+    "tags": [
+      "範囲攻撃",
+      "牽制",
+      "遠距離",
+      "術師タイプ",
+      "エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": null,
+      "Y": "「アイス・ブレイジャー」"
+    }
+  },
   "char_388_mint": {
     "name": "ミント",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "風のささやき",
@@ -2641,6 +2859,7 @@
   },
   "char_338_iris": {
     "name": "アイリス",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "童話の守り人",
@@ -2661,6 +2880,7 @@
   },
   "char_297_hamoni": {
     "name": "ハーモニー",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "舞は軽やかに",
@@ -2681,6 +2901,7 @@
   },
   "char_1011_lava2": {
     "name": "炎獄ラヴァ",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "フレイムエンチャント",
@@ -2701,6 +2922,7 @@
   },
   "char_489_serum": {
     "name": "コロセラム",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "過集中",
@@ -2722,6 +2944,7 @@
   },
   "char_4013_kjera": {
     "name": "イェラ",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -2743,6 +2966,7 @@
   },
   "char_4040_rockr": {
     "name": "ロックロック",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "戦術詠唱γ",
@@ -2763,6 +2987,7 @@
   },
   "char_4054_malist": {
     "name": "ミニマリスト",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "迅速攻撃γ",
@@ -2783,6 +3008,7 @@
   },
   "char_242_otter": {
     "name": "メイヤー",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "攪乱装置",
@@ -2804,6 +3030,7 @@
   },
   "char_336_folivo": {
     "name": "シーン",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "擬態化機能",
@@ -2825,6 +3052,7 @@
   },
   "char_108_silent": {
     "name": "サイレンス",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "回復力強化γ",
@@ -2845,6 +3073,7 @@
   },
   "char_171_bldsk": {
     "name": "ワルファリン",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "救急包帯法",
@@ -2866,6 +3095,7 @@
   },
   "char_345_folnic": {
     "name": "フォリニック",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "最大限度量投薬",
@@ -2887,6 +3117,7 @@
   },
   "char_348_ceylon": {
     "name": "セイロン",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "ハイドロセラピー",
@@ -2907,6 +3138,7 @@
   },
   "char_436_whispr": {
     "name": "ウィスパーレイン",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "対症療法",
@@ -2927,6 +3159,7 @@
   },
   "char_402_tuye": {
     "name": "トゥイエ",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "アクアリング",
@@ -2947,6 +3180,7 @@
   },
   "char_473_mberry": {
     "name": "マルベリー",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "ヒーリングミスト",
@@ -2967,6 +3201,7 @@
   },
   "char_449_glider": {
     "name": "ハニーベリー",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "メンタルケア",
@@ -2987,6 +3222,7 @@
   },
   "char_1024_hbisc2": {
     "name": "濯塵ハイビスカス",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -3007,6 +3243,7 @@
   },
   "char_4071_peper": {
     "name": "パプリカ",
+    "class": "MEDIC",
     "rarity": 4,
     "skills": {
       "1": "援護作戦γ",
@@ -3027,6 +3264,7 @@
   },
   "char_148_nearl": {
     "name": "ニアール",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "応急処置",
@@ -3048,6 +3286,7 @@
   },
   "char_226_hmau": {
     "name": "ウン",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "応急処置・受動",
@@ -3069,6 +3308,7 @@
   },
   "char_144_red": {
     "name": "レッド",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "処刑の構え",
@@ -3090,6 +3330,7 @@
   },
   "char_243_waaifu": {
     "name": "ワイフー",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "寸勁",
@@ -3111,6 +3352,7 @@
   },
   "char_214_kafka": {
     "name": "カフカ",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "ミステリーキューブ",
@@ -3132,6 +3374,7 @@
   },
   "char_455_nothin": {
     "name": "ウユウ",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "引き際の心得",
@@ -3153,6 +3396,7 @@
   },
   "char_107_liskam": {
     "name": "リスカム",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "チャージガード",
@@ -3174,6 +3418,7 @@
   },
   "char_201_moeshd": {
     "name": "クロワッサン",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "防御態勢",
@@ -3195,6 +3440,7 @@
   },
   "char_325_bison": {
     "name": "バイソン",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "防御力強化γ",
@@ -3215,6 +3461,7 @@
   },
   "char_163_hpsts": {
     "name": "ヴァルカン",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "鉄壁の構え",
@@ -3237,6 +3484,7 @@
   },
   "char_378_asbest": {
     "name": "アスベストス",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "堅守モード",
@@ -3258,6 +3506,7 @@
   },
   "char_4025_aprot2": {
     "name": "シャレム",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "短期決戦",
@@ -3279,6 +3528,7 @@
   },
   "char_4047_pianst": {
     "name": "ツェルニー",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "超絶技巧",
@@ -3300,6 +3550,7 @@
   },
   "char_457_blitz": {
     "name": "Blitz",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "フラッシュシールド",
@@ -3321,6 +3572,7 @@
   },
   "char_304_zebra": {
     "name": "ヘビーレイン",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "応急迷彩",
@@ -3342,6 +3594,7 @@
   },
   "char_431_ashlok": {
     "name": "アッシュロック",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -3363,6 +3616,7 @@
   },
   "char_493_firwhl": {
     "name": "ファイヤーホイッスル",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "ワイルドファイア",
@@ -3384,6 +3638,7 @@
   },
   "char_422_aurora": {
     "name": "オーロラ",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "故郷の守り人",
@@ -3405,6 +3660,7 @@
   },
   "char_464_cement": {
     "name": "セメント",
+    "class": "TANK",
     "rarity": 4,
     "skills": {
       "1": "鉱脈突破",
@@ -3425,6 +3681,7 @@
   },
   "char_145_prove": {
     "name": "プロヴァンス",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "ウルフアイ",
@@ -3445,6 +3702,7 @@
   },
   "char_4006_melnte": {
     "name": "メラナイト",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "飽和パルス",
@@ -3466,6 +3724,7 @@
   },
   "char_158_milu": {
     "name": "ファイヤーウォッチ",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "カモフラージュ",
@@ -3487,6 +3746,7 @@
   },
   "char_218_cuttle": {
     "name": "アンドレアナ",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "攻撃力強化γ",
@@ -3508,6 +3768,7 @@
   },
   "char_4014_lunacu": {
     "name": "ルナカブ",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "狩猟開始",
@@ -3529,6 +3790,7 @@
   },
   "char_363_toddi": {
     "name": "トギフォンス",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "信号矢",
@@ -3549,6 +3811,7 @@
   },
   "char_4043_erato": {
     "name": "エラト",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "安眠のメローディア",
@@ -3570,6 +3833,7 @@
   },
   "char_1027_greyy2": {
     "name": "承曦グレイ",
+    "class": "SNIPER",
     "rarity": 4,
     "skills": {
       "1": "迅速攻撃γ",
@@ -3589,8 +3853,30 @@
       "Y": null
     }
   },
+  "char_4104_coldst": {
+    "name": "コールドショット",
+    "class": "SNIPER",
+    "rarity": 4,
+    "skills": {
+      "1": "攻撃力強化γ",
+      "2": "夜に酔いしれて",
+      "3": null
+    },
+    "tags": [
+      "火力",
+      "遠距離",
+      "狙撃タイプ",
+      "エリート"
+    ],
+    "obtain": "イベント",
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
   "char_4015_spuria": {
     "name": "スプリア",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "クイックドロウ",
@@ -3612,6 +3898,7 @@
   },
   "char_173_slchan": {
     "name": "クリフハート",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "ワイヤーシックル",
@@ -3633,6 +3920,7 @@
   },
   "char_383_snsant": {
     "name": "スノーズント",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "フックキャッチ",
@@ -3652,8 +3940,30 @@
       "Y": null
     }
   },
+  "char_4105_almond": {
+    "name": "アーモンド",
+    "class": "SPECIAL",
+    "rarity": 4,
+    "skills": {
+      "1": "マグネットキャッチャー",
+      "2": "ハイパートラクション",
+      "3": null
+    },
+    "tags": [
+      "強制移動",
+      "近距離",
+      "特殊タイプ",
+      "エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": "「卒業制作」",
+      "Y": null
+    }
+  },
   "char_174_slbell": {
     "name": "プラマニクス",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "木霊せし聖音",
@@ -3674,6 +3984,7 @@
   },
   "char_254_vodfox": {
     "name": "シャマレ",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "不治の呪い",
@@ -3694,6 +4005,7 @@
   },
   "char_195_glassb": {
     "name": "イースチナ",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "一心不乱",
@@ -3715,6 +4027,7 @@
   },
   "char_326_glacus": {
     "name": "グラウコス",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "デュアルリロード",
@@ -3736,6 +4049,7 @@
   },
   "char_4032_provs": {
     "name": "プロヴァイゾ",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "訴訟提起",
@@ -3757,6 +4071,7 @@
   },
   "char_433_windft": {
     "name": "ウインドフリット",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "この身で築かす",
@@ -3778,6 +4093,7 @@
   },
   "char_101_sora": {
     "name": "ソラ",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "すやすやナンバー",
@@ -3799,6 +4115,7 @@
   },
   "char_4045_heidi": {
     "name": "ハイディ",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "架空の物語・怒れる者",
@@ -3820,6 +4137,7 @@
   },
   "char_343_tknogi": {
     "name": "ツキノギ",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "跡無",
@@ -3835,12 +4153,13 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "朧夜の灯り",
       "Y": null
     }
   },
   "char_4019_ncdeer": {
     "name": "九色鹿",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "人間降吉",
@@ -3856,12 +4175,13 @@
     ],
     "obtain": "イベント",
     "modules": {
-      "X": null,
+      "X": "「仙薬」",
       "Y": null
     }
   },
   "char_492_quercu": {
     "name": "クエルクス",
+    "class": "SUPPORT",
     "rarity": 4,
     "skills": {
       "1": "大地の慈悲",
@@ -3877,12 +4197,34 @@
     ],
     "obtain": "人材募集",
     "modules": {
+      "X": "錆びついた枝",
+      "Y": null
+    }
+  },
+  "char_4102_threye": {
+    "name": "ヴァラルクビン",
+    "class": "SUPPORT",
+    "rarity": 4,
+    "skills": {
+      "1": "崩壊を視しとき",
+      "2": "枯朽を視たりて",
+      "3": null
+    },
+    "tags": [
+      "元素",
+      "遠距離",
+      "補助タイプ",
+      "エリート"
+    ],
+    "obtain": "統合戦略報酬",
+    "modules": {
       "X": null,
       "Y": null
     }
   },
   "char_215_mantic": {
     "name": "マンティコア",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "アジトキシン",
@@ -3904,6 +4246,7 @@
   },
   "char_478_kirara": {
     "name": "キララ",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "アンカークラッシュ",
@@ -3925,6 +4268,7 @@
   },
   "char_241_panda": {
     "name": "エフイーター",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "鉄意六合拳",
@@ -3946,6 +4290,7 @@
   },
   "char_4036_forcer": {
     "name": "エンフォーサー",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "デタランスショット",
@@ -3967,6 +4312,7 @@
   },
   "char_451_robin": {
     "name": "ロビン",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "バインド「クリップ」",
@@ -3988,6 +4334,7 @@
   },
   "char_458_rfrost": {
     "name": "Frost",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "トラップセット",
@@ -4009,6 +4356,7 @@
   },
   "char_369_bena": {
     "name": "ベナ",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "フルトリミング",
@@ -4030,6 +4378,7 @@
   },
   "char_4016_kazema": {
     "name": "カゼマル",
+    "class": "SPECIAL",
     "rarity": 4,
     "skills": {
       "1": "紙織・速攻",
@@ -4051,6 +4400,7 @@
   },
   "char_103_angel": {
     "name": "エクシア",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "アサルトモード",
@@ -4071,6 +4421,7 @@
   },
   "char_332_archet": {
     "name": "アルケット",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "飛散の矢",
@@ -4091,6 +4442,7 @@
   },
   "char_456_ash": {
     "name": "Ash",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "援護射撃",
@@ -4111,6 +4463,7 @@
   },
   "char_340_shwaz": {
     "name": "シュヴァルツ",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "強射",
@@ -4131,6 +4484,7 @@
   },
   "char_4055_bgsnow": {
     "name": "パゼオンカ",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "イアンボス",
@@ -4151,6 +4505,7 @@
   },
   "char_430_fartth": {
     "name": "ファートゥース",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "迅速攻撃γ",
@@ -4171,6 +4526,7 @@
   },
   "char_113_cqbw": {
     "name": "W",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "ハートのK",
@@ -4192,6 +4548,7 @@
   },
   "char_300_phenxi": {
     "name": "フィアメッタ",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "「直視せよ」",
@@ -4212,6 +4569,7 @@
   },
   "char_197_poca": {
     "name": "ロサ",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "攻撃力強化γ",
@@ -4231,8 +4589,30 @@
       "Y": null
     }
   },
+  "char_2012_typhon": {
+    "name": "ティフォン",
+    "class": "SNIPER",
+    "rarity": 5,
+    "skills": {
+      "1": "迅速攻撃γ",
+      "2": "氷原の掟",
+      "3": "「永久なる狩猟」"
+    },
+    "tags": [
+      "火力",
+      "遠距離",
+      "狙撃タイプ",
+      "上級エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": "自然の容認",
+      "Y": null
+    }
+  },
   "char_391_rosmon": {
     "name": "ロスモンティス",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "意識拡張",
@@ -4253,6 +4633,7 @@
   },
   "char_1013_chen2": {
     "name": "遊龍チェン",
+    "class": "SNIPER",
     "rarity": 5,
     "skills": {
       "1": "高圧ショット",
@@ -4274,6 +4655,7 @@
   },
   "char_112_siege": {
     "name": "シージ",
+    "class": "PIONEER",
     "rarity": 5,
     "skills": {
       "1": "突撃指令γ",
@@ -4295,6 +4677,7 @@
   },
   "char_222_bpipe": {
     "name": "バグパイプ",
+    "class": "PIONEER",
     "rarity": 5,
     "skills": {
       "1": "迅速攻撃γ",
@@ -4316,6 +4699,7 @@
   },
   "char_362_saga": {
     "name": "サガ",
+    "class": "PIONEER",
     "rarity": 5,
     "skills": {
       "1": "突撃指令γ",
@@ -4331,12 +4715,13 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "何処にか駄獣を尋ねん",
       "Y": "身は雲泥に向かふ"
     }
   },
   "char_479_sleach": {
     "name": "サイラッハ",
+    "class": "PIONEER",
     "rarity": 5,
     "skills": {
       "1": "支援指令γ",
@@ -4352,12 +4737,13 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "牧童の歌",
       "Y": null
     }
   },
   "char_420_flamtl": {
     "name": "フレイムテイル",
+    "class": "PIONEER",
     "rarity": 5,
     "skills": {
       "1": "俊敏なる直覚",
@@ -4379,6 +4765,7 @@
   },
   "char_427_vigil": {
     "name": "ヴィジェル",
+    "class": "PIONEER",
     "rarity": 5,
     "skills": {
       "1": "統率者の一声",
@@ -4400,6 +4787,7 @@
   },
   "char_249_mlyss": {
     "name": "ミュルジス",
+    "class": "PIONEER",
     "rarity": 5,
     "skills": {
       "1": "段階的湿潤化",
@@ -4421,6 +4809,7 @@
   },
   "char_4087_ines": {
     "name": "イネス",
+    "class": "PIONEER",
     "rarity": 5,
     "skills": {
       "1": "影纏う刃",
@@ -4442,6 +4831,7 @@
   },
   "char_134_ifrit": {
     "name": "イフリータ",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "猛火",
@@ -4463,6 +4853,7 @@
   },
   "char_213_mostma": {
     "name": "モスティマ",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "攻撃力強化γ",
@@ -4485,6 +4876,7 @@
   },
   "char_180_amgoat": {
     "name": "エイヤフィヤトラ",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "二重詠唱",
@@ -4506,6 +4898,7 @@
   },
   "char_2013_cerber": {
     "name": "ケオベ",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "「つめたいおの」",
@@ -4527,6 +4920,7 @@
   },
   "char_4027_heyak": {
     "name": "ホルハイヤ",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "探求せんがため",
@@ -4548,6 +4942,7 @@
   },
   "char_2015_dusk": {
     "name": "シー",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "工筆入魂",
@@ -4570,6 +4965,7 @@
   },
   "char_472_pasngr": {
     "name": "パッセンジャー",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "エレキチェーン",
@@ -4590,6 +4986,7 @@
   },
   "char_426_billro": {
     "name": "カーネリアン",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "熱砂護陣",
@@ -4611,6 +5008,7 @@
   },
   "char_4080_lin": {
     "name": "リン",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "玲瓏",
@@ -4632,6 +5030,7 @@
   },
   "char_377_gdglow": {
     "name": "ゴールデングロー",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "スパーキング",
@@ -4652,6 +5051,7 @@
   },
   "char_4046_ebnhlz": {
     "name": "エーベンホルツ",
+    "class": "CASTER",
     "rarity": 5,
     "skills": {
       "1": "アッチェレランド",
@@ -4672,6 +5072,7 @@
   },
   "char_206_gnosis": {
     "name": "ノーシス",
+    "class": "SUPPORT",
     "rarity": 5,
     "skills": {
       "1": "思考加速",
@@ -4692,6 +5093,7 @@
   },
   "char_291_aglina": {
     "name": "アンジェリーナ",
+    "class": "SUPPORT",
     "rarity": 5,
     "skills": {
       "1": "秘杖・急収束　",
@@ -4714,6 +5116,7 @@
   },
   "char_358_lisa": {
     "name": "スズラン",
+    "class": "SUPPORT",
     "rarity": 5,
     "skills": {
       "1": "全身全霊",
@@ -4736,6 +5139,7 @@
   },
   "char_248_mgllan": {
     "name": "マゼラン",
+    "class": "SUPPORT",
     "rarity": 5,
     "skills": {
       "1": "フリーズモジュール",
@@ -4758,6 +5162,7 @@
   },
   "char_1012_skadi2": {
     "name": "濁心スカジ",
+    "class": "SUPPORT",
     "rarity": 5,
     "skills": {
       "1": "同帰殊塗の吟",
@@ -4780,6 +5185,7 @@
   },
   "char_1031_slent2": {
     "name": "淬羽サイレンス",
+    "class": "SUPPORT",
     "rarity": 5,
     "skills": {
       "1": "止まらぬ歩み",
@@ -4796,12 +5202,13 @@
     ],
     "obtain": "イベント",
     "modules": {
-      "X": null,
+      "X": "明晰な思考の助け",
       "Y": null
     }
   },
   "char_2023_ling": {
     "name": "リィン",
+    "class": "SUPPORT",
     "rarity": 5,
     "skills": {
       "1": "重ねて酒を進み",
@@ -4824,6 +5231,7 @@
   },
   "char_4072_ironmn": {
     "name": "ステインレス",
+    "class": "SUPPORT",
     "rarity": 5,
     "skills": {
       "1": "ハイパーブースト",
@@ -4845,6 +5253,7 @@
   },
   "char_250_phatom": {
     "name": "ファントム",
+    "class": "SPECIAL",
     "rarity": 5,
     "skills": {
       "1": "闇夜の影法師",
@@ -4862,11 +5271,12 @@
     "obtain": "人材募集",
     "modules": {
       "X": "レディのフェルト細工",
-      "Y": null
+      "Y": "「影のように」"
     }
   },
   "char_1028_texas2": {
     "name": "血掟テキサス",
+    "class": "SPECIAL",
     "rarity": 5,
     "skills": {
       "1": "ピオヴィッジネ",
@@ -4888,6 +5298,7 @@
   },
   "char_1029_yato2": {
     "name": "キリンRヤトウ",
+    "class": "SPECIAL",
     "rarity": 5,
     "skills": {
       "1": "鬼人化",
@@ -4909,6 +5320,7 @@
   },
   "char_322_lmlee": {
     "name": "リー",
+    "class": "SPECIAL",
     "rarity": 5,
     "skills": {
       "1": "邪気退散",
@@ -4929,8 +5341,31 @@
       "Y": null
     }
   },
+  "char_1033_swire2": {
+    "name": "琳琅スワイヤー",
+    "class": "SPECIAL",
+    "rarity": 5,
+    "skills": {
+      "1": "資金援助",
+      "2": "「おもてなし」",
+      "3": "千金一擲"
+    },
+    "tags": [
+      "高速再配置",
+      "爆発力",
+      "近距離",
+      "特殊タイプ",
+      "上級エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": "「輝かしきメダル」",
+      "Y": null
+    }
+  },
   "char_400_weedy": {
     "name": "ウィーディ",
+    "class": "SPECIAL",
     "rarity": 5,
     "skills": {
       "1": "砲身強打",
@@ -4953,6 +5388,7 @@
   },
   "char_225_haak": {
     "name": "ア",
+    "class": "SPECIAL",
     "rarity": 5,
     "skills": {
       "1": "高速射撃",
@@ -4974,6 +5410,7 @@
   },
   "char_474_glady": {
     "name": "グレイディーア",
+    "class": "SPECIAL",
     "rarity": 5,
     "skills": {
       "1": "渇水の大洋裂断",
@@ -4996,6 +5433,7 @@
   },
   "char_437_mizuki": {
     "name": "ミヅキ",
+    "class": "SPECIAL",
     "rarity": 5,
     "skills": {
       "1": "呼び声",
@@ -5017,6 +5455,7 @@
   },
   "char_1023_ghost2": {
     "name": "帰溟スペクター",
+    "class": "SPECIAL",
     "rarity": 5,
     "skills": {
       "1": "生存の技巧",
@@ -5038,6 +5477,7 @@
   },
   "char_4048_doroth": {
     "name": "ドロシー",
+    "class": "SPECIAL",
     "rarity": 5,
     "skills": {
       "1": "脅威排除",
@@ -5059,6 +5499,7 @@
   },
   "char_147_shining": {
     "name": "シャイニング",
+    "class": "MEDIC",
     "rarity": 5,
     "skills": {
       "1": "信条",
@@ -5080,6 +5521,7 @@
   },
   "char_179_cgbird": {
     "name": "ナイチンゲール",
+    "class": "MEDIC",
     "rarity": 5,
     "skills": {
       "1": "回復力強化γ",
@@ -5101,6 +5543,7 @@
   },
   "char_003_kalts": {
     "name": "ケルシー",
+    "class": "MEDIC",
     "rarity": 5,
     "skills": {
       "1": "指令：構造強化",
@@ -5122,6 +5565,7 @@
   },
   "char_4042_lumen": {
     "name": "ルーメン",
+    "class": "MEDIC",
     "rarity": 5,
     "skills": {
       "1": "恵みの慈雨",
@@ -5141,8 +5585,30 @@
       "Y": "「幸運」"
     }
   },
+  "char_1016_agoat2": {
+    "name": "純燼エイヤフィヤトラ",
+    "class": "MEDIC",
+    "rarity": 5,
+    "skills": {
+      "1": "無垢なる恵み",
+      "2": "雲煙の庇護",
+      "3": "ヴォルケーノ・エコー"
+    },
+    "tags": [
+      "治療",
+      "遠距離",
+      "医療タイプ",
+      "上級エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
   "char_1020_reed2": {
     "name": "焔影リード",
+    "class": "MEDIC",
     "rarity": 5,
     "skills": {
       "1": "迅速攻撃γ",
@@ -5165,6 +5631,7 @@
   },
   "char_136_hsguma": {
     "name": "ホシグマ",
+    "class": "TANK",
     "rarity": 5,
     "skills": {
       "1": "戦意昂揚",
@@ -5186,6 +5653,7 @@
   },
   "char_202_demkni": {
     "name": "サリア",
+    "class": "TANK",
     "rarity": 5,
     "skills": {
       "1": "応急処置",
@@ -5208,6 +5676,7 @@
   },
   "char_423_blemsh": {
     "name": "ブレミシャイン",
+    "class": "TANK",
     "rarity": 5,
     "skills": {
       "1": "光芒奔溢",
@@ -5230,6 +5699,7 @@
   },
   "char_2014_nian": {
     "name": "ニェン",
+    "class": "TANK",
     "rarity": 5,
     "skills": {
       "1": "錫灼",
@@ -5251,6 +5721,7 @@
   },
   "char_311_mudrok": {
     "name": "マドロック",
+    "class": "TANK",
     "rarity": 5,
     "skills": {
       "1": "防御力強化γ",
@@ -5273,6 +5744,7 @@
   },
   "char_4065_judge": {
     "name": "ペナンス",
+    "class": "TANK",
     "rarity": 5,
     "skills": {
       "1": "裁決のガベル",
@@ -5294,6 +5766,7 @@
   },
   "char_416_zumama": {
     "name": "ユーネクテス",
+    "class": "TANK",
     "rarity": 5,
     "skills": {
       "1": "トマホーク",
@@ -5316,6 +5789,7 @@
   },
   "char_4039_horn": {
     "name": "ホルン",
+    "class": "TANK",
     "rarity": 5,
     "skills": {
       "1": "照明榴弾",
@@ -5335,8 +5809,32 @@
       "Y": null
     }
   },
+  "char_1034_jesca2": {
+    "name": "滌火ジェシカ",
+    "class": "TANK",
+    "rarity": 5,
+    "skills": {
+      "1": "戦線維持",
+      "2": "掩護弾幕",
+      "3": "飽和射撃"
+    },
+    "tags": [
+      "防御",
+      "生存",
+      "火力",
+      "近距離",
+      "重装タイプ",
+      "上級エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": null,
+      "Y": null
+    }
+  },
   "char_264_f12yin": {
     "name": "マウンテン",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "左鉤突き",
@@ -5358,6 +5856,7 @@
   },
   "char_2024_chyue": {
     "name": "チョンユエ",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "満盈",
@@ -5378,6 +5877,7 @@
   },
   "char_172_svrash": {
     "name": "シルバーアッシュ",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "強撃γ",
@@ -5399,6 +5899,7 @@
   },
   "char_293_thorns": {
     "name": "ソーンズ",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "攻撃力強化γ",
@@ -5420,6 +5921,7 @@
   },
   "char_4082_qiubai": {
     "name": "チューバイ",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "留羽",
@@ -5441,6 +5943,7 @@
   },
   "char_010_chen": {
     "name": "チェン",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "鞘打ち",
@@ -5457,11 +5960,12 @@
     "obtain": "人材募集",
     "modules": {
       "X": "ロドス制式刀剣",
-      "Y": null
+      "Y": "過ぎ去った日々"
     }
   },
   "char_4009_irene": {
     "name": "アイリーニ",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "舞風",
@@ -5484,6 +5988,7 @@
   },
   "char_017_huang": {
     "name": "ブレイズ",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "強撃γ",
@@ -5499,12 +6004,13 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "熱く燃える心臓と武器",
       "Y": null
     }
   },
   "char_1026_gvial2": {
     "name": "百錬ガヴィル",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "ピンポイントヒット",
@@ -5521,12 +6027,13 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "ガヴィルの受難",
       "Y": null
     }
   },
   "char_350_surtr": {
     "name": "スルト",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "レーヴァテイン",
@@ -5547,6 +6054,7 @@
   },
   "char_188_helage": {
     "name": "ヘラグ",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "新月",
@@ -5563,11 +6071,12 @@
     "obtain": "人材募集",
     "modules": {
       "X": "蔵鋒",
-      "Y": null
+      "Y": "「熱い雪」"
     }
   },
   "char_485_pallas": {
     "name": "パラス",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "勝敗分かつ連撃",
@@ -5589,6 +6098,7 @@
   },
   "char_1014_nearl2": {
     "name": "耀騎士ニアール",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "夜に灯る白焔",
@@ -5609,6 +6119,7 @@
   },
   "char_1032_excu2": {
     "name": "聖約イグゼキュター",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "遺言の執行",
@@ -5629,6 +6140,7 @@
   },
   "char_4064_mlynar": {
     "name": "ムリナール",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "秘めたる怒り",
@@ -5650,6 +6162,7 @@
   },
   "char_230_savage": {
     "name": "サベージ",
+    "class": "WARRIOR",
     "rarity": 4,
     "skills": {
       "1": "強撃β",
@@ -5665,12 +6178,13 @@
     ],
     "obtain": "周年記念特典",
     "modules": {
-      "X": null,
+      "X": "果たされざる旅",
       "Y": null
     }
   },
   "char_282_catap": {
     "name": "カタパルト",
+    "class": "SNIPER",
     "rarity": 2,
     "skills": {
       "1": "爆破範囲拡大α",
@@ -5690,6 +6204,7 @@
   },
   "char_283_midn": {
     "name": "ミッドナイト",
+    "class": "WARRIOR",
     "rarity": 2,
     "skills": {
       "1": "エンチャントα",
@@ -5709,6 +6224,7 @@
   },
   "char_137_brownb": {
     "name": "ビーハンター",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "ウィービング",
@@ -5728,6 +6244,7 @@
   },
   "char_347_jaksel": {
     "name": "ジャッキー",
+    "class": "WARRIOR",
     "rarity": 3,
     "skills": {
       "1": "全力パンチ！",
@@ -5747,6 +6264,7 @@
   },
   "char_164_nightm": {
     "name": "ナイトメア",
+    "class": "CASTER",
     "rarity": 4,
     "skills": {
       "1": "ソウルドレイン",
@@ -5769,6 +6287,7 @@
   },
   "char_220_grani": {
     "name": "グラニ",
+    "class": "PIONEER",
     "rarity": 4,
     "skills": {
       "1": "防御力強化γ",
@@ -5790,6 +6309,7 @@
   },
   "char_263_skadi": {
     "name": "スカジ",
+    "class": "WARRIOR",
     "rarity": 5,
     "skills": {
       "1": "迅速攻撃γ",

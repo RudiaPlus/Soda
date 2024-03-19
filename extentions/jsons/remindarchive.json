@@ -109,5 +109,30 @@
         "link": "https://00m.in/u4H4P",
         "startTime": 1700074800,
         "endTime": 1710529199
+    },
+    "anniRemind_3": {
+        "name": "ヴィクトリア「薄暗い泥沼」",
+        "description": null,
+        "type": "anni",
+        "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%83%B4%E3%82%A3%E3%82%AF%E3%83%88%E3%83%AA%E3%82%A2%E3%80%8C%E8%96%84%E6%9A%97%E3%81%84%E6%B3%A5%E6%B2%BC%E3%80%8D",
+        "startTime": 1705258800,
+        "endTime": 1710097199
+
+    },
+    "anniRemind_4": {
+        "name": "サルゴン「特製小さな水たまり」",
+        "description": null,
+        "type": "anni",
+        "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%83%B4%E3%82%A3%E3%82%AF%E3%83%88%E3%83%AA%E3%82%A2%E3%80%8C%E8%96%84%E6%9A%97%E3%81%84%E6%B3%A5%E6%B2%BC%E3%80%8D",
+        "startTime": 1710097200,
+        "endTime": 1714935599
+    },
+    "sssRemind_3": {
+        "name": "南方保全駐在",
+        "description": null,
+        "type": "sss",
+        "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8",
+        "startTime": 1710529200,
+        "endTime": 1721069999
     }
 }

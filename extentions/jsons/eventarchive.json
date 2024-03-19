@@ -594,6 +594,40 @@
             }
         ]
     },
+    "act18sre": {
+        "id": "act18sre",
+        "type": "SIDESTORY",
+        "stageAdd": "False",
+        "name": "塵影に交わる残響(復刻)",
+        "news":"https://arknights.jp/news/383",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88105_%E5%A1%B5%E5%BD%B1%E3%81%AB%E4%BA%A4%E3%82%8F%E3%82%8B%E6%AE%8B%E9%9F%BF%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/94b20bef6c87d1815be8efe7be46ecc2.png",
+        "startTime": 1704438000,
+        "endTime": 1705258799,
+        "rewardEndTime": 1705604399
+    },
+    "act27side": {
+        "id": "act27side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "火山と雲と夢色の旅路",
+        "news": "https://www.arknights.jp/news/386",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88106_%E7%81%AB%E5%B1%B1%E3%81%A8%E9%9B%B2%E3%81%A8%E5%A4%A2%E8%89%B2%E3%81%AE%E6%97%85%E8%B7%AF",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/b36cedea8df57f245df93535068ed9b2.png",
+        "startTime": 1705388400,
+        "endTime": 1707159599,
+        "rewardEndTime": 1707764399,
+        "additionalStage": [
+            {
+                "name": "トレジャーハント",
+                "startTime": 1705993200
+            },
+            {
+                "name": "マグマサーフィン",
+                "startTime": 1706598000
+            }
+        ]
+    },
     "dis_rogue_2": {
         "id": "dis_rogue_2",
         "type": "ROGUELIKE",
@@ -639,6 +673,90 @@
                 "startTime": 1704049200,
                 "endTime": 1706727599,
                 "contents": "- 追憶映写08: ミヅキ「幼年期の終わり」"
+            }
+        ]
+    },
+    "act19sre": {
+        "id": "act18sre",
+        "type": "SIDESTORY",
+        "stageAdd": "False",
+        "name": "理想都市-エンドレスカーニバル-(復刻)",
+        "news":"https://arknights.jp/news/389",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88107_%E7%90%86%E6%83%B3%E9%83%BD%E5%B8%82-%E3%82%A8%E3%83%B3%E3%83%89%E3%83%AC%E3%82%B9%E3%82%AB%E3%83%BC%E3%83%8B%E3%83%90%E3%83%AB-%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/0b5a9ed682a7b8979fa8deef58771dea.png",
+        "startTime": 1707202800,
+        "endTime": 1708023599,
+        "rewardEndTime": 1708369199
+    },
+    "act3bossrush": {
+        "id": "act3bossrush",
+        "type": "BOSS_RUSH",
+        "stageAdd": "False",
+        "name": "導灯の試練 #3",
+        "news": "https://arknights.jp/news/391",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88108_%E5%B0%8E%E7%81%AF%E3%81%AE%E8%A9%A6%E7%B7%B4%EF%BC%833",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/bf2c73956eaf60476030435fd83e4b48.png",
+        "startTime": 1707721200,
+        "endTime": 1708887599,
+        "rewardEndTime": 1709146799
+    },
+        "act15mini": {
+        "id": "act15mini",
+        "type": "MINISTORY",
+        "stageAdd": "False",
+        "name": "樹影にて眠る",
+        "news": "https://arknights.jp/news/394",
+        "link": "",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/10fa17e4eabc078ec497e21520ca4b77.png",
+        "startTime": 1709017200,
+        "endTime": 1709578799,
+        "rewardEndTime": 1709837999
+    },
+    "act20sre": {
+        "id": "act20sre",
+        "type": "SIDESTORY",
+        "stageAdd": "False",
+        "name": "翠玉の夢(復刻)",
+        "news":"https://arknights.jp/news/395",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88110_%E7%BF%A0%E7%8E%89%E3%81%AE%E5%A4%A2%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/f8afe4e244e549cd6ea5c8a5e09fafe6.png",
+        "startTime": 1709622000,
+        "endTime": 1710442799,
+        "rewardEndTime": 1710788399
+    },
+    "act28side": {
+        "id": "act28side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "ダーティマネー",
+        "news": "https://arknights.jp/news/398",
+        "link": "https://arknights.jp/news/398",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/2287e2f2e5432e43b7eb98cc6da4494e.png",
+        "startTime": 1710831600,
+        "endTime": 1711997999,
+        "rewardEndTime": 1712602799,
+        "additionalStage": [
+            {
+                "name": "黒き艦船",
+                "startTime": 1711436400
+            }
+        ]
+    },
+    "dis_rogue_3": {
+        "id": "dis_rogue_3",
+        "type": "ROGUELIKE",
+        "name": "統合戦略「探索者と銀氷の果て」",
+        "news": "https://arknights.jp/news/396",
+        "link": "https://arknights.wikiru.jp/?%E7%B5%B1%E5%90%88%E6%88%A6%E7%95%A5%E3%80%8C%E6%8E%A2%E7%B4%A2%E8%80%85%E3%81%A8%E9%8A%80%E6%B0%B7%E3%81%AE%E6%9E%9C%E3%81%A6%E3%80%8D",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/3272d2169fa9ccc3986a2b9bd39ce37c.png",
+        "startTime": 1709622000,
+        "endTime": 1732993199,
+        "monthlyUpdate": [
+            {
+                "month": 3,
+                "startTime": 1709622000,
+                "endTime": 1711911599,
+                "contents": "- 探索者記録01: マゼラン"
             }
         ]
     }

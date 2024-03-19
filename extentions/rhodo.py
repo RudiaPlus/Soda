@@ -108,13 +108,6 @@ def run_discord_bot():
         channelID = message.channel.id
 
         if message.guild:
-            
-            embeds, video_urls = await twitterpost.create_embed(content = user_message)
-            if embeds:
-                await message.reply(embeds = embeds)
-                if video_urls:
-                    for url in video_urls:
-                        await message.reply(content = f"[ブラウザで開く]({url})")
                         
             
             if channelID == remindThreadID:
@@ -209,10 +202,14 @@ def run_discord_bot():
             
     @client.event
     async def on_raw_reaction_add(reaction_payload: discord.RawReactionActionEvent):
+        
+        if reaction_payload.emoji.name != "I_agree":
+            return
+        
         reaction_user = reaction_payload.user_id
         message_channel = client.get_channel(reaction_payload.channel_id)
         message = await message_channel.fetch_message(reaction_payload.message_id)
-        
+
         if not message.guild:
             return
         found = False
@@ -278,6 +275,58 @@ def run_discord_bot():
             message_author = message.author
             message_jump_url = message.jump_url
             await edit_message.edit(content = f"{message_author.mention} さんのメッセージが <:I_agree:1183255845497229442> を{reaction.count}個獲得しました！\nメッセージへのリンク: {message_jump_url}")
+    
+    @client.event
+    async def on_member_update(before: discord.Member, after: discord.Member):
+        #beforeとafterの比較
+        before_roles = set(before.roles)
+        after_roles = set(after.roles)
+        
+        #追加されたロールの抽出
+        if before_roles == after_roles:
+            return
+        else:
+            added_roles = list(after_roles - before_roles)
+            
+        #botロールの検出
+        try:
+            is_user_bot_role = False
+            for role in added_roles:
+                if role.id == config.user_bot_role:
+                    is_user_bot_role = True
+                    break
+            if is_user_bot_role == False:
+                return
+            else:
+                member_got = after
+                roles = []
+                
+                for index, role in enumerate(member_got.roles):
+                    role_mention = role.name if index == 0 else role.mention
+                    roles.append(role_mention)
+
+                role_got = "\n".join(roles)
+                
+                embed = discord.Embed(title = "botロールを検出しました！", description = f"{member_got.mention}\nユーザー名: {str(member_got)}\nグローバルネーム: {member_got.global_name}", 
+                                      color=discord.Color.red())
+                embed.set_thumbnail(url=member_got.display_avatar)
+                embed.set_author(name=member_got.display_name,
+                                 icon_url=member_got.avatar)
+                embed.add_field(name = "ID", value = member_got.id, inline = False)
+                embed.add_field(name = "サーバー参加日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.joined_at.timestamp())), inline = False)
+                embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.created_at.timestamp())), inline = False)
+                embed.add_field(name = "所持しているロール", value = role_got, inline = True)
+                embed.add_field(name = "最高のロール", value = "<@&{0}>".format(member_got.top_role.id), inline = True)
+                if member_got.is_timed_out() == True:
+                    embed.add_field(name="タイムアウト状態", value="<t:{0}:F>( <t:{0}:R> )まで".format(
+                        round(member_got.timed_out_until.timestamp())), inline=False)
+                    
+                channel_action_log = client.get_channel(config.action_logs)
+                await channel_action_log.send(embed = embed)
+                
+        except Exception as e:
+            logger.error(f"[on_member_update]にてエラー: {e}")
+            
             
     class VoiceSpeechButtons(discord.ui.View):
         def __init__(self, join_channel, target_chat_id):

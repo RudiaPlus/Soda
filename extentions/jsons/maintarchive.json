@@ -68,5 +68,21 @@
         "endTime": 1703142000,
         "doing": false,
         "link": "https://arknights.jp/news/377"
+    },
+    {
+        "type": "MAINTENANCE",
+        "startTime": 1708995600,
+        "endTime": 1709017200,
+        "doing": false,
+        "link": "https://arknights.jp/news/393",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/49ad70f1f47bd0c1bee2adfcc37c1980.png"
+    },
+    {
+        "type": "MAINTENANCE",
+        "startTime": 1710820800,
+        "endTime": 1710831600,
+        "doing": false,
+        "link": null,
+        "pic": null
     }
 ]

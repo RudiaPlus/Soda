@@ -39,10 +39,11 @@ async def maintenance_list():
                 maint_name = "緊急メンテナンス"
                 
             link = maintenances[entry]["link"]
+            pic = maintenances[entry]["pic"] if "pic" in maintenances[entry] else None
                         
             maint_start = "<t:{0}:F>( <t:{0}:R> )".format(maintenances[entry]["startTime"])
             maint_end = "<t:{0}:F>( <t:{0}:R> )".format(maintenances[entry]["endTime"])
-            maint_list.append({"name": maint_name, "time": f"開始:{maint_start}\n終了:{maint_end}", "link": link})
+            maint_list.append({"name": maint_name, "time": f"開始:{maint_start}\n終了:{maint_end}", "link": link, "pic": pic})
     
     return maint_list
     
@@ -81,6 +82,7 @@ async def maintenance_timer():
             maint_start = maintenances[entry]["startTime"]
             maint_end = maintenances[entry]["endTime"]
             link = maintenances[entry]["link"]
+            pic = maintenances[entry]["pic"] if "pic" in maintenances[entry] else None
                 
             if maintenances[entry]["doing"] == False and maint_start < time.time():
                 #メンテナンス開始
@@ -90,8 +92,9 @@ async def maintenance_timer():
                 embed = discord.Embed(title = f"{maint_name}が開始されました！",
                                       description = f"開始:{start}\n終了:{end}",
                                       color = 0xf5b642,
-                                      url = link
+                                      url = link,
                                       )
+                embed.set_image(url=pic)
                 await channel.send("<@&1090976873774854177>", embed = embed)    
                     
                 #ここまで
