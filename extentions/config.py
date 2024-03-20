@@ -80,7 +80,8 @@ remind = 1140326740158333048 if test == False else remind_TEST  #リマインド
 ake_news_test = 1166921222785859684 #メンテナンス部屋/ニューステスト
 ake_news = 1166620310750113802 if test == False else ake_news_test #ニュース
 
-cathedral = 1183254115338420285 #聖堂
+cathedral = 1183254115338420285 if test == False else ake_news_test #聖堂
+
 
 maintenance = 1081251314958344313 #メンテナンス
 request = 1093849433621401600 #サポートリクエスト

@@ -225,6 +225,7 @@ def run_discord_bot():
         
         reaction_count, posted = await load_reactions(reaction)
         
+        #リアクションの数とポストされたかどうかを確認
         if reaction_count >= 3 and posted == 0:
 
             message_id = message.id
@@ -258,15 +259,22 @@ def run_discord_bot():
             if message_attachments and "image" in message_attachments[0].content_type:
                 embed.set_image(url = message_attachments[0].url)
             embeds.append(embed)
+            videos = []
             if message_attachments:
-                for number in range(1, len(message_attachments)):
-                    if "image" in message_attachments[number].content_type:
+                
+                for number in range(len(message_attachments)):
+                    if "image" in message_attachments[number].content_type and number != 0:
                         embed = discord.Embed(color = discord.Color.yellow())
                         embed.set_image(url = message_attachments[number].url)
                         embeds.append(embed)
+                    
+                    if "video" in message_attachments[number].content_type:
+                        videos.append(message_attachments[number].url)
 
             logger.info(f"メッセージ({message_id})が{reaction_user}の手で聖堂へ刻まれました")                        
             posted_message = await channel.send(content = f"{message_author.mention} さんのメッセージが <:I_agree:1183255845497229442> を{reaction.count}個獲得しました！\nメッセージへのリンク: {message_jump_url}", embeds = embeds)
+            for video_url in videos:
+                await posted_message.reply(content = f"[ブラウザで開く]({video_url})")
             await posted_reaction_message(message_id, posted_message.id)
         
         if posted != 0:
