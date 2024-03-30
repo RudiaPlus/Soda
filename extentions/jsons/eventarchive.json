@@ -742,6 +742,18 @@
             }
         ]
     },
+    "act1dos": {
+        "id": "act1dos",
+        "type": "OTHER",
+        "stageAdd": "False",
+        "name": "紛争演繹(えんえき)",
+        "news": "https://arknights.jp/news/402",
+        "link": "https://arknights.jp/news/398",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/6102168bd6c8bd124fe0352c3ad735d9.png",
+        "startTime": 1712041200,
+        "endTime": 1713207599,
+        "rewardEndTime": 1713466799
+    },
     "dis_rogue_3": {
         "id": "dis_rogue_3",
         "type": "ROGUELIKE",

@@ -5,9 +5,9 @@ from extentions.aclient import client
 import re
 import asyncio
 import datetime
-import unicodedata
 import os
 import json
+from unicodedata import normalize
 from math import floor
 from discord import app_commands
 from discord.ext import tasks
@@ -112,7 +112,7 @@ def run_discord_bot():
             
             if channelID == remindThreadID:
                 
-                greet_pattern = ".*(お(は(よ|ー|～)|早)|こんにち(は|わ)|こんばん(は|わ)).*"
+                greet_pattern = ".*(お(は(よ|ー|～)|早)|こんにち(は|わ)|こんばん(は|わ))|ohayo.*"
                 result = re.match(greet_pattern, message.content)
                 if result:
                     logger.info(f"{author.name}さんが挨拶しました！")
@@ -152,7 +152,7 @@ def run_discord_bot():
             else:
                 mail = discord.Embed(
                     title="お問い合わせの場合は、/modmailをご利用ください！",
-                    description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！\n私とお話ししたい場合は、<#1072158278634713108>までどうぞ！",
+                    description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！",
                     color=0x979C9F)
                 mail.set_author(name="あしたはこぶねスタッフ",
                                 icon_url=config.server_icon)
@@ -167,7 +167,9 @@ def run_discord_bot():
         search_id = str(reaction.message.id)
         for messageid in list(reactions.keys()):
             
-            if JST_timestamp - reactions[messageid]["created_at"] > 86400:
+            #データベースから除外する日数の閾値
+            #86400 = 1日
+            if JST_timestamp - reactions[messageid]["created_at"] > 14 * 86400:
                 del reactions[messageid]
                 continue
                 
@@ -182,8 +184,12 @@ def run_discord_bot():
         if found == False:
             reaction_count = reaction.count
             created_at = floor(reaction.message.created_at.astimezone(tz = JSTTime.tz_JST).timestamp())
-            if JST_timestamp - created_at > 86400:
+            
+            #聖堂に新しく刻まない日数の閾値
+            #86400 = 1日
+            if JST_timestamp - created_at > 14 * 86400:
                 return 0, 0
+            
             reactions[reaction.message.id] = {"count": reaction_count, "created_at": created_at, "posted": 0}
             
         with open(os.path.join(dir, "jsons/reactions.json"), "w", encoding="utf-8") as f:
@@ -523,7 +529,7 @@ def run_discord_bot():
             guild = client.get_guild(guildID)
             channel = guild.get_thread(remindThreadID)
         else:
-            channelid = int(unicodedata.normalize("NFKC", channelid))
+            channelid = int(normalize("NFKC", channelid))
             channel = client.get_channel(channelid)
         await channel.send(text)
         await interaction.response.send_message("完了しました")
@@ -540,7 +546,7 @@ def run_discord_bot():
             if interaction.user == client.user:
                 return
 
-            num_tag = unicodedata.normalize("NFKC", tag)
+            num_tag = normalize("NFKC", tag)
 
             if len(tag) > 6 or len(name) > 16:
                 embed = discord.Embed(title="名前が長すぎます！",
