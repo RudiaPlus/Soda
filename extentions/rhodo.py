@@ -51,11 +51,9 @@ def run_discord_bot():
             
             #ルーティン
             maintenances.maintenance_timer.start()
-            
-            if twitterpost.web == True:
-                url = twitterpost.last_tweet_url
-                await twitterpost.publish_tweet_from_nitter_url(url)
-                twitterpost.ake_tweet_retrieve.start()
+            twitterpost.ake_tweet_retrieve.start()
+            twitterpost.ww_tweet_retrieve.start()
+            twitterpost.ww_youtube_retrieve.start()
             
             #リマインダー(スレッド)の確認
             try:

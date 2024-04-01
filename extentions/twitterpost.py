@@ -1,42 +1,17 @@
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-
 from typing import List, Tuple
 from discord import Embed, Color
 from discord.ext import tasks
 from extentions import log, config
 from extentions.aclient import client
+import time
 import datetime
 import requests
 import re
 import os
-import json
+import feedparser
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger(__name__)
-test = config.test
-last_tweet_url = ""
-web = True # Switch of web
-
-if web == True:
-    try:
-        options = webdriver.ChromeOptions()
-        options.binary_location = r"C:\Windows\System32\chrome\win64-120.0.6099.109\chrome-win64\chrome.exe"
-        options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        driver = webdriver.Chrome(options = options)
-        driver.get("https://twstalker.com/AKEndfieldJP")
-        
-        wait = WebDriverWait(driver, 9)
-        last_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="user-text3"]/span')))
-        
-        last_tweet_url = last_tweet.find_element(By.XPATH, ".//a").get_attribute('href')
-        logger.info(f"@AKEndfieldJPの最後のツイートをtwstalkerにて取得しました: {last_tweet_url}")
-        
-    except Exception as e:
-        web=False
-        logger.error(f"twstalkerにてエラー: {e}")
         
 async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
     try:
@@ -115,70 +90,102 @@ async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
     except Exception as e:
         logger.error(f"[create_embed]にてエラー: {e}")
         return [], []
-            
-        
-async def check_duplicate(url: str) -> bool:
-    json_name = "jsons/tweeted.json"
-    with open(os.path.join(dir, json_name), "r", encoding = "UTF-8") as f:
-        tweeted_list = json.load(f)
-    if url in tweeted_list:
-        duplicate = True
-    else:
-        duplicate = False
-        tweeted_list.append(url)
-        if len(tweeted_list) > 10:
-            tweeted_list.pop(0)
-        with open(os.path.join(dir, json_name), "w", encoding = "UTF-8") as f:
-            json.dump(tweeted_list, f, indent=4, ensure_ascii=False)
-    return duplicate
 
-async def publish_tweet_from_nitter_url(url: str) -> None:
-    target = url.find(".com/")
-    new_tweet_url_splitted = url[target+5:]
-    new_tweet_url_twitter = f"https://twitter.com/{new_tweet_url_splitted}"
-    duplicate = await check_duplicate(new_tweet_url_twitter)
-    if duplicate == False:
-        channel = client.get_channel(config.ake_news)
-        embeds, video_urls = await create_embed(new_tweet_url_twitter)
-        message = await channel.send(f"<{new_tweet_url_twitter}>", embeds = embeds)
-        await message.publish()
-        if video_urls:
-            for url in video_urls:
-                await message.reply(content = f"[ブラウザで開く]({url})")
-        logger.info(f"新規ツイート({new_tweet_url_twitter})をアナウンスしました。")
-    else:
-        logger.info(f"新規ツイート({new_tweet_url_twitter})は既にアナウンスされています。投稿を中止しました。")
    
-@tasks.loop(minutes=7)
+@tasks.loop(minutes=1)
 async def ake_tweet_retrieve():
-    global last_tweet_url
     try:
         logger.debug("ツイートを取得します")
+        feed = feedparser.parse(config.rss_endfield_link)
+        minutes_ago = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes = 1)
+        count = 0
         new_tweet_urls = []
-        driver.refresh()
-        new_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="user-text3"]/span')))
         
-        new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
-        
-        if new_tweet_url != last_tweet_url:
-            current_tweet_url = new_tweet_url
-            count = 1
-            while current_tweet_url != last_tweet_url and count < 10:
+        for entry in feed.entries:
+            pubdate = datetime.datetime.fromtimestamp(time.mktime(entry.updated_parsed), datetime.timezone.utc) + datetime.timedelta(hours = 9)
+            if pubdate > minutes_ago:
+                tweet_url = entry.link
                 count += 1
-                new_tweet_urls.append(current_tweet_url)
-                current_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, f'//div[@class="user-text3"][{count}]/span')))
-                
-                current_tweet_url = current_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
-            
-            last_tweet_url = new_tweet_urls[0]
-            
-            logger.info(f"@AKEndfieldJPの最新ツイートを{count-1}個twstalkerにて取得しました: {new_tweet_urls}")
-            
+                new_tweet_urls.append(tweet_url)
+        
+        if new_tweet_urls:    
+            logger.info(f"@AKEndfieldJPの最新ツイートを{count}個取得しました: {new_tweet_urls}")
+        
             new_tweet_urls = list(reversed(new_tweet_urls))
             
             for url in new_tweet_urls:
-                await publish_tweet_from_nitter_url(url)
-
+                channel = client.get_channel(config.ake_news)
+                embeds, video_urls = await create_embed(url)
+                message = await channel.send(f"<{url}>", embeds = embeds)
+                await message.publish()
+                if video_urls:
+                    for url in video_urls:
+                        await message.reply(content = f"[ブラウザで開く]({url})")
+                logger.info(f"新規ツイート({url})をアナウンスしました。")
             
     except Exception as e:
-        print(f"error: {e}")
+        print(f"【ake_tweet_retrieve】にてエラー: {e}")
+        
+@tasks.loop(minutes=1)
+async def ww_tweet_retrieve():
+    try:
+        logger.debug("ツイートを取得します")
+        feed = feedparser.parse(config.rss_ww_link)
+        minutes_ago = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes = 1)
+
+        count = 0
+        new_tweet_urls = []
+        
+        for entry in feed.entries:
+            pubdate = datetime.datetime.fromtimestamp(time.mktime(entry.updated_parsed), datetime.timezone.utc) + datetime.timedelta(hours = 9)
+            if pubdate > minutes_ago:
+                tweet_url = entry.link
+                count += 1
+                new_tweet_urls.append(tweet_url)
+        
+        if new_tweet_urls:    
+            logger.info(f"@WW_JP_Officialの最新ツイートを{count}個取得しました: {new_tweet_urls}")
+        
+            new_tweet_urls = list(reversed(new_tweet_urls))
+            
+            for url in new_tweet_urls:
+                channel = client.get_channel(config.ww_news)
+                embeds, video_urls = await create_embed(url)
+                message = await channel.send(f"<{url}>", embeds = embeds)
+                await message.publish()
+                if video_urls:
+                    for url in video_urls:
+                        await message.reply(content = f"[ブラウザで開く]({url})")
+                logger.info(f"新規ツイート({url})をアナウンスしました。")
+            
+    except Exception as e:
+        print(f"【ww_tweet_retrieve】にてエラー: {e}")
+        
+@tasks.loop(minutes=1)
+async def ww_youtube_retrieve():
+    try:
+        logger.debug("ツイートを取得します")
+        feed = feedparser.parse(config.rss_ww_youtube)
+        minutes_ago = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes = 1)
+        count = 0
+        new_video_urls = []
+        
+        for entry in feed.entries:
+            pubdate = datetime.datetime.fromtimestamp(time.mktime(entry.updated_parsed), datetime.timezone.utc) + datetime.timedelta(hours = 9)
+            if pubdate > minutes_ago:
+                video_url = entry.link
+                count += 1
+                new_video_urls.append(video_url)
+        
+        if new_video_urls:    
+            logger.info(f"@WW_JP_Officialの最新YouTubeを{count}個取得しました: {new_video_urls}")
+        
+            new_video_urls = list(reversed(new_video_urls))
+            
+            for url in new_video_urls:
+                channel = client.get_channel(config.ww_news_youtube)
+                message = await channel.send(f"{url}")
+                logger.info(f"新規YouTube({url})をアナウンスしました。")
+            
+    except Exception as e:
+        print(f"【ww_youtube_retrieve】にてエラー: {e}")

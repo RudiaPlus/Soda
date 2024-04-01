@@ -2,7 +2,7 @@ import datetime
 import os
 
 #ABILITY SWITCH
-test = False #TESTMODE(Switch to OverRein), default = False
+test = True #TESTMODE(Switch to OverRein), default = False
 logging = True #Write log to your file, default = True
 voicechat = False #Voicechat command
 voice_suggest = False #suggest text speech to voicechat user
@@ -14,6 +14,9 @@ JST = datetime.timezone(t_delta, 'JST')
 test_client = os.environ["TEST_DISCORD_TOKEN"]
 token = os.environ["DISCORD_TOKEN"]
 
+rss_ww_youtube = "https://rss.app/feeds/wH8bl6WlE3VOh5j9.xml"
+rss_ww_link = "https://rss.app/feeds/8HtqVP3WztQNfTAd.xml"
+rss_endfield_link = "https://rss.app/feeds/3tu3Qm62w6KdOgGb.xml"
 server_invite_link = "https://discord.gg/AshC"
 server_rule_link = "https://discord.com/channels/1018858818345631745/1018858818932842589/1018863690914729986"
 community_guideline_link = "https://discord.com/guidelines"
@@ -77,10 +80,12 @@ user_bot_role = 1207273509462736966 #私はbotです。追放してください�
 
 remind_TEST = 1156850119451353110 #メンテナンス部屋/リマインド
 remind = 1140326740158333048 if test == False else remind_TEST  #リマインド
-ake_news_test = 1166921222785859684 #メンテナンス部屋/ニューステスト
-ake_news = 1166620310750113802 if test == False else ake_news_test #ニュース
+news_test = 1166921222785859684 #メンテナンス部屋/ニューステスト
+ake_news = 1166620310750113802 if test == False else news_test #ニュース
+ww_news = 1223503167187058718 if test == False else news_test #公式Twitter
+ww_news_youtube = 1223505601792053381 if test == False else news_test #公式Youtube
 
-cathedral = 1183254115338420285 if test == False else ake_news_test #聖堂
+cathedral = 1183254115338420285 if test == False else news_test #聖堂
 
 
 maintenance = 1081251314958344313 #メンテナンス
