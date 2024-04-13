@@ -1,5 +1,6 @@
 import discord
 import json
+import random
 import os
 from unicodedata import normalize
 from re import match
@@ -9,6 +10,51 @@ import traceback
 
 logger = log.setup_logger(__name__)
 dir = os.path.abspath(__file__ + "/../")
+
+class YaminabeRepeat(discord.ui.View):
+    def __init__(self, label, operators_in_class):
+        self.operators_in_class = operators_in_class
+        self.label = label
+        self.classes = config.operator_classes
+        super().__init__(timeout = 300)
+        
+    @discord.ui.button(label = "引き直す", style = discord.ButtonStyle.primary, emoji = "↩️")
+    async def yaminabe_repeat_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await yaminabe(interaction = interaction, label = self.label, operators_in_class=self.operators_in_class)
+
+class YaminabeSelect(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=300)
+        self.classes = config.operator_classes
+        for button_class in self.classes:
+            self.add_buttons(button_class)
+
+    def add_buttons(self, label):
+        button_classes = discord.ui.Button(label=label, style=discord.ButtonStyle.primary)
+        
+        async def button_callback(interaction: discord.Interaction):
+            operators_in_class = await return_operators_in_class(label, self.classes)
+            await yaminabe(interaction=interaction, label = label, operators_in_class=operators_in_class)
+        
+        button_classes.callback = button_callback
+        self.add_item(button_classes)
+
+async def return_operators_in_class(operator_class: str, classes: dict):
+    #先鋒等の職業名に一致するオペレーターのリストを返します。
+    operators = await requests.operators_load()
+    operators_in_class = []
+    for index in operators:
+        if operators[index]["class"] == classes[operator_class]:
+            operators_in_class.append(operators[index]["name"])
+    return operators_in_class
+
+async def yaminabe(interaction: discord.Interaction, label, operators_in_class):
+
+    selected_operator = random.choice(operators_in_class)
+    
+    embed = discord.Embed(title = "闇鍋招集", color = discord.Color.blue())
+    embed.add_field(name = f"招集する{label}オペレーター", value = selected_operator)
+    await interaction.response.edit_message(embed = embed, view = YaminabeRepeat(label = label, operators_in_class=operators_in_class))            
 
 class AddInformationModal(discord.ui.Modal):
     def __init__(self, title, doctorname):
@@ -221,6 +267,12 @@ class ToolButtons(discord.ui.View):
     async def searchwikibutton(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(OperatorSearchModal())
         logger.info(f"{interaction.user.name}がsearchwikibuttonを使用しました")
+    
+    @discord.ui.button(label = "闇鍋招集", custom_id = "yaminabebutton", style = discord.ButtonStyle.primary, emoji = "🎲")
+    async def yaminabebutton(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = discord.Embed(title = "闇鍋招集", description="招集したい職業を選択してください", color = discord.Color.blue())
+        await interaction.response.send_message(embed = embed, view = YaminabeSelect(), ephemeral = True)
+        logger.info(f"{interaction.user.name}がyaminabebuttonを使用しました")
                
 
 @client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = discord.Object(config.testserverid))
@@ -240,6 +292,7 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     embed.add_field(name = "・サポートリクエスト", value = "サポートリクエストを送信します。\n機能は「/request」コマンドとほぼ同じです", inline = False)
     embed.add_field(name = "・ドクター情報登録", value = "アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n機能は「/doctorname add」コマンドとほぼ同じです。\n※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
     embed.add_field(name = "・Wiki検索", value = "オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。", inline = False)
+    embed.add_field(name = "・闇鍋招集", value = "統合戦略でオペレーターを招集する際、職業ごとにランダムで選んでくれるツールです。", inline = False)
     
     embed.set_author(name = "ロード", icon_url=client.user.avatar)
     if not edit:

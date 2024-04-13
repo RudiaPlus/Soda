@@ -23,25 +23,20 @@ web = True # Switch of web
 if web == True:
     try:
         options = webdriver.ChromeOptions()
+        options.binary_location = r"C:\Windows\System32\chrome\win64-120.0.6099.109\chrome-win64\chrome.exe"
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        driver = webdriver.Chrome()
-        driver.get("https://nitter.net/AKEndfieldJP")
+        driver = webdriver.Chrome(options = options)
+        driver.get("https://twstalker.com/AKEndfieldJP")
         
         wait = WebDriverWait(driver, 9)
-        last_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "]')))
-        
-        try:
-            pinned = last_tweet.find_element(By.XPATH, ".//div//div[@class='pinned']")
-            last_tweet=wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "][2]')))
-        except:
-            pass
+        last_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="user-text3"]/span')))
         
         last_tweet_url = last_tweet.find_element(By.XPATH, ".//a").get_attribute('href')
-        logger.info(f"@AKEndfieldJPの最後のツイートをnitterにて取得しました: {last_tweet_url}")
+        logger.info(f"@AKEndfieldJPの最後のツイートをtwstalkerにて取得しました: {last_tweet_url}")
         
     except Exception as e:
         web=False
-        logger.error(f"nitterにてエラー: {e}")
+        logger.error(f"twstalkerにてエラー: {e}")
         
 async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
     try:
@@ -82,14 +77,15 @@ async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
                 if "media" in tweet_data:
                     
                     for key in tweet_data["media"]:
-                        if key != "external" and key != "photos" and key != "videos":
+                        if key != "photos" and key != "videos":
                             continue
-                        tweet_medias = tweet_data["media"][key]
+                        
+                        tweet_medias = tweet_data["media"][key]                        
                         for media in tweet_medias:
                             url = media["url"]
                             if key == "photos":
                                 media_urls.append(url)
-                            elif key == "videos" or key == "external":
+                            elif key == "videos":
                                 video_urls.append(url)
                 
                 tweet_dict = {"id": id, "url": tweet_url, "author_name": author["name"], "screen_name": author["screen_name"], "author_avatar": avatar_url, "text": tweet_text, "created_at": created_at, "media_urls": media_urls, "video_urls": video_urls}
@@ -137,9 +133,8 @@ async def check_duplicate(url: str) -> bool:
     return duplicate
 
 async def publish_tweet_from_nitter_url(url: str) -> None:
-    target = url.find(".net/")
-    target_end = url.find("#m")
-    new_tweet_url_splitted = url[target+5:target_end]
+    target = url.find(".com/")
+    new_tweet_url_splitted = url[target+5:]
     new_tweet_url_twitter = f"https://twitter.com/{new_tweet_url_splitted}"
     duplicate = await check_duplicate(new_tweet_url_twitter)
     if duplicate == False:
@@ -161,16 +156,9 @@ async def ake_tweet_retrieve():
         logger.debug("ツイートを取得します")
         new_tweet_urls = []
         driver.refresh()
-        new_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "]')))
+        new_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="user-text3"]/span')))
         
         new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
-        
-        try:
-            pinned = new_tweet.find_element(By.XPATH, ".//div//div[@class='pinned']")
-            new_tweet=wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="timeline-item "][2]')))
-            new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
-        except:
-            pass
         
         if new_tweet_url != last_tweet_url:
             current_tweet_url = new_tweet_url
@@ -178,16 +166,13 @@ async def ake_tweet_retrieve():
             while current_tweet_url != last_tweet_url and count < 10:
                 count += 1
                 new_tweet_urls.append(current_tweet_url)
-                if pinned:
-                    current_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, f'//div[@class="timeline-item "][{count+1}]')))
-                else:
-                    current_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, f'//div[@class="timeline-item "][{count}]')))
+                current_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, f'//div[@class="user-text3"][{count}]/span')))
                 
                 current_tweet_url = current_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
             
             last_tweet_url = new_tweet_urls[0]
             
-            logger.info(f"@AKEndfieldJPの最新ツイートを{count-1}個nitterにて取得しました: {new_tweet_urls}")
+            logger.info(f"@AKEndfieldJPの最新ツイートを{count-1}個twstalkerにて取得しました: {new_tweet_urls}")
             
             new_tweet_urls = list(reversed(new_tweet_urls))
             

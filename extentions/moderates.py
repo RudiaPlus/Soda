@@ -48,10 +48,10 @@ async def punishment_load():
 
 
 async def reason_autocomplete(interaction: discord.Interaction, current: str) -> List[discord.app_commands.Choice[str]]:
-    reasons = ["迷惑なスパム行為", "サーバールールの違反", "差別/侮辱的な発言", "ハラスメント行為",
-               "ヘイト行為", "暴力的な発言/脅迫行為", "児童への性的加害を含んだコンテンツの共有",
+    reasons = ["botロールの取得",  "疑わしいプロフィール", "迷惑なスパム行為", "サーバールールの違反", "差別/侮辱的な発言", "ハラスメント行為",
+               "暴力的な発言/脅迫行為", "児童への性的加害を含んだコンテンツの共有",
                "不適切な場所での性的なコンテンツの共有", "他者の権利を侵害するコンテンツの共有",
-               "虚偽の情報/誤解を招く情報の共有", "無許可の不適切な宣伝行為", "違法行為の助長または実行"]
+               "虚偽の情報/誤解を招く情報の共有", "違法行為の助長または実行"]
     return [
         discord.app_commands.Choice(name=reason, value=reason)
         for reason in reasons if current.lower() in reason.lower()
@@ -139,7 +139,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
 
     except Exception as e:
         embed = discord.Embed(title="⚠️メンバーへの警告に失敗しました！",
-                              description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}\n{str(member_got)}/{member_id}")
+                              description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}")
         await interaction.followup.send(embed=embed)
         logger.error(f"[warn]にてエラー：{e}")
 
@@ -216,7 +216,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
 
     except Exception as e:
         embed = discord.Embed(title="⚠️メンバーの追放に失敗しました！",
-                              description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}\n{str(member_got)}/{member_id}")
+                              description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}")
         await interaction.followup.send(embed=embed)
         logger.error(f"[kick]にてエラー：{e}")
 
@@ -292,7 +292,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
 
     except Exception as e:
         embed = discord.Embed(title="⚠️メンバーのBanに失敗しました！",
-                              description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\nメッセージを送信出来なかった場合、理由を入力せずにもう一度お願いします。\n出現した例外：{e}\n{member_id}")
+                              description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\nメッセージを送信出来なかった場合、理由を入力せずにもう一度お願いします。\n出現した例外：{e}")
         await interaction.followup.send(embed=embed)
         logger.error(f"[ban]にてエラー：{e}")
 
@@ -352,7 +352,7 @@ async def unban(interaction:  discord.Interaction, member:  discord.Member = Non
 
     except Exception as e:
         embed = discord.Embed(title="⚠️メンバーのBan解除に失敗しました！",
-                              description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\nメッセージを送信出来なかった場合、無視しても構いません。\n出現した例外：{e}\n{str(member_got)}/{member_id}")
+                              description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\nメッセージを送信出来なかった場合、無視しても構いません。\n出現した例外：{e}")
         await interaction.followup.send(embed=embed)
         logger.error(f"[unban]にてエラー：{e}")
 
@@ -464,7 +464,7 @@ class ModerateCommand(discord.app_commands.Group):
         try:
             if member is None and member_id is None:
                 embed = discord.Embed(title="メンバーを指定してください！",
-                                      description="memberかmember_idのどちらかでメンバーの指定する必要があります！")
+                                      description="memberかmember_idのどちらかでメンバーの指定する必要があります!")
                 await interaction.followup.send(embed=embed)
                 return
 
@@ -508,7 +508,14 @@ class ModerateCommand(discord.app_commands.Group):
                         round(member_got.timed_out_until.timestamp())), inline=False)
 
             else:
-                member_got = await client.fetch_user(int(member_id))
+                try:
+                    member_got = await client.fetch_user(int(member_id))
+                except ValueError:
+                    embed = discord.Embed(title=f"member_idに整数以外が渡されています",
+                                      description=f"ユーザーIDが分からない場合、member引数を利用してください!")
+                    await interaction.followup.send(embed=embed)
+                    return
+                    
                 embed = discord.Embed(title=f"{member_got.display_name}(@{str(member_got)})さんの情報",
                                       description=f"{member_got.mention}\nユーザー名: {str(member_got)}\nグローバルネーム: {member_got.global_name}", color=member_got.accent_color)
                 embed.set_thumbnail(url=member_got.display_avatar)
@@ -559,7 +566,7 @@ class ModerateCommand(discord.app_commands.Group):
 
         except Exception as e:
             embed = discord.Embed(title="⚠️メンバーの情報を取得できませんでした！",
-                                  description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}\n{str(member_got)}")
+                                  description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}")
             await interaction.followup.send(embed=embed)
             logger.error(f"[ModerateCommand.show]にてエラー：{e}")
 
@@ -574,7 +581,7 @@ class ModerateCommand(discord.app_commands.Group):
                                       description="memberかmember_idのどちらかでメンバーの指定する必要があります！")
                 await interaction.followup.send(embed=embed)
                 return
-
+            
             member_got = await client.fetch_user(int(member_id)) if member is None else member
             id = int(id)
 
