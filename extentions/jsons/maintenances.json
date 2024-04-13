@@ -1,1 +1,9 @@
-[]
+[
+    {
+        "type": "MAINTENANCE",
+        "startTime": 1713229200,
+        "endTime": 1713250800,
+        "doing": false,
+        "link": "https://arknights.jp/news/405"
+    }
+]
