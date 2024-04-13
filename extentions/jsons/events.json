@@ -14,7 +14,13 @@
                 "startTime": 1709622000,
                 "endTime": 1711911599,
                 "contents": "- 探索者記録01: マゼラン"
-            }
+            },
+            {
+            "month": 4,
+            "startTime": 1709622000,
+            "endTime": 1711911599,
+            "contents": "- 探索者記録02: ティフォン「直視」"
+        }
         ]
     },
     "act28side": {
@@ -41,7 +47,7 @@
         "stageAdd": "False",
         "name": "紛争演繹(えんえき)",
         "news": "https://arknights.jp/news/402",
-        "link": "https://arknights.jp/news/398",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88112_%E7%B4%9B%E4%BA%89%E6%BC%94%E7%B9%B9",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/6102168bd6c8bd124fe0352c3ad735d9.png",
         "startTime": 1712041200,
         "endTime": 1713207599,

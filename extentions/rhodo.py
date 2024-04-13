@@ -169,7 +169,7 @@ def run_discord_bot():
             
             #データベースから除外する日数の閾値
             #86400 = 1日
-            if JST_timestamp - reactions[messageid]["created_at"] > 14 * 86400:
+            if JST_timestamp - reactions[messageid]["created_at"] > 86400:
                 del reactions[messageid]
                 continue
                 
@@ -187,7 +187,7 @@ def run_discord_bot():
             
             #聖堂に新しく刻まない日数の閾値
             #86400 = 1日
-            if JST_timestamp - created_at > 14 * 86400:
+            if JST_timestamp - created_at > 86400:
                 return 0, 0
             
             reactions[reaction.message.id] = {"count": reaction_count, "created_at": created_at, "posted": 0}

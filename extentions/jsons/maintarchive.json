@@ -84,5 +84,13 @@
         "doing": false,
         "link": null,
         "pic": null
+    },
+    {
+        "type": "EMERGENCY",
+        "startTime": 1712044800,
+        "endTime": 1712055600,
+        "doing": false,
+        "link": null,
+        "pic": null
     }
 ]
