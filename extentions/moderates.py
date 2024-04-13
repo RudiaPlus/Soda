@@ -386,6 +386,11 @@ class ModerateCommand(discord.app_commands.Group):
                     embed.add_field(name = str(member), value = f"id: {member.id}")
                     
             await interaction.followup.send(embed = embed)
+        except Exception as e:
+            embed = discord.Embed(title="⚠️例外が発生しました！",
+                                  description=f"出現した例外：{e}")
+            await interaction.followup.send(embed=embed)
+            logger.error(f"[ModerateCommand]にてエラー：{e}") 
             
    
     @discord.app_commands.command(name="kick-all-bots", description="botロールを持っているメンバー全員を追放します。#botmoderate専用コマンドです。")
@@ -451,9 +456,9 @@ class ModerateCommand(discord.app_commands.Group):
             await punishment_write(punishments)
         except Exception as e:
             embed = discord.Embed(title="⚠️例外が発生しました！",
-                                  description=f"出現した例外：{e}\n{str(member_got)}")
+                                  description=f"出現した例外：{e}")
             await interaction.followup.send(embed=embed)
-            logger.error(f"[ModerateCommand.show]にてエラー：{e}")                
+            logger.error(f"[ModerateCommand]にてエラー：{e}")                
             
     
     @discord.app_commands.command(name="show", description="指定されたメンバーの情報/処罰履歴を確認します。#botmoderate限定")

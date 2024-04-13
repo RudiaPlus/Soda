@@ -754,6 +754,24 @@
         "endTime": 1713207599,
         "rewardEndTime": 1713466799
     },
+    "act13main": {
+        "id": "act13main",
+        "type": "MAIN",
+        "stageAdd": "True",
+        "name": "13章「悪兆渦流」実装",
+        "news": "https://arknights.jp/news/406",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88113_%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0%E5%85%AC%E9%96%8B",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/96ee49daf69a4a34d508fe1f29166a15.png",
+        "startTime": 1713250800,
+        "endTime": 1714417199,
+        "rewardEndTime": 1714417199,
+        "additionalStage": [
+            {
+                "name": "高難易度ステージ",
+                "startTime": 1713855600
+            }
+        ]
+    },
     "dis_rogue_3": {
         "id": "dis_rogue_3",
         "type": "ROGUELIKE",
@@ -769,6 +787,12 @@
                 "startTime": 1709622000,
                 "endTime": 1711911599,
                 "contents": "- 探索者記録01: マゼラン"
+            },
+            {
+                "month": 4,
+                "startTime": 1711911600,
+                "endTime": 1714503599,
+                "contents": "- 探索者記録02: ティフォン「直視」"   
             }
         ]
     }
