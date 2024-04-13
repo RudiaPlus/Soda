@@ -68,6 +68,7 @@ newdaytime = datetime.time(hour=0, minute=00, tzinfo=JST)
 administrator_role = 1019295385967149057 #Administrator(赤)
 Moderator_role = 1093773233410547735 #Moderator(橙)
 cathedral_NG_role = 1183346673469100043 #聖堂NG
+spam_role = 1207273509462736966 #私はbotです
 
 
 #CHANNEL

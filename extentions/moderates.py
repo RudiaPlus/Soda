@@ -360,6 +360,102 @@ async def unban(interaction:  discord.Interaction, member:  discord.Member = Non
 @discord.app_commands.default_permissions(view_audit_log=True)
 @discord.app_commands.guild_only()
 class ModerateCommand(discord.app_commands.Group):
+
+    @discord.app_commands.command(name="show-all-bots", description="botロールを持っているメンバーを確認・追放します。#botmoderate専用コマンドです")
+    @discord.app_commands.checks.has_permissions(view_audit_log=True)
+    async def show(self, interaction:  discord.Interaction):
+        await interaction.response.defer()
+        try:
+            if interaction.channel_id != config.moderatorchannel:
+                embed = discord.Embed(title=f"専用チャンネルで使用してください！",
+                                      description=f"このコマンドは<#{config.moderatorchannel}>限定のコマンドです。")
+                await interaction.followup.send(embed=embed)
+                return
+            
+            bot_role = interaction.guild.get_role(config.spam_role)
+            spam_members = bot_role.members
+            
+            if len(spam_members) <= 25:
+                embed = discord.Embed(title = "botロールを取得しているメンバー一覧", description=f"botロールを取得しているメンバーは現在{len(spam_members)}人います。")
+            else:
+                embed = discord.Embed(title = "botロールを取得しているメンバー一覧", description=f"メンバーの数が25人を超えました({len(spam_members)}人)。最初の25人のみを表示しています。")
+            number = 0
+            for member in spam_members:
+                number += 1
+                if number <= 25:
+                    embed.add_field(name = str(member), value = f"id: {member.id}")
+                    
+            await interaction.followup.send(embed = embed)
+            
+   
+    @discord.app_commands.command(name="kick-all-bots", description="botロールを持っているメンバー全員を追放します。#botmoderate専用コマンドです。")
+    @discord.app_commands.checks.has_permissions(view_audit_log=True)
+    async def show(self, interaction:  discord.Interaction):
+        await interaction.response.defer()
+        try:
+            if interaction.channel_id != config.moderatorchannel:
+                embed = discord.Embed(title=f"専用チャンネルで使用してください！",
+                                      description=f"このコマンドは<#{config.moderatorchannel}>限定のコマンドです。")
+                await interaction.followup.send(embed=embed)
+                return
+            
+            bot_role = interaction.guild.get_role(config.spam_role)
+            spam_members = bot_role.members
+            now = str(JSTTime.timeJST("raw"))
+            punishments = await punishment_load()
+            reason = "botロールの取得"
+            
+            for member_got in spam_members:
+                
+                member_punishments = []
+                search_id = str(member_got.id)
+
+                
+                if search_id in punishments:
+                    criminal_record = punishments[search_id]
+                    member_punishments = criminal_record["punishments"]
+
+                embed = discord.Embed(title="⚠️メンバーを追放しました",
+                                    description=f"メンバー「{member_got.display_name}」をサーバーから「**追放**」しました。\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰で、このメンバーはサーバーに入りなおすことが出来ます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
+                                    color=member_got.accent_color)
+                embed.set_author(name=member_got.display_name, icon_url=member_got.display_avatar)
+                embed.set_footer(text=f"{now} | このメッセージは削除しないでください。")
+                message = await interaction.followup.send(embed=embed)
+
+                punishment = {"id": message.id, "type": "kick",
+                            "date": now, "reason": reason, "by": interaction.user.id}
+
+                if search_id in punishments:
+                    member_punishments.append(punishment)
+                    new = {"userName": str(member_got), "userID": member_got.id,
+                        "banned": False, "punishments": member_punishments}
+                    punishments[search_id] = new
+
+                else:
+                    lists = []
+                    lists.append(punishment)
+                    new = {"userName": str(
+                        member_got), "userID": member_got.id, "banned": False, "punishments": lists}
+                    punishments[search_id] = new
+
+                embed = discord.Embed(title="⚠️あなたはサーバーから追放されました",
+                                    description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーから「**追放**」されました。\n- 処罰の理由: {reason}\n\nあなたはまたサーバーに入りなおすことが出来ますが、これは{len(member_punishments)+1}回目の処罰です。回数が重なると、あなたはサーバーに入りなおすことが出来なくなります。\nこの処罰に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
+                embed.set_author(
+                    name="あしたはこぶね", url=config.server_invite_link, icon_url=config.server_icon)
+                logger.info(f"DMを送信しました。: {embed.description}")
+                await member_got.send(embed=embed)
+
+                #キック
+                await interaction.guild.kick(user=member_got, reason=reason)
+                
+            await punishment_write(punishments)
+        except Exception as e:
+            embed = discord.Embed(title="⚠️例外が発生しました！",
+                                  description=f"出現した例外：{e}\n{str(member_got)}")
+            await interaction.followup.send(embed=embed)
+            logger.error(f"[ModerateCommand.show]にてエラー：{e}")                
+            
+    
     @discord.app_commands.command(name="show", description="指定されたメンバーの情報/処罰履歴を確認します。#botmoderate限定")
     @discord.app_commands.describe(member="メンバー(推奨)", member_id="ユーザーID(メンバー以外)")
     @discord.app_commands.checks.has_permissions(view_audit_log=True)
@@ -463,7 +559,7 @@ class ModerateCommand(discord.app_commands.Group):
 
         except Exception as e:
             embed = discord.Embed(title="⚠️メンバーの情報を取得できませんでした！",
-                                  description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}\n{str(member_got)}/{member_id}")
+                                  description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}\n{str(member_got)}")
             await interaction.followup.send(embed=embed)
             logger.error(f"[ModerateCommand.show]にてエラー：{e}")
 
@@ -497,6 +593,6 @@ class ModerateCommand(discord.app_commands.Group):
 
         except Exception as e:
             embed = discord.Embed(title="⚠️処罰履歴の削除に失敗しました！",
-                                  description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}\n{str(member_got)}/{member_id}")
+                                  description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}\n{str(member_got)}")
             await interaction.followup.send(embed=embed)
             logger.error(f"[ModerateCommand.delete]にてエラー：{e}")
