@@ -346,30 +346,15 @@ async def remind(mode = "morning"):
                     except Exception:
                         pass
 
-                    png_name = "images/contingencycontract.png"
-                    file = discord.File(os.path.join(dir, png_name),
-                                        filename="image.png")
-                    files.append(file)
                     embed = discord.Embed(title=title,
                                             description=f"- **高難易度のイベントです！**\n- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}",
                                             color=eventColor,
                                             url=link)
-                    embed.set_author(name="危機契約",
-                                        icon_url="attachment://image.png")
-                    embed.add_field(name="・常設ステージ",
-                                    value=events[i]["permStage"],
-                                    inline=False)
-                    embed.add_field(name="・本日のデイリーステージ",
-                                    value=events[i]["todaysDaily"]["stageName"],
-                                    inline=False)
-                    if events[i]["contractAdd"] == False:
-                        embed.add_field(name="・契約追加日",
-                                        value=events[i]["contractAddTime"],
-                                        inline=False)
-                    else:
-                        embed.add_field(name="・契約が追加されています！",
-                                        value="危機契約も後半戦です！一緒に頑張りましょう！！",
-                                        inline=False)
+                    embed.set_author(name="危機契約")
+                    embed.add_field(name="・通常試験区画",
+                                    value=f'**{events[i]["permStage"]}**')
+                    embed.add_field(name="・特別試験区画",
+                                    value=f'**{events[i]["todaysDaily"]["stageName"]}**\n> 賞金獲得期限: <t:{events[i]["dailyEnd"]}:R>',)
                         
                     embed.set_image(url=eventpic)
                     embeds.append(embed)
@@ -486,7 +471,7 @@ async def remind(mode = "morning"):
                                             description=f"- 詳細: [公式サイト]({news})\n- 新規メインストーリー攻略情報: [有志Wiki]({link})\n{eventTime}",
                                             color=0x353536,
                                             url=link)
-                    embed.set_author(name="理性保護&物資回収キャンペーン")
+                    embed.set_author(name="理性保護&作戦支援")
                     embed.set_image(url=eventpic)
                     embeds.append(embed)
                     
@@ -527,13 +512,13 @@ async def remind(mode = "morning"):
                         month = events[i]["month"]
                         content = events[i]["content"]
                         updateTime = events[i]["updateTime"]
-                        embed.add_field(name = f"{month}月の更新内容", value = f"{content}\n\n{updateTime}", inline = False)
+                        embed.add_field(name = f"{month}月の更新内容", value = f"{content}\n\n> {updateTime}", inline = False)
                         
                         if events[i]["nextmonth"]:
                             nextmonth = events[i]["nextmonth"]
                             nextcontent = events[i]["nextcontent"]
                             nextUpdateTime = events[i]["nextUpdateTime"]
-                            embed.add_field(name = f"{nextmonth}月の更新内容", value = f"{nextcontent}\n\n{nextUpdateTime}", inline = False)
+                            embed.add_field(name = f"{nextmonth}月の更新内容", value = f"{nextcontent}\n\n> {nextUpdateTime}", inline = False)
                     
                     embeds.append(embed)                
 
@@ -558,7 +543,7 @@ async def remind(mode = "morning"):
                 eventpic = events[i]["pic"]
                 rewardEndTime = events[i]["rewardEndTime"]
                 embed = discord.Embed(title=events[i]["name"],
-                                        description=f"報酬受取期限：{rewardEndTime}",
+                                        description=f"> 報酬受取期限：{rewardEndTime}",
                                         color=0x454545)
                 embed.set_author(name="終了したイベント")
                 embed.set_image(url=eventpic)

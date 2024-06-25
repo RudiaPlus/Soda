@@ -3,6 +3,7 @@ import os
 import time
 import datetime
 from extentions import log, JSTTime
+from math import floor
 
 logger = log.setup_logger(__name__)
 timeDay = JSTTime.timetoJST
@@ -81,19 +82,24 @@ def eventget():
                 delta = now - dt
                 crisis_day = delta.days + 1 #差の日にち+1日＝何日目
                 
-                if crisis_day == 1 or crisis_day == 2:
+                if 1 <= crisis_day <= 4:
                     todaysDaily = dailyStage[0]
+                    dailyEnd_date = dt + datetime.timedelta(days = 4)
+                    dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
+                elif 5 <= crisis_day <= 7:
+                    todaysDaily = dailyStage[1]
+                    dailyEnd_date = dt + datetime.timedelta(days = 7)
+                    dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
+                elif 8 <= crisis_day <= 10:
+                    todaysDaily = dailyStage[2]
+                    dailyEnd_date = dt + datetime.timedelta(days = 10)
+                    dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
                 else:
-                    todaysDaily = dailyStage[crisis_day - 2]
+                    todaysDaily = dailyStage[3]
+                    dailyEnd_date = dt + datetime.timedelta(days = 14)
+                    dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
                     
-                if crisis_day >= 8:
-                    contractAdd = True
-                    contractAddTime = 0
-                else:
-                    contractAdd = False
-                    contractAddTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_now_list[i]]["firstAddTime"])
-                    
-                events.append({"name": name, "dif": "present", "type": type, "time": f"開始: {startTime}\n終了: {endTime}", "eventColor": eventColor, "permStage": permStage, "news": news, "link": link, "todaysDaily": todaysDaily, "contractAdd": contractAdd, "contractAddTime": contractAddTime, "pic": pic})
+                events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "eventColor": eventColor, "permStage": permStage, "news": news, "link": link, "todaysDaily": todaysDaily, "dailyEnd": dailyEnd_timestamp, "pic": pic})
             
             elif type == "ROGUELIKE":
                 try:
@@ -160,11 +166,11 @@ def eventget():
                     logger.error("予期されていないイベント内容です。")
                     continue
                     
-                events.append({"name": name, "dif": "present", "type": type, "time": f"開始: {startTime}\n終了: {endTime}", "news": news, "link": link, "stageAdd": stageAdd, "nextStageName": nextStageName, "nextAddTime": nextAddTime, "pic": pic, "remark": remark})
+                events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "news": news, "link": link, "stageAdd": stageAdd, "nextStageName": nextStageName, "nextAddTime": nextAddTime, "pic": pic, "remark": remark})
                 
             else:
                 remark = None
-                events.append({"name": name, "dif": "present", "type": type, "time": f"開始: {startTime}\n終了: {endTime}", "news": news, "link": link, "stageAdd": stageAdd, "pic": pic, "remark": remark})
+                events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "news": news, "link": link, "stageAdd": stageAdd, "pic": pic, "remark": remark})
             
         for i in range(len(event_end_list)):
             try:
@@ -193,7 +199,7 @@ def eventget():
                 except KeyError as e:
                     logger.exception(f"[event_value_list]にてエラー：{e}")
                 
-                events.append({"name": name, "dif": "future", "type": type, "time": f"開始: {startTime}", "news": news, "pic": pic})                
+                events.append({"name": name, "dif": "future", "type": type, "time": f"> 開始: {startTime}", "news": news, "pic": pic})                
                 
             else:
             
@@ -208,7 +214,7 @@ def eventget():
                 except KeyError as e:
                     logger.exception(f"[event_value_list]にてエラー：{e}")
                 
-                events.append({"name": name, "dif": "future", "type": type, "time": f"開始: {startTime}\n終了: {endTime}", "news": news, "pic": pic})
+                events.append({"name": name, "dif": "future", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "news": news, "pic": pic})
             
     return(events)
 

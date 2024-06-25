@@ -128,7 +128,25 @@ def run_discord_bot():
                     title=f"【スタッフ】{author.display_name}からのメッセージ", description=user_message, color=0x979C9F)
                 mail.set_author(name=author.display_name,
                                 icon_url=author.avatar)
-                await user.send(embed=mail)
+                
+                embeds = [mail]
+                videos = []
+                
+                for attachment in message.attachments:
+                    if "image" in attachment.content_type:
+                        embed = discord.Embed(color = discord.Color.yellow())
+                        embed.set_image(url = attachment.url)
+                        embeds.append(embed)
+                    
+                    if "video" in attachment.content_type:
+                        videos.append(attachment.url)
+                
+                await user.send(embeds=embeds)
+                for video in videos:
+                    await user.send(content = f"[ブラウザで開く]({video})")
+
+                await message.add_reaction("✅")
+                logger.info(f"Modmailに投稿されたメッセージ(id: {message.id})を正常に転送しました")
                 
             if message.guild.voice_client:
                 target_channels = await voicechat.get_target_channels(message.guild.voice_client.channel)
@@ -143,11 +161,29 @@ def run_discord_bot():
             logger.info(f"{username}に「{user_message}」と言われました。")
             mod_channel = await modmails.fetch_mod_channel(guild=guild, user=author)
             if mod_channel is not None:
-                mail = discord.Embed(title=f"{message.author.name}さんからのメッセージ",
+                    
+                mail = discord.Embed(title=f"{author.display_name}さんからのメッセージ",
                                      description=message.content, color=message.author.accent_color)
                 mail.set_author(name=str(message.author),
                                 icon_url=message.author.avatar)
-                await mod_channel.send(embed=mail)
+                embeds = [mail]
+                videos = []
+                
+                for attachment in message.attachments:
+                    if "image" in attachment.content_type:
+                        embed = discord.Embed(color = discord.Color.yellow())
+                        embed.set_image(url = attachment.url)
+                        embeds.append(embed)
+                    
+                    if "video" in attachment.content_type:
+                        videos.append(attachment.url)
+                
+                await mod_channel.send(embeds=embeds)
+                for video in videos:
+                    await mod_channel.send(content = f"[ブラウザで開く]({video})")
+                    
+                await message.add_reaction("✅")
+                logger.info(f"Modmailへ投稿されたメッセージ(id: {message.id})を正常に転送しました")
 
             else:
                 mail = discord.Embed(
@@ -169,7 +205,7 @@ def run_discord_bot():
             
             #データベースから除外する日数の閾値
             #86400 = 1日
-            if JST_timestamp - reactions[messageid]["created_at"] > 86400:
+            if JST_timestamp - reactions[messageid]["created_at"] > config.collect_agree_days:
                 del reactions[messageid]
                 continue
                 
@@ -187,7 +223,7 @@ def run_discord_bot():
             
             #聖堂に新しく刻まない日数の閾値
             #86400 = 1日
-            if JST_timestamp - created_at > 86400:
+            if JST_timestamp - created_at > config.collect_agree_days:
                 return 0, 0
             
             reactions[reaction.message.id] = {"count": reaction_count, "created_at": created_at, "posted": 0}

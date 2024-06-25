@@ -134,5 +134,13 @@
         "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8",
         "startTime": 1710529200,
         "endTime": 1721069999
+    },
+    "anniRemind_5": {
+        "name": "ヴィクトリア「腐敗した荒野」",
+        "description": null,
+        "type": "anni",
+        "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%83%B4%E3%82%A3%E3%82%AF%E3%83%88%E3%83%AA%E3%82%A2%E3%80%8C%E8%85%90%E6%95%97%E3%81%97%E3%81%9F%E8%8D%92%E9%87%8E%E3%80%8D",
+        "startTime": 1714935600,
+        "endTime": 1720983599
     }
 }

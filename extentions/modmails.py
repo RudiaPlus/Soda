@@ -64,7 +64,7 @@ class ModmailFinish(discord.ui.View):
             
         if mod_channel.name == f"mail-{userID}":
                 
-            embed = discord.Embed(title = "お問い合わせが終了しました", description = "お問い合わせ頂き、ありがとうございました！\nなお、スタッフの判断によってお問い合わせが再開され、スタッフからの返信が来る場合があります。", color=discord.Color.yellow())
+            embed = discord.Embed(title = "お問い合わせ/個別連絡が終了しました", description = "お問い合わせ/個別連絡が終了しました。ありがとうございました！\nなお、スタッフの判断によって再開され、スタッフからの連絡が来る場合があります。", color=discord.Color.yellow())
             embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
             embed_mod = discord.Embed(title = "ModMailが終了しました", description = f"ModMailは{interaction.user.mention}によって終了しました。", color = discord.Color.yellow())
             
@@ -185,11 +185,17 @@ async def create_modmail(user: discord.User):
             role_overwrite = {}
             
         mod_channel = await guild.create_text_channel(f"mail-{user.id}", category = categoty, overwrites = role_overwrite, reason = f"ModMailが開始されました:{user.id}")
+        announce_channel = client.get_channel(config.moderatorchannel)
         
-        embed_mod = discord.Embed(title="ModMailが開始されました！", description=f"ニックネーム : {user.display_name}\nid : {user.id}\nアカウント作成日 : {user.created_at}", color=user.accent_color)
+        embed_mod = discord.Embed(title="ModMailが開始されました！", color=user.accent_color)
         embed_mod.set_author(name=str(user), icon_url=user.avatar.url)
+        embed_mod.set_thumbnail(url = user.avatar.url)
+        embed_mod.add_field(name = "ニックネーム", value = user.display_name)
+        embed_mod.add_field(name = "id", value = user.id)
+        embed_mod.add_field(name = "アカウント作成日", value = user.created_at)
         
         await mod_channel.send(embed=embed_mod, view = ModmailFinish())
+        await announce_channel.send(embed = embed_mod)
         
         return("created")
         
@@ -212,12 +218,20 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
     async for message in channel.history(oldest_first = True):
         author = f"{str(message.author)} (スタッフ)"
         author_avatar = message.author.display_avatar.url
-        content = escape(message.embeds[0].description) if message.embeds else escape(message.content)
+        content_unescape = message.embeds[0].description if message.embeds else message.content
+        content_unescape = "" if content_unescape is None else content_unescape
+        content = escape(content_unescape)
+        content_br = content.replace("\n", "</p>\n<p class='text-base'>")
         timestamp = message.created_at + datetime.timedelta(hours=9)
         
         date_format = "%Y-%m-%d %H:%M:%S"
+        image = ""
         
         if message.author != client.user:
+            
+            for attachment in message.attachments:
+                if "image" in attachment.content_type:
+                    image += f"<img src='{attachment.url}' alt='{attachment.url}' class='w-96 rounded-lg'>\n"
             
             if author in users:
                 
@@ -227,7 +241,9 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
                 users[author] = 1 
                 
         else:
-            content = message.embeds[0].description
+            for number in range(1, len(message.embeds)):
+                image += f"<img src='{message.embeds[number].image.url}' alt='{message.embeds[number].image.url}' class='w-96 rounded-lg'>\n"
+                
             if message.embeds[0].author.name is not None:
                 author = f"{message.embeds[0].author.name} (メンバー)"
                 author_avatar = message.embeds[0].author.icon_url
@@ -241,7 +257,7 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
             else:
                 author = f"{str(message.author)} (bot)"
         
-        html_tag = f"<div class='flex items-start my-2'>\n<img src='{author_avatar}' alt='{author}' class='w-12 h-12 rounded-full mr-2'>\n<div class='flex flex-col'>\n<p class='text-lg font-semibold'>{author}</p>\n<p class='text-sm text-gray-400'>{timestamp.strftime(date_format)}</p>\n<p class='text-base'>{content}</p>\n</div>\n</div>\n"
+        html_tag = f"<div class='flex items-start my-2'>\n<img src='{author_avatar}' alt='{author}' class='w-12 h-12 rounded-full mr-2'>\n<div class='flex flex-col'>\n<p class='text-lg font-semibold'>{author}</p>\n<p class='text-sm text-gray-400'>{timestamp.strftime(date_format)}</p>\n<p class='text-base'>{content_br}</p>\n{image}</div>\n</div>\n"
         
         html_body += html_tag
     

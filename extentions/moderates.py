@@ -4,7 +4,7 @@ from datetime import timedelta
 import json
 import time
 import os
-from extentions import log, config, JSTTime
+from extentions import log, config, JSTTime, modmails
 from extentions.aclient import client
 from typing import List
 
@@ -56,15 +56,15 @@ async def reason_autocomplete(interaction: discord.Interaction, current: str) ->
         discord.app_commands.Choice(name=reason, value=reason)
         for reason in reasons if current.lower() in reason.lower()
     ]
+    
+def timeout_choices():
+    timeout_labels = ["無し", "30分", "1時間", "6時間", "12時間", "1日", "3日", "1週間"]
+    timeout_values = [None, 30, 60, 360, 720, 1440, 4320, 10080]
+    
+    return [discord.SelectOption(label = timeout_labels[i], value = timeout_values[i]) for i in range(len(timeout_values))]
 
-
-@client.tree.command(name="warn", description="指定したメンバーに警告を科します。")
-@discord.app_commands.describe(member="警告するメンバー(どちらか)", member_id="警告するメンバーの ID(どちらか)", reason="警告する理由", timeout="タイムアウト(ミュート)する時間(分単位の数字)")
-@discord.app_commands.default_permissions(kick_members=True)
-@discord.app_commands.guild_only()
-@discord.app_commands.checks.has_permissions(kick_members=True)
-@discord.app_commands.autocomplete(reason=reason_autocomplete)
-async def warn(interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None, reason: str = None, timeout: int = None):
+async def warning_and_timeout(interaction: discord.Interaction, member: discord.Member = None, member_id: str = None, reason: str = None, timeout: int = None):
+    #AppCommand, Component, Modal_Submitのみ対応
     await interaction.response.defer()
     try:
         if member is None and member_id is None:
@@ -92,7 +92,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
             # logger.info(member_punishments)
 
         embed = discord.Embed(title="⚠️メンバーに「警告」を科しました。",
-                              description=f"メンバー「{member_got.display_name}」に「**警告**」を科しました。\n- タイムアウト: {timeout_minutes}\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰です。\n「警告」が数回重なった場合、より重い処罰が科される場合があります。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
+                              description=f"メンバー「{member_got.display_name}」に「**警告**」を科しました。\n- タイムアウト: {timeout_minutes}\n- 理由：{reason}\n- これは{len(member_punishments)}回目の処罰です。\n「警告」が数回重なった場合、より重い処罰が科される場合があります。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
                               color=member_got.accent_color)
         embed.set_author(name=member_got.display_name, icon_url=member_got.display_avatar)
         embed.set_footer(text=f"{now} | このメッセージは削除しないでください。")
@@ -122,7 +122,7 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
 
         if reason:
             if timeout:
-                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告とタイムアウト**」が科されました。\n- あなたはこれより**{timeout_minutes}**、メッセージの送信やVCへの参加が出来ません。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)}回目の処罰です。「警告」が数回重なるとより重いタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
+                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告とタイムアウト**」が科されました。\n- あなたはこれより**{timeout_minutes}**、メッセージの送信やVCへの参加が出来ません。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとより重いタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
             else:
                 description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告**」が科されました。\n- メッセージの送信やVCへの参加は引き続き可能です。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
             embed = discord.Embed(title="⚠️あなたはスタッフから警告されました",
@@ -141,8 +141,42 @@ async def warn(interaction:  discord.Interaction, member:  discord.Member = None
         embed = discord.Embed(title="⚠️メンバーへの警告に失敗しました！",
                               description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}")
         await interaction.followup.send(embed=embed)
-        logger.error(f"[warn]にてエラー：{e}")
+        logger.error(f"[warning_and_timeout]にてエラー：{e}")
 
+class WarningDetailModal(discord.ui.Modal):
+    
+    def __init__(self, member, message_url) -> None:
+        self.message_url = message_url
+        self.member = member
+        super().__init__(title=f"{member.display_name}さんに警告を科す")
+    
+    reason = discord.ui.TextInput(label = "理由(任意)", required = False)
+    timeout_minutes = discord.ui.TextInput(label = "タイムアウト期間(分, 任意)" , required = False)
+    
+    async def on_submit(self, interaction: discord.Interaction):
+        if self.timeout_minutes.value == False:
+            interaction.response.send_message("タイムアウトには有効な数字のみを入力してください！")
+        reason = f"{self.message_url}: {self.reason.value}" if self.reason.value else self.message_url
+        await warning_and_timeout(interaction, self.member, None, reason, int(self.timeout_minutes.value))
+
+@client.tree.context_menu(name = "メッセージから警告")
+@discord.app_commands.default_permissions(kick_members=True)
+@discord.app_commands.guild_only()
+@discord.app_commands.checks.has_permissions(kick_members=True)
+async def warn_from_message(interaction: discord.Interaction, message: discord.Message):
+    member = message.author
+    message_url = message.jump_url
+    await interaction.response.send_modal(WarningDetailModal(member, message_url))
+    
+
+@client.tree.command(name="warn", description="指定したメンバーに警告を科します。")
+@discord.app_commands.describe(member="警告するメンバー(どちらか)", member_id="警告するメンバーの ID(どちらか)", reason="警告する理由", timeout="タイムアウト(ミュート)する時間(分単位の数字)")
+@discord.app_commands.default_permissions(kick_members=True)
+@discord.app_commands.guild_only()
+@discord.app_commands.checks.has_permissions(kick_members=True)
+@discord.app_commands.autocomplete(reason=reason_autocomplete)
+async def warn(interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None, reason: str = None, timeout: int = None):
+    await warning_and_timeout(interaction, member, member_id, reason, timeout)
 
 @client.tree.command(name="kick", description="指定したメンバーをキックします。")
 @discord.app_commands.describe(member="キックするメンバー(どちらか)", member_id="キックするメンバーの ID(どちらか)", reason="キックする理由")
@@ -205,7 +239,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
 
         if reason != "無し":
             embed = discord.Embed(title="⚠️あなたはサーバーから追放されました",
-                                  description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーから「**追放**」されました。\n- 処罰の理由: {reason}\n\nあなたはまたサーバーに入りなおすことが出来ますが、これは{len(member_punishments)+1}回目の処罰です。回数が重なると、あなたはサーバーに入りなおすことが出来なくなります。\nこの処罰に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
+                                  description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーから「**追放**」されました。\n- 処罰の理由: {reason}\n\nあなたはまたサーバーに入りなおすことが出来ますが、これは{len(member_punishments)}回目の処罰です。回数が重なると、あなたはサーバーに入りなおすことが出来なくなります。\nこの処罰に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
             embed.set_author(
                 name="あしたはこぶね", url=config.server_invite_link, icon_url=config.server_icon)
             logger.info(f"DMを送信しました。: {embed.description}")
@@ -361,9 +395,9 @@ async def unban(interaction:  discord.Interaction, member:  discord.Member = Non
 @discord.app_commands.guild_only()
 class ModerateCommand(discord.app_commands.Group):
 
-    @discord.app_commands.command(name="show-all-bots", description="botロールを持っているメンバーを確認・追放します。#botmoderate専用コマンドです")
+    @discord.app_commands.command(name="show_all_bots", description="botロールを持っているメンバーを確認・追放します。#botmoderate専用コマンドです")
     @discord.app_commands.checks.has_permissions(view_audit_log=True)
-    async def show(self, interaction:  discord.Interaction):
+    async def show_all_bots(self, interaction:  discord.Interaction):
         await interaction.response.defer()
         try:
             if interaction.channel_id != config.moderatorchannel:
@@ -393,9 +427,9 @@ class ModerateCommand(discord.app_commands.Group):
             logger.error(f"[ModerateCommand]にてエラー：{e}") 
             
    
-    @discord.app_commands.command(name="kick-all-bots", description="botロールを持っているメンバー全員を追放します。#botmoderate専用コマンドです。")
+    @discord.app_commands.command(name="kick_all_bots", description="botロールを持っているメンバー全員を追放します。#botmoderate専用コマンドです。")
     @discord.app_commands.checks.has_permissions(view_audit_log=True)
-    async def show(self, interaction:  discord.Interaction):
+    async def kick_all_bots(self, interaction:  discord.Interaction):
         await interaction.response.defer()
         try:
             if interaction.channel_id != config.moderatorchannel:
@@ -442,7 +476,8 @@ class ModerateCommand(discord.app_commands.Group):
                     new = {"userName": str(
                         member_got), "userID": member_got.id, "banned": False, "punishments": lists}
                     punishments[search_id] = new
-
+                
+                #DM送信
                 embed = discord.Embed(title="⚠️あなたはサーバーから追放されました",
                                     description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーから「**追放**」されました。\n- 処罰の理由: {reason}\n\nあなたはまたサーバーに入りなおすことが出来ますが、これは{len(member_punishments)+1}回目の処罰です。回数が重なると、あなたはサーバーに入りなおすことが出来なくなります。\nこの処罰に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
                 embed.set_author(
@@ -452,6 +487,42 @@ class ModerateCommand(discord.app_commands.Group):
 
                 #キック
                 await interaction.guild.kick(user=member_got, reason=reason)
+                
+                #メンバー情報の表標示
+                embed = discord.Embed(title=f"{member_got.display_name}(@{str(member_got)})さんの情報",
+                                      description=f"{member_got.mention}\nユーザー名: {str(member_got)}\nグローバルネーム: {member_got.global_name}", color=member_got.accent_color)
+                embed.set_thumbnail(url=member_got.display_avatar)
+                embed.set_author(name=member_got.display_name,
+                                 icon_url=member_got.avatar)
+                if member_got.system == True:
+                    member_stats = "システム(Discord公式)アカウント"
+                elif member_got.bot == True:
+                    member_stats = "Botアカウント"
+                else:
+                    member_stats = "ユーザー(通常)アカウント"
+                embed.add_field(name = "アカウントの種類", value = member_stats)
+                embed.add_field(name = "ID", value = member_got.id, inline = False)
+                embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.created_at.timestamp())), inline = False)
+
+                user_puni = punishments[search_id]["punishments"]
+
+                embed2 = discord.Embed(
+                    title="処罰履歴", description=f"このユーザーは{len(user_puni)}回処罰を受けています")
+
+                for index in range(len(user_puni)):
+                    id = user_puni[index]["id"]
+                    date = user_puni[index]["date"]
+                    reason = user_puni[index]["reason"]
+                    by = user_puni[index]["by"]
+                    if "timeout" in user_puni[index].keys():
+                        timeout = f"{user_puni[index]['timeout']}分" if user_puni[index]['timeout'] else "無し"
+                        value = f"- ID: {id}\n- 時間: {date}\n- タイムアウト: {timeout}\n- 理由: {reason}\n- 処罰者: <@{by}>"
+                    else:
+                        value= f"- ID: {id}\n- 時間: {date}\n- 理由: {reason}\n- 処罰者: <@{by}>"
+                    embed2.add_field(name=user_puni[index]["type"], value=value, inline=False)
+                
+                embeds = [embed, embed2]
+                await interaction.followup.send(embeds = embeds)
                 
             await punishment_write(punishments)
         except Exception as e:
@@ -608,3 +679,29 @@ class ModerateCommand(discord.app_commands.Group):
                                   description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}\n{str(member_got)}")
             await interaction.followup.send(embed=embed)
             logger.error(f"[ModerateCommand.delete]にてエラー：{e}")
+    
+    @discord.app_commands.command(name="modmail", description="指定されたメンバーと直接連絡を取り合います")
+    @discord.app_commands.describe(member="メンバー(推奨)", member_id="ユーザーID(メンバー以外)")
+    @discord.app_commands.checks.has_permissions(view_audit_log=True)
+    async def modmail(self, interaction:  discord.Interaction, member:  discord.Member = None, member_id: str = None):
+        await interaction.response.defer(ephemeral=True)
+        try:
+            if member is None and member_id is None:
+                embed = discord.Embed(title="メンバーを指定してください！",
+                                      description="memberかmember_idのどちらかでメンバーの指定する必要があります!")
+                await interaction.followup.send(embed=embed)
+                return
+
+            member_got = await client.fetch_user(int(member_id)) if member is None else member
+            
+            await modmails.create_modmail(member_got)
+            embed = discord.Embed(title="あしたはこぶね・個別連絡", description="**運営スタッフからの個別連絡が始まりました！**\nスタッフから連絡が入るまで今しばらくお待ちください。", color=discord.Color.green())
+            embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
+            
+            await member_got.send(embed=embed)
+            await interaction.followup.send("Modmailの作成に成功しました！", ephemeral=True)
+        except Exception as e:
+            embed = discord.Embed(title="⚠️Modmailの作成に失敗しました！",
+                                  description=f"メンバーの取得に失敗したか、メンバーへのDM送信に失敗した可能性があります！\n出現した例外：{e}")
+            await interaction.followup.send(embed=embed, ephemeral = True)
+            logger.error(f"[ModerateCommand.modmail]にてエラー：{e}")

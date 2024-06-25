@@ -772,6 +772,109 @@
             }
         ]
     },
+    "act29side": {
+        "id": "act29side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "ツヴィリングトゥルムの黄金",
+        "news": "https://arknights.jp/news/410",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88114_%E3%83%84%E3%83%B4%E3%82%A3%E3%83%AA%E3%83%B3%E3%82%B0%E3%83%88%E3%82%A5%E3%83%AB%E3%83%A0%E3%81%AE%E9%BB%84%E9%87%91",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/2616aab71364ac721b160171a74b030b.png",
+        "startTime": 1714460400,
+        "endTime": 1716231599,
+        "rewardEndTime": 1716836399,
+        "additionalStage": [
+            {
+                "name": "恩寵は永遠に",
+                "startTime": 1715065200
+            },
+            {
+                "name": "大権に情なく",
+                "startTime": 1715670000
+            }
+        ]
+    },
+    "act1collabkfc": {
+        "id": "act1collabkfc",
+        "type": "OTHER",
+        "stageAdd": "False",
+        "name": "KFCコラボ",
+        "news": "https://arknights.jp/news/414",
+        "link": null,
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/1be261bec92eedbe349a5e3cf340e189.png",
+        "startTime": 1715799600,
+        "endTime": 1717678800,
+        "rewardEndTime": 1717678800,
+        "additionalStage": null
+    },
+    "act21sre": {
+        "id": "act21sre",
+        "type": "SIDESTORY",
+        "stageAdd": "False",
+        "name": "シラクザーノ(復刻)",
+        "news":"https://arknights.jp/news/417",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88116_%E3%82%B7%E3%83%A9%E3%82%AF%E3%82%B6%E3%83%BC%E3%83%8E%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/91f925d31d16990580cc4c1f82fbe394.png",
+        "startTime": 1716447600,
+        "endTime": 1717268399,
+        "rewardEndTime": 1717613999
+    },
+    "cc2#1": {
+        "id": "cc2#1",
+        "type": "CRISIS",
+        "name": "危機契約#1 作戦コード「濁燃」",
+        "news": "https://arknights.jp/news/419",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88117_%E5%8D%B1%E6%A9%9F%E5%A5%91%E7%B4%84BATTLEPLAN%EF%BC%831",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/870f5556c3954d7e49701758cccd78d2.png",
+        "stageAdd":"CRISIS",
+        "startTime": 1717570800,
+        "endTime": 1718737199,
+        "eventColor": "441312",
+        "permStage": {
+            "stageType": "PERM",
+            "stageName": "灰燼の沼"
+        },
+        "dailyStage": [
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 1,
+                "stageName": "守りの関所"
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 2,
+                "stageName": "連邦の監獄"
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 3,
+                "stageName": "改修中のビーチ"
+            },
+            {
+                "stageType": "DAILY_FINAL",
+                "dailyNumber": 4,
+                "stageName": "第13区跡"
+            }
+        ]
+    },
+    "act30side": {
+        "id": "act30side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "銀心湖鉄道",
+        "news": "https://arknights.jp/news/422",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88118_%E9%8A%80%E5%BF%83%E6%B9%96%E9%89%84%E9%81%93",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/4cc0af0e04aeb4212741893bf336e0e5.png",
+        "startTime": 1718953200,
+        "endTime": 1720119599,
+        "rewardEndTime": 1720724399,
+        "additionalStage": [
+            {
+                "name": "特急列車",
+                "startTime": 1719558000
+            }
+        ]
+    },
     "dis_rogue_3": {
         "id": "dis_rogue_3",
         "type": "ROGUELIKE",
