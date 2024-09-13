@@ -62,12 +62,10 @@ def setup_logger(module_name: str) -> logging.Logger:
         log_name = f'bot.log'
         log_path = os.path.join(dir, log_name)
         # create local log handler
-        log_handler = logging.handlers.RotatingFileHandler(
+        log_handler = logging.handlers.WatchedFileHandler(
             filename=log_path,
             mode="a",
             encoding='utf-8',
-            maxBytes=256 * 1024,  # 32 MiB
-            backupCount=5,  # Rotate through 5 files
             delay = True
         )
         log_handler.setFormatter(logging.Formatter(

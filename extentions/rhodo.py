@@ -6,6 +6,8 @@ import re
 import asyncio
 import datetime
 import os
+import io
+import requests as rq
 import json
 from unicodedata import normalize
 from math import floor
@@ -117,6 +119,15 @@ def run_discord_bot():
                 if result:
                     logger.info(f"{author.name}さんが挨拶しました！")
                     await message.add_reaction("🌟")
+                    
+            if channelID == config.screenshot_recruit_channel:
+                if not message.attachments:
+                    return
+                for attachment in message.attachments:
+                    if not "image" in attachment.content_type:
+                        return
+                    tags_image = io.BytesIO(rq.get(attachment.url).content)
+                    await recruit.recruit_from_screenshot(image_path=tags_image, message = message)
 
             if channel.category_id == config.feedback_category and channel.name.startswith("mail"):
 

@@ -96,6 +96,8 @@ action_logs = 1111276658540937308 #action-logs
 moderatorchannel = 1093777243601371157 #botmoderate
 modmail_save_channel = 1108480334024167514 #議事録
 
+screenshot_recruit_channel = 1284115621465948171 #公開求人ツール（スクショ認識）
+
 
 #categories
 feedback_category = 1108189699715125268
