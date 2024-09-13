@@ -2,7 +2,7 @@
   "remindMessage": {
     "id": 1156979471182729308,
     "thread_id": 1156979471182729308,
-    "last_remind_id": 1254911438557020160
+    "last_remind_id": 1283902482656923786
   },
   "dailyStageRemind": {
     "name": "本日解放の資源ステージ",
@@ -125,20 +125,20 @@
     "startTime": null,
     "endTime": null
   },
-  "sssRemind_3": {
-    "name": "南方保全駐在",
+  "anniRemind_6": {
+    "name": "殲滅依頼「千嶂の辺塞」",
+    "description": null,
+    "type": "anni",
+    "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E7%82%8E%E5%9B%BD%E3%80%8C%E5%8D%83%E5%B6%82%E3%81%AE%E8%BE%BA%E5%A1%9E%E3%80%8D",
+    "startTime": 1720983600,
+    "endTime": 1725821999
+  },
+  "sssRemind_4": {
+    "name": "辺境保全駐在",
     "description": null,
     "type": "sss",
     "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#ib028f3e",
-    "startTime": 1710529200,
-    "endTime": 1721069999
-  },
-  "anniRemind_5": {
-    "name": "ヴィクトリア「腐敗した荒野」",
-    "description": null,
-    "type": "anni",
-    "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%83%B4%E3%82%A3%E3%82%AF%E3%83%88%E3%83%AA%E3%82%A2%E3%80%8C%E8%85%90%E6%95%97%E3%81%97%E3%81%9F%E8%8D%92%E9%87%8E%E3%80%8D",
-    "startTime": 1714935600,
-    "endTime": 1720983599
+    "startTime": 1721070000,
+    "endTime": 1731697199
   }
 }

@@ -60,7 +60,7 @@ def eventget():
                 type = event_dic[event_now_list[i]]["type"]
                 startTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_now_list[i]]["startTime"])
                 
-                if not type == "ROGUELIKE":
+                if not type == "ROGUELIKE" and not type == "SANDBOX":
                     endTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_now_list[i]]["endTime"])
                     stageAdd = event_dic[event_now_list[i]]["stageAdd"]
                 news = event_dic[event_now_list[i]]["news"]    
@@ -125,7 +125,32 @@ def eventget():
                             
                 events.append({"name": name, "dif": "present", "type": type, "news": news, "link": link, "pic": pic, "month": month, "content": content, "updateTime": f"今月の任務終了: {updateEndTime}",
                                "nextmonth": nextmonth, "nextcontent": nextcontent, "nextUpdateTime": f"開始: {nextUpdateStartTime}"})    
-   
+
+            elif type == "SANDBOX":
+                try:
+                    monthlyUpdate = event_dic[event_now_list[i]]["monthlyUpdate"]
+                except KeyError as e:
+                    logger.error(e)
+                    
+                month = content = updateEndRime = nextmonth = nextcontent = nextUpdateStartTime = None
+                
+                if monthlyUpdate:
+                    for update in monthlyUpdate:
+                        if update["startTime"] < time.time() and time.time() < update["endTime"]:
+                            
+                            month = update["month"]
+                            content = update["contents"]
+                            updateEndTime = "<t:{0}:F>( <t:{0}:R> )".format(update["endTime"])
+                            
+                        elif time.time() < update["startTime"]:
+                            
+                            nextmonth = update["month"]
+                            nextcontent = update["contents"]
+                            nextUpdateStartTime = "<t:{0}:F>( <t:{0}:R> )".format(update["startTime"])
+                            
+                events.append({"name": name, "dif": "present", "type": type, "news": news, "link": link, "pic": pic, "month": month, "content": content, "updateTime": f"闘争の潮流入れ替え: {updateEndTime}",
+                               "nextmonth": nextmonth, "nextcontent": nextcontent, "nextUpdateTime": f"開始: {nextUpdateStartTime}"}) 
+            
             elif stageAdd == "True":
                 try:
                     additionalStage = event_dic[event_now_list[i]]["additionalStage"]
@@ -187,7 +212,7 @@ def eventget():
         
         for i in range(len(event_value_list)):
             
-            if event_dic[event_value_list[i]]["type"] == "ROGUELIKE":
+            if event_dic[event_value_list[i]]["type"] == "ROGUELIKE" or event_dic[event_value_list[i]]["type"] == "SANDBOX":
                 
                 try:
                     name = event_dic[event_value_list[i]]["name"]
@@ -249,7 +274,7 @@ def eventcount():
                 if timeDay(eventtime, type="m/d") == timeDay(time.time(), type="m/d"):
                     event_today += 1
                 
-            elif time.time() < eventEndtime and not type == "ROGUELIKE":
+            elif time.time() < eventEndtime and not type == "ROGUELIKE" and not type == "SANDBOX":
                 event_now += 1
                 
                 if timeDay(eventEndtime, type="m/d") == timeDay(time.time()+86400, type="m/d"):

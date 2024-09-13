@@ -135,7 +135,7 @@ async def check_duplicate(url: str) -> bool:
 async def publish_tweet_from_nitter_url(url: str) -> None:
     target = url.find(".com/")
     new_tweet_url_splitted = url[target+5:]
-    new_tweet_url_twitter = f"https://twitter.com/{new_tweet_url_splitted}"
+    new_tweet_url_twitter = f"https://x.com/{new_tweet_url_splitted}"
     duplicate = await check_duplicate(new_tweet_url_twitter)
     if duplicate == False:
         channel = client.get_channel(config.ake_news)
@@ -166,6 +166,7 @@ async def ake_tweet_retrieve():
             while current_tweet_url != last_tweet_url and count < 10:
                 count += 1
                 new_tweet_urls.append(current_tweet_url)
+                print(current_tweet_url)
                 current_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, f'//div[@class="user-text3"][{count}]/span')))
                 
                 current_tweet_url = current_tweet.find_element(By.XPATH, ".//a").get_attribute("href")

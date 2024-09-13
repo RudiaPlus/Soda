@@ -10,72 +10,46 @@
         "endTime": 1732993199,
         "monthlyUpdate": [
             {
-                "month": 3,
-                "startTime": 1709622000,
-                "endTime": 1711911599,
-                "contents": "- 探索者記録01: マゼラン"
-            },
-            {
-                "month": 4,
-                "startTime": 1711911600,
-                "endTime": 1714503599,
-                "contents": "- 探索者記録02: ティフォン「直視」"   
+                "month": 9,
+                "startTime": 1725130800,
+                "endTime": 1727722799,
+                "contents": "- 探索者記録07: ケルシー「使命」"   
             }
         ]
     },
-    "cc2#1": {
-        "id": "cc2#1",
-        "type": "CRISIS",
-        "name": "危機契約#1 作戦コード「濁燃」",
-        "news": "https://arknights.jp/news/419",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88117_%E5%8D%B1%E6%A9%9F%E5%A5%91%E7%B4%84BATTLEPLAN%EF%BC%831",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/870f5556c3954d7e49701758cccd78d2.png",
-        "stageAdd":"CRISIS",
-        "startTime": 1717570800,
-        "endTime": 1718737199,
-        "eventColor": "FC6340",
-        "permStage": {
-            "stageType": "PERM",
-            "stageName": "ヴィクトリア「灰燼の沼」"
-        },
-        "dailyStage": [
+    "dis_perm_sandbox_1": {
+        "id": "dis_perm_sandbox_1",
+        "type": "SANDBOX",
+        "name": "生息演算「熱砂秘聞」",
+        "news": "https://arknights.jp/news/431",
+        "link": "https://arknights.wikiru.jp/?%E7%94%9F%E6%81%AF%E6%BC%94%E7%AE%97%E3%80%8C%E7%86%B1%E7%A0%82%E7%A7%98%E8%81%9E%E3%80%8D",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/5d655d15263acb8249a6cc5cec51d49e.png",
+        "startTime": 1723014000,
+        "endTime": 1754506799,
+        "monthlyUpdate": [
             {
-                "stageType": "DAILY",
-                "dailyNumber": 1,
-                "stageName": "炎国「守りの関所」"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 2,
-                "stageName": "クルビア「連邦の監獄」"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 3,
-                "stageName": "ボリバル「改修中のビーチ」"
-            },
-            {
-                "stageType": "DAILY_FINAL",
-                "dailyNumber": 4,
-                "stageName": "チェルノボーグ「第13区跡」"
+                "month": 9,
+                "startTime": 1725130800,
+                "endTime": 1727722799,
+                "contents": "- 闘争の潮流: 「獲物は霧の中」"   
             }
         ]
     },
-    "act30side": {
-        "id": "act30side",
+    "act32side": {
+        "id": "act32side",
         "type": "SIDESTORY",
         "stageAdd": "True",
-        "name": "銀心湖鉄道",
-        "news": "https://arknights.jp/news/422",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88118_%E9%8A%80%E5%BF%83%E6%B9%96%E9%89%84%E9%81%93",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/4cc0af0e04aeb4212741893bf336e0e5.png",
-        "startTime": 1718953200,
-        "endTime": 1720119599,
-        "rewardEndTime": 1720724399,
+        "name": "オペレーション ルーセントアローヘッド",
+        "news": "https://www.arknights.jp/news/436",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88125_%E3%82%AA%E3%83%9A%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3+%E3%83%AB%E3%83%BC%E3%82%BB%E3%83%B3%E3%83%88%E3%82%A2%E3%83%AD%E3%83%BC%E3%83%98%E3%83%83%E3%83%89",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/61b0b11cdd687b8393bdf5d9bc03027a.png",
+        "startTime": 1725519600,
+        "endTime": 1726685999,
+        "rewardEndTime": 1727290799,
         "additionalStage": [
             {
-                "name": "特急列車",
-                "startTime": 1719558000
+                "name": "降下作戦",
+                "startTime": 1726124400
             }
         ]
     }

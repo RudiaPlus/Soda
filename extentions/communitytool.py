@@ -117,8 +117,11 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
         operators = await requests.operators_load()
-        name = self.name_input.value
-        matched_operators = [operators[key]["name"] for key in operators if name in operators[key]["name"]]
+        name = self.name_input.value.lower()
+        matched_operators = []
+        for op_dict in operators.values():
+            if op_dict["name"].lower() == name:
+                matched_operators.append(op_dict["name"])
 
         if not matched_operators:
             embed = discord.Embed(title = "Wiki検索 - 不明なオペレーター", description=f"「{name}」を含むオペレーターが見つかりませんでした。", color = discord.Color.red())
@@ -212,7 +215,10 @@ class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
         level = int(self.level_input.value) if self.level_input.value else 0
         remarks = self.remarks_input.value if self.remarks_input.value else "無し"
             
-        matched_operators = [operators[key]["name"] for key in operators if name in operators[key]["name"]]
+        matched_operators = []
+        for op_dict in operators.values():
+            if op_dict["name"].lower() == name:
+                matched_operators.append(op_dict["name"])
         
         if not matched_operators:
             embed = discord.Embed(title = "サポートリクエスト - 不明なオペレーター", description=f"「{name}」を含むオペレーターが見つかりませんでした。", color = discord.Color.red())
