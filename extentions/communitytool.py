@@ -138,7 +138,7 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
             embeds.append(embed)
         for operator_name in sorted_operators:
             url = f"https://arknights.wikiru.jp/?{operator_name}"
-            embed = discord.Embed(title = f"検索結果 - {operator_name}", description=f"{operator_name}の詳細・評価: [有志Wiki]({url})", url = url, color = discord.Color.blue())
+            embed = discord.Embed(title = f"検索結果 - {recruit.operator_emojis[operator_name]}{operator_name}", description=f"{recruit.operator_emojis[operator_name]}{operator_name}の詳細・評価: [有志Wiki]({url})", url = url, color = discord.Color.blue())
             embeds.append(embed)
         await interaction.followup.send(embeds = embeds, ephemeral=True)
 
@@ -153,7 +153,7 @@ class OperatorSelectButton(discord.ui.View):
             
     def add_buttons(self, label):
         
-        button_operator = discord.ui.Button(label=label, style=discord.ButtonStyle.primary)
+        button_operator = discord.ui.Button(label=label, style=discord.ButtonStyle.primary, emoji = recruit.operator_emojis[label])
         
         async def button_callback(interaction: discord.Interaction):
             
@@ -184,7 +184,7 @@ class OperatorSelectButton(discord.ui.View):
                     for i in skills:
                         skill_name += f"- スキル{i}: {skills[i]}\n"
 
-                    embed = discord.Embed(title=f"サポートオペレーター「{operator}」のリクエスト",
+                    embed = discord.Embed(title=f"サポートオペレーター「{recruit.operator_emojis[operator]}{operator}」のリクエスト",
                                         description=f"スキルの選択をしてください\n{skill_name}")
                     embed.set_footer(text=f"入力した備考：{self.remarks}")
                     logger.info(f"{interaction.user.name}がリクエストを開始しました")

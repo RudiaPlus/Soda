@@ -12,6 +12,8 @@ request_json = "jsons/requests.json"
 operators_json = "jsons/operators.json"
 doctors_json = "jsons/doctors.json"
 
+with open(os.path.join(dir, "jsons\\operator_emojis.json"), "r", encoding="utf-8") as f:
+    operator_emojis = json.load(f)
 
 class RequestConfirm(discord.ui.View):
     def __init__(self, original_message, request_index):
@@ -137,7 +139,7 @@ class RequestComplete(discord.ui.View):
                     skill = requests[index]["skill"]
 
                     respond_embed = discord.Embed(title="リクエストに応えていただきありがとうございます！",
-                                                  description=f"{request_user.display_name}さんのサポートリクエストが終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator} | {skill}")
+                                                  description=f"{request_user.display_name}さんのサポートリクエストが終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator_emojis[operator]}{operator} | {skill}")
                     respond_embed.set_author(
                         name=request_user.display_name, icon_url=request_user.display_avatar)
                     respond_embed.set_footer(text="これからも「あしたはこぶね」を宜しくお願い致します！")
@@ -286,7 +288,7 @@ async def send_request(user, operator, skill = None, skill_level = None, module:
 
     channel = client.get_channel(config.request)
     embed = discord.Embed(
-        title=f"サポートオペレーター「{operator}」のリクエスト",
+        title=f"サポートオペレーター「{operator_emojis[operator]}{operator}」のリクエスト",
         description=f"リクエスト者：{user.mention}\n{doctorname_display}\n__**希望条件**__\n{lv_name}{skill_name}{module_name}{remarks_name}\n**是非ご協力ください！**"
     )
     embed.set_author(name=user.display_name, icon_url=user.display_avatar)
@@ -333,7 +335,7 @@ class OperatorSkillButton(discord.ui.View):
                 else:
                     level = f"昇進1/レベル{self.lv}"
                 embed = discord.Embed(
-                    title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {label}/レベル7\n")
+                    title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {label}/レベル7\n")
                 embed.set_footer(text=f"入力した備考：{self.remarks}")
                 # リクエスト
                 await send_request(user=interaction.user,
@@ -347,7 +349,7 @@ class OperatorSkillButton(discord.ui.View):
             
             else:
                 embed = discord.Embed(
-                    title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"「{label}」を選択しました。\nスキルレベルの条件を選んでください。")
+                    title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト", description=f"「{label}」を選択しました。\nスキルレベルの条件を選んでください。")
                 embed.set_footer(text=f"入力した備考：{self.remarks}")
                 await interaction.response.edit_message(embed=embed, view=OperatorLevelButton(self.operators, label, self.operator, self.lv, remarks = self.remarks, doctorname = self.doctorname))
 
@@ -358,7 +360,7 @@ class OperatorSkillButton(discord.ui.View):
     @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
     async def cancel(self, interaction: discord.Interaction,
                      button: discord.ui.Button):
-        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                               description=f"リクエストをキャンセルしました。",
                               color=0xf45d5d)
         await interaction.response.edit_message(embed=embed, view=None)
@@ -387,7 +389,7 @@ class OperatorLevelButton(discord.ui.View):
         skillLevel = "レベル7"
         if self.modules:
             embed = discord.Embed(
-                title=f"サポートオペレーター「{self.operator}」のリクエスト",
+                title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                 description=f"「{self.skill}/レベル7」を選択しました。\nモジュールに条件はありますか？\n{self.module_name}")
             embed.set_footer(text=f"入力した備考：{self.remarks}")
             await interaction.response.edit_message(
@@ -400,7 +402,7 @@ class OperatorLevelButton(discord.ui.View):
             else:
                 level = f"昇進2/レベル{self.lv}"
             embed = discord.Embed(
-                title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/レベル7\n")
+                title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/レベル7\n")
             embed.set_footer(text=f"入力した備考：{self.remarks}")
             # リクエスト
             await send_request(user=interaction.user,
@@ -418,7 +420,7 @@ class OperatorLevelButton(discord.ui.View):
         skillLevel = "特化3"
         if self.modules:
             embed = discord.Embed(
-                title=f"サポートオペレーター「{self.operator}」のリクエスト",
+                title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                 description=f"「{self.skill}/特化3」を選択しました。\nモジュールに条件はありますか？\n{self.module_name}")
             embed.set_footer(text=f"入力した備考：{self.remarks}")
             await interaction.response.edit_message(
@@ -431,7 +433,7 @@ class OperatorLevelButton(discord.ui.View):
             else:
                 level = f"昇進2/レベル{self.lv}"
             embed = discord.Embed(
-                title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/特化3\n")
+                title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/特化3\n")
             embed.set_footer(text=f"入力した備考：{self.remarks}")
             # リクエスト
             await send_request(user=interaction.user,
@@ -446,7 +448,7 @@ class OperatorLevelButton(discord.ui.View):
     @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
     async def cancel(self, interaction: discord.Interaction,
                      button: discord.ui.Button):
-        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                               description=f"リクエストをキャンセルしました。",
                               color=0xf45d5d)
         await interaction.response.edit_message(embed=embed, view=None)
@@ -473,7 +475,7 @@ class OperatorModuleButton(discord.ui.View):
 
         async def button_callback(interaction: discord.Interaction):
             embed = discord.Embed(
-                title=f"サポートオペレーター「{self.operator}」のリクエスト",
+                title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                 description=f"「{label}」を選択しました。\nモジュールランクの条件を選んでください。")
             embed.set_footer(text=f"入力した備考：{self.remarks}")
             await interaction.response.edit_message(
@@ -491,7 +493,7 @@ class OperatorModuleButton(discord.ui.View):
             level = ""
         else:
             level = f"昇進2/レベル{self.lv}"
-        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                               description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/{self.skillLevel}\n")
         embed.set_footer(text=f"入力した備考：{self.remarks}")
         # リクエスト
@@ -507,7 +509,7 @@ class OperatorModuleButton(discord.ui.View):
     @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
     async def cancel(self, interaction: discord.Interaction,
                      button: discord.ui.Button):
-        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                               description=f"リクエストをキャンセルしました。",
                               color=0xf45d5d)
         await interaction.response.edit_message(embed=embed, view=None)
@@ -532,7 +534,7 @@ class OperatorModuleLevelButton(discord.ui.View):
             level = ""
         else:
             level = f"昇進2/レベル{self.lv}"
-        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                               description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/{self.skillLevel}\n- {self.module}/ランク1以上")
         embed.set_footer(text=f"入力した備考：{self.remarks}")
         # リクエスト
@@ -554,7 +556,7 @@ class OperatorModuleLevelButton(discord.ui.View):
             level = ""
         else:
             level = f"昇進2/レベル{self.lv}"
-        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                               description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/{self.skillLevel}\n- {self.module}/ランク2以上")
         embed.set_footer(text=f"入力した備考：{self.remarks}")
         # リクエスト
@@ -576,7 +578,7 @@ class OperatorModuleLevelButton(discord.ui.View):
             level = ""
         else:
             level = f"昇進2/レベル{self.lv}"
-        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                               description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/{self.skillLevel}\n- {self.module}/ランク3")
         embed.set_footer(text=f"入力した備考：{self.remarks}")
         # リクエスト
@@ -594,7 +596,7 @@ class OperatorModuleLevelButton(discord.ui.View):
     @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
     async def cancel(self, interaction: discord.Interaction,
                      button: discord.ui.Button):
-        embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
+        embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
                               description=f"リクエストをキャンセルしました。",
                               color=0xf45d5d)
         await interaction.response.edit_message(embed=embed, view=None)
@@ -654,7 +656,7 @@ async def support_request(interaction: discord.Interaction,
             for i in skills:
                 skill_name += f"- スキル{i}: {skills[i]}\n"
 
-            embed = discord.Embed(title=f"サポートオペレーター「{operator}」のリクエスト",
+            embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[operator]}{operator}」のリクエスト",
                                   description=f"スキルの選択をしてください\n{skill_name}")
             embed.set_footer(text=f"入力した備考：{remarks}")
             logger.info(f"{interaction.user.name}がコマンド/requestを使用しました")
