@@ -3,7 +3,7 @@ import math
 t_delta = datetime.timedelta(hours=9)
 tz_JST = datetime.timezone(t_delta, 'JST')
 
-def timeJST(type: str) -> str:
+def timeJST(type: str):
     
     now = datetime.datetime.now(tz_JST)
     week = ["月","火","水","木","金","土","日"]

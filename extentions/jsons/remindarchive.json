@@ -158,5 +158,13 @@
       "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#ib028f3e",
       "startTime": 1721070000,
       "endTime": 1731697199
+    },
+    "anniRemind_7": {
+        "name": "殲滅依頼「ニューホテル通り」",
+        "description": null,
+        "type": "anni",
+        "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%B7%E3%82%A8%E3%82%B9%E3%82%BF%E3%80%8C%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%9B%E3%83%86%E3%83%AB%E9%80%9A%E3%82%8A%E3%80%8D",
+        "startTime": 1725822000,
+        "endTime": 1730660399
     }
 }

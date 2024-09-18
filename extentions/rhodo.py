@@ -54,7 +54,7 @@ def run_discord_bot():
             #ルーティン
             maintenances.maintenance_timer.start()
             
-            if twitterpost.web == True:
+            if config.selenium == True:
                 url = twitterpost.last_tweet_url
                 await twitterpost.publish_tweet_from_nitter_url(url)
                 twitterpost.ake_tweet_retrieve.start()

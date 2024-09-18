@@ -6,6 +6,7 @@ test = False #TESTMODE(Switch to OverRein), default = False
 logging = True #Write log to your file, default = True
 voicechat = False #Voicechat command
 voice_suggest = False #suggest text speech to voicechat user
+selenium = True #use selenium to correct twitterpost exc.
 
 #MAIN
 t_delta = datetime.timedelta(hours=9)
@@ -88,7 +89,8 @@ cathedral = 1183254115338420285 if test == False else ake_news_test #聖堂
 
 
 maintenance = 1081251314958344313 #メンテナンス
-request = 1093849433621401600 #サポートリクエスト
+request = 1093849433621401600 if test == False else 1285907503695007846#サポートリクエスト
+request_url = f"https://discord.com/channels/{main_server}/{request}" if test == False else f"https://discord.com/channels/{testserverid}/{request}"
 
 chat = 1072158278634713108  #bot/ロードの部屋
 
@@ -97,6 +99,7 @@ moderatorchannel = 1093777243601371157 #botmoderate
 modmail_save_channel = 1108480334024167514 #議事録
 
 screenshot_recruit_channel = 1284115621465948171 #公開求人ツール（スクショ認識）
+screenshot_recruit_channel_url = f"https://discord.com/channels/{main_server}/{screenshot_recruit_channel}"
 
 
 #categories

@@ -154,9 +154,10 @@ async def result_embed_maker(result_list: list, all: bool) -> list:
             if ("ロボット" in result["tags"] or result["min_rarity"] > 2):
                 rare_list.append(result)
                 
-        if len(rare_list)<20:
-            embed_ope = discord.Embed(title = "獲得できる高レアなオペレーター", color = discord.Color.blue())
-            count = 0
+        embed_ope = discord.Embed(title = "獲得できる高レアなオペレーター", color = discord.Color.blue())
+        count = 0
+        if not rare_list:
+            embed_ope.add_field(name = "該当タグ無し", value = "☆4以上のオペレーターを確定で引ける組み合わせはありません。\n全ての組み合わせを見る場合、「全てのタグを表示する」ボタンを押してください。")
         for tag in rare_list:
             value = ""
             field_name = " ".join(tag["tags"])
@@ -236,7 +237,7 @@ class TagUndoOnly(discord.ui.View):
             
             embeds.append(embed_tags)            
             
-            view = TagUndoOnly(self.selected_tags,all=self.all,rare = self.rare)
+            view = TagUndoOnly(self.selected_tags,all=self.all,rare = self.rare, undo = self.undo)
             
             await interaction.response.edit_message(embeds = embeds, view = view)
         
@@ -686,13 +687,14 @@ async def recruit_from_screenshot(image_path, message: discord.Message):
         result_tags = await ocr_tag_from_screenshot(image_path)
         result_list, goodresult_list= await output_results(selected_tags=result_tags)
         tags_view = "、 ".join(result_tags)
+        show_all_tags = False
         embeds = []
         embed = discord.Embed(title = "公開求人シミュレーター")
         embeds.append(embed)
         #結果があるとき
         if result_list:
             
-            embeds_ope = await result_embed_maker(result_list = result_list, all = True)
+            embeds_ope = await result_embed_maker(result_list = result_list, all = show_all_tags)
             embeds.extend(embeds_ope)
                     
         embed_tags = discord.Embed(title = "タグ")
@@ -707,12 +709,12 @@ async def recruit_from_screenshot(image_path, message: discord.Message):
         
         embeds.append(embed_tags)
         
-        view = TagUndoOnly(result_tags, all=True, rare = rare, undo = False)
+        view = TagUndoOnly(result_tags, all=show_all_tags, rare = rare, undo = False)
         
         await message.reply(embeds = embeds, view = view)
     
     except Exception as e:
-        logger.error(f"タグの認識にエラー")
+        logger.error(f"タグの認識にエラー: {e}")
         embed = discord.Embed(title = "公開求人シミュレーター：エラー", description = "タグの認識に失敗しました！他のスクリーンショットをお試しください！")
         await message.reply(embed = embed)
     

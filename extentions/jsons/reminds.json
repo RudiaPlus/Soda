@@ -2,7 +2,7 @@
   "remindMessage": {
     "id": 1156979471182729308,
     "thread_id": 1156979471182729308,
-    "last_remind_id": 1283902482656923786
+    "last_remind_id": 1285714420558856232
   },
   "dailyStageRemind": {
     "name": "本日解放の資源ステージ",
@@ -125,14 +125,6 @@
     "startTime": null,
     "endTime": null
   },
-  "anniRemind_6": {
-    "name": "殲滅依頼「千嶂の辺塞」",
-    "description": null,
-    "type": "anni",
-    "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E7%82%8E%E5%9B%BD%E3%80%8C%E5%8D%83%E5%B6%82%E3%81%AE%E8%BE%BA%E5%A1%9E%E3%80%8D",
-    "startTime": 1720983600,
-    "endTime": 1725821999
-  },
   "sssRemind_4": {
     "name": "辺境保全駐在",
     "description": null,
@@ -140,5 +132,13 @@
     "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#ib028f3e",
     "startTime": 1721070000,
     "endTime": 1731697199
+  },
+  "anniRemind_7": {
+    "name": "殲滅依頼「ニューホテル通り」",
+    "description": null,
+    "type": "anni",
+    "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%B7%E3%82%A8%E3%82%B9%E3%82%BF%E3%80%8C%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%9B%E3%83%86%E3%83%AB%E9%80%9A%E3%82%8A%E3%80%8D",
+    "startTime": 1725822000,
+    "endTime": 1730660399
   }
 }

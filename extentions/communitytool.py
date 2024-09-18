@@ -120,7 +120,7 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
         name = self.name_input.value.lower()
         matched_operators = []
         for op_dict in operators.values():
-            if op_dict["name"].lower() == name:
+            if name in op_dict["name"].lower():
                 matched_operators.append(op_dict["name"])
 
         if not matched_operators:
@@ -143,10 +143,11 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
         await interaction.followup.send(embeds = embeds, ephemeral=True)
 
 class OperatorSelectButton(discord.ui.View):
-    def __init__(self, operators: list, level: int, remarks: str):
+    def __init__(self, operators: list, level: int, remarks: str, doctorname: str = None):
         super().__init__(timeout = 300)
         self.level = level
         self.remarks = remarks
+        self.doctorname = doctorname
         for operator in operators:
             self.add_buttons(operator)
             
@@ -181,13 +182,13 @@ class OperatorSelectButton(discord.ui.View):
                     }
                     skill_name = ""
                     for i in skills:
-                        skill_name += f"・スキル{i}: {skills[i]}\n"
+                        skill_name += f"- スキル{i}: {skills[i]}\n"
 
                     embed = discord.Embed(title=f"サポートオペレーター「{operator}」のリクエスト",
                                         description=f"スキルの選択をしてください\n{skill_name}")
                     embed.set_footer(text=f"入力した備考：{self.remarks}")
                     logger.info(f"{interaction.user.name}がリクエストを開始しました")
-                    await interaction.response.edit_message(embed=embed, view=requests.OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=self.level, rarity = operators[index]["rarity"], remarks = self.remarks))
+                    await interaction.response.edit_message(embed=embed, view=requests.OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=self.level, rarity = operators[index]["rarity"], remarks = self.remarks, doctorname = self.doctorname))
                     return
                 
             if correct == 0:
@@ -199,8 +200,9 @@ class OperatorSelectButton(discord.ui.View):
 
 class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
     name_input = discord.ui.TextInput(label = "リクエストするオペレーター(名前の一部のみでも可)", placeholder="アーミヤ")
-    level_input = discord.ui.TextInput(label = "昇進2でのレベル条件(数字のみ、任意)", required=False)
-    remarks_input = discord.ui.TextInput(label = "備考(潜在等のその他の条件があれば。スキルやモジュールは後から選択します。)", required=False)
+    level_input = discord.ui.TextInput(label = "昇進2でのレベル条件(省略可、数字のみ)", required=False)
+    doctorname_input = discord.ui.TextInput(label = "ドクターネーム(省略可、コミュニティツールで登録した場合はそちらが自動的に使われます)", placeholder="名前#0000", required = False)
+    remarks_input = discord.ui.TextInput(label = "備考(省略可、潜在等のその他の条件があれば。スキルやモジュールは後から選択できます)", required=False)
     
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
@@ -214,10 +216,12 @@ class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
         
         level = int(self.level_input.value) if self.level_input.value else 0
         remarks = self.remarks_input.value if self.remarks_input.value else "無し"
+        doctorname_from_data = await requests.doctor_check(interaction.user)
+        doctorname = self.doctorname_input.value if self.doctorname_input.value else doctorname_from_data[4:] #doctor_checkの返り値に"Dr. "があって余計
             
         matched_operators = []
         for op_dict in operators.values():
-            if op_dict["name"].lower() == name:
+            if name in op_dict["name"].lower():
                 matched_operators.append(op_dict["name"])
         
         if not matched_operators:
@@ -234,7 +238,7 @@ class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
             embed = discord.Embed(title = "サポートリクエスト - 検索結果", description = f"「{name}」を含むオペレーターは{len(matched_operators)}名います。リクエストしたいオペレーターを選択してください。", color = discord.Color.green())
             embeds.append(embed)
         
-        await interaction.followup.send(embeds = embeds, view = OperatorSelectButton(operators=sorted_operators, level = level, remarks = remarks))
+        await interaction.followup.send(embeds = embeds, view = OperatorSelectButton(operators=sorted_operators, level = level, remarks = remarks, doctorname = doctorname))
             
 
 class ToolButtons(discord.ui.View):
@@ -293,12 +297,15 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     channel = await client.fetch_channel(channelid)
     embed = discord.Embed(title = "コミュニティツール", description = "下のボタンから私の便利ツールをご利用できます！", color = discord.Color.red())
     
+    screenshot_recruit_channel = config.screenshot_recruit_channel_url
+    request_channel = config.request_url
+    
     #ツールの説明
-    embed.add_field(name = "・公開求人ツール", value = "公開求人のタグから獲得できるオペレーターを表示します。\nリセットする時はボタンを押し直してください！", inline=False)
-    embed.add_field(name = "・サポートリクエスト", value = "サポートリクエストを送信します。\n機能は「/request」コマンドとほぼ同じです", inline = False)
-    embed.add_field(name = "・ドクター情報登録", value = "アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n機能は「/doctorname add」コマンドとほぼ同じです。\n※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
-    embed.add_field(name = "・Wiki検索", value = "オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。", inline = False)
-    embed.add_field(name = "・闇鍋招集", value = "統合戦略でオペレーターを招集する際、職業ごとにランダムで選んでくれるツールです。", inline = False)
+    embed.add_field(name = "・公開求人ツール", value = f">>> 公開求人のタグから獲得できるオペレーターを表示します。\nスクリーンショット認識ver → {screenshot_recruit_channel}", inline=False)
+    embed.add_field(name = "・サポートリクエスト", value = f">>> サポートリクエストを送信します。\n詳しくは{request_channel}をご覧ください！", inline = False)
+    embed.add_field(name = "・ドクター情報登録", value = ">>> アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n削除する場合、任意のチャンネルで ***/doctorname delete*** を実行してください。\n-# ※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
+    embed.add_field(name = "・Wiki検索", value = ">>> オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。", inline = False)
+    embed.add_field(name = "・闇鍋招集", value = ">>> 統合戦略でオペレーターを招集する際、職業ごとにランダムで選んでくれるツールです。", inline = False)
     
     embed.set_author(name = "ロード", icon_url=client.user.avatar)
     if not edit:

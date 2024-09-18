@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from typing import List, Tuple
 from discord import Embed, Color
 from discord.ext import tasks
-from extentions import log, config
+from extentions import log, config, JSTTime
 from extentions.aclient import client
 import datetime
 import requests
@@ -18,7 +18,7 @@ dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger(__name__)
 test = config.test
 last_tweet_url = ""
-web = True # Switch of web
+web = config.selenium # Switch of web
 
 if web == True:
     try:
@@ -27,7 +27,6 @@ if web == True:
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         driver = webdriver.Chrome(options = options)
         driver.get("https://twstalker.com/AKEndfieldJP")
-        
         wait = WebDriverWait(driver, 9)
         last_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="user-text3"]/span')))
         
@@ -154,6 +153,7 @@ async def ake_tweet_retrieve():
     global last_tweet_url
     try:
         logger.debug("ツイートを取得します")
+        time_before_refresh = JSTTime.timeJST("raw")
         new_tweet_urls = []
         driver.refresh()
         new_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="user-text3"]/span')))
@@ -179,6 +179,10 @@ async def ake_tweet_retrieve():
             
             for url in new_tweet_urls:
                 await publish_tweet_from_nitter_url(url)
+        
+        time_after_retrieve = JSTTime.timeJST("raw")
+        time_passed = time_after_retrieve - time_before_refresh
+        logger.info(f"ツイート取得完了 経過時間: {time_passed.total_seconds()}")
 
             
     except Exception as e:

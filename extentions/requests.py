@@ -42,7 +42,7 @@ class RequestConfirm(discord.ui.View):
             else:
                 user_embed = discord.Embed(
                     title="リクエストへの応答が来ました！",
-                    description=f"[あなたのリクエスト]({self.original_message.jump_url})に{interaction.user.mention}さんが応じてくれるようです！\n戦友に追加していない場合サポートを借りれませんので、戦友になっていない場合はこれを機に戦友になるのは如何でしょうか？\n・ドクターネーム：{doctor}",
+                    description=f"[あなたのリクエスト]({self.original_message.jump_url})に{interaction.user.mention}さんが応じてくれるようです！\n戦友に追加していない場合サポートを借りれませんので、戦友になっていない場合はこれを機に戦友になるのは如何でしょうか？\n- ドクターネーム：{doctor}",
                     url=self.original_message.jump_url)
                 user_embed.set_footer(
                     text=f"作戦を無事に終わらせたら、リンク先から「リクエスト終了」ボタンを押してリクエストの終了をお願いします！")
@@ -239,27 +239,33 @@ async def doctor_add(user, name, tag):
     return (f"Dr. {name}#{tag}")
 
 
-async def send_request(user, operator, skill = None, skill_level = None, module: str = None, module_rank: str = None, lv: int = 0, rarity = None, remarks = None):
+async def send_request(user, operator, skill = None, skill_level = None, module: str = None, module_rank: str = None, lv: int = 0, rarity = None, remarks = None, doctorname = None):
     if module == None:
         module_name = ""
         module_rank = ""
     else:
-        module_name = f"・{module}/{module_rank}\n"
+        module_name = f"- ***{module}***/{module_rank}\n"
         
     if remarks == None or remarks =="無し":
         remarks_name = ""
     else:
-        remarks_name = f"・備考: {remarks}\n"
+        remarks_name = f"- 備考: {remarks}\n"
         
     if skill == None:
         skill_name = ""
         skill_level = ""
 
     else:
-        skill_name = f"・{skill}/{skill_level}\n"
-    lv_name = "" if lv == 0 else f"・昇進2/レベル{lv}以上\n"
+        skill_name = f"- ***{skill}***/{skill_level}\n"
+        
+    lv_name = "" if lv == 0 else f"- **昇進2**/レベル**{lv}以上**\n"
     if rarity == 2:
-        lv_name = "" if lv == 0 else f"・昇進1/レベル{lv}以上\n"
+        lv_name = "" if lv == 0 else f"- **昇進1**/レベル**{lv}以上**\n"
+        
+    if doctorname == None:
+        doctorname_display = "ドクターネーム：**未設定**\n"
+    else:
+        doctorname_display = f"ドクターネーム：**{doctorname}**\n" 
     
     requests = await request_load()
     id = 0 if not requests else (requests[-1]["id"] + 1)
@@ -273,6 +279,7 @@ async def send_request(user, operator, skill = None, skill_level = None, module:
         "module_rank": module_rank,
         "lv": lv,
         "remarks": remarks,
+        "doctorname": doctorname,
         "messageID": None,
         "respondUserID": None
     }
@@ -280,11 +287,11 @@ async def send_request(user, operator, skill = None, skill_level = None, module:
     channel = client.get_channel(config.request)
     embed = discord.Embed(
         title=f"サポートオペレーター「{operator}」のリクエスト",
-        description=f"リクエスト者：{user.mention}\n\n**希望条件**\n{lv_name}{skill_name}{module_name}{remarks_name}\n\n**是非ご協力ください！**"
+        description=f"リクエスト者：{user.mention}\n{doctorname_display}\n__**希望条件**__\n{lv_name}{skill_name}{module_name}{remarks_name}\n**是非ご協力ください！**"
     )
     embed.set_author(name=user.display_name, icon_url=user.display_avatar)
     embed.set_footer(
-        text="・対象のオペレーターをサポートに出せる場合、「リクエストに応える」ボタンを押してください！\n・【リクエスト者のみ可能】リクエストを終了したい場合は「リクエスト終了」ボタンを押してください！"
+        text="- 対象のオペレーターをサポートに出せる場合、「リクエストに応える」ボタンを押してください！\n- 【リクエスト者のみ可能】リクエストを終了したい場合は「リクエスト終了」ボタンを押してください！"
     )
     message = await channel.send(embed=embed, view=RequestComplete())
     request["messageID"] = message.id
@@ -303,12 +310,13 @@ async def request_complete(id):
 
 class OperatorSkillButton(discord.ui.View):
 
-    def __init__(self, operators, skills, operator, lv, rarity, remarks = None):
+    def __init__(self, operators, skills, operator, lv, rarity, remarks = None, doctorname = None):
         self.lv = lv
         self.rarity = rarity
         self.operators = operators
         self.operator = operator
         self.remarks = remarks if remarks else "無し"
+        self.doctorname = doctorname
         super().__init__(timeout=300)
         for i in skills:
             self.add_buttons(f"スキル{i}：{skills[i]}")
@@ -325,7 +333,7 @@ class OperatorSkillButton(discord.ui.View):
                 else:
                     level = f"昇進1/レベル{self.lv}"
                 embed = discord.Embed(
-                    title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{label}/レベル7\n")
+                    title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {label}/レベル7\n")
                 embed.set_footer(text=f"入力した備考：{self.remarks}")
                 # リクエスト
                 await send_request(user=interaction.user,
@@ -341,7 +349,7 @@ class OperatorSkillButton(discord.ui.View):
                 embed = discord.Embed(
                     title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"「{label}」を選択しました。\nスキルレベルの条件を選んでください。")
                 embed.set_footer(text=f"入力した備考：{self.remarks}")
-                await interaction.response.edit_message(embed=embed, view=OperatorLevelButton(self.operators, label, self.operator, self.lv, remarks = self.remarks))
+                await interaction.response.edit_message(embed=embed, view=OperatorLevelButton(self.operators, label, self.operator, self.lv, remarks = self.remarks, doctorname = self.doctorname))
 
         button_skill.callback = button_callback
         
@@ -358,11 +366,12 @@ class OperatorSkillButton(discord.ui.View):
 
 class OperatorLevelButton(discord.ui.View):
 
-    def __init__(self, operators, skill, operator, lv, remarks = None):
+    def __init__(self, operators, skill, operator, lv, remarks = None, doctorname = None):
         self.operator = operator
         self.lv = lv
         self.skill = skill
         self.remarks = remarks if remarks else "無し"
+        self.doctorname = doctorname
         super().__init__(timeout=300)
         self.modules = {
             k: v
@@ -370,7 +379,7 @@ class OperatorLevelButton(discord.ui.View):
         }
         self.module_name = ""
         for n in self.modules:
-            self.module_name += f"・モジュール{n}: {self.modules[n]}\n"
+            self.module_name += f"- モジュール{n}: {self.modules[n]}\n"
 
     @discord.ui.button(label="レベル7", style=discord.ButtonStyle.primary)
     async def lv7(self, interaction: discord.Interaction,
@@ -384,14 +393,14 @@ class OperatorLevelButton(discord.ui.View):
             await interaction.response.edit_message(
                 embed=embed,
                 view=OperatorModuleButton(self.skill, skillLevel, self.operator,
-                                          self.modules, self.lv, remarks = self.remarks))
+                                          self.modules, self.lv, remarks = self.remarks, doctorname = self.doctorname))
         else:
             if self.lv == 0:
                 level = ""
             else:
                 level = f"昇進2/レベル{self.lv}"
             embed = discord.Embed(
-                title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/レベル7\n")
+                title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/レベル7\n")
             embed.set_footer(text=f"入力した備考：{self.remarks}")
             # リクエスト
             await send_request(user=interaction.user,
@@ -399,7 +408,8 @@ class OperatorLevelButton(discord.ui.View):
                                skill=self.skill,
                                skill_level=skillLevel,
                                lv=self.lv,
-                               remarks = self.remarks)
+                               remarks = self.remarks,
+                               doctorname = self.doctorname)
             await interaction.response.edit_message(embed=embed, view=None)
 
     @discord.ui.button(label="特化3", style=discord.ButtonStyle.success)
@@ -414,14 +424,14 @@ class OperatorLevelButton(discord.ui.View):
             await interaction.response.edit_message(
                 embed=embed,
                 view=OperatorModuleButton(self.skill, skillLevel, self.operator,
-                                          self.modules, self.lv, remarks = self.remarks))
+                                          self.modules, self.lv, remarks = self.remarks, doctorname = self.doctorname))
         else:
             if self.lv == 0:
                 level = ""
             else:
                 level = f"昇進2/レベル{self.lv}"
             embed = discord.Embed(
-                title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/特化3\n")
+                title=f"サポートオペレーター「{self.operator}」のリクエスト", description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/特化3\n")
             embed.set_footer(text=f"入力した備考：{self.remarks}")
             # リクエスト
             await send_request(user=interaction.user,
@@ -429,7 +439,8 @@ class OperatorLevelButton(discord.ui.View):
                                skill=self.skill,
                                skill_level=skillLevel,
                                lv=self.lv,
-                               remarks = self.remarks)
+                               remarks = self.remarks, 
+                               doctorname = self.doctorname)
             await interaction.response.edit_message(embed=embed, view=None)
 
     @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
@@ -443,13 +454,14 @@ class OperatorLevelButton(discord.ui.View):
 
 class OperatorModuleButton(discord.ui.View):
 
-    def __init__(self, skill, skillLevel, operator, modules, lv, remarks = None):
+    def __init__(self, skill, skillLevel, operator, modules, lv, remarks = None, doctorname = None):
         self.operator = operator
         self.lv = lv
         self.skill = skill
         self.skillLevel = skillLevel
         self.modules = modules
         self.remarks = remarks if remarks else "無し"
+        self.doctorname = doctorname
         super().__init__(timeout=300)
 
         for n in modules:
@@ -467,7 +479,7 @@ class OperatorModuleButton(discord.ui.View):
             await interaction.response.edit_message(
                 embed=embed,
                 view=OperatorModuleLevelButton(self.skill, self.skillLevel,
-                                               self.operator, label, self.lv, remarks = self.remarks))
+                                               self.operator, label, self.lv, remarks = self.remarks, doctorname = self.doctorname))
 
         button_module.callback = button_callback
         self.add_item(button_module)
@@ -480,7 +492,7 @@ class OperatorModuleButton(discord.ui.View):
         else:
             level = f"昇進2/レベル{self.lv}"
         embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
-                              description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n")
+                              description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/{self.skillLevel}\n")
         embed.set_footer(text=f"入力した備考：{self.remarks}")
         # リクエスト
         await send_request(user=interaction.user,
@@ -488,7 +500,8 @@ class OperatorModuleButton(discord.ui.View):
                            skill=self.skill,
                            skill_level=self.skillLevel,
                            lv=self.lv,
-                           remarks = self.remarks)
+                           remarks = self.remarks, 
+                           doctorname = self.doctorname)
         await interaction.response.edit_message(embed=embed, view=None)
 
     @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
@@ -502,13 +515,14 @@ class OperatorModuleButton(discord.ui.View):
 
 class OperatorModuleLevelButton(discord.ui.View):
 
-    def __init__(self, skill, skillLevel, operator, module, lv, remarks = None):
+    def __init__(self, skill, skillLevel, operator, module, lv, remarks = None, doctorname = None):
         self.operator = operator
         self.skill = skill
         self.skillLevel = skillLevel
         self.module = module
         self.lv = lv
         self.remarks = remarks if remarks else "無し"
+        self.doctorname = doctorname
         super().__init__(timeout=300)
 
     @discord.ui.button(label="ランク1以上", style=discord.ButtonStyle.primary)
@@ -519,7 +533,7 @@ class OperatorModuleLevelButton(discord.ui.View):
         else:
             level = f"昇進2/レベル{self.lv}"
         embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
-                              description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク1以上")
+                              description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/{self.skillLevel}\n- {self.module}/ランク1以上")
         embed.set_footer(text=f"入力した備考：{self.remarks}")
         # リクエスト
         await send_request(user=interaction.user,
@@ -529,7 +543,8 @@ class OperatorModuleLevelButton(discord.ui.View):
                            module=self.module,
                            module_rank="ランク1以上",
                            lv=self.lv,
-                           remarks = self.remarks)
+                           remarks = self.remarks, 
+                           doctorname = self.doctorname)
         await interaction.response.edit_message(embed=embed, view=None)
 
     @discord.ui.button(label="ランク2以上", style=discord.ButtonStyle.primary)
@@ -540,7 +555,7 @@ class OperatorModuleLevelButton(discord.ui.View):
         else:
             level = f"昇進2/レベル{self.lv}"
         embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
-                              description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク2以上")
+                              description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/{self.skillLevel}\n- {self.module}/ランク2以上")
         embed.set_footer(text=f"入力した備考：{self.remarks}")
         # リクエスト
         await send_request(user=interaction.user,
@@ -550,7 +565,8 @@ class OperatorModuleLevelButton(discord.ui.View):
                            module=self.module,
                            module_rank="ランク2以上",
                            lv=self.lv,
-                           remarks = self.remarks)
+                           remarks = self.remarks, 
+                           doctorname = self.doctorname)
         await interaction.response.edit_message(embed=embed, view=None)
 
     @discord.ui.button(label="ランク3", style=discord.ButtonStyle.primary)
@@ -561,7 +577,7 @@ class OperatorModuleLevelButton(discord.ui.View):
         else:
             level = f"昇進2/レベル{self.lv}"
         embed = discord.Embed(title=f"サポートオペレーター「{self.operator}」のリクエスト",
-                              description=f"サポートのリクエストを送信しました！\n・{self.operator} {level}\n・{self.skill}/{self.skillLevel}\n・{self.module}/ランク3")
+                              description=f"サポートのリクエストを送信しました！\n- {self.operator} {level}\n- {self.skill}/{self.skillLevel}\n- {self.module}/ランク3")
         embed.set_footer(text=f"入力した備考：{self.remarks}")
         # リクエスト
         await send_request(user=interaction.user,
@@ -571,7 +587,8 @@ class OperatorModuleLevelButton(discord.ui.View):
                            module=self.module,
                            module_rank="ランク3",
                            lv=self.lv,
-                           remarks = self.remarks)
+                           remarks = self.remarks, 
+                           doctorname = self.doctorname)
         await interaction.response.edit_message(embed=embed, view=None)
 
     @discord.ui.button(label="キャンセル", row=1, style=discord.ButtonStyle.danger)
@@ -635,7 +652,7 @@ async def support_request(interaction: discord.Interaction,
             }
             skill_name = ""
             for i in skills:
-                skill_name += f"・スキル{i}: {skills[i]}\n"
+                skill_name += f"- スキル{i}: {skills[i]}\n"
 
             embed = discord.Embed(title=f"サポートオペレーター「{operator}」のリクエスト",
                                   description=f"スキルの選択をしてください\n{skill_name}")
