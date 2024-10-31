@@ -1,6 +1,6 @@
 import discord
-from extentions import (moderates, reminder, responses, config, voicechat,
-                        evjson, JSTTime, modmails, log, maintenances, requests, recruit, twitterpost, communitytool)
+from extentions import (moderates, reminder, responses, config, supportrequest, voicechat,
+                        evjson, JSTTime, modmails, log, maintenances, recruit, twitterpost, communitytool)
 from extentions.aclient import client
 import re
 import asyncio
@@ -14,7 +14,7 @@ from math import floor
 from discord import app_commands
 from discord.ext import tasks
 
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 
 #global変数
 remindThreadID = 0
@@ -45,7 +45,7 @@ def run_discord_bot():
             logger.info(f"{len(synced)}個のコマンドを同期しました。")
             
             #ボタン登録
-            client.add_view(requests.RequestComplete())
+            client.add_view(supportrequest.RequestComplete())
             client.add_view(modmails.ModmailButton())
             client.add_view(modmails.ModmailFinish())
             client.add_view(modmails.ModmailControl())
@@ -54,7 +54,7 @@ def run_discord_bot():
             #ルーティン
             maintenances.maintenance_timer.start()
             
-            if config.selenium == True:
+            if twitterpost.web == True:
                 url = twitterpost.last_tweet_url
                 await twitterpost.publish_tweet_from_nitter_url(url)
                 twitterpost.ake_tweet_retrieve.start()
@@ -610,7 +610,7 @@ def run_discord_bot():
                 return
 
             await interaction.response.defer()
-            added = await requests.doctor_add(interaction.user, name, num_tag)
+            added = await supportrequest.doctor_add(interaction.user, name, num_tag)
             embed = discord.Embed(title="ドクターネームの登録が完了しました！",
                                   description=f"新しく設定された貴方のドクターネームは「{added}」です！",
                                   color=0x5cb85c)
@@ -629,7 +629,7 @@ def run_discord_bot():
             if interaction.user == client.user:
                 return
             await interaction.response.defer()
-            name_full = await requests.doctor_check(user)
+            name_full = await supportrequest.doctor_check(user)
             if name_full is None:
                 embed = discord.Embed(title=f"ドクターネームが見つかりません！",
                                       description=f"{user.name}さんのドクターネームは見つかりませんでした！",
@@ -650,7 +650,7 @@ def run_discord_bot():
             if interaction.user == client.user:
                 return
             await interaction.response.defer()
-            delete = await requests.doctor_delete(interaction.user)
+            delete = await supportrequest.doctor_delete(interaction.user)
             if delete == "success":
                 embed = discord.Embed(
                     title=f"ドクターネームの登録を削除しました！",
@@ -695,7 +695,7 @@ def run_discord_bot():
             logger.info("時間になりました。メンバーにリマインドを送ります。")
             thread = await reminder.remind("thread")
             remindThreadID = thread.id
-            await responses.get_response("reset", reset=True)
+            await supportrequest.delete_old_request()
 
         except Exception as e:
             logger.exception(f"[send_remind]にてエラー：{e}") 
@@ -705,7 +705,6 @@ def run_discord_bot():
         try:
             logger.info("時間になりました。アフタヌーンルーティンを始めます")
             await reminder.remind("afternoon")
-            await responses.get_response("reset", reset=True)
 
         except Exception as e:
             logger.exception(f"[afternoon]にてエラー：{e}") 
@@ -715,7 +714,6 @@ def run_discord_bot():
         try:
             logger.info("時間になりました。イヴニングルーティンを始めます")
             await reminder.remind("evening")
-            await responses.get_response("reset", reset=True)
 
         except Exception as e:
             logger.exception(f"[evening]にてエラー：{e}") 
@@ -725,7 +723,6 @@ def run_discord_bot():
         try:
             logger.info("時間になりました。０時ルーティンを始めます")
             await reminder.remind("evening")
-            await responses.get_response("reset", reset=True)
 
         except Exception as e:
             logger.exception(f"[new_days]にてエラー：{e}") 

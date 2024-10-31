@@ -2,10 +2,10 @@ import json
 import os
 import time
 import datetime
-from extentions import log, JSTTime
+from extentions import JSTTime, log
 from math import floor
 
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 timeDay = JSTTime.timetoJST
 
 def eventget():

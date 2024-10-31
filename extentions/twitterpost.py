@@ -9,26 +9,37 @@ from discord.ext import tasks
 from extentions import log, config, JSTTime
 from extentions.aclient import client
 import datetime
-import requests
 import re
 import os
 import json
+import aiohttp
+import requests
 
 dir = os.path.abspath(__file__ + "/../")
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 test = config.test
 last_tweet_url = ""
 web = config.selenium # Switch of web
+twitterurl = "https://twstalker.com/AKEndfieldJP"
+timeout = aiohttp.ClientTimeout(total=7)
+
+async def get_response(url):
+    async with aiohttp.ClientSession(timeout=timeout) as session:
+        async with session.get(url) as r:
+            return r
 
 if web == True:
     try:
+        twitter_status = requests.get(twitterurl)
+        if twitter_status.status_code != 200:
+            raise Exception(f"ツイートにアクセスできませんでした。ステータスコード: {twitter_status.status_code}")
         options = webdriver.ChromeOptions()
-        options.binary_location = r"C:\Windows\System32\chrome\win64-120.0.6099.109\chrome-win64\chrome.exe"
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         driver = webdriver.Chrome(options = options)
-        driver.get("https://twstalker.com/AKEndfieldJP")
+        driver.set_page_load_timeout(10)
+        driver.get(twitterurl)
         wait = WebDriverWait(driver, 9)
-        last_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="user-text3"]/span')))
+        last_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="user-text3"])[1]/span')))
         
         last_tweet_url = last_tweet.find_element(By.XPATH, ".//a").get_attribute('href')
         logger.info(f"@AKEndfieldJPの最後のツイートをtwstalkerにて取得しました: {last_tweet_url}")
@@ -36,6 +47,7 @@ if web == True:
     except Exception as e:
         web=False
         logger.error(f"twstalkerにてエラー: {e}")
+        
         
 async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
     try:
@@ -53,8 +65,8 @@ async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
             
         responses = []
         for id in ids:
-            response = requests.get(f"https://api.fxtwitter.com/status/{id}")
-            if response.status_code == 200:
+            response = await get_response(f"https://api.fxtwitter.com/status/{id}")
+            if response.status == 200:
                 tweet_data = response.json()["tweet"]
                 
                 tweet_url = tweet_data["url"]
@@ -132,6 +144,8 @@ async def check_duplicate(url: str) -> bool:
     return duplicate
 
 async def publish_tweet_from_nitter_url(url: str) -> None:
+    if not url:
+        return
     target = url.find(".com/")
     new_tweet_url_splitted = url[target+5:]
     new_tweet_url_twitter = f"https://x.com/{new_tweet_url_splitted}"
@@ -153,10 +167,14 @@ async def ake_tweet_retrieve():
     global last_tweet_url
     try:
         logger.debug("ツイートを取得します")
+        response = await get_response(twitterurl)
+        if response.status != 200:
+            logger.error(f"ツイートにアクセスできませんでした。ステータスコード: {response.status}")
+            return
         time_before_refresh = JSTTime.timeJST("raw")
         new_tweet_urls = []
         driver.refresh()
-        new_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@class="user-text3"]/span')))
+        new_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="user-text3"])[1]/span')))
         
         new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
         
@@ -167,7 +185,7 @@ async def ake_tweet_retrieve():
                 count += 1
                 new_tweet_urls.append(current_tweet_url)
                 print(current_tweet_url)
-                current_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, f'//div[@class="user-text3"][{count}]/span')))
+                current_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//div[@class="user-text3"])[{count}]/span')))
                 
                 current_tweet_url = current_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
             
@@ -182,7 +200,7 @@ async def ake_tweet_retrieve():
         
         time_after_retrieve = JSTTime.timeJST("raw")
         time_passed = time_after_retrieve - time_before_refresh
-        logger.info(f"ツイート取得完了 経過時間: {time_passed.total_seconds()}")
+        logger.debug(f"ツイート取得完了 経過時間: {time_passed.total_seconds()}")
 
             
     except Exception as e:

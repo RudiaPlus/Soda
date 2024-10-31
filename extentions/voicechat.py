@@ -8,7 +8,7 @@ import requests
 import time
 import re
 
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "\\..\\")
 channel_json_path = "jsons\\channels.json"
 

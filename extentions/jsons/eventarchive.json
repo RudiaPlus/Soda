@@ -975,6 +975,84 @@
         "endTime": 1727549999,
         "rewardEndTime": 1727895599
     },
+    "cc2#2": {
+        "id": "cc2#2",
+        "type": "CRISIS",
+        "name": "危機契約#2 作戦コード「潮曦」",
+        "news": "https://arknights.jp/news/440",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88127_%E5%8D%B1%E6%A9%9F%E5%A5%91%E7%B4%84BATTLEPLAN%EF%BC%832",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/4568b72cb572cd80b07ce76e38e4aeae.png",
+        "stageAdd":"CRISIS",
+        "startTime": 1727334000,
+        "endTime": 1728500399,
+        "eventColor": "F7D267",
+        "permStage": {
+            "stageType": "PERM",
+            "stageName": "不朽の広間"
+        },
+        "dailyStage": [
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 1,
+                "stageName": "薄明の迷い路"
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 2,
+                "stageName": "枯葦の泥沼"
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 3,
+                "stageName": "守りの関所"
+            },
+            {
+                "stageType": "DAILY_FINAL",
+                "dailyNumber": 4,
+                "stageName": "実験基地 - 封鎖エリア"
+            }
+        ]
+    },
+    "act33side": {
+        "id": "act33side",
+        "type": "SIDESTORY",
+        "stageAdd": "True",
+        "name": "バベル",
+        "news": "https://www.arknights.jp/news/443",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88128_%E3%83%90%E3%83%99%E3%83%AB",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/44f7ff5e110ae8a3774f28fdaeffed4c.png",
+        "startTime": 1728543600,
+        "endTime": 1730401199,
+        "rewardEndTime": 1730919599,
+        "additionalStage": [
+            {
+                "name": "昔日に残れり",
+                "startTime": 1729148400
+            },
+            {
+                "name": "大江北岸",
+                "startTime": 1729753200
+            }
+        ]
+    },
+    "act14main": {
+        "id": "act14main",
+        "type": "MAIN",
+        "stageAdd": "True",
+        "name": "14章「慈悲光塔」実装",
+        "news": "https://arknights.jp/news/445",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88129_%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0%E5%85%AC%E9%96%8B",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/b3aab0928bd4d234ef2c272ffbc67a66.png",
+        "startTime": 1730358000,
+        "endTime": 1731524399,
+        "rewardEndTime": 1732129199,
+        "additionalStage": [
+            {
+                "name": "高難易度ステージ",
+                "startTime": 1730962800
+            }
+        ]
+    },
     "dis_rogue_3": {
         "id": "dis_rogue_3",
         "type": "ROGUELIKE",

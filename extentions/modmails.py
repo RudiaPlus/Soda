@@ -8,7 +8,7 @@ from extentions.aclient import client
 from typing import List
 from html import escape
 
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
 modmail_html_path = "htmls/modmail.html"
 

@@ -1,8 +1,5 @@
 import discord
 from discord import app_commands
-from extentions import log
-
-logger = log.setup_logger(__name__)
 
 class Rhodolite(discord.Client):
 

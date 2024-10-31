@@ -1,6 +1,4 @@
-from extentions import (rhodo, log)
+from extentions import rhodo
 
 if __name__ == "__main__":
-  log.setup_logger("discord")
-  log.setup_logger("selenium")
-  rhodo.run_discord_bot()
+    rhodo.run_discord_bot()

@@ -1,12 +1,14 @@
 import discord
 import json
 import os
+import datetime
+from discord.ext import tasks
 from extentions import JSTTime, log, config
 from extentions.aclient import client
 import asyncio
 from typing import List
 
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
 request_json = "jsons/requests.json"
 operators_json = "jsons/operators.json"
@@ -268,8 +270,8 @@ async def send_request(user, operator, skill = None, skill_level = None, module:
         doctorname_display = "ドクターネーム：**未設定**\n"
     else:
         doctorname_display = f"ドクターネーム：**{doctorname}**\n" 
-    
     requests = await request_load()
+        
     id = 0 if not requests else (requests[-1]["id"] + 1)
     request = {
         "id": id,
@@ -614,6 +616,39 @@ async def operator_autocomplete(interaction: discord.Interaction, current: str) 
         for choice in choices if current.lower() in choice.lower()
     ][:25]
 
+async def delete_old_request():
+    
+    request_list = await request_load()
+    for item in request_list:
+        request_message: discord.TextChannel = await client.get_channel(item["messageID"])
+        if request_message.threads:
+            time_delta = datetime.datetime.now() - request_message.threads[0].created_at
+            if time_delta.days > 3:
+                await request_complete(item["id"])
+                await request_message.threads[0].delete()
+                await request_message.delete()
+                request_user = client.get_user(item["userID"])
+
+                respond_user = client.get_user(
+                    item["respondUserID"])
+                operator = item["operator"]
+                skill = item["skill"]
+
+                respond_embed = discord.Embed(title="リクエストに応えていただきありがとうございます！",
+                                                description=f"リクエストから一定時間が経ったため、{request_user.display_name}さんのサポートリクエストを終了しました！ ご協力頂きありがとうございます！\nリクエストされていたオペレーター：{operator_emojis[operator]}{operator} | {skill}")
+                respond_embed.set_author(
+                    name=request_user.display_name, icon_url=request_user.display_avatar)
+                respond_embed.set_footer(text="これからも「あしたはこぶね」を宜しくお願い致します！")
+                await respond_user.send(embed=respond_embed)
+                
+                requester_embed = discord.Embed(title="リクエストを終了しました！",
+                                                description=f"リクエストから一定時間が経ったため、{request_user.display_name}さんのサポートリクエストを終了しました！\nリクエストされていたオペレーター：{operator_emojis[operator]}{operator} | {skill}")
+                respond_embed.set_author(
+                    name=request_user.display_name, icon_url=request_user.display_avatar)
+                requester_embed.set_footer(text="これからも「あしたはこぶね」を宜しくお願い致します！")
+                await request_user.send(embed=requester_embed)
+            
+
 
 @client.tree.command(
     name="request",
@@ -655,6 +690,11 @@ async def support_request(interaction: discord.Interaction,
             skill_name = ""
             for i in skills:
                 skill_name += f"- スキル{i}: {skills[i]}\n"
+            requests = await request_load()
+            for item in requests:
+                if item["userID"] == interaction.user.id:
+                    await interaction.followup.send(f"あなたは既にリクエストを送信しています！<#{config.request}>をご覧ください！")
+                    return
 
             embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[operator]}{operator}」のリクエスト",
                                   description=f"スキルの選択をしてください\n{skill_name}")

@@ -7,7 +7,7 @@ import datetime
 import time
 
 dir = os.path.abspath(__file__ + "/../")
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 test = config.test
 
 @client.tree.command(name="set_remind",
@@ -483,7 +483,7 @@ async def remind(mode = "morning"):
                                             description=f"- 詳細: [公式サイト]({news})\n- 新規メインストーリー攻略情報: [有志Wiki]({link})\n{eventTime}",
                                             color=0x353536,
                                             url=link)
-                    embed.set_author(name="理性保護&作戦支援")
+                    embed.set_author(name="新章実装キャンペーン")
                     embed.set_image(url=eventpic)
                     embeds.append(embed)
                     

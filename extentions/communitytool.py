@@ -4,11 +4,11 @@ import random
 import os
 from unicodedata import normalize
 from re import match
-from extentions import JSTTime, log, config, recruit, requests
+from extentions import JSTTime, log, config, recruit, supportrequest
 from extentions.aclient import client
 import traceback
 
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
 
 class YaminabeRepeat(discord.ui.View):
@@ -41,7 +41,7 @@ class YaminabeSelect(discord.ui.View):
 
 async def return_operators_in_class(operator_class: str, classes: dict):
     #先鋒等の職業名に一致するオペレーターのリストを返します。
-    operators = await requests.operators_load()
+    operators = await supportrequest.operators_load()
     operators_in_class = []
     for index in operators:
         if operators[index]["class"] == classes[operator_class]:
@@ -53,7 +53,7 @@ async def yaminabe(interaction: discord.Interaction, label, operators_in_class):
     selected_operator = random.choice(operators_in_class)
     
     embed = discord.Embed(title = "闇鍋招集", color = discord.Color.blue())
-    embed.add_field(name = f"招集する{label}オペレーター", value = selected_operator)
+    embed.add_field(name = f"招集する{label}オペレーター", value = f"{recruit.operator_emojis[selected_operator]}{selected_operator}")
     await interaction.response.edit_message(embed = embed, view = YaminabeRepeat(label = label, operators_in_class=operators_in_class))            
 
 class AddInformationModal(discord.ui.Modal):
@@ -96,7 +96,7 @@ class AddInformationModal(discord.ui.Modal):
             await interaction.followup.send(ephemeral = True, embed=embed)
             return
         
-        added = await requests.doctor_add(interaction.user, name, num_tag)
+        added = await supportrequest.doctor_add(interaction.user, name, num_tag)
         embed = discord.Embed(title="ドクター情報の登録が完了しました！",
                                 description=f"新しく設定された貴方のドクターネームは「{added}」です！",
                                 color=discord.Color.green())
@@ -116,7 +116,7 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
     
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
-        operators = await requests.operators_load()
+        operators = await supportrequest.operators_load()
         name = self.name_input.value.lower()
         matched_operators = []
         for op_dict in operators.values():
@@ -158,7 +158,7 @@ class OperatorSelectButton(discord.ui.View):
         async def button_callback(interaction: discord.Interaction):
             
             operator = label
-            operators = await requests.operators_load()
+            operators = await supportrequest.operators_load()
             correct = 0
             for index in operators:
                 if operators[index]["name"] == operator:
@@ -188,7 +188,7 @@ class OperatorSelectButton(discord.ui.View):
                                         description=f"スキルの選択をしてください\n{skill_name}")
                     embed.set_footer(text=f"入力した備考：{self.remarks}")
                     logger.info(f"{interaction.user.name}がリクエストを開始しました")
-                    await interaction.response.edit_message(embed=embed, view=requests.OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=self.level, rarity = operators[index]["rarity"], remarks = self.remarks, doctorname = self.doctorname))
+                    await interaction.response.edit_message(embed=embed, view=supportrequest.OperatorSkillButton(operators=operator_dic, skills=skills, operator=operator, lv=self.level, rarity = operators[index]["rarity"], remarks = self.remarks, doctorname = self.doctorname))
                     return
                 
             if correct == 0:
@@ -206,7 +206,12 @@ class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
     
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
-        operators = await requests.operators_load()
+        request_loaded = await supportrequest.request_load()
+        for item in request_loaded:
+            if item["userID"] == interaction.user.id:
+                await interaction.followup.send(f"あなたは既にリクエストを送信しています！<#{config.request}>をご覧ください！")
+                return
+        operators = await supportrequest.operators_load()
         
         name = self.name_input.value
         if self.level_input.value and self.level_input.value.isdecimal() == False:
@@ -216,8 +221,9 @@ class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
         
         level = int(self.level_input.value) if self.level_input.value else 0
         remarks = self.remarks_input.value if self.remarks_input.value else "無し"
-        doctorname_from_data = await requests.doctor_check(interaction.user)
-        doctorname = self.doctorname_input.value if self.doctorname_input.value else doctorname_from_data[4:] #doctor_checkの返り値に"Dr. "があって余計
+        doctorname_from_data = await supportrequest.doctor_check(interaction.user)
+        doctorname_split = doctorname_from_data[4:] if doctorname_from_data else None
+        doctorname = self.doctorname_input.value if self.doctorname_input.value else doctorname_split
             
         matched_operators = []
         for op_dict in operators.values():
@@ -264,7 +270,7 @@ class ToolButtons(discord.ui.View):
         
     @discord.ui.button(label = "ドクター情報登録", custom_id = "addinformationbutton", style = discord.ButtonStyle.primary, emoji = "📝")
     async def addinformationbutton(self, interaction: discord.Interaction, button: discord.ui.Button):
-        doctorname = await requests.doctor_check(user = interaction.user)
+        doctorname = await supportrequest.doctor_check(user = interaction.user)
         if not doctorname:
             modal = AddInformationModal(title = f"ドクター情報の新規登録", doctorname=None)
             await interaction.response.send_modal(modal)

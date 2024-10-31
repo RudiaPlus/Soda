@@ -8,7 +8,7 @@ from extentions import log, config, JSTTime, modmails
 from extentions.aclient import client
 from typing import List
 
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
 puni_json_path = "jsons/punishments.json"
 jst_tz = JSTTime.timeJST("JST")
@@ -92,7 +92,7 @@ async def warning_and_timeout(interaction: discord.Interaction, member: discord.
             # logger.info(member_punishments)
 
         embed = discord.Embed(title="⚠️メンバーに「警告」を科しました。",
-                              description=f"メンバー「{member_got.display_name}」に「**警告**」を科しました。\n- タイムアウト: {timeout_minutes}\n- 理由：{reason}\n- これは{len(member_punishments)}回目の処罰です。\n「警告」が数回重なった場合、より重い処罰が科される場合があります。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
+                              description=f"メンバー「{member_got.display_name}」に「**警告**」を科しました。\n- タイムアウト: {timeout_minutes}\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰です。\n「警告」が数回重なった場合、より重い処罰が科される場合があります。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
                               color=member_got.accent_color)
         embed.set_author(name=member_got.display_name, icon_url=member_got.display_avatar)
         embed.set_footer(text=f"{now} | このメッセージは削除しないでください。")

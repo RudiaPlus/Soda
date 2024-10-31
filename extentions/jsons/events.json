@@ -35,34 +35,44 @@
             }
         ]
     },
-    "act32side": {
-        "id": "act32side",
+    "act33side": {
+        "id": "act33side",
         "type": "SIDESTORY",
         "stageAdd": "True",
-        "name": "オペレーション ルーセントアローヘッド",
-        "news": "https://www.arknights.jp/news/436",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88125_%E3%82%AA%E3%83%9A%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3+%E3%83%AB%E3%83%BC%E3%82%BB%E3%83%B3%E3%83%88%E3%82%A2%E3%83%AD%E3%83%BC%E3%83%98%E3%83%83%E3%83%89",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/61b0b11cdd687b8393bdf5d9bc03027a.png",
-        "startTime": 1725519600,
-        "endTime": 1726685999,
-        "rewardEndTime": 1727290799,
+        "name": "バベル",
+        "news": "https://www.arknights.jp/news/443",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88128_%E3%83%90%E3%83%99%E3%83%AB",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/44f7ff5e110ae8a3774f28fdaeffed4c.png",
+        "startTime": 1728543600,
+        "endTime": 1730401199,
+        "rewardEndTime": 1730919599,
         "additionalStage": [
             {
-                "name": "降下作戦",
-                "startTime": 1726124400
+                "name": "昔日に残れり",
+                "startTime": 1729148400
+            },
+            {
+                "name": "大江北岸",
+                "startTime": 1729753200
             }
         ]
     },
-    "act1r6sre": {
-        "id": "act1r6sre",
-        "type": "SIDESTORY",
-        "stageAdd": "False",
-        "name": "オペレーション オリジニウムダスト(復刻)",
-        "news":"https://arknights.jp/news/439",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88126_%E3%82%AA%E3%83%9A%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3+%E3%82%AA%E3%83%AA%E3%82%B8%E3%83%8B%E3%82%A6%E3%83%A0%E3%83%80%E3%82%B9%E3%83%88%28%E5%BE%A9%E5%88%BB%29",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/60fd80105e9fd679eb1f5f6286b3e4f4.png",
-        "startTime": 1726729200,
-        "endTime": 1727549999,
-        "rewardEndTime": 1727895599
+    "act14main": {
+        "id": "act14main",
+        "type": "MAIN",
+        "stageAdd": "True",
+        "name": "14章「慈悲光塔」実装",
+        "news": "https://arknights.jp/news/445",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88129_%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0%E5%85%AC%E9%96%8B",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/b3aab0928bd4d234ef2c272ffbc67a66.png",
+        "startTime": 1730358000,
+        "endTime": 1731524399,
+        "rewardEndTime": 1732129199,
+        "additionalStage": [
+            {
+                "name": "高難易度ステージ",
+                "startTime": 1730962800
+            }
+        ]
     }
 }

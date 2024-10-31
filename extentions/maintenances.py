@@ -8,7 +8,7 @@ from extentions import log, config, JSTTime
 from extentions.aclient import client
 from datetime import datetime
 
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
 json_dir = "jsons/maintenances.json"
 tz_JST = JSTTime.tz_JST

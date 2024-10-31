@@ -151,6 +151,28 @@
       "Δ": null
     }
   },
+  "char_4136_phonor": {
+    "name": "PhonoR-0",
+    "class": "SUPPORT",
+    "rarity": 0,
+    "skills": {
+      "1": null,
+      "2": null,
+      "3": null
+    },
+    "tags": [
+      "ロボット",
+      "元素",
+      "遠距離",
+      "補助タイプ"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": null,
+      "Y": null,
+      "Δ": null
+    }
+  },
   "char_502_nblade": {
     "name": "ヤトウ",
     "class": "PIONEER",
@@ -1027,7 +1049,7 @@
     "obtain": "人材募集",
     "modules": {
       "X": null,
-      "Y": null,
+      "Y": "カニカニビュッフェ",
       "Δ": null
     }
   },
@@ -1116,7 +1138,7 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "止まないビート",
       "Y": null,
       "Δ": null
     }
@@ -1225,7 +1247,7 @@
     "obtain": "人材募集",
     "modules": {
       "X": null,
-      "Y": null,
+      "Y": "アレーンのノート",
       "Δ": null
     }
   },
@@ -1246,7 +1268,7 @@
     "obtain": "イベント",
     "modules": {
       "X": null,
-      "Y": null,
+      "Y": "毛糸玉",
       "Δ": null
     }
   },
@@ -1544,6 +1566,28 @@
     "obtain": "人材募集",
     "modules": {
       "X": "バブルのブレイジングソード",
+      "Y": null,
+      "Δ": null
+    }
+  },
+  "char_4130_luton": {
+    "name": "ルトナダ",
+    "class": "TANK",
+    "rarity": 3,
+    "skills": {
+      "1": "強撃β",
+      "2": "強磁場シールド",
+      "3": null
+    },
+    "tags": [
+      "生存",
+      "防御",
+      "近距離",
+      "重装タイプ"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": "生還者たち",
       "Y": null,
       "Δ": null
     }
@@ -1950,6 +1994,29 @@
       "Δ": null
     }
   },
+  "char_1036_fang2": {
+    "name": "歴陣鋭槍フェン",
+    "class": "PIONEER",
+    "rarity": 4,
+    "skills": {
+      "1": "ペネトレイトスピア",
+      "2": "前線維持",
+      "3": null
+    },
+    "tags": [
+      "COST回復",
+      "火力",
+      "近距離",
+      "先鋒タイプ",
+      "エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": "たゆまず進め",
+      "Y": null,
+      "Δ": null
+    }
+  },
   "char_401_elysm": {
     "name": "エリジウム",
     "class": "PIONEER",
@@ -2014,7 +2081,7 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "星々と寝坊助",
       "Y": null,
       "Δ": null
     }
@@ -2311,7 +2378,7 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "「幼き狼の牙」",
       "Y": null,
       "Δ": null
     }
@@ -2334,7 +2401,7 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "荒野用携帯気付け薬",
       "Y": null,
       "Δ": null
     }
@@ -2358,7 +2425,7 @@
     "obtain": "人材募集",
     "modules": {
       "X": null,
-      "Y": null,
+      "Y": "古い衣服",
       "Δ": null
     }
   },
@@ -2646,6 +2713,29 @@
     },
     "tags": [
       "爆発力",
+      "近距離",
+      "前衛タイプ",
+      "エリート"
+    ],
+    "obtain": "イベント",
+    "modules": {
+      "X": null,
+      "Y": null,
+      "Δ": null
+    }
+  },
+  "char_4131_odda": {
+    "name": "オッダ",
+    "class": "WARRIOR",
+    "rarity": 4,
+    "skills": {
+      "1": "散火槌",
+      "2": "炎撃槌",
+      "3": null
+    },
+    "tags": [
+      "範囲攻撃",
+      "牽制",
       "近距離",
       "前衛タイプ",
       "エリート"
@@ -3258,6 +3348,29 @@
     "obtain": "人材募集",
     "modules": {
       "X": "消し去れぬもの",
+      "Y": null,
+      "Δ": null
+    }
+  },
+  "char_446_aroma": {
+    "name": "アロマ",
+    "class": "CASTER",
+    "rarity": 4,
+    "skills": {
+      "1": "強力洗浄",
+      "2": "スリップ注意",
+      "3": null
+    },
+    "tags": [
+      "範囲攻撃",
+      "牽制",
+      "遠距離",
+      "術師タイプ",
+      "エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": "レモンの薫る子供時代",
       "Y": null,
       "Δ": null
     }
@@ -5188,6 +5301,28 @@
       "Δ": null
     }
   },
+  "char_1035_wisdel": {
+    "name": "ウィシャデル",
+    "class": "SNIPER",
+    "rarity": 5,
+    "skills": {
+      "1": "クリアランス",
+      "2": "オーバーレネゲード",
+      "3": "デイブレイクバースト"
+    },
+    "tags": [
+      "火力",
+      "遠距離",
+      "狙撃タイプ",
+      "上級エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": "「ご先祖ランチャー」",
+      "Y": null,
+      "Δ": null
+    }
+  },
   "char_1013_chen2": {
     "name": "遊龍チェン",
     "class": "SNIPER",
@@ -5366,7 +5501,7 @@
     ],
     "obtain": "イベント",
     "modules": {
-      "X": null,
+      "X": "シラクーザ式入門の証",
       "Y": null,
       "Δ": null
     }
@@ -5389,7 +5524,7 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "身繕い用水影",
       "Y": null,
       "Δ": null
     }
@@ -5529,8 +5664,30 @@
     "obtain": "人材募集",
     "modules": {
       "X": "「図書館」",
-      "Y": null,
+      "Y": "ククルカンの時間博物館",
       "Δ": null
+    }
+  },
+  "char_4133_logos": {
+    "name": "ロゴス",
+    "class": "CASTER",
+    "rarity": 5,
+    "skills": {
+      "1": "歿亡",
+      "2": "提喩",
+      "3": "差延視界"
+    },
+    "tags": [
+      "火力",
+      "遠距離",
+      "術師タイプ",
+      "上級エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": null,
+      "Y": null,
+      "Δ": "河谷より来たる筆入れ"
     }
   },
   "char_2015_dusk": {
@@ -5781,6 +5938,30 @@
       "上級エリート"
     ],
     "obtain": "人材募集",
+    "modules": {
+      "X": null,
+      "Y": null,
+      "Δ": null
+    }
+  },
+  "char_4134_cetsyr": {
+    "name": "シヴィライト・エテルナ",
+    "class": "SUPPORT",
+    "rarity": 5,
+    "skills": {
+      "1": "身に纏わる過去",
+      "2": "未だ届かぬ明日",
+      "3": "紡ぎ直される現世"
+    },
+    "tags": [
+      "支援",
+      "生存",
+      "火力",
+      "遠距離",
+      "補助タイプ",
+      "上級エリート"
+    ],
+    "obtain": "イベント",
     "modules": {
       "X": null,
       "Y": null,
@@ -6089,6 +6270,29 @@
     "modules": {
       "X": "使者の盟約",
       "Y": "紺碧の種",
+      "Δ": null
+    }
+  },
+  "char_4132_ascln": {
+    "name": "アスカロン",
+    "class": "SPECIAL",
+    "rarity": 5,
+    "skills": {
+      "1": "追襲",
+      "2": "恩賜",
+      "3": "降臨"
+    },
+    "tags": [
+      "減速",
+      "火力",
+      "近距離",
+      "特殊タイプ",
+      "上級エリート"
+    ],
+    "obtain": "人材募集",
+    "modules": {
+      "X": "「無形、無情」",
+      "Y": null,
       "Δ": null
     }
   },
@@ -6599,7 +6803,7 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "雪境羽獣お手入れセット",
       "Y": null,
       "Δ": null
     }
@@ -6622,7 +6826,7 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "「塩と砂」",
       "Y": null,
       "Δ": null
     }
@@ -6645,7 +6849,7 @@
     ],
     "obtain": "人材募集",
     "modules": {
-      "X": null,
+      "X": "雪に濡れる笠",
       "Y": null,
       "Δ": null
     }

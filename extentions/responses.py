@@ -2,7 +2,7 @@
 from extentions import ChatGPT, config, log
 import os
 
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 
 """async def getresponse(message) -> str:
     try:

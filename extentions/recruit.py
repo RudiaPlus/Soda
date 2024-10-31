@@ -10,7 +10,7 @@ from difflib import get_close_matches
 import cv2
 import itertools
 
-logger = log.setup_logger(__name__)
+logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
 image_dir = os.path.join(dir, "images")
 operators_json = "jsons/operators.json"
@@ -328,14 +328,15 @@ class TagUndoOnly(discord.ui.View):
         
     
 class TagSelectView(discord.ui.View):
-    def __init__(self, selected_tags: list, all: bool, rare: bool = False):
+    def __init__(self, selected_tags: list, all: bool, rare: bool = False, undo: bool = True):
         self.selected_tags = selected_tags
         self.all = all
         self.rare = rare
         self.disable = False
+        self.undo = undo
         super().__init__(timeout=300)
                     
-        if self.selected_tags:
+        if self.selected_tags and self.undo == True:
             self.add_undo_button()
         
         if self.all == True and self.rare == True:
