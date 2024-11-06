@@ -1,18 +1,34 @@
-import discord
-from extentions import (moderates, reminder, responses, config, supportrequest, voicechat,
-                        evjson, JSTTime, modmails, log, maintenances, recruit, twitterpost, communitytool)
-from extentions.aclient import client
-import re
 import asyncio
 import datetime
-import os
 import io
-import requests as rq
 import json
-from unicodedata import normalize
+import os
+import re
 from math import floor
+from unicodedata import normalize
+
+import discord
+import requests as rq
 from discord import app_commands
 from discord.ext import tasks
+
+from extentions import (
+    JSTTime,
+    communitytool,
+    config,
+    evjson,
+    log,
+    maintenances,
+    moderates,
+    modmails,
+    recruit,
+    reminder,
+    responses,
+    supportrequest,
+    twitterpost,
+    voicechat,
+)
+from extentions.aclient import client
 
 logger = log.setup_logger()
 
@@ -54,7 +70,7 @@ def run_discord_bot():
             #ルーティン
             maintenances.maintenance_timer.start()
             
-            if twitterpost.web == True:
+            if twitterpost.web is True:
                 url = twitterpost.last_tweet_url
                 await twitterpost.publish_tweet_from_nitter_url(url)
                 twitterpost.ake_tweet_retrieve.start()
@@ -76,7 +92,7 @@ def run_discord_bot():
                 logger.info(f"前回のリマインダーは{last_remind.created_at.astimezone(tz_JST)}({passed_second}秒前)に投稿されています")
 
                 if passed_second > 86400:
-                    logger.warn(f"前回のリマインダー投稿から1日以上({passed_second}秒)が経過していました。リマインダーを投稿します。")
+                    logger.warning(f"前回のリマインダー投稿から1日以上({passed_second}秒)が経過していました。リマインダーを投稿します。")
                     await reminder.remind("thread")
                 
             except Exception as e:
@@ -100,7 +116,7 @@ def run_discord_bot():
     @client.event
     async def on_message(message: discord.Message):
 
-        if message.author == client.user or message.author.bot == True:
+        if message.author == client.user or message.author.bot is True:
             return
 
         author = message.author
@@ -124,7 +140,7 @@ def run_discord_bot():
                 if not message.attachments:
                     return
                 for attachment in message.attachments:
-                    if not "image" in attachment.content_type:
+                    if "image" not in attachment.content_type:
                         return
                     tags_image = io.BytesIO(rq.get(attachment.url).content)
                     await recruit.recruit_from_screenshot(image_path=tags_image, message = message)
@@ -168,7 +184,7 @@ def run_discord_bot():
                     message.guild.voice_client.play(source)
                     
         else:
-            guild = client.get_guild(config.main_server) if config.test == False else client.get_guild(config.testserverid)
+            guild = client.get_guild(config.main_server) if config.test is False else client.get_guild(config.testserverid)
             logger.info(f"{username}に「{user_message}」と言われました。")
             mod_channel = await modmails.fetch_mod_channel(guild=guild, user=author)
             if mod_channel is not None:
@@ -228,7 +244,7 @@ def run_discord_bot():
                 if reactions[messageid]["posted"]:
                     posted = reactions[messageid]["posted"]
                     
-        if found == False:
+        if found is False:
             reaction_count = reaction.count
             created_at = floor(reaction.message.created_at.astimezone(tz = JSTTime.tz_JST).timestamp())
             
@@ -273,7 +289,7 @@ def run_discord_bot():
             if emoji_name == "I_agree":
                 found = True
                 break
-        if found == False:
+        if found is False:
             return
         
         reaction_count, posted = await load_reactions(reaction)
@@ -290,14 +306,14 @@ def run_discord_bot():
             message_author = message.author
             is_private = False
             
-            if type(message_channel) == discord.Thread:
-                if message_channel.is_private == True:
+            if type(message_channel) is discord.Thread:
+                if message_channel.is_private() is True:
                     is_private = True
             else:
                 default_overwrites = message_channel.overwrites_for(message_guild.default_role)
-                if default_overwrites.read_messages == False:
+                if default_overwrites.read_messages is False:
                     is_private = True
-            if is_private == True:
+            if is_private is True:
                 logger.info("プライベートチャンネルのため、聖堂入りを中止しました。")
                 return
             if message_author.get_role(config.cathedral_NG_role):
@@ -356,7 +372,7 @@ def run_discord_bot():
                 if role.id == config.user_bot_role:
                     is_user_bot_role = True
                     break
-            if is_user_bot_role == False:
+            if is_user_bot_role is False:
                 return
             else:
                 member_got = after
@@ -378,7 +394,7 @@ def run_discord_bot():
                 embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.created_at.timestamp())), inline = False)
                 embed.add_field(name = "所持しているロール", value = role_got, inline = True)
                 embed.add_field(name = "最高のロール", value = "<@&{0}>".format(member_got.top_role.id), inline = True)
-                if member_got.is_timed_out() == True:
+                if member_got.is_timed_out() is True:
                     embed.add_field(name="タイムアウト状態", value="<t:{0}:F>( <t:{0}:R> )まで".format(
                         round(member_got.timed_out_until.timestamp())), inline=False)
                     
@@ -403,7 +419,7 @@ def run_discord_bot():
             
             target_chat_str = "<#" + ">, <#".join(map(str,self.target_chat_id)) + ">"
             
-            embed = discord.Embed(title="ボイスチャンネルに接続しました", description= f"チャット読み上げを開始します。\n`/leave`で読み上げを終了します。", color = discord.Color.green())
+            embed = discord.Embed(title="ボイスチャンネルに接続しました", description= "チャット読み上げを開始します。\n`/leave`で読み上げを終了します。", color = discord.Color.green())
             embed.add_field(name = "接続したチャンネル", value = f"<#{self.join_channel.id}>")
             embed.add_field(name = "読み上げ対象のチャンネル", value = target_chat_str)
             embed.set_author(name = "チャット読み上げ")
@@ -561,7 +577,7 @@ def run_discord_bot():
     @client.tree.command(name="eventcounttest",
                          description="イベントカウントのテストを行います",
                          guild=discord.Object(config.testserverid))
-    async def eventtest(interaction: discord.Interaction):
+    async def eventcounttest(interaction: discord.Interaction):
         if interaction.user == client.user:
             return
         await interaction.response.defer()
@@ -602,7 +618,7 @@ def run_discord_bot():
                 await interaction.response.send_message(embed=embed)
                 return
 
-            if tag.isdecimal() == False or re.match(r"[0-9]{1,6}$", num_tag) is None:
+            if tag.isdecimal() is False or re.match(r"[0-9]{1,6}$", num_tag) is None:
                 embed = discord.Embed(title="タグは数字のみを入力してください！",
                                       description="なにかの間違いで無かったら、スタッフまでお問い合わせください",
                                       color=0xf45d5d)
@@ -631,7 +647,7 @@ def run_discord_bot():
             await interaction.response.defer()
             name_full = await supportrequest.doctor_check(user)
             if name_full is None:
-                embed = discord.Embed(title=f"ドクターネームが見つかりません！",
+                embed = discord.Embed(title="ドクターネームが見つかりません！",
                                       description=f"{user.name}さんのドクターネームは見つかりませんでした！",
                                       color=0xf45d5d)
                 embed.set_author(name=user.name, icon_url=user.avatar)
@@ -639,7 +655,7 @@ def run_discord_bot():
                 return
             else:
                 embed = discord.Embed(
-                    title=f"ドクターネームが見つかりました！",
+                    title="ドクターネームが見つかりました！",
                     description=f"{user.name}さんのドクターネームは以下になります！\n「{name_full}」",
                     color=0x5cb85c)
                 embed.set_author(name=user.name, icon_url=user.avatar)
@@ -653,16 +669,16 @@ def run_discord_bot():
             delete = await supportrequest.doctor_delete(interaction.user)
             if delete == "success":
                 embed = discord.Embed(
-                    title=f"ドクターネームの登録を削除しました！",
-                    description=f"登録しなおす場合は、「/doctorname set」をご利用ください！",
+                    title="ドクターネームの登録を削除しました！",
+                    description="登録しなおす場合は、「/doctorname set」をご利用ください！",
                     color=0x5cb85c)
                 embed.set_author(name=interaction.user.name,
                                  icon_url=interaction.user.avatar)
                 await interaction.followup.send(embed=embed, ephemeral=True)
             else:
                 embed = discord.Embed(
-                    title=f"ドクターネームの登録を削除できませんでした。",
-                    description=f"ドクターネームの登録を削除できませんでした！既に登録が削除されている場合があります！\nもし削除されているか確認したい場合は「/modmail」にてお問い合わせください！",
+                    title="ドクターネームの登録を削除できませんでした。",
+                    description="ドクターネームの登録を削除できませんでした！既に登録が削除されている場合があります！\nもし削除されているか確認したい場合は「/modmail」にてお問い合わせください！",
                     color=0xf45d5d)
                 embed.set_author(name=interaction.user.name,
                                  icon_url=interaction.user.avatar)
@@ -727,9 +743,9 @@ def run_discord_bot():
         except Exception as e:
             logger.exception(f"[new_days]にてエラー：{e}") 
 
-    if test == True:
+    if test is True:
 
-        logger.warn("テストモードで実行しています！")
+        logger.warning("テストモードで実行しています！")
         TOKEN = config.test_client
     
     else:

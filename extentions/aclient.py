@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 
+
 class Rhodolite(discord.Client):
 
   def __init__(self) -> None:

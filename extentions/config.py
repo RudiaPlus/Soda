@@ -61,6 +61,7 @@ recruitList = ["Lancet-2", "Castle-3", "THRM-EX", "ジャスティスナイト",
 
 #OPERATOR
 operator_classes = {"先鋒": "PIONEER", "前衛": "WARRIOR", "重装": "TANK", "狙撃": "SNIPER", "術師": "CASTER", "医療": "MEDIC", "補助": "SUPPORT", "特殊": "SPECIAL"}
+profession_id_to_name = {"SNIPER": "狙撃", "TANK": "重装", "MEDIC": "医療", "SPECIAL": "特殊", "PIONEER": "先鋒", "CASTER": "術師", "WARRIOR": "前衛", "SUPPORT": "補助"}
 
 #TASK TIME
 morningtime = datetime.time(hour=4, minute=00, tzinfo=JST)

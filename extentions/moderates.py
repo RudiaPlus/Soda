@@ -1,12 +1,12 @@
-import discord
-from discord.ext import tasks
-from datetime import timedelta
 import json
-import time
 import os
-from extentions import log, config, JSTTime, modmails
-from extentions.aclient import client
+from datetime import timedelta
 from typing import List
+
+import discord
+
+from extentions import JSTTime, config, log, modmails
+from extentions.aclient import client
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
@@ -38,7 +38,7 @@ async def punishment_delete(member, id):
 async def punishment_write(dic):
     with open(os.path.join(dir, puni_json_path), "w", encoding="UTF-8") as f:
         json.dump(dic, f, indent=2, ensure_ascii=False)
-        logger.info(f"punishments.jsonに新しく書き込みを行いました")
+        logger.info("punishments.jsonに新しく書き込みを行いました")
 
 
 async def punishment_load():
@@ -154,7 +154,7 @@ class WarningDetailModal(discord.ui.Modal):
     timeout_minutes = discord.ui.TextInput(label = "タイムアウト期間(分, 任意)" , required = False)
     
     async def on_submit(self, interaction: discord.Interaction):
-        if self.timeout_minutes.value == False:
+        if self.timeout_minutes.value is False:
             interaction.response.send_message("タイムアウトには有効な数字のみを入力してください！")
         reason = f"{self.message_url}: {self.reason.value}" if self.reason.value else self.message_url
         await warning_and_timeout(interaction, self.member, None, reason, int(self.timeout_minutes.value))
@@ -354,9 +354,9 @@ async def unban(interaction:  discord.Interaction, member:  discord.Member = Non
 
         punishments = await punishment_load()
         if search_id in punishments:
-            if punishments[search_id]["banned"] == True:
+            if punishments[search_id]["banned"] is True:
                 punishments[search_id]["banned"] = False
-            if delete == True:
+            if delete is True:
                 criminal_record = punishments[search_id]
                 member_punishments = criminal_record["punishments"]
                 for index in range(len(member_punishments)):
@@ -376,7 +376,7 @@ async def unban(interaction:  discord.Interaction, member:  discord.Member = Non
             channel = client.get_channel(config.moderatorchannel)
             await channel.send(embed=embed)
 
-        if delete == True and member:
+        if delete is True and member:
             embed = discord.Embed(title="✅あなたのBanは解除されました",
                                   description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーからの「**Banを解除**」されました。\nBanの経歴も削除されます。\n「あしたはこぶね」をクリックすると、サーバーに入りなおすことができます。これからも「あしたはこぶね」をよろしくお願いします。")
             embed.set_author(
@@ -401,7 +401,7 @@ class ModerateCommand(discord.app_commands.Group):
         await interaction.response.defer()
         try:
             if interaction.channel_id != config.moderatorchannel:
-                embed = discord.Embed(title=f"専用チャンネルで使用してください！",
+                embed = discord.Embed(title="専用チャンネルで使用してください！",
                                       description=f"このコマンドは<#{config.moderatorchannel}>限定のコマンドです。")
                 await interaction.followup.send(embed=embed)
                 return
@@ -433,7 +433,7 @@ class ModerateCommand(discord.app_commands.Group):
         await interaction.response.defer()
         try:
             if interaction.channel_id != config.moderatorchannel:
-                embed = discord.Embed(title=f"専用チャンネルで使用してください！",
+                embed = discord.Embed(title="専用チャンネルで使用してください！",
                                       description=f"このコマンドは<#{config.moderatorchannel}>限定のコマンドです。")
                 await interaction.followup.send(embed=embed)
                 return
@@ -494,9 +494,9 @@ class ModerateCommand(discord.app_commands.Group):
                 embed.set_thumbnail(url=member_got.display_avatar)
                 embed.set_author(name=member_got.display_name,
                                  icon_url=member_got.avatar)
-                if member_got.system == True:
+                if member_got.system is True:
                     member_stats = "システム(Discord公式)アカウント"
-                elif member_got.bot == True:
+                elif member_got.bot is True:
                     member_stats = "Botアカウント"
                 else:
                     member_stats = "ユーザー(通常)アカウント"
@@ -545,7 +545,7 @@ class ModerateCommand(discord.app_commands.Group):
                 return
 
             if interaction.channel_id != config.moderatorchannel:
-                embed = discord.Embed(title=f"専用チャンネルで使用してください！",
+                embed = discord.Embed(title="専用チャンネルで使用してください！",
                                       description=f"このコマンドは<#{config.moderatorchannel}>限定のコマンドです。")
                 await interaction.followup.send(embed=embed)
                 return
@@ -567,9 +567,9 @@ class ModerateCommand(discord.app_commands.Group):
                 embed.set_thumbnail(url=member_got.display_avatar)
                 embed.set_author(name=member_got.display_name,
                                  icon_url=member_got.avatar)
-                if member_got.system == True:
+                if member_got.system is True:
                     member_stats = "システム(Discord公式)アカウントです"
-                elif member_got.bot == True:
+                elif member_got.bot is True:
                     member_stats = "Botアカウント"
                 else:
                     member_stats = "ユーザー(通常)アカウント"
@@ -579,7 +579,7 @@ class ModerateCommand(discord.app_commands.Group):
                 embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.created_at.timestamp())), inline = False)
                 embed.add_field(name = "所持しているロール", value = role, inline = True)
                 embed.add_field(name = "最高のロール", value = "<@&{0}>".format(member_got.top_role.id), inline = True)
-                if member_got.is_timed_out() == True:
+                if member_got.is_timed_out() is True:
                     embed.add_field(name="タイムアウト状態", value="<t:{0}:F>( <t:{0}:R> )まで".format(
                         round(member_got.timed_out_until.timestamp())), inline=False)
 
@@ -587,8 +587,8 @@ class ModerateCommand(discord.app_commands.Group):
                 try:
                     member_got = await client.fetch_user(int(member_id))
                 except ValueError:
-                    embed = discord.Embed(title=f"member_idに整数以外が渡されています",
-                                      description=f"ユーザーIDが分からない場合、member引数を利用してください!")
+                    embed = discord.Embed(title="member_idに整数以外が渡されています",
+                                      description="ユーザーIDが分からない場合、member引数を利用してください!")
                     await interaction.followup.send(embed=embed)
                     return
                     
@@ -597,9 +597,9 @@ class ModerateCommand(discord.app_commands.Group):
                 embed.set_thumbnail(url=member_got.display_avatar)
                 embed.set_author(name=member_got.display_name,
                                  icon_url=member_got.avatar)
-                if member_got.system == True:
+                if member_got.system is True:
                     member_stats = "システム(Discord公式)アカウント"
-                elif member_got.bot == True:
+                elif member_got.bot is True:
                     member_stats = "Botアカウント"
                 else:
                     member_stats = "ユーザー(通常)アカウント"
@@ -614,7 +614,7 @@ class ModerateCommand(discord.app_commands.Group):
                 banned = punishments[search_id]["banned"]
                 user_puni = punishments[search_id]["punishments"]
 
-                if banned == True:
+                if banned is True:
                     embed.add_field(
                         name="Banされています", value="このユーザーはサーバーからBanされています", inline=False)
 
@@ -663,7 +663,7 @@ class ModerateCommand(discord.app_commands.Group):
 
             result = await punishment_delete(member=member_got, id=id)
             if result != "False":
-                if result == "Timeout" and member_got.is_timed_out() == True:
+                if result == "Timeout" and member_got.is_timed_out() is True:
                     await member_got.timeout(None, reason = "処罰の訂正")
                 embed = discord.Embed(title="処罰履歴の削除",
                                       description=f"{member_got.display_name}さんの処罰履歴#{id}を削除しました。")

@@ -1,12 +1,14 @@
-import discord
-import json
 import asyncio
-from extentions import log, config, JSTTime
-from extentions.aclient import client
+import json
 import os
-import requests
-import time
 import re
+import time
+
+import discord
+import requests
+
+from extentions import config, log
+from extentions.aclient import client
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "\\..\\")
@@ -56,7 +58,7 @@ def synthesis(speaker, query_data,max_retry):
         raise ConnectionError("音声エラー：リトライ回数が上限に到達しました。 synthesis : ", r)
 
 def text_to_speech(texts, speaker=8, max_retry=20):
-    if texts==False:
+    if texts is False:
         texts=""
     texts=re.split("(?<=！|。|？)",texts)
     for i, text in enumerate(texts):
@@ -73,7 +75,7 @@ def text_to_speech(texts, speaker=8, max_retry=20):
 async def channels_write(dic):
     with open(os.path.join(dir, channel_json_path), "w", encoding="UTF-8") as f:
         json.dump(dic, f, indent=2, ensure_ascii=False)
-        logger.info(f"channels.jsonに新しく書き込みを行いました")
+        logger.info("channels.jsonに新しく書き込みを行いました")
 
 async def get_target_channels(vc_channel) -> list:
     for index in channels:
@@ -81,13 +83,13 @@ async def get_target_channels(vc_channel) -> list:
             try:
                 target_chat = channel_register[index]
             except KeyError:
-                logger.warn(f"{index}は登録されていません。")
+                logger.warning(f"{index}は登録されていません。")
                 return
             id_ = "id"
             target_chat_id = [channels[d][id_] for d in target_chat]
             return(target_chat_id)
 
-if config.voicechat == True:     
+if config.voicechat is True:     
     @client.tree.command(name="join", description="チャット読み上げを開始します")
     @discord.app_commands.describe(channel="参加するチャンネル(任意)")
     async def join(interaction:  discord.Interaction, channel:  discord.VoiceChannel = None):
@@ -109,7 +111,7 @@ if config.voicechat == True:
                             
                             target_chat_str = "<#" + ">, <#".join(map(str,target_chat_id)) + ">"
                             
-                            embed = discord.Embed(title="ボイスチャンネルに接続しました", description= f"チャット読み上げを開始します。\n`/leave`で読み上げを終了します。", color = discord.Color.green())
+                            embed = discord.Embed(title="ボイスチャンネルに接続しました", description= "チャット読み上げを開始します。\n`/leave`で読み上げを終了します。", color = discord.Color.green())
                             embed.add_field(name = "接続したチャンネル", value = f"<#{join_channel.id}>")
                             embed.add_field(name = "読み上げ対象のチャンネル", value = target_chat_str)
                             embed.set_author(name = "チャット読み上げ")

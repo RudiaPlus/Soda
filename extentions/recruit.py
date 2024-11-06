@@ -1,14 +1,16 @@
-import discord
+import itertools
 import json
 import os
+from difflib import get_close_matches
+
+import cv2
+import discord
 import numpy
-from extentions import log, config
+from PIL import Image
+
+from extentions import config, log
 from extentions.aclient import client
 from extentions.aOCR import ocr
-from PIL import Image
-from difflib import get_close_matches
-import cv2
-import itertools
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
@@ -66,7 +68,7 @@ async def find_common_tags(reference_tags, operators):
             if set(operators[ope]["tags"]) & set(combination):
                 matchtag = set(operators[ope]["tags"]) & set(combination)
                 
-                if (operators[ope]["rarity"] == 5 and not "上級エリート" in combination) or (operators[ope]["name"] == "アーミヤ"):
+                if (operators[ope]["rarity"] == 5 and "上級エリート" not in combination) or (operators[ope]["name"] == "アーミヤ"):
                     pass
                 
                 else:
@@ -75,10 +77,10 @@ async def find_common_tags(reference_tags, operators):
                     for collection in matching_combinations:
                         if set(collection["tags"]) == matchtag:
                             there = True
-                            if not operators[ope] in collection["operators"]:
+                            if operators[ope] not in collection["operators"]:
                                 collection["operators"].append(operators[ope])
                             break
-                    if there == False:   
+                    if there is False:   
                         matching_combinations.append({"tags": list(matchtag), "operators": [operators[ope]]})
         for i in range(len(matching_combinations)):
             matching_combinations[i]["operators"] = sorted(matching_combinations[i]["operators"], key = lambda x: x["rarity"])
@@ -98,7 +100,6 @@ async def output_results(selected_tags):
         result_operators = await find_common_tags(reference_tags=selected_tags, operators = operators_list)
         
         goodresult_list = ""
-        list_tags = []
         
         for result in result_operators:
 
@@ -119,7 +120,7 @@ async def output_results(selected_tags):
 async def result_embed_maker(result_list: list, all: bool) -> list:
     embeds = []
     
-    if all == True:
+    if all is True:
         embed_ope = discord.Embed(title = "獲得できる全てのオペレーター", color = discord.Color.blue())
         count = 0
         for tag in result_list:
@@ -195,12 +196,12 @@ class TagUndoOnly(discord.ui.View):
         self.undo = undo
         super().__init__(timeout=300)
         
-        if undo == True:
+        if undo is True:
             self.add_back_button()
         
-        if self.all == True and self.rare == True:
+        if self.all is True and self.rare is True:
             self.add_rare_only_button()
-        elif self.all == False:
+        elif self.all is False:
             self.add_show_all_button()
         
     def add_show_all_button(self):
@@ -213,7 +214,7 @@ class TagUndoOnly(discord.ui.View):
             view = None
             
             tags_view = "、 ".join(self.selected_tags)
-            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+            embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
 
             result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
             
@@ -254,7 +255,7 @@ class TagUndoOnly(discord.ui.View):
             view = None
             
             tags_view = "、 ".join(self.selected_tags)
-            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+            embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
 
             result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
             
@@ -294,7 +295,7 @@ class TagUndoOnly(discord.ui.View):
             view = None
             
             tags_view = "、 ".join(self.selected_tags)
-            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+            embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
             embeds.append(embed)
             result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
             
@@ -336,12 +337,12 @@ class TagSelectView(discord.ui.View):
         self.undo = undo
         super().__init__(timeout=300)
                     
-        if self.selected_tags and self.undo == True:
+        if self.selected_tags and self.undo is True:
             self.add_undo_button()
         
-        if self.all == True and self.rare == True:
+        if self.all is True and self.rare is True:
             self.add_rare_only_button()
-        elif self.all == False:
+        elif self.all is False:
             self.add_show_all_button()
 
             
@@ -355,7 +356,7 @@ class TagSelectView(discord.ui.View):
         view = None
         
         tags_view = "、 ".join(self.selected_tags)
-        embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+        embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
 
         result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
         
@@ -397,7 +398,7 @@ class TagSelectView(discord.ui.View):
         view = None
         
         tags_view = "、 ".join(self.selected_tags)
-        embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+        embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
 
         result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
         
@@ -439,7 +440,7 @@ class TagSelectView(discord.ui.View):
         view = None
         
         tags_view = "、 ".join(self.selected_tags)
-        embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+        embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
 
         result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
         
@@ -481,7 +482,7 @@ class TagSelectView(discord.ui.View):
         view = None
         
         tags_view = "、 ".join(self.selected_tags)
-        embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+        embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
 
         result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
         
@@ -522,7 +523,7 @@ class TagSelectView(discord.ui.View):
             view = None
             
             tags_view = "、 ".join(self.selected_tags)
-            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+            embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
 
             result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
             
@@ -563,7 +564,7 @@ class TagSelectView(discord.ui.View):
             view = None
             
             tags_view = "、 ".join(self.selected_tags)
-            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+            embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
 
             result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
             
@@ -602,7 +603,7 @@ class TagSelectView(discord.ui.View):
             view = None
             
             tags_view = "、 ".join(self.selected_tags)
-            embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+            embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
 
             result_list, goodresult_list= await output_results(selected_tags=self.selected_tags)
             
@@ -642,7 +643,7 @@ async def recruit(interaction: discord.Interaction):
     
     logger.info(f"{interaction.user.name}がコマンド/recruitを使用しました")
     
-    embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+    embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
     await interaction.followup.send(embed = embed, view = view, ephemeral=True)
     
 async def ocr_tag_from_screenshot(image_path):

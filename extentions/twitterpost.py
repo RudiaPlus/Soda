@@ -1,19 +1,20 @@
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-
-from typing import List, Tuple
-from discord import Embed, Color
-from discord.ext import tasks
-from extentions import log, config, JSTTime
-from extentions.aclient import client
 import datetime
-import re
-import os
 import json
+import os
+import re
+from typing import List, Tuple
+
 import aiohttp
 import requests
+from discord import Color, Embed
+from discord.ext import tasks
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+from extentions import JSTTime, config, log
+from extentions.aclient import client
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger()
@@ -28,7 +29,7 @@ async def get_response(url):
         async with session.get(url) as r:
             return r
 
-if web == True:
+if web is True:
     try:
         twitter_status = requests.get(twitterurl)
         if twitter_status.status_code != 200:
@@ -150,7 +151,7 @@ async def publish_tweet_from_nitter_url(url: str) -> None:
     new_tweet_url_splitted = url[target+5:]
     new_tweet_url_twitter = f"https://x.com/{new_tweet_url_splitted}"
     duplicate = await check_duplicate(new_tweet_url_twitter)
-    if duplicate == False:
+    if duplicate is False:
         channel = client.get_channel(config.ake_news)
         embeds, video_urls = await create_embed(new_tweet_url_twitter)
         message = await channel.send(f"<{new_tweet_url_twitter}>", embeds = embeds)

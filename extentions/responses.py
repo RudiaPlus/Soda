@@ -1,6 +1,7 @@
 #from revChatGPT.V1 import AsyncChatbot
-from extentions import ChatGPT, config, log
 import os
+
+from extentions import ChatGPT, config, log
 
 logger = log.setup_logger()
 
@@ -24,7 +25,7 @@ async def get_response(message, reset: bool) -> str:
     chatbot = ChatGPT.Chatbot(api_key=config.openAI_key,
                               temperature=0.8,
                               system_prompt=prompt)
-    if reset == True:
+    if reset is True:
       chatbot.reset()
       chatbot.save()
       return ("リセットしました")

@@ -1,6 +1,9 @@
 import datetime
 import math
 import traceback
+from extentions import log
+
+logger = log.setup_logger()
 t_delta = datetime.timedelta(hours=9)
 tz_JST = datetime.timezone(t_delta, 'JST')
 
@@ -31,7 +34,8 @@ def timeJST(type: str):
         else :
             raise ValueError("argument 'type' didn't match correctly.")
         
-    except:
+    except Exception as e:
+        logger.error(e)
         traceback.print_exc()
             
 def timetoJST(timestamp: int, type: str) -> str:

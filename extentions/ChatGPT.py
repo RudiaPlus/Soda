@@ -1,6 +1,7 @@
-import openai
-import os
 import json
+import os
+
+import openai
 
 dir = os.path.abspath(__file__ + "/../")
 prompt_name = "starting-prompt.txt"

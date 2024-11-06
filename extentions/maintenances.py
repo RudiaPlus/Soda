@@ -1,13 +1,16 @@
 import asyncio
-import discord
-from discord.ext import tasks
 import json
-import time
 import os
-from extentions import log, config, JSTTime
-from extentions.aclient import client
+import time
 from datetime import datetime
 
+import discord
+from discord.ext import tasks
+
+from extentions import JSTTime, config, log, data_update
+from extentions.aclient import client
+
+codes_path = os.path.abspath("C:\\Users\\Siratama\\Documents\\codes")
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
 json_dir = "jsons/maintenances.json"
@@ -59,6 +62,7 @@ async def maintenance_end(maint_name: str, entry: int):
     await channel.send("<@&1090976873774854177>", embed = embed)
     del maintenances[entry]
     await write_json(maintenances)
+    await data_update.update_data()
     
 async def maintenance_ruined(entry):
     maintenances = await read_json()
@@ -84,7 +88,7 @@ async def maintenance_timer():
             link = maintenances[entry]["link"]
             pic = maintenances[entry]["pic"] if "pic" in maintenances[entry] else None
                 
-            if maintenances[entry]["doing"] == False and maint_start < time.time():
+            if maintenances[entry]["doing"] is False and maint_start < time.time():
                 #メンテナンス開始
                 channel = client.get_channel(config.maintenance)
                 start = "<t:{0}:F>( <t:{0}:R> )".format(maint_start)
@@ -107,7 +111,5 @@ async def maintenance_timer():
                     
                 #ここまで
                                
-        logger.debug("メンテナンスがあります")
         await asyncio.sleep(5)
         maintenances = await read_json()
-    logger.debug("メンテナンスはありません！")

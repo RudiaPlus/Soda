@@ -1,9 +1,10 @@
+import datetime
 import json
 import os
 import time
-import datetime
-from extentions import JSTTime, log
 from math import floor
+
+from extentions import JSTTime, log
 
 logger = log.setup_logger()
 timeDay = JSTTime.timetoJST
@@ -132,7 +133,7 @@ def eventget():
                 except KeyError as e:
                     logger.error(e)
                     
-                month = content = updateEndRime = nextmonth = nextcontent = nextUpdateStartTime = None
+                month = content = updateEndTime = nextmonth = nextcontent = nextUpdateStartTime = None
                 
                 if monthlyUpdate:
                     for update in monthlyUpdate:
@@ -154,7 +155,6 @@ def eventget():
             elif stageAdd == "True":
                 try:
                     additionalStage = event_dic[event_now_list[i]]["additionalStage"]
-                    stageAddTime = additionalStage[0]["startTime"]
                     remark = None
                 except KeyError as e:
                     logger.error(e)

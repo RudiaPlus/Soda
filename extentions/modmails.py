@@ -1,12 +1,11 @@
-import discord
-from discord.ext import tasks
-import json
 import datetime
 import os
-from extentions import log, config, JSTTime
-from extentions.aclient import client
-from typing import List
 from html import escape
+
+import discord
+
+from extentions import JSTTime, config, log
+from extentions.aclient import client
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
@@ -41,7 +40,7 @@ class ModmailFinish(discord.ui.View):
     @discord.ui.button(label = "終了", custom_id = "modmailfinish", emoji = "🔒")
     async def modmailfinish(self, interaction: discord.Interaction, button: discord.ui.Button):
         
-        guild = client.get_guild(config.main_server) if config.test == False else client.get_guild(config.testserverid)
+        guild = client.get_guild(config.main_server) if config.test is False else client.get_guild(config.testserverid)
         
         if not interaction.guild:
             
@@ -76,7 +75,7 @@ class ModmailFinish(discord.ui.View):
                 await user.send(embed = embed)
                 await interaction.response.send_message(embed = embed_mod)
 
-            if config.test == False:
+            if config.test is False:
             
                 Administrator = guild.get_role(config.administrator_role)
                 Moderator = guild.get_role(config.Moderator_role)
@@ -164,14 +163,14 @@ async def fetch_mod_channel(guild: discord.Guild, user: discord.User) -> discord
 
 async def create_modmail(user: discord.User):
 
-    guild = client.get_guild(config.main_server) if config.test == False else client.get_guild(config.testserverid)
+    guild = client.get_guild(config.main_server) if config.test is False else client.get_guild(config.testserverid)
     mod_channel = await fetch_mod_channel(guild=guild, user=user)
     
     if mod_channel is None:
     
         categoty = discord.utils.get(guild.categories, name = "────フィードバック────")
         
-        if config.test == False:
+        if config.test is False:
             Administrator = guild.get_role(config.administrator_role)
             Moderator = guild.get_role(config.Moderator_role)
         
@@ -280,7 +279,7 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
     embed.add_field(name = "発言者", value = speakers, inline = False)
     embed.add_field(name = "削除者", value = delete_user.mention)
     
-    save_channel = client.get_channel(config.modmail_save_channel) if config.test == False else client.get_channel(1163715007503151144)
+    save_channel = client.get_channel(config.modmail_save_channel) if config.test is False else client.get_channel(1163715007503151144)
     await save_channel.send(embed = embed, file = messages_json)
         
     

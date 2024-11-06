@@ -1,10 +1,12 @@
-import discord
-import json
-from extentions import log, config, JSTTime, evjson, maintenances
-from extentions.aclient import client
-import os
 import datetime
+import json
+import os
 import time
+
+import discord
+
+from extentions import JSTTime, config, evjson, log, maintenances
+from extentions.aclient import client
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger()
@@ -16,7 +18,7 @@ test = config.test
 @discord.app_commands.describe(version="リマインドの時間 morning/afternoon/evening")
 async def set_remind(interaction: discord.Interaction, version: str):
     await interaction.response.defer()
-    channel = client.get_channel(config.remind) if test == False else client.get_channel(config.remind_TEST)
+    channel = client.get_channel(config.remind) if test is False else client.get_channel(config.remind_TEST)
     message = await channel.send("リマインダーを作り直します")
     remind_dic = await load_remind_dic()
     remind_dic["remindMessage"] = {"id": message.id, "thread_id": 0}
@@ -39,7 +41,7 @@ async def load_remind_dic() -> dict:
     json_name = "jsons/reminds.json"
     with open(os.path.join(dir, json_name), "r", encoding="utf-8") as f:
         remind_dic = json.load(f)
-    if remind_dic["dailyStageRemind"]["allAvailable"] == False:
+    if remind_dic["dailyStageRemind"]["allAvailable"] is False:
         if remind_dic["dailyStageRemind"]["allStartTime"] < today_timestamp and today_timestamp < remind_dic["dailyStageRemind"]["allEndTime"]:
             remind_dic["dailyStageRemind"]["allAvailable"] = True
             await write_remind_dic(remind_dic)
@@ -64,7 +66,7 @@ async def create_thread(channel: discord.TextChannel, message: discord.Message) 
     if not thread_create_message.id == message.id:
         await thread_create_message.delete()
     else:
-        logger.warn("スレッド作成のメッセージが送信されていませんので、削除しませんでした。")
+        logger.warning("スレッド作成のメッセージが送信されていませんので、削除しませんでした。")
         
     return(thread)
 
@@ -100,8 +102,8 @@ async def daily_message_maker(remind_dic: dict):
     weekday_today = JSTTime.timeJST("weekday")
     first = f"本日は{today.month}月{today.day}日({weekday_today})です。"
     
-    if remind_dic["dailyStageRemind"]["allAvailable"] == True:
-        first += f"\n**危機契約が始まっています！無理せずに頑張りましょう！！**"
+    if remind_dic["dailyStageRemind"]["allAvailable"] is True:
+        first += "\n**危機契約が始まっています！無理せずに頑張りましょう！！**"
     
     if today.day == 1:
         special_day = f"\n今日から{today.month}月が始まりますね！資格証交換が更新されているのでご確認ください！"
@@ -142,7 +144,7 @@ async def daily_message_maker(remind_dic: dict):
         eventnow = ""
         
     if eventcount[0] == 1:
-        eventnow += f"\n- イベントが進行中です:sparkles: 頑張りましょう！"
+        eventnow += "\n- イベントが進行中です:sparkles: 頑張りましょう！"
     elif eventcount[0] > 1:
         eventnow += f"\n- 本日は{eventcount[0]}個のイベントが進行中です:sparkles: 頑張りましょう！"
         
@@ -154,14 +156,14 @@ async def daily_message_maker(remind_dic: dict):
     if eventcount[1] == 0:
         eventend = ""
     elif eventcount[1] == 1:
-        eventend = f"\n- 終了したイベントがあります！ 報酬の受け取りを忘れずに！:eyes:"
+        eventend = "\n- 終了したイベントがあります！ 報酬の受け取りを忘れずに！:eyes:"
     else:
         eventend = f"\n- {eventcount[1]}個のイベントが終了しています。報酬の受け取りを忘れずに！:eyes:"
 
     if eventcount[2] == 0:
         eventfuture = ""
     elif eventcount[2] == 1:
-        eventfuture = f"\n- 開催予定のイベントがあります！ 楽しみですね！:star2:"
+        eventfuture = "\n- 開催予定のイベントがあります！ 楽しみですね！:star2:"
     else:
         eventfuture = f"\n- {eventcount[2]}個のイベントがこの先やってきます！準備は出来ていますか？"
 
@@ -217,7 +219,7 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
             soc_stages = []
             
             for stage in dailyStage["stage"]:
-                if today in stage["available"] or dailyStage["allAvailable"] == True:
+                if today in stage["available"] or dailyStage["allAvailable"] is True:
                     stageid = stage["id"]
                     type = stage["type"]
                     stagename = stage["name"]
@@ -227,7 +229,6 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
                     elif type == "SoC探索":
                         soc_stages.append(f"**{stageid}**:{stagename}")
         
-        now = datetime.datetime.now(tz=JSTTime.tz_JST)
         description = value["description"]
         
         if value["type"] == "regular":
@@ -274,7 +275,7 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
 async def remind(mode = "morning"):
     events = evjson.eventget()
     maintenance = await maintenances.maintenance_list()
-    channel = client.get_channel(config.remind) if test == False else client.get_channel(config.remind_TEST)
+    channel = client.get_channel(config.remind) if test is False else client.get_channel(config.remind_TEST)
     embeds = []
     files = []
 
@@ -297,7 +298,7 @@ async def remind(mode = "morning"):
             thread = channel.get_thread(threadid)
             
             if not thread:
-                logger.warn("リマインドスレッドが見つかりません。作成します")
+                logger.warning("リマインドスレッドが見つかりません。作成します")
                 thread = await create_thread(channel, message)
             
                 remind_dic["remindMessage"]["thread_id"] = thread.id
@@ -477,7 +478,7 @@ async def remind(mode = "morning"):
                         link = events[i]["link"]
                         eventpic = events[i]["pic"]
                     except Exception as e:
-                        logger.warn(f"[morning:main]: {e}")
+                        logger.error(f"[morning:main]: {e}")
 
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n- 新規メインストーリー攻略情報: [有志Wiki]({link})\n{eventTime}",
@@ -494,7 +495,7 @@ async def remind(mode = "morning"):
                         news = events[i]["news"]
                         eventpic = events[i]["pic"]
                     except Exception as e:
-                        logger.warn(f"[morning:main]: {e}")
+                        logger.error(f"[morning:main]: {e}")
                         
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n{eventTime}",
@@ -511,7 +512,7 @@ async def remind(mode = "morning"):
                         link = events[i]["link"]
                         eventpic = events[i]["pic"]
                     except Exception as e:
-                        logger.warn(f"[morning:main]: {e}")
+                        logger.error(f"[morning:main]: {e}")
                         
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})",
@@ -542,7 +543,7 @@ async def remind(mode = "morning"):
                         link = events[i]["link"]
                         eventpic = events[i]["pic"]
                     except Exception as e:
-                        logger.warn(f"[morning:main]: {e}")
+                        logger.error(f"[morning:main]: {e}")
                     
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}",

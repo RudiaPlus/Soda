@@ -1,12 +1,13 @@
-import discord
+import asyncio
+import datetime
 import json
 import os
-import datetime
-from discord.ext import tasks
-from extentions import JSTTime, log, config
-from extentions.aclient import client
-import asyncio
 from typing import List
+
+import discord
+
+from extentions import config, log
+from extentions.aclient import client
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
@@ -49,7 +50,7 @@ class RequestConfirm(discord.ui.View):
                     description=f"[あなたのリクエスト]({self.original_message.jump_url})に{interaction.user.mention}さんが応じてくれるようです！\n戦友に追加していない場合サポートを借りれませんので、戦友になっていない場合はこれを機に戦友になるのは如何でしょうか？\n- ドクターネーム：{doctor}",
                     url=self.original_message.jump_url)
                 user_embed.set_footer(
-                    text=f"作戦を無事に終わらせたら、リンク先から「リクエスト終了」ボタンを押してリクエストの終了をお願いします！")
+                    text="作戦を無事に終わらせたら、リンク先から「リクエスト終了」ボタンを押してリクエストの終了をお願いします！")
                 user_embed.set_author(
                     name=interaction.user.display_name, icon_url=interaction.user.display_avatar)
 
@@ -62,7 +63,7 @@ class RequestConfirm(discord.ui.View):
                 if thread_create_message.id != self.original_message.id and thread_create_message.author.id != config.me:
                     await thread_create_message.delete()
                 else:
-                    logger.warn("スレッド作成のメッセージが送信されていませんので、削除しませんでした。")
+                    logger.warning("スレッド作成のメッセージが送信されていませんので、削除しませんでした。")
 
                 requests = await request_load()
                 requests[self.request_index]["respondUserID"] = interaction.user.id
@@ -147,7 +148,7 @@ class RequestComplete(discord.ui.View):
                     respond_embed.set_footer(text="これからも「あしたはこぶね」を宜しくお願い致します！")
                     await respond_user.send(embed=respond_embed)
 
-        if interaction.user.id == request_user.id or interaction.user.guild_permissions.manage_messages == True:
+        if interaction.user.id == request_user.id or interaction.user.guild_permissions.manage_messages is True:
             embed = discord.Embed(title="リクエストを終了しました！",
                                   description="この投稿は5秒後に削除されます！")
             embed.set_author(name=interaction.user.display_name,
@@ -168,7 +169,7 @@ class RequestComplete(discord.ui.View):
 async def request_write(dic):
     with open(os.path.join(dir, request_json), "w", encoding="UTF-8") as f:
         json.dump(dic, f, indent=2, ensure_ascii=False)
-        logger.info(f"requests.jsonに新しく書き込みを行いました")
+        logger.info("requests.jsonに新しく書き込みを行いました")
 
 
 async def request_load():
@@ -192,7 +193,7 @@ async def doctors_load():
 async def doctors_write(dic):
     with open(os.path.join(dir, doctors_json), "w", encoding="UTF-8") as f:
         json.dump(dic, f, indent=2, ensure_ascii=False)
-        logger.info(f"doctors.jsonに新しく書き込みを行いました")
+        logger.info("doctors.jsonに新しく書き込みを行いました")
 
 
 async def doctor_check(user: discord.User):
@@ -202,7 +203,7 @@ async def doctor_check(user: discord.User):
         if doctors[index]["id"] == user.id:
             include = True
             name_full = doctors[index]["full"]
-    if include == False:
+    if include is False:
         name_full = None
     return (name_full)
 
@@ -216,7 +217,7 @@ async def doctor_delete(user):
             del doctors[index]
             await doctors_write(doctors)
             return ("success")
-    if include == False:
+    if include is False:
         return
 
 
@@ -232,7 +233,7 @@ async def doctor_add(user, name, tag):
                 "tag": tag,
                 "full": f"Dr. {name}#{tag}"
             }
-    if include == False:
+    if include is False:
         doctors.append({
             "id": user.id,
             "name": name,
@@ -244,18 +245,18 @@ async def doctor_add(user, name, tag):
 
 
 async def send_request(user, operator, skill = None, skill_level = None, module: str = None, module_rank: str = None, lv: int = 0, rarity = None, remarks = None, doctorname = None):
-    if module == None:
+    if module is None:
         module_name = ""
         module_rank = ""
     else:
         module_name = f"- ***{module}***/{module_rank}\n"
         
-    if remarks == None or remarks =="無し":
+    if remarks is None or remarks =="無し":
         remarks_name = ""
     else:
         remarks_name = f"- 備考: {remarks}\n"
         
-    if skill == None:
+    if skill is None:
         skill_name = ""
         skill_level = ""
 
@@ -266,7 +267,7 @@ async def send_request(user, operator, skill = None, skill_level = None, module:
     if rarity == 2:
         lv_name = "" if lv == 0 else f"- **昇進1**/レベル**{lv}以上**\n"
         
-    if doctorname == None:
+    if doctorname is None:
         doctorname_display = "ドクターネーム：**未設定**\n"
     else:
         doctorname_display = f"ドクターネーム：**{doctorname}**\n" 
@@ -363,7 +364,7 @@ class OperatorSkillButton(discord.ui.View):
     async def cancel(self, interaction: discord.Interaction,
                      button: discord.ui.Button):
         embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
-                              description=f"リクエストをキャンセルしました。",
+                              description="リクエストをキャンセルしました。",
                               color=0xf45d5d)
         await interaction.response.edit_message(embed=embed, view=None)
 
@@ -377,10 +378,7 @@ class OperatorLevelButton(discord.ui.View):
         self.remarks = remarks if remarks else "無し"
         self.doctorname = doctorname
         super().__init__(timeout=300)
-        self.modules = {
-            k: v
-            for k, v in operators["modules"].items() if v is not None
-        }
+        self.modules = {k: v for k, v in operators["modules"].items() if v is not None} if "modules" in operators else {}
         self.module_name = ""
         for n in self.modules:
             self.module_name += f"- モジュール{n}: {self.modules[n]}\n"
@@ -451,7 +449,7 @@ class OperatorLevelButton(discord.ui.View):
     async def cancel(self, interaction: discord.Interaction,
                      button: discord.ui.Button):
         embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
-                              description=f"リクエストをキャンセルしました。",
+                              description="リクエストをキャンセルしました。",
                               color=0xf45d5d)
         await interaction.response.edit_message(embed=embed, view=None)
 
@@ -512,7 +510,7 @@ class OperatorModuleButton(discord.ui.View):
     async def cancel(self, interaction: discord.Interaction,
                      button: discord.ui.Button):
         embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
-                              description=f"リクエストをキャンセルしました。",
+                              description="リクエストをキャンセルしました。",
                               color=0xf45d5d)
         await interaction.response.edit_message(embed=embed, view=None)
 
@@ -599,7 +597,7 @@ class OperatorModuleLevelButton(discord.ui.View):
     async def cancel(self, interaction: discord.Interaction,
                      button: discord.ui.Button):
         embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[self.operator]}{self.operator}」のリクエスト",
-                              description=f"リクエストをキャンセルしました。",
+                              description="リクエストをキャンセルしました。",
                               color=0xf45d5d)
         await interaction.response.edit_message(embed=embed, view=None)
 

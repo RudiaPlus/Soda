@@ -1,12 +1,13 @@
-import discord
-import json
-import random
 import os
-from unicodedata import normalize
-from re import match
-from extentions import JSTTime, log, config, recruit, supportrequest
-from extentions.aclient import client
+import random
 import traceback
+from re import match
+from unicodedata import normalize
+
+import discord
+
+from extentions import config, log, recruit, supportrequest
+from extentions.aclient import client
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
@@ -71,9 +72,9 @@ class AddInformationModal(discord.ui.Modal):
             self.add_item(self.number_input)
         else:
             self.before_doctorname = None
-            self.name_input = discord.ui.TextInput(label = f"名前(IDの前半, 「Dr. 」を含まない)の追加 例「Rudia」", custom_id = "name_input")
+            self.name_input = discord.ui.TextInput(label = "名前(IDの前半, 「Dr. 」を含まない)の追加 例「Rudia」", custom_id = "name_input")
             self.add_item(self.name_input)
-            self.number_input = discord.ui.TextInput(label = f"番号(IDの後半, 「#」を含まない)の追加 例「2726」", custom_id = "number_input")
+            self.number_input = discord.ui.TextInput(label = "番号(IDの後半, 「#」を含まない)の追加 例「2726」", custom_id = "number_input")
             self.add_item(self.number_input)
     
     async def on_submit(self, interaction: discord.Interaction):
@@ -89,7 +90,7 @@ class AddInformationModal(discord.ui.Modal):
             await interaction.followup.send(ephemeral = True, embed=embed)
             return
 
-        if tag.isdecimal() == False or match(r"[0-9]{1,6}$", num_tag) is None:
+        if tag.isdecimal() is False or match(r"[0-9]{1,6}$", num_tag) is None:
             embed = discord.Embed(title="ドクター情報登録 - エラー",
                                     description="番号部分には数字のみを入力してください！\nなにかの間違いで無かったら、スタッフまでお問い合わせください",
                                     color=discord.Color.red())
@@ -112,7 +113,7 @@ class AddInformationModal(discord.ui.Modal):
         traceback.print_exception(type(error), error, error.__traceback__)
         
 class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
-    name_input = discord.ui.TextInput(label = f"検索するオペレーター名")
+    name_input = discord.ui.TextInput(label = "検索するオペレーター名")
     
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
@@ -214,8 +215,8 @@ class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
         operators = await supportrequest.operators_load()
         
         name = self.name_input.value
-        if self.level_input.value and self.level_input.value.isdecimal() == False:
-            embed = discord.Embed(title = "サポートリクエスト - エラー", description=f"レベル条件には数字のみを入力してください。", color = discord.Color.red())
+        if self.level_input.value and self.level_input.value.isdecimal() is False:
+            embed = discord.Embed(title = "サポートリクエスト - エラー", description="レベル条件には数字のみを入力してください。", color = discord.Color.red())
             await interaction.followup.send(embed = embed)
             return
         
@@ -259,7 +260,7 @@ class ToolButtons(discord.ui.View):
         selected_tags = []
         view = recruit.TagSelectView(selected_tags=selected_tags, all = True)
         
-        embed = discord.Embed(title = "公開求人シミュレーター", description = f"ドロップダウンメニューからタグを一つずつ指定してください")
+        embed = discord.Embed(title = "公開求人シミュレーター", description = "ドロップダウンメニューからタグを一つずつ指定してください")
         logger.info(f"{interaction.user.name}がrecruitbuttonを使用しました")
         await interaction.followup.send(embed = embed, view = view, ephemeral=True)
         
@@ -272,7 +273,7 @@ class ToolButtons(discord.ui.View):
     async def addinformationbutton(self, interaction: discord.Interaction, button: discord.ui.Button):
         doctorname = await supportrequest.doctor_check(user = interaction.user)
         if not doctorname:
-            modal = AddInformationModal(title = f"ドクター情報の新規登録", doctorname=None)
+            modal = AddInformationModal(title = "ドクター情報の新規登録", doctorname=None)
             await interaction.response.send_modal(modal)
         else:
             modal = AddInformationModal(title = f"ドクター情報({doctorname})の編集", doctorname = doctorname)
