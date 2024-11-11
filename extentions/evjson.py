@@ -4,10 +4,34 @@ import os
 import time
 from math import floor
 
+import requests
+import arkprts
+from bs4 import BeautifulSoup
+
 from extentions import JSTTime, log
 
 logger = log.setup_logger()
 timeDay = JSTTime.timetoJST
+
+async def gachaget():
+    network=arkprts.NetworkSession("jp")
+    announce_dict = await network.request("an")
+    await network.close()
+    gacha_dict = {}
+    for announce in announce_dict["announceList"]:
+        if "スカウト" in announce["title"] or "セレクト" in announce["title"]:
+            announce_response = ""
+            try:
+                announce_response = requests.get(announce["webUrl"])
+                gacha_soup = BeautifulSoup(announce_response.content, "html.parser")
+                gacha_image = gacha_soup.find(class_="banner-image")
+                gacha_image_url = gacha_image["src"]
+                gacha_dict.update({announce["title"]: gacha_image_url})
+                        
+            except Exception as e:
+                logger.error(e)
+    return gacha_dict
+                    
 
 def eventget():
     dir = os.path.abspath(__file__ + "/../")
@@ -152,7 +176,7 @@ def eventget():
                 events.append({"name": name, "dif": "present", "type": type, "news": news, "link": link, "pic": pic, "month": month, "content": content, "updateTime": f"闘争の潮流入れ替え: {updateEndTime}",
                                "nextmonth": nextmonth, "nextcontent": nextcontent, "nextUpdateTime": f"開始: {nextUpdateStartTime}"}) 
             
-            elif stageAdd == "True":
+            elif stageAdd is True:
                 try:
                     additionalStage = event_dic[event_now_list[i]]["additionalStage"]
                     remark = None
@@ -178,12 +202,12 @@ def eventget():
                         remark = "**EXステージが追加されました！Sステージが今後登場予定です**\n"
                 
                 elif len(additionalStage) == 1:
-                    stageAdd = "False"
+                    stageAdd = False
                     remark = "**EXステージが追加されました！**\n"
                     nextStageName = ""
                     nextAddTime = ""
                 elif len(additionalStage) == 2:
-                    stageAdd = "False"
+                    stageAdd = False
                     remark = "**EXステージ、Sステージが追加されました！**\n"
                     nextStageName = ""
                     nextAddTime = ""

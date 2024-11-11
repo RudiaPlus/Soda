@@ -201,21 +201,30 @@ async def create_modmail(user: discord.User):
     else:
         return("duplicated")
         
-async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
+async def save_modmail(channel: discord.TextChannel, delete_user: discord.User = None, vc_log: bool = False, save_channel = client.get_channel(config.modmail_save_channel), vc_create_user = None):
     
-    idx = channel.name.find("-") + 1
-    userID = int(channel.name[idx:])
-    user = await client.fetch_user(userID)
+    if vc_log is False:
+        idx = channel.name.find("-") + 1
+        userID = int(channel.name[idx:])
+        user = await client.fetch_user(userID)
+    else:
+        user = vc_create_user
     channel_name = channel.name
     channel_id = channel.id
     
     users = {}
-    html_header = f"<!DOCTYPE html>\n<html lang='ja'>\n<head>\n<meta charset='utf-8'>\n<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n<title>Modmail-{channel_id}</title>\n<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>\n</head>\n<body class='bg-gray-700 text-gray-300'>\n<h1 class='text-2xl font-bold text-center my-4'>\n{channel_name} (チャンネルID: {channel_id})\n</h1>\n<div class='container mx-auto px-4'>\n"
+    html_header = f"<!DOCTYPE html>\n<html lang='ja'>\n<head>\n<meta charset='utf-8'>\n<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n<title>{channel_id}</title>\n<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>\n</head>\n<body class='bg-gray-700 text-gray-300'>\n<h1 class='text-2xl font-bold text-center my-4'>\n{channel_name} (チャンネルID: {channel_id})\n</h1>\n<div class='container mx-auto px-4'>\n"
     html_body = ""
     html_hooter = "</div>\n</body>\n</html>\n"
     
+    log_count = 0
+    
     async for message in channel.history(oldest_first = True):
-        author = f"{str(message.author)} (スタッフ)"
+        if vc_log is True and message.author == client.user:
+            continue
+        log_count += 1
+        
+        author = f"{str(message.author)} (スタッフ)" if vc_log is False else str(message.author)
         author_avatar = message.author.display_avatar.url
         content_unescape = message.embeds[0].description if message.embeds else message.content
         content_unescape = "" if content_unescape is None else content_unescape
@@ -259,13 +268,16 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
         html_tag = f"<div class='flex items-start my-2'>\n<img src='{author_avatar}' alt='{author}' class='w-12 h-12 rounded-full mr-2'>\n<div class='flex flex-col'>\n<p class='text-lg font-semibold'>{author}</p>\n<p class='text-sm text-gray-400'>{timestamp.strftime(date_format)}</p>\n<p class='text-base'>{content_br}</p>\n{image}</div>\n</div>\n"
         
         html_body += html_tag
+        
+    if log_count == 0:
+        return
     
     html = html_header + html_body + html_hooter
         
     with open(os.path.join(dir, modmail_html_path), mode = "w", encoding="utf-8") as f:
         f.write(html)
     
-    messages_json = discord.File(fp = os.path.join(dir, modmail_html_path), filename = f"Modmail-{channel_id}.html")
+    messages_json = discord.File(fp = os.path.join(dir, modmail_html_path), filename = f"Modmail-{channel_id}.html") if vc_log is False else discord.File(fp = os.path.join(dir, modmail_html_path), filename = f"VCLog-{channel_id}.html")
     
     speakers = ""
     
@@ -277,9 +289,11 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User):
     embed.add_field(name = "ユーザー", value = f"{user.mention} - {str(user)}")
     embed.add_field(name = "終了日時", value = JSTTime.timeJST("full"))
     embed.add_field(name = "発言者", value = speakers, inline = False)
-    embed.add_field(name = "削除者", value = delete_user.mention)
+    if vc_log is False:
+        embed.add_field(name = "削除者", value = delete_user.mention)
+    else:
+        embed.add_field(name = "チャンネル名", value = channel_name)
     
-    save_channel = client.get_channel(config.modmail_save_channel) if config.test is False else client.get_channel(1163715007503151144)
     await save_channel.send(embed = embed, file = messages_json)
         
     

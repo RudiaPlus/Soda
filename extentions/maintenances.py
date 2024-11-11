@@ -62,7 +62,14 @@ async def maintenance_end(maint_name: str, entry: int):
     await channel.send("<@&1090976873774854177>", embed = embed)
     del maintenances[entry]
     await write_json(maintenances)
-    await data_update.update_data()
+    start_time = datetime.now()
+    result = await data_update.update_data()
+    if result is True:
+        result_time = datetime.now()
+        result_delta = result_time - start_time
+        logger.info(f"データ更新に成功しました！\n経過した時間: {result_delta.total_seconds()}秒")
+    else:
+        await logger.warn("更新に失敗しました......")
     
 async def maintenance_ruined(entry):
     maintenances = await read_json()

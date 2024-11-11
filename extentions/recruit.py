@@ -8,7 +8,7 @@ import discord
 import numpy
 from PIL import Image
 
-from extentions import config, log
+from extentions import config, log, supportrequest
 from extentions.aclient import client
 from extentions.aOCR import ocr
 
@@ -50,10 +50,6 @@ for index in operators:
     if operators[index]["name"] in recruitList:
         dict_add = {"name": operators[index]["name"], "rarity": operators[index]["rarity"], "tags": operators[index]["tags"]}
         operators_list.append(dict_add)
-        
-#load operator_emojis
-with open(os.path.join(dir, "jsons\\operator_emojis.json"), "r", encoding="utf-8") as f:
-    operator_emojis = json.load(f)
 
 async def find_common_tags(reference_tags, operators):
     
@@ -119,6 +115,7 @@ async def output_results(selected_tags):
         
 async def result_embed_maker(result_list: list, all: bool) -> list:
     embeds = []
+    operator_emojis = supportrequest.operator_emoji_load()
     
     if all is True:
         embed_ope = discord.Embed(title = "獲得できる全てのオペレーター", color = discord.Color.blue())

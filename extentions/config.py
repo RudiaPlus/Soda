@@ -75,6 +75,8 @@ newdaytime = datetime.time(hour=0, minute=00, tzinfo=JST)
 administrator_role = 1019295385967149057 #Administrator(赤)
 Moderator_role = 1093773233410547735 #Moderator(橙)
 cathedral_NG_role = 1183346673469100043 #聖堂NG
+server_app_role = 1019206899209605190 #愉快な仲間たち（bot）
+vc_allowed_role = 1155320615922843748 #情報郷友会(VC)
 user_bot_role = 1207273509462736966 #私はbotです。追放してください。
 spam_role = 1207273509462736966 #私はbotです
 
@@ -102,6 +104,12 @@ modmail_save_channel = 1108480334024167514 #議事録
 screenshot_recruit_channel = 1284115621465948171 #公開求人ツール（スクショ認識）
 screenshot_recruit_channel_url = f"https://discord.com/channels/{main_server}/{screenshot_recruit_channel}"
 
+voicecreate_channel = 1305508824781815899 #個別VC作成方法
+voicecreate_vc = 1305536169924231229 #>>VC作成<<
+
+vccreate_log_channel = 1305570776690200636 #個別VCチャットログ
+
 
 #categories
 feedback_category = 1108189699715125268
+vccreate_category = 1305500357958307860

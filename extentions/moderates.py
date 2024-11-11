@@ -20,7 +20,7 @@ async def punishment_delete(member, id):
             member_punishments = punishments[str(member.id)]["punishments"]
             for index in range(len(member_punishments)):
                 if member_punishments[index]["id"] == id:
-                    value = "True"
+                    value = True
                     if "timeout" in member_punishments[index].keys():
                         if member_punishments[index]["timeout"]:
                             value = "Timeout"
@@ -29,7 +29,7 @@ async def punishment_delete(member, id):
                                 ]["punishments"] = member_punishments
                     await punishment_write(punishments)
                     return value
-            return "False"
+            return True
 
     except Exception as e:
         logger.error(f"[punishment_delete]にてエラー：{e}")
@@ -158,7 +158,29 @@ class WarningDetailModal(discord.ui.Modal):
             interaction.response.send_message("タイムアウトには有効な数字のみを入力してください！")
         reason = f"{self.message_url}: {self.reason.value}" if self.reason.value else self.message_url
         await warning_and_timeout(interaction, self.member, None, reason, int(self.timeout_minutes.value))
-
+        
+@client.tree.command(name="slowmode", description="全てのテキストチャンネルで低速モードを設定します。")
+@discord.app_commands.describe(seconds = "設定する秒数。0で解除")
+@discord.app_commands.default_permissions(manage_messages=True)
+@discord.app_commands.guild_only()
+@discord.app_commands.checks.has_permissions(manage_messages=True)
+async def slowmode(interaction: discord.Interaction, seconds: str):
+    await interaction.response.defer()
+    if seconds.isdecimal() is False:
+        await interaction.followup.send("秒数が無効です！数字を入力してください！")
+        return
+    seconds = int(seconds)
+    guild_channels = interaction.guild.text_channels
+    try:
+        for channel in guild_channels:
+            await channel.edit(slowmode_delay=seconds)
+        embed = discord.Embed(color = discord.Color.green(), title = "低速モードの設定", description=f"サーバー全体の低速モードを**{seconds}秒**に設定しました。\n設定を解除するときは、秒数を0に設定してください。")
+        await interaction.followup.send(embed = embed)
+    except Exception as e:
+        logger.error(e)
+        embed = discord.Embed(color = discord.Color.red(), title = "低速モードの設定(エラー)", description=f"サーバー全体の低速モードを設定できませんでした\n出現した例外: {e}")
+        await interaction.followup.send(embed = embed)
+    
 @client.tree.context_menu(name = "メッセージから警告")
 @discord.app_commands.default_permissions(kick_members=True)
 @discord.app_commands.guild_only()
@@ -662,7 +684,7 @@ class ModerateCommand(discord.app_commands.Group):
             id = int(id)
 
             result = await punishment_delete(member=member_got, id=id)
-            if result != "False":
+            if result is not False:
                 if result == "Timeout" and member_got.is_timed_out() is True:
                     await member_got.timeout(None, reason = "処罰の訂正")
                 embed = discord.Embed(title="処罰履歴の削除",

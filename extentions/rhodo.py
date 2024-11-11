@@ -21,6 +21,7 @@ from extentions import (
     maintenances,
     moderates,
     modmails,
+    multiplayertool,  # noqa: F401
     recruit,
     reminder,
     responses,
@@ -478,7 +479,41 @@ def run_discord_bot():
                             embed.set_author(name = "チャット読み上げ")
                             message = await send_channel.send(embed = embed, view = VoiceSpeechButtons(join_channel = join_channel, target_chat_id=target_chat_id))
                             asyncio.sleep(60)
-                            await message.delete()         
+                            await message.delete()
+                            
+        #vccreate
+        vccreate_voice = client.get_channel(config.voicecreate_vc)
+        
+        if after.channel == vccreate_voice:
+            vccreate_category = discord.utils.get(after.channel.guild.categories, name = "────VC/個別────")
+            gd = after.channel.guild
+            administrator = gd.get_role(config.administrator_role)
+            moderator = gd.get_role(config.Moderator_role)
+            vc_allowed = gd.get_role(config.vc_allowed_role)
+            
+            overwrite = {gd.default_role: discord.PermissionOverwrite(view_channel = False, connect = False),
+                         moderator: discord.PermissionOverwrite(view_channel = True, connect = True),
+                         administrator: discord.PermissionOverwrite(view_channel = True, connect = True),
+                         vc_allowed: discord.PermissionOverwrite(view_channel = True, connect = True),
+                         member: discord.PermissionOverwrite(manage_channels = True)}
+            created_vc = await vccreate_category.create_voice_channel(name = "臨時VC - 名前を変更できます", overwrites=overwrite)
+            await member.move_to(created_vc)
+            vccreate_channel = client.get_channel(config.voicecreate_channel)
+            embed = discord.Embed(title = "ボイスチャット作成成功", description = f"ボイスチャットの作成に成功しました！\n名前の変更、最大人数の設定などは{vccreate_channel.jump_url}をご覧ください！\n**使用されていない「しゃべるくん」以外の読み上げbotの使用はご遠慮ください。**")
+            embed.set_footer(text = "VCルールとマナーを厳守してください。このVC内容はログが取られています。")
+            await created_vc.send(content = member.mention, embed = embed)
+            
+        #autodelete_created_vc
+        if before.channel:
+            vccreate_category = discord.utils.get(before.channel.guild.categories, name = "────VC/個別────")
+            if len(before.channel.members) < 1 and before.channel.category == vccreate_category and before.channel != vccreate_voice:
+                overwrites = before.channel.overwrites
+                for overwrite in overwrites:
+                    if type(overwrite) is discord.Member:
+                        vc_create_user = overwrite
+                        break
+                await modmails.save_modmail(channel=before.channel, vc_log=True, save_channel=client.get_channel(config.vccreate_log_channel), vc_create_user=vc_create_user)
+                await before.channel.delete()
 
     @client.tree.command(name="help",
                          description="現在実装されているコマンドの使い方を簡単に説明します！")

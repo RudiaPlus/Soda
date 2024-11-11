@@ -4,8 +4,8 @@ import os
 import time
 
 import discord
-
-from extentions import JSTTime, config, evjson, log, maintenances
+import requests
+from extentions import JSTTime, config, evjson, log, maintenances, supportrequest
 from extentions.aclient import client
 
 dir = os.path.abspath(__file__ + "/../")
@@ -270,8 +270,6 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
             await message.unpin()
     await last_remind_message.pin()
 
-                
-
 async def remind(mode = "morning"):
     events = evjson.eventget()
     maintenance = await maintenances.maintenance_list()
@@ -361,7 +359,7 @@ async def remind(mode = "morning"):
                     embeds.append(embed)
 
                 elif events[i]["type"] == "SIDESTORY":
-                    if events[i]["stageAdd"] == "True":
+                    if events[i]["stageAdd"] is True:
                         try:
                             title = events[i]["name"]
                             nextStageName = events[i]["nextStageName"]
@@ -437,6 +435,24 @@ async def remind(mode = "morning"):
                                             color=0xFFBA00,
                                             url=link)
                     embed.set_author(name="導灯の試練")
+                    embed.set_image(url=eventpic)
+                    embeds.append(embed)
+                    
+                elif events[i]["type"] == "MULTIPLAY":
+                    try:
+                        title = events[i]["name"]
+                        eventTime =  events[i]["time"]
+                        news = events[i]["news"]
+                        link = events[i]["link"]
+                        eventpic = events[i]["pic"]
+                    except Exception:
+                        pass
+
+                    embed = discord.Embed(title=title,
+                                            description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}",
+                                            color=0xCAC531,
+                                            url=link)
+                    embed.set_author(name="マルチイベント")
                     embed.set_image(url=eventpic)
                     embeds.append(embed)
                     
@@ -575,7 +591,51 @@ async def remind(mode = "morning"):
                 embeds.append(embed)
         
         refreshTime = "<t:{0}:F>( <t:{0}:R> )".format(round(time.time()))
+        
+        #スカウト情報
+        png_name = "images/banner_scout.png"
+        file = discord.File(os.path.join(dir, png_name), filename="banner_scout.png")
+        files.append(file)
+        embed = discord.Embed(color = discord.Color.dark_grey())
+        embed.set_image(url = "attachment://banner_scout.png")
+        embeds.append(embed)
+        
+        gacha_dict = await evjson.gachaget()
+        image_dir = os.path.join(dir, "images")
+        operators = await supportrequest.operators_load()
+        operator_list = {}
+        for op in operators:
+            operator_list.update({operators[op]["name"]: op})
             
+        k = 0
+        
+        for gacha in gacha_dict:
+            
+            k = k + 1
+            image_name = f"scout_image_{k}.png"
+            r = requests.get(gacha_dict[gacha])
+            gacha_image = r.content
+            with open(os.path.join(image_dir, image_name), "wb") as f:
+                f.write(gacha_image)
+
+            if "中堅" in gacha:
+                author_name = "中堅スカウト"
+                color = discord.Color.blue()
+            elif "常設" in gacha:
+                author_name = "常設スカウト"
+                color = discord.Color.yellow()
+            else:
+                author_name = "イベントスカウト"
+                color = discord.Color.orange()
+                
+            embed = discord.Embed(color = color)
+            embed.set_author(name = author_name)
+                
+            file = discord.File(os.path.join(image_dir, image_name), filename = image_name)
+            files.append(file)
+            embed.set_image(url = f"attachment://{image_name}")      
+            embeds.append(embed)
+        
         if embeds:
             if files:
                 await message.edit(content = f"最終更新: {refreshTime}", attachments = files, embeds = embeds)

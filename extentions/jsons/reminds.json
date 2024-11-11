@@ -2,7 +2,7 @@
   "remindMessage": {
     "id": 1156979471182729308,
     "thread_id": 1156979471182729308,
-    "last_remind_id": 1303471411259768905
+    "last_remind_id": 1305283357382414359
   },
   "dailyStageRemind": {
     "name": "本日解放の資源ステージ",
@@ -133,12 +133,20 @@
     "startTime": 1721070000,
     "endTime": 1731697199
   },
-  "anniRemind_7": {
-    "name": "殲滅依頼「ニューホテル通り」",
+  "anniRemind_8": {
+    "name": "殲滅依頼「『離心率』ラボ」",
     "description": null,
     "type": "anni",
-    "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%B7%E3%82%A8%E3%82%B9%E3%82%BF%E3%80%8C%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%9B%E3%83%86%E3%83%AB%E9%80%9A%E3%82%8A%E3%80%8D",
-    "startTime": 1725822000,
-    "endTime": 1730660399
+    "link": "https://arknights.wikiru.jp/index.php?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%AF%E3%83%AB%E3%83%93%E3%82%A2%E3%80%8E%E3%80%8C%E9%9B%A2%E5%BF%83%E7%8E%87%E3%80%8D%E3%83%A9%E3%83%9C%E3%80%8F",
+    "startTime": 1730660400,
+    "endTime": 1736708399
+  },
+  "sssRemind_5": {
+    "name": "音浪保全駐在",
+    "description": null,
+    "type": "sss",
+    "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#i1e9c48a",
+    "startTime": 1731697200,
+    "endTime": 1742065199
   }
 }

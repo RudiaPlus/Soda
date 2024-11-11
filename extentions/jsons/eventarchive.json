@@ -2,7 +2,7 @@
     "act19side": {
         "id": "act19side",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "理想都市-エンドレスカーニバル-",
         "link": "https://arknights.wikiru.jp/index.php?%A5%A4%A5%D9%A5%F3%A5%C877_%CD%FD%C1%DB%C5%D4%BB%D4-%A5%A8%A5%F3%A5%C9%A5%EC%A5%B9%A5%AB%A1%BC%A5%CB%A5%D0%A5%EB-",
         "startTime": 1673575200,
@@ -110,7 +110,7 @@
     "act11mini": {
         "id": "act11mini",
         "type": "MINISTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "未尽篇章",
         "link": "https://00m.in/XKNt3",
         "startTime": 1676617200,
@@ -120,7 +120,7 @@
     "act12side": {
         "id": "act12sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "ドッソレス・ホリデー・復刻",
         "link": "https://arknights.wikiru.jp/index.php?%A5%A4%A5%D9%A5%F3%A5%C8xx_%A5%C9%A5%C3%A5%BD%A5%EC%A5%B9%A5%DB%A5%EA%A5%C7%A1%BC%28%C9%FC%B9%EF%29",
         "startTime": 1677567600,
@@ -130,7 +130,7 @@
     "act20side": {
         "id": "act20side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "翠玉の夢",
         "link": "https://00m.in/HmmmR",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/c4b6d5f46a142ab6650796eaed375a37.png",
@@ -147,7 +147,7 @@
     "act12mini": {
       "id": "act12mini",
       "type": "MINISTORY",
-      "stageAdd": "False",
+      "stageAdd": false,
       "name": "夕景に影ありて",
       "link": "https://00m.in/JrJ6G",
       "pic": "https://webusstatic.yo-star.com/uy0news/aj/8fa86f454c3a05fc8e93e2bb148b0e5f.png",
@@ -158,7 +158,7 @@
     "act13mini": {
         "id": "act13mini",
         "type": "MINISTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "また会えたね",
         "link": "https://00m.in/srkqe",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/4550ad5c20d1733e91efa5afd40c876a.png",
@@ -169,7 +169,7 @@
     "act13sre": {
         "id": "act13sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "ニアーライト(復刻)",
         "link": "https://00m.in/Ec9vI",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/e2aea5229a18e83b6261256a765c101a.png",
@@ -180,7 +180,7 @@
     "main11": {
         "id": "main11",
         "type": "MAIN",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "11章「淬火煙塵」実装",
         "link": "https://00m.in/ryM4F",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/e1e487d948dc33982646e3e0c87d9bd4.png",
@@ -190,7 +190,7 @@
     "act21side": {
         "id": "act21side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "シラクザーノ",
         "link": "https://00m.in/8xoB4",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/43c93dd20bb1b5380567af398aba1e02.png",
@@ -211,7 +211,7 @@
     "act14sre": {
         "id": "act14sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "風雪一過(復刻)",
         "link": "https://00m.in/4D2hV",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/f93f0b6dc5a4bd6ce7a7d0e1f859cd05.png",
@@ -308,7 +308,7 @@
     "act22side": {
         "id": "act22side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "この炎が照らす先",
         "link": "https://00m.in/xj1pL",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/de0bde6cd33e6459b60c0cfbeb866743.png",
@@ -325,7 +325,7 @@
     "act23side": {
         "id": "act21side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "登臨意",
         "link": "https://00m.in/8CpWJ",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/9cf3f3d5761f70e29df33c2a4eb6164a.png",
@@ -342,7 +342,7 @@
     "act15sre": {
         "id": "act15sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "将進酒(復刻)",
         "link": "https://00m.in/6n4Qf",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/26d663c7aba752280f7692237c360a28.png",
@@ -353,7 +353,7 @@
     "act14mini": {
         "id": "act14mini",
         "type": "MINISTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "春分",
         "link": "https://arknights.jp/news/347",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/52cd2f623e11ce408eae2c19f828de75.png",
@@ -364,7 +364,7 @@
     "act2bossrush": {
         "id": "act2bossrush",
         "type": "BOSS_RUSH",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "導灯の試練 #2",
         "link": "https://00m.in/0DOz7",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/b8d23ee4192fc200918b7e919a9203f5.png",
@@ -375,7 +375,7 @@
     "act24side": {
         "id": "act24side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "紅炎遣らう落葉",
         "news": "https://arknights.jp/news/352",
         "link": "https://arknights.jp/news/352",
@@ -393,7 +393,7 @@
     "act16sre": {
         "id": "act16sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "吾れ先導者たらん(復刻)",
         "news":"https://arknights.jp/news/354",
         "link": "https://00m.in/OUgcV",
@@ -491,7 +491,7 @@
     "act1sandbox": {
         "id": "act1sandbox",
         "type": "SANDBOX",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "生息演算「砂中の火」",
         "news": "https://arknights.jp/news/353",
         "link": "https://arknights.jp/news/353",
@@ -503,7 +503,7 @@
     "act1exmain": {
         "id": "act1exmain",
         "type": "SUPPORT",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "作戦支援",
         "news": "https://arknights.jp/news/353",
         "link": null,
@@ -515,7 +515,7 @@
     "act12main": {
         "id": "act12main",
         "type": "MAIN",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "12章「驚靂蕭然」実装",
         "news": "https://arknights.jp/news/362",
         "link": "https://00m.in/KDIGw",
@@ -533,7 +533,7 @@
     "act25side": {
         "id": "act25side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "孤星",
         "news": "https://arknights.jp/news/364",
         "link": "https://00m.in/m87L3",
@@ -555,7 +555,7 @@
     "act17sre": {
         "id": "act17sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "狂人号(復刻)",
         "news":"https://arknights.jp/news/369",
         "link": "https://00m.in/OUgcV",
@@ -567,7 +567,7 @@
     "act1po": {
         "id": "act1po",
         "type": "OTHER",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "尖滅試験作戦",
         "news":"https://arknights.jp/news/373",
         "link": "",
@@ -579,7 +579,7 @@
     "act26side": {
         "id": "act26side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "空想の花庭",
         "news": "https://arknights.jp/news/380",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88104_%E7%A9%BA%E6%83%B3%E3%81%AE%E8%8A%B1%E5%BA%AD",
@@ -597,7 +597,7 @@
     "act18sre": {
         "id": "act18sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "塵影に交わる残響(復刻)",
         "news":"https://arknights.jp/news/383",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88105_%E5%A1%B5%E5%BD%B1%E3%81%AB%E4%BA%A4%E3%82%8F%E3%82%8B%E6%AE%8B%E9%9F%BF%28%E5%BE%A9%E5%88%BB%29",
@@ -609,7 +609,7 @@
     "act27side": {
         "id": "act27side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "火山と雲と夢色の旅路",
         "news": "https://www.arknights.jp/news/386",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88106_%E7%81%AB%E5%B1%B1%E3%81%A8%E9%9B%B2%E3%81%A8%E5%A4%A2%E8%89%B2%E3%81%AE%E6%97%85%E8%B7%AF",
@@ -679,7 +679,7 @@
     "act19sre": {
         "id": "act18sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "理想都市-エンドレスカーニバル-(復刻)",
         "news":"https://arknights.jp/news/389",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88107_%E7%90%86%E6%83%B3%E9%83%BD%E5%B8%82-%E3%82%A8%E3%83%B3%E3%83%89%E3%83%AC%E3%82%B9%E3%82%AB%E3%83%BC%E3%83%8B%E3%83%90%E3%83%AB-%28%E5%BE%A9%E5%88%BB%29",
@@ -691,7 +691,7 @@
     "act3bossrush": {
         "id": "act3bossrush",
         "type": "BOSS_RUSH",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "導灯の試練 #3",
         "news": "https://arknights.jp/news/391",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88108_%E5%B0%8E%E7%81%AF%E3%81%AE%E8%A9%A6%E7%B7%B4%EF%BC%833",
@@ -703,7 +703,7 @@
         "act15mini": {
         "id": "act15mini",
         "type": "MINISTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "樹影にて眠る",
         "news": "https://arknights.jp/news/394",
         "link": "",
@@ -715,7 +715,7 @@
     "act20sre": {
         "id": "act20sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "翠玉の夢(復刻)",
         "news":"https://arknights.jp/news/395",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88110_%E7%BF%A0%E7%8E%89%E3%81%AE%E5%A4%A2%28%E5%BE%A9%E5%88%BB%29",
@@ -727,7 +727,7 @@
     "act28side": {
         "id": "act28side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "ダーティマネー",
         "news": "https://arknights.jp/news/398",
         "link": "https://arknights.jp/news/398",
@@ -745,7 +745,7 @@
     "act1dos": {
         "id": "act1dos",
         "type": "OTHER",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "紛争演繹(えんえき)",
         "news": "https://arknights.jp/news/402",
         "link": "https://arknights.jp/news/398",
@@ -757,7 +757,7 @@
     "act13main": {
         "id": "act13main",
         "type": "MAIN",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "13章「悪兆渦流」実装",
         "news": "https://arknights.jp/news/406",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88113_%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0%E5%85%AC%E9%96%8B",
@@ -775,7 +775,7 @@
     "act29side": {
         "id": "act29side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "ツヴィリングトゥルムの黄金",
         "news": "https://arknights.jp/news/410",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88114_%E3%83%84%E3%83%B4%E3%82%A3%E3%83%AA%E3%83%B3%E3%82%B0%E3%83%88%E3%82%A5%E3%83%AB%E3%83%A0%E3%81%AE%E9%BB%84%E9%87%91",
@@ -797,7 +797,7 @@
     "act1collabkfc": {
         "id": "act1collabkfc",
         "type": "OTHER",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "KFCコラボ",
         "news": "https://arknights.jp/news/414",
         "link": null,
@@ -810,7 +810,7 @@
     "act21sre": {
         "id": "act21sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "シラクザーノ(復刻)",
         "news":"https://arknights.jp/news/417",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88116_%E3%82%B7%E3%83%A9%E3%82%AF%E3%82%B6%E3%83%BC%E3%83%8E%28%E5%BE%A9%E5%88%BB%29",
@@ -860,7 +860,7 @@
     "act30side": {
         "id": "act30side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "銀心湖鉄道",
         "news": "https://arknights.jp/news/422",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88118_%E9%8A%80%E5%BF%83%E6%B9%96%E9%89%84%E9%81%93",
@@ -878,7 +878,7 @@
     "act16mini": {
     "id": "act16mini",
     "type": "MINISTORY",
-    "stageAdd": "False",
+    "stageAdd": false,
     "name": "ニヤニヤ谷へ",
     "news": "https://arknights.jp/news/424",
     "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88120_%E3%83%8B%E3%83%A4%E3%83%8B%E3%83%A4%E8%B0%B7%E3%81%B8",
@@ -890,7 +890,7 @@
     "act22sre": {
         "id": "act22sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "登臨意(復刻)",
         "news":"https://arknights.jp/news/426",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88121_%E7%99%BB%E8%87%A8%E6%84%8F%28%E5%BE%A9%E5%88%BB%29",
@@ -902,7 +902,7 @@
     "act31side": {
         "id": "act31side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "懐黍離",
         "news": "https://www.arknights.jp/news/428",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88122_%E6%87%90%E9%BB%8D%E9%9B%A2",
@@ -924,7 +924,7 @@
     "act4bossrush": {
         "id": "act4bossrush",
         "type": "BOSS_RUSH",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "導灯の試練 #4",
         "news": "https://arknights.jp/news/434",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88123_%E5%B0%8E%E7%81%AF%E3%81%AE%E8%A9%A6%E7%B7%B4%EF%BC%834",
@@ -936,7 +936,7 @@
     "act23sre": {
         "id": "act23sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "この炎が照らす先(復刻)",
         "news":"https://arknights.jp/news/435",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88124_%E3%81%93%E3%81%AE%E7%82%8E%E3%81%8C%E7%85%A7%E3%82%89%E3%81%99%E5%85%88%28%E5%BE%A9%E5%88%BB%29",
@@ -948,7 +948,7 @@
     "act32side": {
         "id": "act32side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "オペレーション ルーセントアローヘッド",
         "news": "https://www.arknights.jp/news/436",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88125_%E3%82%AA%E3%83%9A%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3+%E3%83%AB%E3%83%BC%E3%82%BB%E3%83%B3%E3%83%88%E3%82%A2%E3%83%AD%E3%83%BC%E3%83%98%E3%83%83%E3%83%89",
@@ -966,7 +966,7 @@
     "act1r6sre": {
         "id": "act1r6sre",
         "type": "SIDESTORY",
-        "stageAdd": "False",
+        "stageAdd": false,
         "name": "オペレーション オリジニウムダスト(復刻)",
         "news":"https://arknights.jp/news/439",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88126_%E3%82%AA%E3%83%9A%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3+%E3%82%AA%E3%83%AA%E3%82%B8%E3%83%8B%E3%82%A6%E3%83%A0%E3%83%80%E3%82%B9%E3%83%88%28%E5%BE%A9%E5%88%BB%29",
@@ -1016,7 +1016,7 @@
     "act33side": {
         "id": "act33side",
         "type": "SIDESTORY",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "バベル",
         "news": "https://www.arknights.jp/news/443",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88128_%E3%83%90%E3%83%99%E3%83%AB",
@@ -1038,7 +1038,7 @@
     "act14main": {
         "id": "act14main",
         "type": "MAIN",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "14章「慈悲光塔」実装",
         "news": "https://arknights.jp/news/445",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88129_%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0%E5%85%AC%E9%96%8B",
@@ -1052,6 +1052,18 @@
                 "startTime": 1730962800
             }
         ]
+    },
+    "act2vmulti": {
+        "id": "act2vmulti",
+        "type": "MULTIPLAY",
+        "stageAdd": false,
+        "name": "ロドス協心競技",
+        "news": "https://arknights.jp/news/448",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88130_%E3%83%AD%E3%83%89%E3%82%B9%E5%8D%94%E5%BF%83%E7%AB%B6%E6%8A%80",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/eaf636d8a2f21c43457fae9c717ed46c.png",
+        "startTime": 1731571200,
+        "endTime": 1732733999,
+        "rewardEndTime": 1732993199
     },
     "dis_rogue_3": {
         "id": "dis_rogue_3",

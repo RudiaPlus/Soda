@@ -177,6 +177,10 @@ async def request_load():
         requests = json.load(f)
     return (requests)
 
+def operator_emoji_load():
+    with open(os.path.join(dir, "jsons\\operator_emojis.json"), "r", encoding="utf-8") as f:
+        operator_emojis = json.load(f)
+    return operator_emojis
 
 async def operators_load():
     with open(os.path.join(dir, operators_json), encoding="UTF-8") as f:
@@ -316,6 +320,8 @@ async def request_complete(id):
 class OperatorSkillButton(discord.ui.View):
 
     def __init__(self, operators, skills, operator, lv, rarity, remarks = None, doctorname = None):
+        global operator_emojis
+        operator_emojis = operator_emoji_load()
         self.lv = lv
         self.rarity = rarity
         self.operators = operators
@@ -665,6 +671,8 @@ async def support_request(interaction: discord.Interaction,
     remarks = remarks if remarks else "無し"
     operators = await operators_load()
     correct = 0
+    global operator_emojis
+    operator_emojis = operator_emoji_load()
     for index in operators:
         if operators[index]["name"] == operator:
             if operators[index]["rarity"] <= 1:

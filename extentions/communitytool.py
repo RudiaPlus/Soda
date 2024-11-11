@@ -52,9 +52,11 @@ async def return_operators_in_class(operator_class: str, classes: dict):
 async def yaminabe(interaction: discord.Interaction, label, operators_in_class):
 
     selected_operator = random.choice(operators_in_class)
+
+    operator_emojis = supportrequest.operator_emoji_load()
     
     embed = discord.Embed(title = "闇鍋招集", color = discord.Color.blue())
-    embed.add_field(name = f"招集する{label}オペレーター", value = f"{recruit.operator_emojis[selected_operator]}{selected_operator}")
+    embed.add_field(name = f"招集する{label}オペレーター", value = f"{operator_emojis[selected_operator]}{selected_operator}")
     await interaction.response.edit_message(embed = embed, view = YaminabeRepeat(label = label, operators_in_class=operators_in_class))            
 
 class AddInformationModal(discord.ui.Modal):
@@ -118,6 +120,7 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
         operators = await supportrequest.operators_load()
+        operator_emojis = supportrequest.operator_emoji_load()
         name = self.name_input.value.lower()
         matched_operators = []
         for op_dict in operators.values():
@@ -139,7 +142,7 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
             embeds.append(embed)
         for operator_name in sorted_operators:
             url = f"https://arknights.wikiru.jp/?{operator_name}"
-            embed = discord.Embed(title = f"検索結果 - {recruit.operator_emojis[operator_name]}{operator_name}", description=f"{recruit.operator_emojis[operator_name]}{operator_name}の詳細・評価: [有志Wiki]({url})", url = url, color = discord.Color.blue())
+            embed = discord.Embed(title = f"検索結果 - {operator_emojis[operator_name]}{operator_name}", description=f"{operator_emojis[operator_name]}{operator_name}の詳細・評価: [有志Wiki]({url})", url = url, color = discord.Color.blue())
             embeds.append(embed)
         await interaction.followup.send(embeds = embeds, ephemeral=True)
 
@@ -153,8 +156,9 @@ class OperatorSelectButton(discord.ui.View):
             self.add_buttons(operator)
             
     def add_buttons(self, label):
+        operator_emojis = supportrequest.operator_emoji_load()
         
-        button_operator = discord.ui.Button(label=label, style=discord.ButtonStyle.primary, emoji = recruit.operator_emojis[label])
+        button_operator = discord.ui.Button(label=label, style=discord.ButtonStyle.primary, emoji = operator_emojis[label])
         
         async def button_callback(interaction: discord.Interaction):
             
@@ -185,7 +189,7 @@ class OperatorSelectButton(discord.ui.View):
                     for i in skills:
                         skill_name += f"- スキル{i}: {skills[i]}\n"
 
-                    embed = discord.Embed(title=f"サポートオペレーター「{recruit.operator_emojis[operator]}{operator}」のリクエスト",
+                    embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[operator]}{operator}」のリクエスト",
                                         description=f"スキルの選択をしてください\n{skill_name}")
                     embed.set_footer(text=f"入力した備考：{self.remarks}")
                     logger.info(f"{interaction.user.name}がリクエストを開始しました")

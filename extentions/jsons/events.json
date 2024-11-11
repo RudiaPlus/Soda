@@ -35,32 +35,10 @@
             }
         ]
     },
-    "act33side": {
-        "id": "act33side",
-        "type": "SIDESTORY",
-        "stageAdd": "True",
-        "name": "バベル",
-        "news": "https://www.arknights.jp/news/443",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88128_%E3%83%90%E3%83%99%E3%83%AB",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/44f7ff5e110ae8a3774f28fdaeffed4c.png",
-        "startTime": 1728543600,
-        "endTime": 1730401199,
-        "rewardEndTime": 1730919599,
-        "additionalStage": [
-            {
-                "name": "昔日に残れり",
-                "startTime": 1729148400
-            },
-            {
-                "name": "大江北岸",
-                "startTime": 1729753200
-            }
-        ]
-    },
     "act14main": {
         "id": "act14main",
         "type": "MAIN",
-        "stageAdd": "True",
+        "stageAdd": true,
         "name": "14章「慈悲光塔」実装",
         "news": "https://arknights.jp/news/445",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88129_%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0%E5%85%AC%E9%96%8B",
@@ -74,5 +52,17 @@
                 "startTime": 1730962800
             }
         ]
+    },
+    "act2vmulti": {
+        "id": "act2vmulti",
+        "type": "MULTIPLAY",
+        "stageAdd": false,
+        "name": "ロドス協心競技",
+        "news": "https://arknights.jp/news/448",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88130_%E3%83%AD%E3%83%89%E3%82%B9%E5%8D%94%E5%BF%83%E7%AB%B6%E6%8A%80",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/eaf636d8a2f21c43457fae9c717ed46c.png",
+        "startTime": 1731571200,
+        "endTime": 1732733999,
+        "rewardEndTime": 1732993199
     }
 }
