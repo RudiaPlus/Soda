@@ -6,7 +6,7 @@ from unicodedata import normalize
 
 import discord
 
-from extentions import config, log, recruit, supportrequest
+from extentions import config, log, recruit, supportrequest, multiplayertool
 from extentions.aclient import client
 
 logger = log.setup_logger()
@@ -294,7 +294,11 @@ class ToolButtons(discord.ui.View):
         embed = discord.Embed(title = "闇鍋招集", description="招集したい職業を選択してください", color = discord.Color.blue())
         await interaction.response.send_message(embed = embed, view = YaminabeSelect(), ephemeral = True)
         logger.info(f"{interaction.user.name}がyaminabebuttonを使用しました")
-               
+        
+    @discord.ui.button(label = "マルチプレイ募集", custom_id = "multicreate_tool", style = discord.ButtonStyle.primary, emoji = "🧑‍🤝‍🧑")
+    async def multicreate_tool(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await multiplayertool.multi_create(interaction)
+        logger.info(f"{interaction.user.name}がmulticreate_toolを使用しました")
 
 @client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = discord.Object(config.testserverid))
 @discord.app_commands.describe(channelid = "フォームを送信するチャンネル デフォルトはあしたはこぶね/#ツール", edit = "新規送信ではなくメッセージの編集にしたい場合、そのメッセージのID")
@@ -310,6 +314,7 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     
     screenshot_recruit_channel = config.screenshot_recruit_channel_url
     request_channel = config.request_url
+    multi_channel = client.get_channel(config.multiplay_request_channel)
     
     #ツールの説明
     embed.add_field(name = "・公開求人ツール", value = f">>> 公開求人のタグから獲得できるオペレーターを表示します。\nスクリーンショット認識ver → {screenshot_recruit_channel}", inline=False)
@@ -317,6 +322,7 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     embed.add_field(name = "・ドクター情報登録", value = ">>> アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n削除する場合、任意のチャンネルで ***/doctorname delete*** を実行してください。\n-# ※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
     embed.add_field(name = "・Wiki検索", value = ">>> オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。", inline = False)
     embed.add_field(name = "・闇鍋招集", value = ">>> 統合戦略でオペレーターを招集する際、職業ごとにランダムで選んでくれるツールです。", inline = False)
+    embed.add_field(name = "・マルチプレイ募集 ", value = f">>> マルチプレイの募集を行います。詳しくは{multi_channel.jump_url}をご覧ください！", inline = False)
     
     embed.set_author(name = "ロード", icon_url=client.user.avatar)
     if not edit:

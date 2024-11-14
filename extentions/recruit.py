@@ -200,6 +200,13 @@ class TagUndoOnly(discord.ui.View):
             self.add_rare_only_button()
         elif self.all is False:
             self.add_show_all_button()
+            
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+
+        # Step 3
+        await self.message.edit(view=self)
         
     def add_show_all_button(self):
         button_show_all = discord.ui.Button(label = "全てのタグを表示する", style = discord.ButtonStyle.primary, emoji = "▶️")
@@ -238,6 +245,8 @@ class TagUndoOnly(discord.ui.View):
             view = TagUndoOnly(self.selected_tags,all=self.all,rare = self.rare, undo = self.undo)
             
             await interaction.response.edit_message(embeds = embeds, view = view)
+            
+            view.message = await interaction.original_response()
         
         button_show_all.callback = button_show_all_callback
         self.add_item(button_show_all)
@@ -279,6 +288,8 @@ class TagUndoOnly(discord.ui.View):
             view = TagUndoOnly(self.selected_tags,all=self.all, rare = self.rare, undo = self.undo)
             
             await interaction.response.edit_message(embeds = embeds, view = view)
+            
+            view.message = await interaction.original_response()
         
         button_rare_only.callback = button_rare_only_callback
         self.add_item(button_rare_only)
@@ -710,7 +721,7 @@ async def recruit_from_screenshot(image_path, message: discord.Message):
         
         view = TagUndoOnly(result_tags, all=show_all_tags, rare = rare, undo = False)
         
-        await message.reply(embeds = embeds, view = view)
+        view.message = await message.reply(embeds = embeds, view = view)
     
     except Exception as e:
         logger.error(f"タグの認識にエラー: {e}")

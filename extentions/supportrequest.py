@@ -200,7 +200,7 @@ async def doctors_write(dic):
         logger.info("doctors.jsonに新しく書き込みを行いました")
 
 
-async def doctor_check(user: discord.User):
+async def doctor_check(user: discord.User, full: bool = True):
     doctors = await doctors_load()
     include = False
     for index in range(len(doctors)):
@@ -209,8 +209,35 @@ async def doctor_check(user: discord.User):
             name_full = doctors[index]["full"]
     if include is False:
         name_full = None
+    elif full is False:
+        name_full = name_full[3:]
     return (name_full)
 
+class DoctorInputOnlyModal(discord.ui.Modal, title = "ドクターネームの入力"):
+    def __init__(self, required: bool, future):
+        self.required = required
+        self.future = future
+        
+        self.doctor_input = discord.ui.TextInput(label = "ドクターネーム(コミュニティツールで登録すると入力不要になります)", placeholder = "名前#0000", required = self.required)
+        self.add_item(self.doctor_input)
+        
+    async def on_submit(self, interaction):
+        self.future.set_result((self.doctor_input.value, interaction)) 
+
+async def doctor_check_or_input(interaction: discord.Interaction, user: discord.User, required: bool = True):
+    doctorname = await doctor_check(user, full = False)
+    if doctorname:
+        return_interaction = interaction
+        
+    else:
+        future = asyncio.Future()
+        doctor_input_modal = DoctorInputOnlyModal(required=required, future=future)
+    
+        await interaction.response.send_modal(doctor_input_modal)
+        
+        doctorname, return_interaction = await future
+        
+    return (doctorname, return_interaction)
 
 async def doctor_delete(user):
     doctors = await doctors_load()
@@ -629,7 +656,8 @@ async def delete_old_request():
             time_delta = datetime.datetime.now() - request_message.threads[0].created_at
             if time_delta.days > 3:
                 await request_complete(item["id"])
-                await request_message.threads[0].delete()
+                thread = request_message.threads[0]
+                await thread.delete()
                 await request_message.delete()
                 request_user = client.get_user(item["userID"])
 

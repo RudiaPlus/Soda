@@ -67,6 +67,7 @@ def run_discord_bot():
             client.add_view(modmails.ModmailFinish())
             client.add_view(modmails.ModmailControl())
             client.add_view(communitytool.ToolButtons())
+            client.add_view(multiplayertool.AKMultiJoinButton())
             
             #ルーティン
             maintenances.maintenance_timer.start()

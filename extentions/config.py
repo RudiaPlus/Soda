@@ -108,6 +108,7 @@ voicecreate_channel = 1305508824781815899 #個別VC作成方法
 voicecreate_vc = 1305536169924231229 #>>VC作成<<
 
 vccreate_log_channel = 1305570776690200636 #個別VCチャットログ
+multiplay_request_channel = 1306450120669139024 #
 
 
 #categories
