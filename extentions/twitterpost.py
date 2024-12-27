@@ -1,135 +1,144 @@
 import datetime
-import json
+import json as js
 import os
 import re
 from typing import List, Tuple
+import time
+import atexit
+import html
 
 import aiohttp
-import requests
 from discord import Color, Embed
 from discord.ext import tasks
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
+from bs4 import BeautifulSoup
 
 from extentions import JSTTime, config, log
 from extentions.aclient import client
+import feedparser
+import asyncio
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger()
 test = config.test
 last_tweet_url = ""
 web = config.selenium # Switch of web
+agent = 'Chromium";v="130","Google Chrome";v="130","Not?A_Brand";v="99'
+headers = {'User-Agent': agent}
 twitterurl = "https://twstalker.com/AKEndfieldJP"
-timeout = aiohttp.ClientTimeout(total=7)
+feedurl = "https://nitter.poast.org/AKEndfieldJP/rss"
+timeout = aiohttp.ClientTimeout(total=10)
 
-async def get_response(url):
-    async with aiohttp.ClientSession(timeout=timeout) as session:
+
+async def get_response(url, json: bool = False):
+    async with aiohttp.ClientSession(timeout=timeout, headers=headers) as session:
         async with session.get(url) as r:
-            return r
+            if json is False:
+                r_text = await r.text()
+                return r, r_text
+            else:
+                r_json =  await r.json()
+                return r, r_json
+
+driver = None
 
 if web is True:
-    try:
-        twitter_status = requests.get(twitterurl)
-        if twitter_status.status_code != 200:
-            raise Exception(f"ツイートにアクセスできませんでした。ステータスコード: {twitter_status.status_code}")
-        options = webdriver.ChromeOptions()
-        options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        driver = webdriver.Chrome(options = options)
-        driver.set_page_load_timeout(10)
-        driver.get(twitterurl)
-        wait = WebDriverWait(driver, 9)
-        last_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="user-text3"])[1]/span')))
-        
-        last_tweet_url = last_tweet.find_element(By.XPATH, ".//a").get_attribute('href')
-        logger.info(f"@AKEndfieldJPの最後のツイートをtwstalkerにて取得しました: {last_tweet_url}")
-        
-    except Exception as e:
-        web=False
-        logger.error(f"twstalkerにてエラー: {e}")
-        
+
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    #options.add_argument("--headless=new")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disale-dev-shm-usage")
         
 async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
-    try:
-        twitter_x_pattern = r"https?:\/\/(www\.)?(x|twitter)\.com\/[^/]+\/status\/(\d+)"
-        links_twitter_x = re.finditer(twitter_x_pattern, content)
-        if not links_twitter_x:
-            return [], []
-        
-        ids = []
-        for matched in links_twitter_x:
-            link = matched.group()
-            index = link.find("/status/")
-            id = link[index+8:]
-            ids.append(id)
-            
-        responses = []
-        for id in ids:
-            response = await get_response(f"https://api.fxtwitter.com/status/{id}")
-            if response.status == 200:
-                tweet_data = response.json()["tweet"]
-                
-                tweet_url = tweet_data["url"]
-                
-                author = tweet_data["author"]
-                
-                if "avatar_url" in author:
-                    avatar_url = author["avatar_url"]
-                else:
-                    avatar_url = None
-                
-                tweet_text = tweet_data["text"]
-                
-                created_at = tweet_data["created_timestamp"]
-                
-                media_urls = []
-                video_urls = []
-                
-                if "media" in tweet_data:
-                    
-                    for key in tweet_data["media"]:
-                        if key != "photos" and key != "videos":
-                            continue
-                        
-                        tweet_medias = tweet_data["media"][key]                        
-                        for media in tweet_medias:
-                            url = media["url"]
-                            if key == "photos":
-                                media_urls.append(url)
-                            elif key == "videos":
-                                video_urls.append(url)
-                
-                tweet_dict = {"id": id, "url": tweet_url, "author_name": author["name"], "screen_name": author["screen_name"], "author_avatar": avatar_url, "text": tweet_text, "created_at": created_at, "media_urls": media_urls, "video_urls": video_urls}
-                responses.append(tweet_dict)
-        
-        embeds = []
-        video_urls = []
-        
-        for dic in responses:
-            timestamp = datetime.datetime.fromtimestamp(dic["created_at"])
-            tweet_embed = Embed(color = Color.blue(), description=dic["text"], timestamp = timestamp)
-            tweet_embed.set_author(name = f"{dic['author_name']} @{dic['screen_name']}", url = dic["url"], icon_url=dic["author_avatar"])
-            embeds.append(tweet_embed)
-            
-            if dic["media_urls"]:
-                for url in dic["media_urls"]:
-                    media_embed = Embed(color = Color.blue(), description=f"[ブラウザで開く]({url})")
-                    media_embed.set_image(url = url)
-                    embeds.append(media_embed)
-                    
-            if dic["video_urls"]:
-                for url in dic["video_urls"]:
-                    video_urls.append(url)
-        
-        return embeds, video_urls
-
-    except Exception as e:
-        logger.error(f"[create_embed]にてエラー: {e}")
+    twitter_x_pattern = r"https?:\/\/(www\.)?(x|twitter)\.com\/[^/]+\/status\/(\d+)"
+    links_twitter_x = re.finditer(twitter_x_pattern, content)
+    if not links_twitter_x:
         return [], []
+    
+    ids = []
+    for matched in links_twitter_x:
+        link = matched.group()
+        index = link.find("/status/")
+        id = link[index+8:]
+        ids.append(id)
+        
+    responses = []
+    for id in ids:
+        response, tweet_json = await get_response(f"https://api.fxtwitter.com/status/{id}", json = True)
+        if response.status == 200:
+            tweet_data = tweet_json["tweet"]
+            
+            tweet_url = tweet_data["url"]
+            
+            author = tweet_data["author"]
+            
+            if "avatar_url" in author:
+                avatar_url = author["avatar_url"]
+            else:
+                avatar_url = None
+            
+            tweet_text = tweet_data["text"]
+            
+            created_at = tweet_data["created_timestamp"]
+            
+            replying_to = tweet_data["replying_to"]
+            
+            media_urls = []
+            video_urls = []
+            
+            if "media" in tweet_data:
+                
+                for key in tweet_data["media"]:
+                    if key != "photos" and key != "videos":
+                        continue
+                    
+                    tweet_medias = tweet_data["media"][key]                        
+                    for media in tweet_medias:
+                        url = media["url"]
+                        if key == "photos":
+                            media_urls.append(url)
+                        elif key == "videos":
+                            video_urls.append(url)
+            
+            tweet_dict = {"id": id, "url": tweet_url, "author_name": author["name"], "screen_name": author["screen_name"], "author_avatar": avatar_url, "text": tweet_text, "created_at": created_at, "media_urls": media_urls, "video_urls": video_urls, "replying_to": replying_to}
+            responses.append(tweet_dict)
+    
+    embeds = []
+    video_urls = []
+    
+    for dic in responses:
+        timestamp = datetime.datetime.fromtimestamp(dic["created_at"])
+        tweet_embed = Embed(color = Color.blue(), description=dic["text"], timestamp = timestamp)
+        if replying_to:
+            tweet_embed.set_author(name = f"{dic['author_name']} @{dic['screen_name']} の @{dic['replying_to']} へのリプライ", url = dic["url"], icon_url=dic["author_avatar"])
+        else:
+            tweet_embed.set_author(name = f"{dic['author_name']} @{dic['screen_name']}", url = dic["url"], icon_url=dic["author_avatar"])
+        embeds.append(tweet_embed)
+        
+        if dic["media_urls"]:
+            for url in dic["media_urls"]:
+                media_embed = Embed(color = Color.blue(), description=f"[ブラウザで開く]({url})")
+                media_embed.set_image(url = url)
+                embeds.append(media_embed)
+                
+        if dic["video_urls"]:
+            for url in dic["video_urls"]:
+                video_urls.append(url)
+    
+    return embeds, video_urls
+
+    """except Exception as e:
+        logger.error(f"[create_embed]にてエラー: {e}")
+        return [], []"""
             
         
-async def check_duplicate(url: str) -> bool:
+"""async def check_duplicate(url: str) -> bool:
     json_name = "jsons/tweeted.json"
     with open(os.path.join(dir, json_name), "r", encoding = "UTF-8") as f:
         tweeted_list = json.load(f)
@@ -168,7 +177,7 @@ async def ake_tweet_retrieve():
     global last_tweet_url
     try:
         logger.debug("ツイートを取得します")
-        response = await get_response(twitterurl)
+        response, json = await get_response(twitterurl)
         if response.status != 200:
             logger.error(f"ツイートにアクセスできませんでした。ステータスコード: {response.status}")
             return
@@ -205,4 +214,53 @@ async def ake_tweet_retrieve():
 
             
     except Exception as e:
-        print(f"error: {e}")
+        print(f"error: {e}")"""
+        
+@tasks.loop(minutes = 5)
+async def ake_feed_retrieve():
+    channel = client.get_channel(config.ake_news)
+    last_message = await channel.fetch_message(channel.last_message_id)
+    last_published_time = last_message.created_at
+    """response, text = await get_response(feedurl)
+    if response.status != 200:
+        logger.error(f"ツイートにアクセスできませんでした。ステータスコード: {response.status}")
+        return"""
+        
+    try:   
+        with webdriver.Chrome(options = options) as driver:
+            driver.set_page_load_timeout(10)
+            driver.get(feedurl)
+            await asyncio.sleep(10)
+
+            source = driver.page_source
+    except Exception as e:
+        logger.warning(f"ページの読み込みに失敗しました。: {type(e)}")
+        return
+    
+    soup = BeautifulSoup(source, "html.parser")
+    pre_content = soup.find("pre").text
+    
+    decoded_xml = html.unescape(pre_content)
+    
+    feed = feedparser.parse(decoded_xml)
+
+    new_tweets = []
+    for entry in feed["entries"]:
+        post_time = entry['published_parsed']
+        post_datetime = datetime.datetime(*post_time[:6], tzinfo = datetime.timezone.utc)
+        if post_datetime > last_published_time:
+            url = entry["link"]
+            target = url.find(".org/") #利用するサイトのドメインから決める
+            target_end = url.find("#m")
+            new_tweet_url_splitted = url[target+5:target_end]
+            new_tweet_url_twitter = f"https://x.com/{new_tweet_url_splitted}"
+            new_tweets.append(new_tweet_url_twitter)
+    new_tweets.reverse()
+    for entry in new_tweets:
+        embeds, video_urls = await create_embed(entry)
+        message = await channel.send(f"<{entry}>", embeds = embeds)
+        await message.publish()
+        if video_urls:
+            for url in video_urls:
+                await message.reply(content = f"[ブラウザで開く]({url})")
+        logger.info(f"新規ツイート({new_tweet_url_twitter})をアナウンスしました。")

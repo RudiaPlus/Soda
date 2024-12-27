@@ -1065,6 +1065,48 @@
         "endTime": 1732733999,
         "rewardEndTime": 1732993199
     },
+    "act25sre": {
+        "id": "act25sre",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "孤星(復刻)",
+        "news":"https://arknights.jp/news/451",
+        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88131_%E5%AD%A4%E6%98%9F%28%E5%BE%A9%E5%88%BB%29#levels3b",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/60fcc744aa19f59a733ef0090299547e.png",
+        "startTime": 1732172400,
+        "endTime": 1732993199,
+        "rewardEndTime": 1733338799
+    },
+    "act34side": {
+        "id": "act34side",
+        "type": "SIDESTORY",
+        "stageAdd": true,
+        "name": "生存航路",
+        "news": "https://www.arknights.jp/news/454",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88132_%E7%94%9F%E5%AD%98%E8%88%AA%E8%B7%AF",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/f46bd4a860a49161fd83f3b0a8499d7c.png",
+        "startTime": 1733209200,
+        "endTime": 1734375599,
+        "rewardEndTime": 1734980399,
+        "additionalStage": [
+            {
+                "name": "防衛線強化",
+                "startTime": 1733814000
+            }
+        ]
+    },
+    "act26sre": {
+        "id": "act26sre",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "空想の花庭(復刻)",
+        "news":"https://arknights.jp/news/460",
+        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88134_%E7%A9%BA%E6%83%B3%E3%81%AE%E8%8A%B1%E5%BA%AD%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/dbda6141671f19dceb5a551fb17ad49e.png",
+        "startTime": 1735023600,
+        "endTime": 1735844399,
+        "rewardEndTime": 1736189999
+    },
     "dis_rogue_3": {
         "id": "dis_rogue_3",
         "type": "ROGUELIKE",

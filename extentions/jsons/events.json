@@ -27,42 +27,36 @@
         "startTime": 1723014000,
         "endTime": 1754506799,
         "monthlyUpdate": [
-            {
-                "month": 9,
-                "startTime": 1725130800,
-                "endTime": 1727722799,
-                "contents": "- 闘争の潮流: 「獲物は霧の中」"   
-            }
         ]
     },
-    "act14main": {
-        "id": "act14main",
-        "type": "MAIN",
+    "act34side": {
+        "id": "act34side",
+        "type": "SIDESTORY",
         "stageAdd": true,
-        "name": "14章「慈悲光塔」実装",
-        "news": "https://arknights.jp/news/445",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88129_%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0%E5%85%AC%E9%96%8B",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/b3aab0928bd4d234ef2c272ffbc67a66.png",
-        "startTime": 1730358000,
-        "endTime": 1731524399,
-        "rewardEndTime": 1732129199,
+        "name": "生存航路",
+        "news": "https://www.arknights.jp/news/454",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88132_%E7%94%9F%E5%AD%98%E8%88%AA%E8%B7%AF",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/f46bd4a860a49161fd83f3b0a8499d7c.png",
+        "startTime": 1733209200,
+        "endTime": 1734375599,
+        "rewardEndTime": 1734980399,
         "additionalStage": [
             {
-                "name": "高難易度ステージ",
-                "startTime": 1730962800
+                "name": "防衛線強化",
+                "startTime": 1733814000
             }
         ]
     },
-    "act2vmulti": {
-        "id": "act2vmulti",
-        "type": "MULTIPLAY",
+    "act26sre": {
+        "id": "act26sre",
+        "type": "SIDESTORY",
         "stageAdd": false,
-        "name": "ロドス協心競技",
-        "news": "https://arknights.jp/news/448",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88130_%E3%83%AD%E3%83%89%E3%82%B9%E5%8D%94%E5%BF%83%E7%AB%B6%E6%8A%80",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/eaf636d8a2f21c43457fae9c717ed46c.png",
-        "startTime": 1731571200,
-        "endTime": 1732733999,
-        "rewardEndTime": 1732993199
+        "name": "空想の花庭(復刻)",
+        "news":"https://arknights.jp/news/460",
+        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88134_%E7%A9%BA%E6%83%B3%E3%81%AE%E8%8A%B1%E5%BA%AD%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/dbda6141671f19dceb5a551fb17ad49e.png",
+        "startTime": 1735023600,
+        "endTime": 1735844399,
+        "rewardEndTime": 1736189999
     }
 }

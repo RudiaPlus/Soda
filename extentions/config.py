@@ -4,9 +4,13 @@ import os
 #ABILITY SWITCH
 test = False #TESTMODE(Switch to OverRein), default = False
 logging = True #Write log to your file, default = True
-voicechat = False #Voicechat command
-voice_suggest = False #suggest text speech to voicechat user
+voicechat = True #Voicechat command
+voice_suggest = True #suggest text speech to voicechat user
 selenium = True #use selenium to correct twitterpost exc.
+voice_clients = 5 #voice clients number
+
+#CLIENTS
+voice_clients_id = [1321765242489016340, 1322054520364208231, 1322063853231804426, 1322066754171834480, 1322067201972375664]
 
 #MAIN
 t_delta = datetime.timedelta(hours=9)
@@ -14,6 +18,7 @@ JST = datetime.timezone(t_delta, 'JST')
 
 test_client = os.environ["TEST_DISCORD_TOKEN"]
 token = os.environ["DISCORD_TOKEN"]
+voice_tokens = [os.environ["DISCORD_VOICE_TOKEN_01"], os.environ["DISCORD_VOICE_TOKEN_02"], os.environ["DISCORD_VOICE_TOKEN_03"], os.environ["DISCORD_VOICE_TOKEN_04"], os.environ["DISCORD_VOICE_TOKEN_05"]]
 
 server_invite_link = "https://discord.gg/AshC"
 server_rule_link = "https://discord.com/channels/1018858818345631745/1018858818932842589/1018863690914729986"
@@ -109,6 +114,8 @@ voicecreate_vc = 1305536169924231229 #>>VC作成<<
 
 vccreate_log_channel = 1305570776690200636 #個別VCチャットログ
 multiplay_request_channel = 1306450120669139024 #
+
+logging_channel = 1318532200588640297
 
 
 #categories

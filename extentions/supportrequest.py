@@ -215,6 +215,7 @@ async def doctor_check(user: discord.User, full: bool = True):
 
 class DoctorInputOnlyModal(discord.ui.Modal, title = "ドクターネームの入力"):
     def __init__(self, required: bool, future):
+        super().__init__()
         self.required = required
         self.future = future
         
@@ -650,13 +651,14 @@ async def operator_autocomplete(interaction: discord.Interaction, current: str) 
 async def delete_old_request():
     
     request_list = await request_load()
+    channel = client.get_channel(config.request)
     for item in request_list:
-        request_message: discord.TextChannel = await client.get_channel(item["messageID"])
-        if request_message.threads:
-            time_delta = datetime.datetime.now() - request_message.threads[0].created_at
+        request_message = await channel.fetch_message(item["messageID"])
+        if request_message.thread:
+            time_delta = datetime.datetime.now(datetime.timezone.utc) - request_message.thread.created_at
             if time_delta.days > 3:
                 await request_complete(item["id"])
-                thread = request_message.threads[0]
+                thread = request_message.thread
                 await thread.delete()
                 await request_message.delete()
                 request_user = client.get_user(item["userID"])

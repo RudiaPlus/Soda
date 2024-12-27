@@ -132,5 +132,13 @@
         "doing": false,
         "link": "https://arknights.jp/news/447",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/95d33d25bd82fc74233d02b64f92e19a.png"
+    },
+    {
+        "type": "MAINTENANCE",
+        "startTime": 1733187600,
+        "endTime": 1733209200,
+        "doing": false,
+        "link": "https://arknights.jp/news/453",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/49ad70f1f47bd0c1bee2adfcc37c1980.png"
     }
 ]

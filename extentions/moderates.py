@@ -63,6 +63,105 @@ def timeout_choices():
     
     return [discord.SelectOption(label = timeout_labels[i], value = timeout_values[i]) for i in range(len(timeout_values))]
 
+async def moderate_show(member, interaction: discord.Interaction = None) -> List[discord.Embed]:
+    embeds = []
+    if type(member) is discord.Member:
+        # ロール
+        roles = []
+        member_got = member
+        
+        for index, role in enumerate(member.roles):
+            role_mention = role.name if index == 0 else role.mention
+            roles.append(role_mention)
+
+        role = "\n".join(roles)
+
+        embed = discord.Embed(title=f"{member.display_name}(@{str(member)})さんの情報",
+                                description=f"{member.mention}\nユーザー名: {str(member)}\nグローバルネーム: {member.global_name}", color=member.accent_color)
+        embed.set_thumbnail(url=member.display_avatar)
+        embed.set_author(name=member.display_name,
+                            icon_url=member.avatar)
+        if member.system is True:
+            member_stats = "システム(Discord公式)アカウントです"
+        elif member.bot is True:
+            member_stats = "Botアカウント"
+        else:
+            member_stats = "ユーザー(通常)アカウント"
+        embed.add_field(name = "アカウントの種類", value = member_stats)
+        embed.add_field(name = "ID", value = member.id, inline = False)
+        embed.add_field(name = "サーバー参加日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member.joined_at.timestamp())), inline = False)
+        embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member.created_at.timestamp())), inline = False)
+        embed.add_field(name = "所持しているロール", value = role, inline = True)
+        embed.add_field(name = "最高のロール", value = "<@&{0}>".format(member.top_role.id), inline = True)
+        if member.is_timed_out() is True:
+            embed.add_field(name="タイムアウト状態", value="<t:{0}:F>( <t:{0}:R> )まで".format(
+                round(member.timed_out_until.timestamp())), inline=False)
+
+    else:
+        try:
+            member_got = await client.fetch_user(int(member))
+        except ValueError:
+            embed = discord.Embed(title="member_idに整数以外が渡されています",
+                                description="ユーザーIDが分からない場合、member引数を利用してください!")
+            await interaction.followup.send(embed=embed)
+            return
+            
+        embed = discord.Embed(title=f"{member_got.display_name}(@{str(member_got)})さんの情報",
+                                description=f"{member_got.mention}\nユーザー名: {str(member_got)}\nグローバルネーム: {member_got.global_name}", color=member_got.accent_color)
+        embed.set_thumbnail(url=member_got.display_avatar)
+        embed.set_author(name=member_got.display_name,
+                            icon_url=member_got.avatar)
+        if member_got.system is True:
+            member_stats = "システム(Discord公式)アカウント"
+        elif member_got.bot is True:
+            member_stats = "Botアカウント"
+        else:
+            member_stats = "ユーザー(通常)アカウント"
+        embed.add_field(name = "アカウントの種類", value = member_stats)
+        embed.add_field(name = "ID", value = member_got.id, inline = False)
+        embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.created_at.timestamp())), inline = False)
+        
+    if embed:
+        embeds.append(embed)
+    else:
+        logger.error("moderate_showにて最初のEmbedが作られていません。")
+        
+    search_id = str(member_got.id)
+    embed2 = None
+
+    punishments = await punishment_load()
+    if search_id in punishments:
+        banned = punishments[search_id]["banned"]
+        user_puni = punishments[search_id]["punishments"]
+
+        if banned is True:
+            embed.add_field(
+                name="Banされています", value="このユーザーはサーバーからBanされています", inline=False)
+
+        embed2 = discord.Embed(
+            title="処罰履歴", description=f"このユーザーは{len(user_puni)}回処罰を受けています")
+
+        for index in range(len(user_puni)):
+            id = user_puni[index]["id"]
+            date = user_puni[index]["date"]
+            reason = user_puni[index]["reason"]
+            by = user_puni[index]["by"]
+            if "timeout" in user_puni[index].keys():
+                timeout = f"{user_puni[index]['timeout']}分" if user_puni[index]['timeout'] else "無し"
+                value = f"- ID: {id}\n- 時間: {date}\n- タイムアウト: {timeout}\n- 理由: {reason}\n- 処罰者: <@{by}>"
+            else:
+                value= f"- ID: {id}\n- 時間: {date}\n- 理由: {reason}\n- 処罰者: <@{by}>"
+            embed2.add_field(name=user_puni[index]["type"], value=value, inline=False)
+            
+        embeds.append(embed2)
+    if interaction:
+
+        await interaction.followup.send(embeds=embeds)
+        return
+
+    else:
+        return embeds
+
 async def warning_and_timeout(interaction: discord.Interaction, member: discord.Member = None, member_id: str = None, reason: str = None, timeout: int = None):
     #AppCommand, Component, Modal_Submitのみ対応
     await interaction.response.defer()
@@ -573,98 +672,15 @@ class ModerateCommand(discord.app_commands.Group):
                 return
 
             if member:
-                member_got = member
 
-                # ロール
-                roles = []
+                await moderate_show(member, interaction)
+            else:
                 
-                for index, role in enumerate(member_got.roles):
-                    role_mention = role.name if index == 0 else role.mention
-                    roles.append(role_mention)
-
-                role = "\n".join(roles)
-
-                embed = discord.Embed(title=f"{member_got.display_name}(@{str(member_got)})さんの情報",
-                                      description=f"{member_got.mention}\nユーザー名: {str(member_got)}\nグローバルネーム: {member_got.global_name}", color=member_got.accent_color)
-                embed.set_thumbnail(url=member_got.display_avatar)
-                embed.set_author(name=member_got.display_name,
-                                 icon_url=member_got.avatar)
-                if member_got.system is True:
-                    member_stats = "システム(Discord公式)アカウントです"
-                elif member_got.bot is True:
-                    member_stats = "Botアカウント"
-                else:
-                    member_stats = "ユーザー(通常)アカウント"
-                embed.add_field(name = "アカウントの種類", value = member_stats)
-                embed.add_field(name = "ID", value = member_got.id, inline = False)
-                embed.add_field(name = "サーバー参加日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.joined_at.timestamp())), inline = False)
-                embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.created_at.timestamp())), inline = False)
-                embed.add_field(name = "所持しているロール", value = role, inline = True)
-                embed.add_field(name = "最高のロール", value = "<@&{0}>".format(member_got.top_role.id), inline = True)
-                if member_got.is_timed_out() is True:
-                    embed.add_field(name="タイムアウト状態", value="<t:{0}:F>( <t:{0}:R> )まで".format(
-                        round(member_got.timed_out_until.timestamp())), inline=False)
-
-            else:
-                try:
-                    member_got = await client.fetch_user(int(member_id))
-                except ValueError:
-                    embed = discord.Embed(title="member_idに整数以外が渡されています",
-                                      description="ユーザーIDが分からない場合、member引数を利用してください!")
-                    await interaction.followup.send(embed=embed)
-                    return
-                    
-                embed = discord.Embed(title=f"{member_got.display_name}(@{str(member_got)})さんの情報",
-                                      description=f"{member_got.mention}\nユーザー名: {str(member_got)}\nグローバルネーム: {member_got.global_name}", color=member_got.accent_color)
-                embed.set_thumbnail(url=member_got.display_avatar)
-                embed.set_author(name=member_got.display_name,
-                                 icon_url=member_got.avatar)
-                if member_got.system is True:
-                    member_stats = "システム(Discord公式)アカウント"
-                elif member_got.bot is True:
-                    member_stats = "Botアカウント"
-                else:
-                    member_stats = "ユーザー(通常)アカウント"
-                embed.add_field(name = "アカウントの種類", value = member_stats)
-                embed.add_field(name = "ID", value = member_got.id, inline = False)
-                embed.add_field(name = "アカウント作成日", value = "<t:{0}:F>( <t:{0}:R> )".format(round(member_got.created_at.timestamp())), inline = False)
-            search_id = str(member_got.id)
-            embed2 = None
-
-            punishments = await punishment_load()
-            if search_id in punishments:
-                banned = punishments[search_id]["banned"]
-                user_puni = punishments[search_id]["punishments"]
-
-                if banned is True:
-                    embed.add_field(
-                        name="Banされています", value="このユーザーはサーバーからBanされています", inline=False)
-
-                embed2 = discord.Embed(
-                    title="処罰履歴", description=f"このユーザーは{len(user_puni)}回処罰を受けています")
-
-                for index in range(len(user_puni)):
-                    id = user_puni[index]["id"]
-                    date = user_puni[index]["date"]
-                    reason = user_puni[index]["reason"]
-                    by = user_puni[index]["by"]
-                    if "timeout" in user_puni[index].keys():
-                        timeout = f"{user_puni[index]['timeout']}分" if user_puni[index]['timeout'] else "無し"
-                        value = f"- ID: {id}\n- 時間: {date}\n- タイムアウト: {timeout}\n- 理由: {reason}\n- 処罰者: <@{by}>"
-                    else:
-                        value= f"- ID: {id}\n- 時間: {date}\n- 理由: {reason}\n- 処罰者: <@{by}>"
-                    embed2.add_field(name=user_puni[index]["type"], value=value, inline=False)
-
-            if embed2:
-                embeds = [embed, embed2]
-                await interaction.followup.send(embeds=embeds)
-
-            else:
-                await interaction.followup.send(embed=embed)
-
+                await moderate_show(member_id, interaction)
+                
         except Exception as e:
             embed = discord.Embed(title="⚠️メンバーの情報を取得できませんでした！",
-                                  description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}")
+                                    description=f"メンバーの取得に失敗したか、既に退出している可能性があります！\n出現した例外：{e}")
             await interaction.followup.send(embed=embed)
             logger.error(f"[ModerateCommand.show]にてエラー：{e}")
 

@@ -202,6 +202,14 @@ class TagUndoOnly(discord.ui.View):
             self.add_show_all_button()
             
     async def on_timeout(self):
+        if not self.message:
+            return
+        try:
+            await self.message.channel.fetch_message(self.message.id)
+        except Exception as e:
+            logger.warning(f"on_timeoutが発動されましたが、メッセージが見つかりませんでした: {e}")
+            return
+            
         for item in self.children:
             item.disabled = True
 

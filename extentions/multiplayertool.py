@@ -140,7 +140,8 @@ async def send_AK_multiplayer(user: discord.User, stage_name: str,  room_id: str
     embed.set_author(icon_url=user.display_avatar, name = user.display_name)
     
     message_sent = await channel.send(embed = embed, view = AKMultiJoinButton())
-    request_dict = {"userID": user.id, "stageName": stage_name, "roomID": room_id, "mode": mode, "players": players, "maxPlayers": max_players, "remarks": remarks, "vcLinked": vc_linked.id, "messageID": message_sent.id}
+    vc_linked_id = vc_linked if vc_linked else None
+    request_dict = {"userID": user.id, "stageName": stage_name, "roomID": room_id, "mode": mode, "players": players, "maxPlayers": max_players, "remarks": remarks, "vcLinked": vc_linked_id, "messageID": message_sent.id}
     multi_dict.append(request_dict)
     created_thread = await message_sent.create_thread(name = f"マルチプレイチャット #{user.id}")
     
@@ -194,7 +195,7 @@ class VClinkAndSendButton(discord.ui.View):
             else:
                 pass
     
-        await interaction.response.send_message(f"ボイスチャットに正しく接続されていません！正しい方法でボイスチャットに接続してください！\n※公開VC(雑談やアークナイツなど)は現在この機能を利用できません。備考入力をご活用ください。\n接続しているボイスチャット: {vc_channel_name}", ephemeral=True)
+        await interaction.followup.send(f"ボイスチャットに正しく接続されていません！正しい方法でボイスチャットに接続してください！\n※公開VC(雑談やアークナイツなど)は現在この機能を利用できません。備考入力をご活用ください。\n接続しているボイスチャット: {vc_channel_name}", ephemeral=True)
     @discord.ui.button(label = "ボイスチャット連携(非公開)", style=discord.ButtonStyle.secondary, emoji = "✅")  
     async def vclink_button_private(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
@@ -226,7 +227,7 @@ class VClinkAndSendButton(discord.ui.View):
             
             else:
                 pass
-        await interaction.response.send_message(f"ボイスチャットに正しく接続されていません！正しい方法でボイスチャットに接続してください！\n※公開VC(雑談やアークナイツなど)は現在この機能を利用できません。備考入力をご活用ください。\n接続しているボイスチャット: {vc_channel_name}", ephemeral=True)
+        await interaction.followup.send(f"ボイスチャットに正しく接続されていません！正しい方法でボイスチャットに接続してください！\n※公開VC(雑談やアークナイツなど)は現在この機能を利用できません。備考入力をご活用ください。\n接続しているボイスチャット: {vc_channel_name}", ephemeral=True)
         
     @discord.ui.button(label = "連携しない", style=discord.ButtonStyle.primary)  
     async def sendonly_button(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -238,17 +239,17 @@ class VClinkAndSendButton(discord.ui.View):
         
 
 class AKMultiCreateModal(discord.ui.Modal, title = "マルチプレイ募集"):
-    room_id_input = discord.ui.TextInput(label = "ルーム番号")
+    room_id_input = discord.ui.TextInput(label = "ルーム番号(未設定OK)", required = False)
     stage_name_input = discord.ui.TextInput(label ="マップ名(任意)", placeholder="IG-1", required = False)
     mode_input = discord.ui.TextInput(label = "難易度(上級/初級、任意)", required = False)
-    remarks_input = discord.ui.TextInput(label = "遊び方、備考など(任意)", required = False)
+    remarks_input = discord.ui.TextInput(label = "遊び方、備考、募集する時間帯など(任意)", required = False)
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
         
         stage_name = self.stage_name_input.value if self.stage_name_input.value else "未設定"
         mode = self.mode_input.value
-        room_id = self.room_id_input.value
+        room_id = self.room_id_input.value if self.room_id_input.value else "ルーム番号未設定"
         remarks = self.remarks_input.value
         
         id_find = room_id.find("[")
@@ -267,7 +268,7 @@ class AKMultiCreateModal(discord.ui.Modal, title = "マルチプレイ募集"):
             
         vccreate_voice = client.get_channel(config.voicecreate_vc)
         embed = discord.Embed(title = "マルチプレイ募集 - ボイスチャットを使用しますか？", description="ボイスチャットを使用して連携を深めたい場合にご利用ください！")
-        embed.add_field(name = "使用方法", value = f"1. {vccreate_voice.jump_url}をクリックし、VCを作成します(自動的に作成したVCに接続します。名前や最大人数の設定は次の操作で自動で設定されます。)\n2. 「ボイスチャット連携」ボタンを押します。(公開)はVCに誰でも入ることが出来ますが、(非公開)は募集から参加した人だけがVCに入れます。")
+        embed.add_field(name = "使用方法", value = f"1. {vccreate_voice.jump_url}をクリックし、VCを作成します(自動的に作成したVCに接続します。名前や最大人数の設定は次の操作で自動で設定されます。)チャンネルにアクセスできない場合、「チャンネル&ロール」から「ボイスチャット」のロールを取得してください！\n2. 「ボイスチャット連携」ボタンを押します。(公開)はVCに誰でも入ることが出来ますが、(非公開)は募集から参加した人だけがVCに入れます。")
         await interaction.followup.send(embed = embed, view = VClinkAndSendButton(stage_name, room_id, mode, remarks=remarks))     
         
 async def multi_create(interaction: discord.Interaction) -> bool:

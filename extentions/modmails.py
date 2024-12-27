@@ -149,7 +149,7 @@ class ModmailControl(discord.ui.View):
             
             embed = discord.Embed(description = "このチャンネルは数秒後に削除されます。")
             await interaction.response.send_message(embed = embed)
-            await save_modmail(channel = interaction.channel, delete_user = interaction.user)
+            await save_modmail(channel = interaction.channel, save_channel=client.get_channel(config.modmail_save_channel), delete_user = interaction.user)
             await interaction.channel.delete()
             
         else:
@@ -201,7 +201,7 @@ async def create_modmail(user: discord.User):
     else:
         return("duplicated")
         
-async def save_modmail(channel: discord.TextChannel, delete_user: discord.User = None, vc_log: bool = False, save_channel = client.get_channel(config.modmail_save_channel), vc_create_user = None):
+async def save_modmail(channel: discord.TextChannel, delete_user: discord.User = None, vc_log: bool = False, save_channel: discord.TextChannel = None, vc_create_user = None):
     
     if vc_log is False:
         idx = channel.name.find("-") + 1
@@ -211,6 +211,9 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User =
         user = vc_create_user
     channel_name = channel.name
     channel_id = channel.id
+    
+    if not save_channel:
+        save_channel = client.get_channel(config.modmail_save_channel)
     
     users = {}
     html_header = f"<!DOCTYPE html>\n<html lang='ja'>\n<head>\n<meta charset='utf-8'>\n<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n<title>{channel_id}</title>\n<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>\n</head>\n<body class='bg-gray-700 text-gray-300'>\n<h1 class='text-2xl font-bold text-center my-4'>\n{channel_name} (チャンネルID: {channel_id})\n</h1>\n<div class='container mx-auto px-4'>\n"
