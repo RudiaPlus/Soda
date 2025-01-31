@@ -202,7 +202,7 @@ class TagUndoOnly(discord.ui.View):
             self.add_show_all_button()
             
     async def on_timeout(self):
-        if not self.message:
+        if not hasattr(self, "message") or self.message is None:
             return
         try:
             await self.message.channel.fetch_message(self.message.id)
@@ -213,7 +213,6 @@ class TagUndoOnly(discord.ui.View):
         for item in self.children:
             item.disabled = True
 
-        # Step 3
         await self.message.edit(view=self)
         
     def add_show_all_button(self):
@@ -690,7 +689,7 @@ async def ocr_tag_from_screenshot(image_path):
     result = ocr.ocr(img = np_binaried, cls = False)
     result_tags = []
     
-    for i in range(5):
+    for i in range(len(result[0])):
         tag = result[0][i][1][0]
         closest_match = get_close_matches(tag, possible_tag_list, n=1, cutoff=0.1)
         if not closest_match:
@@ -703,6 +702,11 @@ async def ocr_tag_from_screenshot(image_path):
 async def recruit_from_screenshot(image_path, message: discord.Message):
     try:
         result_tags = await ocr_tag_from_screenshot(image_path)
+        
+        if len(result_tags) != 5:
+            embed = discord.Embed(title = "公開求人シミュレーター：エラー", description = "タグの認識に失敗しました！他のスクリーンショットをお試しください！\n解像度が出来るだけ高い、画面を直接スクリーンショットした画像を使用してください。")
+            await message.reply(embed = embed)
+            return
         result_list, goodresult_list= await output_results(selected_tags=result_tags)
         tags_view = "、 ".join(result_tags)
         show_all_tags = False

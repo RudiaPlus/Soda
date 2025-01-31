@@ -2,7 +2,7 @@
   "remindMessage": {
     "id": 1156979471182729308,
     "thread_id": 1156979471182729308,
-    "last_remind_id": 1321953236743098501
+    "last_remind_id": 1334636844058411079
   },
   "dailyStageRemind": {
     "name": "本日解放の資源ステージ",
@@ -125,22 +125,6 @@
     "startTime": null,
     "endTime": null
   },
-  "sssRemind_4": {
-    "name": "辺境保全駐在",
-    "description": null,
-    "type": "sss",
-    "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#ib028f3e",
-    "startTime": 1721070000,
-    "endTime": 1731697199
-  },
-  "anniRemind_8": {
-    "name": "殲滅依頼「『離心率』ラボ」",
-    "description": null,
-    "type": "anni",
-    "link": "https://arknights.wikiru.jp/index.php?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%AF%E3%83%AB%E3%83%93%E3%82%A2%E3%80%8E%E3%80%8C%E9%9B%A2%E5%BF%83%E7%8E%87%E3%80%8D%E3%83%A9%E3%83%9C%E3%80%8F",
-    "startTime": 1730660400,
-    "endTime": 1736708399
-  },
   "sssRemind_5": {
     "name": "音浪保全駐在",
     "description": null,
@@ -148,5 +132,13 @@
     "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#i1e9c48a",
     "startTime": 1731697200,
     "endTime": 1742065199
+  },
+  "anniRemind_9": {
+    "name": "殲滅依頼「燃える市街地」",
+    "description": null,
+    "type": "anni",
+    "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%83%B4%E3%82%A3%E3%82%AF%E3%83%88%E3%83%AA%E3%82%A2%E3%80%8C%E7%87%83%E3%81%88%E3%82%8B%E5%B8%82%E8%A1%97%E5%9C%B0%E3%80%8D",
+    "startTime": 1736708400,
+    "endTime": 1741546799
   }
 }

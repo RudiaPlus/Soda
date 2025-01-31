@@ -1107,6 +1107,18 @@
         "endTime": 1735844399,
         "rewardEndTime": 1736189999
     },
+    "act27sre": {
+        "id": "act27sre",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "火山と雲と夢色の旅路(復刻)",
+        "news":"https://arknights.jp/news/464",
+        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88135_%E7%81%AB%E5%B1%B1%E3%81%A8%E9%9B%B2%E3%81%A8%E5%A4%A2%E8%89%B2%E3%81%AE%E6%97%85%E8%B7%AF%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/793ce43bb4a238948c2361cfe0433bc7.png",
+        "startTime": 1735887600,
+        "endTime": 1736708399,
+        "rewardEndTime": 1737053999
+        },
     "dis_rogue_3": {
         "id": "dis_rogue_3",
         "type": "ROGUELIKE",
@@ -1140,6 +1152,28 @@
                 "startTime": 1725130800,
                 "endTime": 1727722799,
                 "contents": "- 探索者記録07: ケルシー「使命」"   
+            }
+        ]
+    },
+    "act35side": {
+        "id": "act35side",
+        "type": "SIDESTORY",
+        "stageAdd": true,
+        "name": "太陽すらも追い越して",
+        "news": "https://www.arknights.jp/news/465",
+        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88136_%E5%A4%AA%E9%99%BD%E3%81%99%E3%82%89%E3%82%82%E8%BF%BD%E3%81%84%E8%B6%8A%E3%81%97%E3%81%A6",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/d0391b41a7b2f20ae353d30595ffe2bc.png",
+        "startTime": 1737010800,
+        "endTime": 1738781999,
+        "rewardEndTime": 1739386799,
+        "additionalStage": [
+            {
+                "name": "豊穣祭",
+                "startTime": 1737615600
+            },
+            {
+                "name": "宝物庫",
+                "startTime": 1738220400
             }
         ]
     },

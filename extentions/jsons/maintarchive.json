@@ -140,5 +140,21 @@
         "doing": false,
         "link": "https://arknights.jp/news/453",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/49ad70f1f47bd0c1bee2adfcc37c1980.png"
+    },
+    {
+        "type": "MAINTENANCE",
+        "startTime": 1736989200,
+        "endTime": 1737010800,
+        "doing": false,
+        "link": null,
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/49ad70f1f47bd0c1bee2adfcc37c1980.png"
+    },
+    {
+        "type": "MAINTENANCE",
+        "startTime": 1738890000,
+        "endTime": 1738911600,
+        "doing": false,
+        "link": "https://arknights.jp/news/468",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/49ad70f1f47bd0c1bee2adfcc37c1980.png"
     }
 ]

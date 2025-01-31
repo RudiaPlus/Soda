@@ -182,5 +182,13 @@
       "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#i1e9c48a",
       "startTime": 1731697200,
       "endTime": 1742065199
+    },
+    "anniRemind_9": {
+        "name": "殲滅依頼「燃える市街地」",
+        "description": null,
+        "type": "anni",
+        "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%83%B4%E3%82%A3%E3%82%AF%E3%83%88%E3%83%AA%E3%82%A2%E3%80%8C%E7%87%83%E3%81%88%E3%82%8B%E5%B8%82%E8%A1%97%E5%9C%B0%E3%80%8D",
+        "startTime": 1736708400,
+        "endTime": 1741546799
     }
 }

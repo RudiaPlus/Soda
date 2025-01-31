@@ -168,9 +168,21 @@ async def on_ready():
         logger.exception(f"[on_ready]にて エラー：{e}")
         
     logger.info(f"{client.user} 、準備完了です！")
+    
+    await asyncio.sleep(40)
+    
+    #ボイスクライアントのロード
+    if voicechat.voicechat is True:
+        try:
+            logger.info("ボイスクライアントをロードします")
+            await voicechat.text_to_speech("ボイスクライアントをロードします")
+            logger.info("ボイスクライアントのロードが完了しました")
+        except Exception as e:
+            logger.error(f"ボイスクライアントのロードに失敗しました！\n{e}")
 
 @client.event
 async def setup_hook() -> None:
+    voicechat.before_reboot.start()
     morning.start()
     send_remind.start()
     afternoon.start()
@@ -338,6 +350,8 @@ async def on_raw_reaction_add(reaction_payload: discord.RawReactionActionEvent):
     message = await message_channel.fetch_message(reaction_payload.message_id)
 
     if not message.guild:
+        return
+    if message.author.bot is True:
         return
     found = False
     for reaction in message.reactions:
@@ -554,22 +568,26 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
             return
         if after.channel == vccreate_voice:
             return
-        if after.channel.category_id == vccreate_category.id:
+        try:
+            if after.channel.category_id == vccreate_category.id:
 
-            join_channel = after.channel
-            logger.info(f"{member.name}にボイス読み上げの提案を行います")
+                join_channel = after.channel
+                logger.info(f"{member.name}にボイス読み上げの提案を行います")
 
-            send_channel = after.channel
+                send_channel = after.channel
+            
+                embed = discord.Embed(title = "ボイスチャットに接続しました！", description = "聞き専チャットを読み上げる機能を有効にしますか？\nこのメッセージは60秒で削除されます！\n後で`/join`コマンドを使用することでも読み上げを始めます！", color = discord.Color.blue())
+                embed.set_author(name = "チャット読み上げ")
+                message = await send_channel.send(embed = embed, view = VoiceSpeechButtons(join_channel = join_channel))
+                await asyncio.sleep(60)
+                try:
+                    await message.delete()
+                except Exception:
+                    pass
+                
+        except Exception as e:
+            logger.error(e)        
         
-            embed = discord.Embed(title = "ボイスチャットに接続しました！", description = "聞き専チャットを読み上げる機能を有効にしますか？\nこのメッセージは60秒で削除されます！\n後で`/join`コマンドを使用することでも読み上げを始めます！", color = discord.Color.blue())
-            embed.set_author(name = "チャット読み上げ")
-            message = await send_channel.send(embed = embed, view = VoiceSpeechButtons(join_channel = join_channel))
-            await asyncio.sleep(60)
-            try:
-                await message.delete()
-            except Exception:
-                pass
-
 @client.tree.command(name="help",
                         description="現在実装されているコマンドの使い方を簡単に説明します！")
 async def help(interaction: discord.Interaction):
@@ -664,6 +682,17 @@ async def eventtest(interaction: discord.Interaction):
     events = evjson.eventget()
     await interaction.followup.send(events)
     
+@client.tree.command(name = "send_voice", description="指定したチャンネルにTTSを送信します", guild=discord.Object(config.testserverid))
+async def send_voice(interaction: discord.Interaction, text: str, channelid: str):
+    if interaction.user == client.user:
+        return
+    await interaction.response.defer()
+    
+    channelid = int(normalize("NFKC", channelid))
+    await voicechat.send_voice_message(text, channelid)
+        
+    await interaction.followup.send("完了しました")
+    
 @client.tree.command(name="eventcounttest",
                         description="イベントカウントのテストを行います",
                         guild=discord.Object(config.testserverid))
@@ -674,10 +703,10 @@ async def eventcounttest(interaction: discord.Interaction):
     eventcount = evjson.eventcount()
     await interaction.followup.send(f"- eventnow: {eventcount[0]}\n- eventend: {eventcount[1]}\n- eventvalue: {eventcount[2]}\n- eventtoday: {eventcount[3]}\n- eventendtoday: {eventcount[4]}")       
 
-@client.tree.command(name="send",
+@client.tree.command(name="send_text_message",
                         description="channelIDが空欄の場合、リマインダースレッドに投稿します！",
                         guild=discord.Object(config.testserverid))
-async def send(interaction: discord.Interaction, text: str, channelid: str = None):
+async def send_text_message(interaction: discord.Interaction, text: str, channelid: str = None):
     if not channelid:
         guild = client.get_guild(guildID)
         channel = guild.get_thread(remindThreadID)

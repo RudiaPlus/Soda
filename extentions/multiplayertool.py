@@ -71,11 +71,13 @@ class AKMultiJoinButton(discord.ui.View):
                     guild = interaction.guild
                     moderator = guild.get_role(config.Moderator_role)
                     administrator = guild.get_role(config.administrator_role)
+                    bots = guild.get_role(config.server_app_role)
                     try:
                         vc_channel = client.get_channel(multi_dict[index]["vcLinked"])
                         overwrite = {guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
                                 moderator: discord.PermissionOverwrite(view_channel = True, connect = True),
                                 administrator: discord.PermissionOverwrite(view_channel = True, connect = True),
+                                bots: discord.PermissionOverwrite(view_channel = True, connect = True),
                                 interaction.user: discord.PermissionOverwrite(view_channel = True),
                                 request_user: discord.PermissionOverwrite(view_channel = True, manage_channels = True)}
                         await vc_channel.edit(overwrites=overwrite)
@@ -176,11 +178,13 @@ class VClinkAndSendButton(discord.ui.View):
                 moderator = guild.get_role(config.Moderator_role)
                 administrator = guild.get_role(config.administrator_role)
                 vc_allowed = guild.get_role(config.vc_allowed_role)
+                bots = guild.get_role(config.server_app_role)
                 
                 overwrite = {guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
                              vc_allowed: discord.PermissionOverwrite(view_channel = True, connect = True),
                              moderator: discord.PermissionOverwrite(view_channel = True, connect = True),
                              administrator: discord.PermissionOverwrite(view_channel = True, connect = True),
+                             bots: discord.PermissionOverwrite(view_channel = True, connect = True),
                              interaction.user: discord.PermissionOverwrite(view_channel = True, manage_channels = True)}
                 
                 await vc_channel.edit(name = f"マルチプレイヤー: {self.room_id}", overwrites = overwrite)
@@ -210,10 +214,12 @@ class VClinkAndSendButton(discord.ui.View):
                 guild = interaction.guild
                 moderator = guild.get_role(config.Moderator_role)
                 administrator = guild.get_role(config.administrator_role)
+                bots = guild.get_role(config.server_app_role)
                 
                 overwrite = {guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
                             moderator: discord.PermissionOverwrite(view_channel = True, connect = True),
                             administrator: discord.PermissionOverwrite(view_channel = True, connect = True),
+                            bots: discord.PermissionOverwrite(view_channel = True, connect = True),
                             interaction.user: discord.PermissionOverwrite(view_channel = True, manage_channels = True)}
                 
                 await vc_channel.edit(name = f"マルチプレイヤー: {self.room_id}", user_limit=self.max_players, overwrites = overwrite)
@@ -299,7 +305,7 @@ async def vccreate(interaction: discord.Interaction, channel: str = str(config.v
     embed = discord.Embed(color = discord.Color.green(), title = "ボイスチャット作成", description=f"用途に沿った臨時ボイスチャットを作成します！\n{vccreate_voice.jump_url} を押すと**自動的に**ボイスチャットが作成されます！")
     embed.add_field(name = "名前の変え方", value = "作成されたボイスチャットから、「⚙️チャンネルの編集」→「チャンネル名」の欄に好きな名前を入力してください！\nオススメ: 今の状況や来て欲しい人など 例:「危機契約620点挑戦中」、「作業通話 誰でも来て下さい！」", inline = False)
     embed.add_field(name = "最大人数の設定", value = "「⚙️チャンネルの編集」→「ユーザー人数制限」のスライダーを動かすことで、ボイスチャットに接続できる最大人数を設定できます。数人用のゲームで遊ぶときにおススメです！", inline = False)
-    embed.add_field(name = "聞き専チャット、読み上げについて", value = "聞き専チャットは作成されたボイスチャットの「💬チャットを開く」ボタンから開けます。\nまた、現在読み上げbotの数が限られているので、読み上げbotを使用することは**推奨されません**。ご協力をお願いします。", inline = False)
+    embed.add_field(name = "聞き専チャット、読み上げについて", value = "聞き専チャットは作成されたボイスチャットの「💬チャットを開く」ボタンから開けます。\n読み上げbotは、<@&1322070138408931341>からご利用ください。ロードbotの`/join`から利用可能です！\nなお、読み上げモジュールは毎朝5時に再起動しますので、ご注意ください！", inline = False)
     
     if edit_message:
         message = await channel_get.fetch_message(edit_message)

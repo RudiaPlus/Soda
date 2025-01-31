@@ -62,7 +62,7 @@ recruitList = ["Lancet-2", "Castle-3", "THRM-EX", "ジャスティスナイト",
                "ホシグマ", "サリア", "シルバーアッシュ", "スカジ", "チェン", "シュヴァルツ", "ヘラグ", "マゼラン", "モスティマ", 
                "ブレイズ", "ア", "ケオベ", "バグパイプ", "ファントム", "ウィーディ", "ロサ", "スズラン", "エアースカーペ", "カシャ",
                "Friston-3", "ソーンズ", "アンドレアナ", "キアーベ", "ビーズワクス", "ジェイ", "フリント", "ユーネクテス", "アシッドドロップ",
-               "スルト", "エイプリル", "アレーン", "ブレミシャイン", "アオスタ", "バブル", "PhonoR-0"]
+               "スルト", "エイプリル", "アレーン", "ブレミシャイン", "アオスタ", "バブル", "PhonoR-0", "マドロック", "ウィスパーレイン", "ジャッキー"] #1-16からの新キャラ
 
 #OPERATOR
 operator_classes = {"先鋒": "PIONEER", "前衛": "WARRIOR", "重装": "TANK", "狙撃": "SNIPER", "術師": "CASTER", "医療": "MEDIC", "補助": "SUPPORT", "特殊": "SPECIAL"}
@@ -121,3 +121,15 @@ logging_channel = 1318532200588640297
 #categories
 feedback_category = 1108189699715125268
 vccreate_category = 1305500357958307860
+
+#speech
+default_waveform_base64 = "acU6Va9UcSVZzsVw7IU/80s0Kh/pbrTcwmpR9da4mvQejIMykkgo9F2FfeCd235K/atHZtSAmxKeTUgKxAdNVO8PAoZq1cHNQXT/PHthL2sfPZGSdxNgLH0AuJwVeI7QZJ02ke40+HkUcBoDdqGDZeUvPqoIRbE23Kr+sexYYe4dVq+zyCe3ci/6zkMWbVBpCjq8D8ZZEFo/lmPJTkgjwqnqHuf6XT4mJyLNphQjvFH9aRqIZpPoQz1sGwAY2vssQ5mTy5J5muGo+n82b0xFROZwsJpumDsFi4Da/85uWS/YzjY5BdxGac8rgUqm9IKh7E6GHzOGOy0LQIz3O4ntTg=="
+
+aivis_speaker_ids = {
+    "ノーマル": 888753760,
+    "通常": 888753761,
+    "テンション高め": 888753762,
+    "落ち着き": 888753763,
+    "上機嫌": 888753764,
+    "怒り・悲しみ": 888753765
+    }

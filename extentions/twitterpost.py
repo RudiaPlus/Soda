@@ -31,6 +31,8 @@ agent = 'Chromium";v="130","Google Chrome";v="130","Not?A_Brand";v="99'
 headers = {'User-Agent': agent}
 twitterurl = "https://twstalker.com/AKEndfieldJP"
 feedurl = "https://nitter.poast.org/AKEndfieldJP/rss"
+feedurl_alter = "https://nitter.privacydev.net/AKEndfieldJP/rss"
+twstalker = "https://twstalker.com/AKEndfieldJP"
 timeout = aiohttp.ClientTimeout(total=10)
 
 
@@ -226,23 +228,40 @@ async def ake_feed_retrieve():
         logger.error(f"ツイートにアクセスできませんでした。ステータスコード: {response.status}")
         return"""
         
-    try:   
-        with webdriver.Chrome(options = options) as driver:
-            driver.set_page_load_timeout(10)
-            driver.get(feedurl)
-            await asyncio.sleep(10)
-
+    driver = await asyncio.to_thread(webdriver.Chrome, options = options)
+    try:
+        driver.set_page_load_timeout(15)
+        await asyncio.to_thread(driver.get, feedurl)
+        await asyncio.sleep(15)
+        source = driver.page_source
+        
+    except Exception:
+        try:
+            driver.set_page_load_timeout(15)
+            await asyncio.to_thread(driver.get, feedurl_alter)
+            await asyncio.sleep(5)
             source = driver.page_source
-    except Exception as e:
-        logger.warning(f"ページの読み込みに失敗しました。: {type(e)}")
-        return
+        except Exception as e:
+            logger.warning(f"フィードにアクセスできませんでした: {type(e)}")
+            return
+    
+    finally:
+        await asyncio.to_thread(driver.quit)
     
     soup = BeautifulSoup(source, "html.parser")
-    pre_content = soup.find("pre").text
+    pre_soup = soup.find("pre")
+    if not pre_soup:
+        logger.info("preタグが見つかりませんでした。")
+        return
+    pre_content = pre_soup.text
     
     decoded_xml = html.unescape(pre_content)
     
-    feed = feedparser.parse(decoded_xml)
+    try:
+        feed = await asyncio.wait_for(asyncio.to_thread(feedparser.parse, decoded_xml), timeout=10)
+    except asyncio.TimeoutError:
+        logger.warning("feedparser.parseがタイムアウトしました。")
+        return
 
     new_tweets = []
     for entry in feed["entries"]:

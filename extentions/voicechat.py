@@ -2,11 +2,14 @@ import asyncio
 import json
 import os
 import re
-import time
+import datetime
 import subprocess
 import atexit
+from unicodedata import normalize
+import aiohttp
 
 import discord
+from discord.ext import tasks
 import requests
 
 from extentions import config, log
@@ -30,7 +33,7 @@ def voice_client_status():
 
 def write_voice_status(dict):
     with open(os.path.join(dir, voice_status_json_name), "w", encoding = "utf-8") as f:
-        json.dump(dict, f, ensure_ascii=False)
+        json.dump(dict, f, ensure_ascii=False, indent=4)
     return
 
 async def audio_query(text, speaker, max_retry):
@@ -72,15 +75,21 @@ async def synthesis(speaker, query_data, max_retry, intonationScale = 1.0, outpu
     else:
         raise ConnectionError("音声エラー：リトライ回数が上限に到達しました。 synthesis : ", r)
 
-async def text_to_speech(texts, speaker=888753760, max_retry=20, intonationScale = 1.0, outputSamplingRate = 44100, outputStereo = False, pauseLength = None, pauseLengthScale = 1.0, pitchScale = 0.0, postPhonemeLength = 0.1, prePhonemeLength = 0.1, speedScale = 1.0, tempoDynamicsScale = 1.0, volumeScale = 1.0):
+async def text_to_speech(texts, speaker=config.aivis_speaker_ids["ノーマル"], max_retry=20, intonationScale = 1.0, outputSamplingRate = 44100, outputStereo = False, pauseLength = None, pauseLengthScale = 1.0, pitchScale = 0.0, postPhonemeLength = 0.1, prePhonemeLength = 0.1, speedScale = 1.0, tempoDynamicsScale = 1.0, volumeScale = 1.0, split_count = 0, is_ogg = False):
     if texts is None:
         texts=""
     
     url_pattern = r'https?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
     texts = re.sub(url_pattern, 'URL省略', texts)
     
-    if len(texts) > 40:
+    emoji_pattern = r"<:.+?:\d+>"
+    texts = re.sub(emoji_pattern, '', texts)
+    
+    if len(texts) > split_count and split_count > 0:
         texts = texts[:40] + "以下略"
+        
+    if len(texts) == 0:
+        return
     
         
     # audio_query
@@ -88,9 +97,83 @@ async def text_to_speech(texts, speaker=888753760, max_retry=20, intonationScale
     # synthesis
     voice_data = await synthesis(speaker,query_data,max_retry,intonationScale,outputSamplingRate,outputStereo,pauseLength,pauseLengthScale,pitchScale,postPhonemeLength,prePhonemeLength,speedScale,tempoDynamicsScale,volumeScale)
     filepath = "TTS\\voice.wav"
+    ogg_filepath = "TTS\\voice.ogg"
     with open(os.path.join(dir, filepath), mode = "wb") as f:
         f.write(voice_data)
+    
+    #ogg変換
+    if is_ogg:
+        command = [
+            "ffmpeg",
+            "-y",
+            "-i", os.path.join(dir, filepath),
+            os.path.join(dir, ogg_filepath)
+        ]
+        subprocess.run(command, check = True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return os.path.join(dir, ogg_filepath)
     return os.path.join(dir, filepath)
+
+async def send_voice_message(text: str, channelid: int):
+
+    file = await text_to_speech(text, speaker= config.aivis_speaker_ids["通常"], volumeScale=0.5, is_ogg=True)
+    
+    async with aiohttp.ClientSession() as session:
+        #アップロードurlの取得
+        headers = {
+            "authorization": f"Bot {config.token}",
+            "content-type": "application/json"
+        }
+        data = {
+            "files": [
+                {
+                    "filename": "voice.ogg",
+                    "file_size": os.path.getsize(file),
+                    "id": "2"
+                }
+            ]
+        }
+        async with session.post(f"https://discord.com/api/v9/channels/{channelid}/attachments", headers=headers, json=data) as resp:
+            if resp.status != 200:
+                logger.error(f"アップロードurlの取得に失敗しました: {resp.status}")
+                return
+            upload_url = (await resp.json())["attachments"][0]["upload_url"]
+            upload_filename = (await resp.json())["attachments"][0]["upload_filename"]
+            
+        #ファイルのアップロード
+        with open(file, "rb") as f:
+            data = f.read()
+        headers = {
+            "authorization": f"Bot {config.token}",
+            "content-type": "audio/ogg"
+        }
+        async with session.put(upload_url, headers=headers, data=data) as resp:
+            if resp.status != 200:
+                logger.error(f"ボイスのアップロードに失敗しました: {resp.status}")
+                return
+        
+        #ボイスメッセージの送信
+        headers = {
+            "authorization": f"Bot {config.token}",
+            "content-type": "application/json"
+        }
+        data = {
+            "flags": 8192,
+            "attachments": [
+                {
+                    "id": "0",
+                    "filename": "voice-message.ogg",
+                    "uploaded_filename": upload_filename,
+                    "duration_secs": os.path.getsize(file) / 10000,
+                    "waveform": config.default_waveform_base64
+                }
+            ]
+        }
+        
+        async with session.post(f"https://discord.com/api/v9/channels/{channelid}/messages", headers=headers, json = data) as resp:
+            if resp.status != 200:
+                logger.error(f"メッセージの送信に失敗しました: {resp.status}")
+                return
+            return resp.status
 
 if config.voicechat is True:
     
@@ -99,6 +182,7 @@ if config.voicechat is True:
     #ボイスエンジン起動
     try:
         voice_engine = subprocess.Popen([r"C:\\Program Files\\AivisSpeech-Engine\\Windows-x64\\run.exe", "--host=0.0.0.0", "--use_gpu"], creationflags=subprocess.CREATE_NEW_CONSOLE)
+        
     except Exception as e:
         logger.error(f"ボイスエンジンの起動に失敗しました！: {e}")
         voicechat = False
@@ -167,7 +251,7 @@ async def join_voice(interaction: discord.Interaction, channel: discord.VoiceCha
         embed.set_author(name = "チャット読み上げ")
         await interaction.followup.send(embed = embed)
 
-@client.tree.command(name="join", description="利用できる読み上げクライアントを探し、チャット読み上げを開始します")
+@client.tree.command(name="join", description="【まずこちらを使ってください】利用できる読み上げクライアントを探し、チャット読み上げを開始します")
 @discord.app_commands.describe(channel="参加するチャンネル(任意)")
 async def join(interaction:  discord.Interaction, channel:  discord.VoiceChannel = None):
     await join_voice(interaction, channel)
@@ -254,9 +338,9 @@ for i in range(config.voice_clients):
             return
 
         author = message.author
-        username = str(author)
-        user_message = message.content
-        channel = message.channel
+        username = str(author)  # noqa: F841
+        user_message = message.content  # noqa: F841
+        channel = message.channel  # noqa: F841
         channelID = message.channel.id
 
         if message.guild:
@@ -280,7 +364,41 @@ for i in range(config.voice_clients):
                             speedScale = 1.0 + (voice_status[str(client_voice.user.id)]["queues"] - 1) * 0.1
                     while message.guild.voice_client.is_playing():
                         await asyncio.sleep(0.3)
-                    source = discord.FFmpegPCMAudio(executable="C:\\Program Files\\FFmpeg\\bin\\ffmpeg.exe",source= await text_to_speech(message.content, volumeScale=0.7, speedScale=speedScale))
+                    source = discord.FFmpegPCMAudio(executable="C:\\Program Files\\FFmpeg\\bin\\ffmpeg.exe",source= await text_to_speech(message.content, volumeScale=0.5, speedScale=speedScale, split_count=40))
                     message.guild.voice_client.play(source)
-                    voice_status[str(client_voice.user.id)]["queues"] -= 1
+                    voice_status = voice_client_status()
+                    voice_status[str(client_voice.user.id)]["queues"] -= 1 if voice_status[str(client_voice.user.id)]["queues"] > 0 else 0
                     write_voice_status(voice_status)
+                    
+    @tasks.loop(time=datetime.time(hour=4, minute = 50, tzinfo=config.JST))
+    async def before_reboot(client_voice = client_voice):
+        try:
+            #再起動前に接続しているVCに告知する
+            voice_status = voice_client_status()
+            await client_voice.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="まもなく再起動を行います。朝の5時以降にまたご利用ください。"), status=discord.Status.idle)
+            connected_channel_id = None
+            for clientID in voice_status:
+                if clientID == str(client_voice.user.id):
+                    
+                    connected_channel_id = voice_status[clientID]["connected_channel"]
+                    logger.info(f"再起動のため、読み上げを終了します。チャンネルID: {connected_channel_id}")
+                    break
+                
+            if connected_channel_id is None:
+                return
+            
+            voice_channel = client_voice.get_channel(connected_channel_id)
+            while voice_channel.guild.voice_client.is_playing():
+                await asyncio.sleep(0.3)
+            source = discord.FFmpegPCMAudio(executable="C:\\Program Files\\FFmpeg\\bin\\ffmpeg.exe",source= await text_to_speech("再起動の為、まもなく読み上げを終了します。朝5時以降にもう一度入れなおして下さい", volumeScale=0.7))
+            voice_channel.guild.voice_client.play(source)
+            await asyncio.sleep(30)
+            await voice_channel.guild.voice_client.disconnect()
+            for clientID in voice_status:
+                if clientID == str(client_voice.user.id):
+                    del voice_status[clientID]
+                    break
+            write_voice_status(voice_status)
+            
+        except Exception as e:
+            logger.exception(e) 
