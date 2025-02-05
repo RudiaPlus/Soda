@@ -30,7 +30,7 @@ class VoiceModule(discord.Client):
         intents.members = True
         intents.voice_states = True
         super().__init__(intents=intents)
-        self.activity = discord.Activity(type = discord.ActivityType.playing, name = "/joinで読み上げを開始します")
+        self.activity = discord.Activity(type = discord.ActivityType.custom, name = "/joinで読み上げを開始します")
         self.status = discord.Status.online
     
     async def join_voice_channel(self, channel: discord.VoiceChannel):
@@ -38,7 +38,7 @@ class VoiceModule(discord.Client):
             await self.voice_clients[0].disconnect()
         channel_got = await self.fetch_channel(channel.id)
         await channel_got.connect()
-        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"読み上げ中　VC: {channel_got.name}"), status = discord.Status.idle)
+        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.custom, name=f"読み上げ中　VC: {channel_got.name}"), status = discord.Status.idle)
     
 
 client = Rhodolite()

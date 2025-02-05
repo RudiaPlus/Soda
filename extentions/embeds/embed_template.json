@@ -1,0 +1,36 @@
+[
+    {
+        "author": {
+            "name": "Author",
+            "url": "https://discord.com",
+            "icon_url": "https://pbs.twimg.com/profile_images/1260264885771890689/2KcWaF8a_400x400.jpg"
+        },
+        "color": 16777215,
+        "title": "Title",
+        "url": "https://discord.com",
+        "description": "# Bigger\n## big\n### medium\n```\ncodeblock\n```\n> quote\n- list\n1. list\n[link](https://discord.com)",
+        "thumbnail": {
+            "url": "https://pbs.twimg.com/profile_images/1260264885771890689/2KcWaF8a_400x400.jpg"
+        },
+        "image": {
+            "url": "https://pbs.twimg.com/profile_images/1260264885771890689/2KcWaF8a_400x400.jpg"
+        },
+        "footer": {
+            "text": "Footer",
+            "icon_url": "https://pbs.twimg.com/profile_images/1260264885771890689/2KcWaF8a_400x400.jpg"
+        },
+        "fields": [
+            {
+                "name": "Field 1",
+                "value": "Value 1",
+                "inline": true
+            },
+            {
+                "name": "Field 2",
+                "value": "Value 2",
+                "inline": true
+            }
+        ],
+        "timestamp": "2014-10-10T13:50:40+09:00"
+    }
+]

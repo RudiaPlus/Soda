@@ -27,7 +27,8 @@ from extentions import (
     responses,
     supportrequest,
     twitterpost,
-    voicechat
+    voicechat,
+    embed
 )
 from extentions.aclient import client, voice_clients_list
 from collections import namedtuple
@@ -702,6 +703,15 @@ async def eventcounttest(interaction: discord.Interaction):
     await interaction.response.defer()
     eventcount = evjson.eventcount()
     await interaction.followup.send(f"- eventnow: {eventcount[0]}\n- eventend: {eventcount[1]}\n- eventvalue: {eventcount[2]}\n- eventtoday: {eventcount[3]}\n- eventendtoday: {eventcount[4]}")       
+
+@client.tree.command(name="shutdown", description="botを終了します", guild=discord.Object(config.testserverid))
+async def shutdown(interaction: discord.Interaction):
+    if interaction.user == client.user:
+        return
+    await interaction.response.defer()
+    await interaction.followup.send("botを終了します")
+    await client.close()
+    quit()
 
 @client.tree.command(name="send_text_message",
                         description="channelIDが空欄の場合、リマインダースレッドに投稿します！",

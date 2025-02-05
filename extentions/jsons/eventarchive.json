@@ -1177,6 +1177,18 @@
             }
         ]
     },
+    "act17mini": {
+    "id": "act17mini",
+    "type": "MINISTORY",
+    "stageAdd": false,
+    "name": "溶炉『還魂』 譚",
+    "news": "https://arknights.jp/news/469",
+    "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88137_%E6%BA%B6%E7%82%89%E3%80%8C%E9%82%84%E9%AD%82%E3%80%8D%E8%AD%9A",
+    "pic": "https://webusstatic.yo-star.com/uy0news/aj/7df30b315e7b2753c6441beee715e1cc.png",
+    "startTime": 1738911600,
+    "endTime": 1739473199,
+    "rewardEndTime": 1739732399
+    },
     "dis_perm_sandbox_1": {
         "id": "dis_perm_sandbox_1",
         "type": "SANDBOX",
@@ -1192,6 +1204,24 @@
                 "startTime": 1725130800,
                 "endTime": 1727722799,
                 "contents": "- 闘争の潮流: 「獲物は霧の中」"   
+            }
+        ]
+    },
+    "dis_rogue_4": {
+        "id": "dis_rogue_4",
+        "type": "ROGUELIKE",
+        "name": "統合戦略「サルカズの炉辺奇談」",
+        "news": "https://arknights.jp/news/470",
+        "link": "https://arknights.wikiru.jp/?%E7%B5%B1%E5%90%88%E6%88%A6%E7%95%A5%E3%80%8C%E3%82%B5%E3%83%AB%E3%82%AB%E3%82%BA%E3%81%AE%E7%82%89%E8%BE%BA%E5%A5%87%E8%AB%87%E3%80%8D",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/d47d0fa0e91459b97500efea7fc2bb1e.png",
+        "startTime": 1739516400,
+        "endTime": 1764529199,
+        "monthlyUpdate": [
+            {
+                "month": 2,
+                "startTime": 1738350000,
+                "endTime": 1740769199,
+                "contents": "- 語り手の目録01: ニンフ"
             }
         ]
     }

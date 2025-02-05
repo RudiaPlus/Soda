@@ -532,7 +532,7 @@ async def remind(mode = "morning"):
                         
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})",
-                                            color=0xFFFFFF,
+                                            color=0x852B2F,
                                             url=link)
                     embed.set_author(name="統合戦略(常設)")
                     embed.set_image(url=eventpic)
