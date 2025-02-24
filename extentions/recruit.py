@@ -58,37 +58,40 @@ async def find_common_tags(reference_tags, operators):
         combinations = itertools.combinations(reference_tags, r)
         all_combinations.extend(combinations)
     
-    matching_combinations = []
+    matching_combinations = {}
+    
     for combination in all_combinations:
-        for ope in range(len(operators)):
-            if set(operators[ope]["tags"]) & set(combination):
-                matchtag = set(operators[ope]["tags"]) & set(combination)
+        if len(combination) > 3:
+            continue
+        combination_set = frozenset(combination)
+        logger.debug(f"start match searching: {combination_set}")
+        for operator in operators:
+            matchtags = set(operator["tags"]) & combination_set
+            
+            if matchtags:
                 
-                if (operators[ope]["rarity"] == 5 and "上級エリート" not in combination) or (operators[ope]["name"] == "アーミヤ"):
-                    pass
+                matchtags_str = ", ".join(matchtags)
                 
-                else:
-                                        
-                    there = False
-                    for collection in matching_combinations:
-                        if set(collection["tags"]) == matchtag:
-                            there = True
-                            if operators[ope] not in collection["operators"]:
-                                collection["operators"].append(operators[ope])
-                            break
-                    if there is False:   
-                        matching_combinations.append({"tags": list(matchtag), "operators": [operators[ope]]})
-        for i in range(len(matching_combinations)):
-            matching_combinations[i]["operators"] = sorted(matching_combinations[i]["operators"], key = lambda x: x["rarity"])
+                if (operator["rarity"] == 5 and "上級エリート" not in combination_set) or (operator["name"] == "アーミヤ"):
+                    continue
+                
+                if matchtags_str not in matching_combinations:
+                    matching_combinations[str(matchtags_str)] = {"tags": list(matchtags), "operators": []}
+                
+                if operator not in matching_combinations[matchtags_str]["operators"]:
+                    matching_combinations[str(matchtags_str)]["operators"].append(operator)
+        
+        for result in matching_combinations.values():
+            result["operators"] = sorted(result["operators"], key = lambda x: x["rarity"])
     
     for tag in matching_combinations:
         rarity = 99 #99 means only 1 star
-        for operator in tag["operators"]:
+        for operator in matching_combinations[tag]["operators"]:
             rarity = operator["rarity"] if rarity > operator["rarity"] and operator["rarity"] != 0 else rarity
-        tag["min_rarity"] = rarity
+        matching_combinations[tag]["min_rarity"] = rarity
         
-    sorted_match = sorted(matching_combinations, key = lambda item: (-item["min_rarity"], len(item["operators"])))
-                
+    sorted_match = sorted(matching_combinations.values(), key = lambda item: (-item["min_rarity"], len(item["operators"])))
+    logger.debug(f"sorted_match: {sorted_match}")
     return sorted_match 
 
 async def output_results(selected_tags):

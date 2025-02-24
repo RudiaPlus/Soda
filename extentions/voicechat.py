@@ -5,7 +5,6 @@ import re
 import datetime
 import subprocess
 import atexit
-from unicodedata import normalize
 import aiohttp
 
 import discord
@@ -288,7 +287,7 @@ async def leave(interaction:  discord.Interaction):
             return
             
         await connected_client.disconnect()
-        await connected_client.client.change_presence(activity=discord.Activity(type=discord.ActivityType.custom, name="/joinで読み上げを開始します"), status=discord.Status.online)
+        await connected_client.client.change_presence(activity=discord.CustomActivity(name="/joinで読み上げを開始します"), status=discord.Status.online)
         
         voice_status = voice_client_status()
         for clientID in voice_status:
@@ -322,7 +321,7 @@ for i in range(config.voice_clients):
             if member.guild.voice_client and len(before.channel.members) < 2:
                 if member.guild.voice_client.channel == before.channel:
                     await member.guild.voice_client.disconnect()
-                    await client_voice.change_presence(activity=discord.Activity(type=discord.ActivityType.custom, name="/joinで読み上げを開始します"), status=discord.Status.online)
+                    await client_voice.change_presence(activity=discord.CustomActivity(name="/joinで読み上げを開始します"), status=discord.Status.online)
                     voice_status = voice_client_status()
                     for clientID in voice_status:
                         if clientID == str(client_voice.user.id):
@@ -375,7 +374,7 @@ for i in range(config.voice_clients):
         try:
             #再起動前に接続しているVCに告知する
             voice_status = voice_client_status()
-            await client_voice.change_presence(activity=discord.Activity(type=discord.ActivityType.custom, name="まもなく再起動を行います。朝の5時以降にまたご利用ください。"), status=discord.Status.idle)
+            await client_voice.change_presence(activity=discord.CustomActivity(name="まもなく再起動を行います。朝の5時以降にまたご利用ください。"), status=discord.Status.idle)
             connected_channel_id = None
             for clientID in voice_status:
                 if clientID == str(client_voice.user.id):

@@ -1,0 +1,82 @@
+{
+    ".recruit": {
+        "description": "公開求人ツール(スクショ認識)機能の説明",
+        "bodytext": "スクリーンショットを認識する公開求人ツールを是非使ってみて下さい！\nhttps://discord.com/channels/1018858818345631745/1284115621465948171"
+    },
+    ".request": {
+        "description": "サポートリクエスト機能の説明",
+        "bodytext": "サポート貸し出しをリクエストする機能があります！詳細は下のチャンネルからどうぞ！\nhttps://discord.com/channels/1018858818345631745/1093849433621401600"
+    },
+    ".channel": {
+        "description": "チャンネルのカスタマイズ機能の説明",
+        "bodytext": "<id:browse> からチャンネルのカスタマイズが出来ます！\n全てのチャンネルを表示したい方は、「このサーバー名が表示されている箇所」をクリックして「全てのチャンネルをを表示」にチェックを入れてください！"
+    },
+    ".spoiler": {
+        "description": "ネタバレ情報の扱い方",
+        "bodytext": "大陸版情報等のネタバレは「||」で文章を囲んでスポイラーマークを付けるか、【ネタバレ】関連のチャンネルをお使いください！\nhttps://discord.com/channels/1018858818345631745/1018901946989551686"
+    },
+    ".rule": {
+        "description": "サーバールールの確認方法",
+        "bodytext": "ルールはこちらをご覧ください！\nhttps://discord.com/channels/1018858818345631745/1018858818932842589"
+    },
+    ".question": {
+        "description": "質問の仕方",
+        "bodytext": "簡単な質問は: https://discord.com/channels/1018858818345631745/1019204491914006550\n詳細な質問（育成相談、大陸版情報等）は: https://discord.com/channels/1018858818345631745/1072130008732147823\nからお願いします！"
+    },
+    ".gakkai": {
+        "description": "データや数値を扱う話題について",
+        "bodytext": "データや数値を扱う話題、通常のプレイで知る必要のない程の効率化などの話題はこちらへおねがいします！\nhttps://discord.com/channels/1018858818345631745/1304100644008759348"
+    },
+    ".story": {
+        "description": "ストーリー内容全般について",
+        "bodytext": "ストーリー内容を扱う際は「||」で文章を囲んでスポイラーマークを付けるか\n日本版のストーリーは: https://discord.com/channels/1018858818345631745/1293797730707308554\n大陸版のストーリーは: https://discord.com/channels/1018858818345631745/1293798000275099739\nからお願いします！"
+    },
+    ".beginner": {
+        "description": "攻略Wikiの「初心者ガイド」を返します",
+        "bodytext": "初心者向けのガイドが攻略Wikiにのっています！\nhttps://arknights.wikiru.jp/?%E5%88%9D%E5%BF%83%E8%80%85%E3%82%AC%E3%82%A4%E3%83%89"
+    },
+    ".gacha": {
+        "description": "ガチャ結果などについて",
+        "bodytext": "ガチャ結果などの話題はこちらへお願いします！\nhttps://discord.com/channels/1018858818345631745/1128635994384637982"
+    },
+    ".endfield": {
+        "description": "エンドフィールド関連のカテゴリーについて",
+        "bodytext": "エンドフィールドについての話題はエンドフィールドカテゴリーにてお願いします！\nhttps://discord.com/channels/1018858818345631745/1166620566736879667\nカテゴリーが見つからない場合 <id:browse> からチャンネルをカスタマイズしてください！"
+    },
+    ".arknights": {
+        "description": "アークナイツ関連のカテゴリーについて",
+        "bodytext": "アークナイツ全般についての話題アークナイツカテゴリーにてお願いします！\nhttps://discord.com/channels/1018858818345631745/1018901913275748382\nカテゴリーが見つからない場合 <id:browse> からチャンネルをカスタマイズしてください！"
+    },
+    ".role": {
+        "description": "ボイスチャット等のロール付与について",
+        "bodytext": "ボイスチャット等のロール付与については <id:customize> からできます！"
+    },
+    ".tool": {
+        "description": "コミュニティツールの場所を紹介します",
+        "bodytext": "公開求人ツール、Wiki検索など便利なコミュニティツールはこちらから！\nhttps://discord.com/channels/1018858818345631745/1142491583757951036"
+    },
+    ".othergame": {
+        "description": "他ゲームの話題について",
+        "bodytext": "他ゲームの話題はこちらへお願いします！\nhttps://discord.com/channels/1018858818345631745/1065816848379162717"
+    },
+    ".bot": {
+        "description": "botの使い方について",
+        "bodytext": "botの使い方についての紹介、コマンドの確認はこちらへ！\nhttps://discord.com/channels/1018858818345631745/1070652684870357022"
+    },
+    ".feedback": {
+        "description": "フィードバック、問い合わせなどの送り方について",
+        "bodytext": "なにかありましたら、\nhttps://discord.com/channels/1018858818345631745/1108227854245830706\nからお願いします！"
+    },
+    ".voicechat": {
+        "description": "個別VCの作り方の説明",
+        "bodytext": "ボイスチャットを個別に作成することが出来ます！詳しくはこちらをご覧ください！\nhttps://discord.com/channels/1018858818345631745/1305508824781815899"
+    },
+    ".rogue5": {
+        "description": "統合戦略5に関する話題について",
+        "bodytext": "統合戦略#5「サルカズの炉辺奇談」についての話題はこちらへお願いします！ \nhttps://discord.com/channels/1018858818345631745/1110448851799777300"
+    },
+    ".beg_build": {
+        "description": "higan_KZBS氏の初心者向け育成ガイドを返します",
+        "bodytext": "初心者向け育成ガイド\n- アークナイツだれ育てる？(higan KZBS氏): https://www.youtube.com/playlist?list=PLrd-1no8XZtGkrMIwR9o1gNvc4CdjHbkn"
+    }
+}

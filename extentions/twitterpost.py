@@ -234,6 +234,9 @@ async def ake_feed_retrieve():
         await asyncio.to_thread(driver.get, feedurl)
         await asyncio.sleep(15)
         source = driver.page_source
+        soup = BeautifulSoup(source, "html.parser")
+        pre_soup = soup.find("pre")
+        pre_content = pre_soup.text
         
     except Exception:
         try:
@@ -241,19 +244,16 @@ async def ake_feed_retrieve():
             await asyncio.to_thread(driver.get, feedurl_alter)
             await asyncio.sleep(5)
             source = driver.page_source
+            soup = BeautifulSoup(source, "html.parser")
+            pre_soup = soup.find("pre")
+            pre_content = pre_soup.text
+            
         except Exception as e:
             logger.warning(f"フィードにアクセスできませんでした: {type(e)}")
             return
     
     finally:
         await asyncio.to_thread(driver.quit)
-    
-    soup = BeautifulSoup(source, "html.parser")
-    pre_soup = soup.find("pre")
-    if not pre_soup:
-        logger.info("preタグが見つかりませんでした。")
-        return
-    pre_content = pre_soup.text
     
     decoded_xml = html.unescape(pre_content)
     
@@ -269,7 +269,8 @@ async def ake_feed_retrieve():
         post_datetime = datetime.datetime(*post_time[:6], tzinfo = datetime.timezone.utc)
         if post_datetime > last_published_time:
             url = entry["link"]
-            target = url.find(".org/") #利用するサイトのドメインから決める
+            target = url.find(".org/") if ".org" in url else url.find(".net/")
+            #利用するサイトのドメインから決める
             target_end = url.find("#m")
             new_tweet_url_splitted = url[target+5:target_end]
             new_tweet_url_twitter = f"https://x.com/{new_tweet_url_splitted}"

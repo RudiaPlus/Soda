@@ -1,9 +1,11 @@
 import asyncio
+import atexit
 import datetime
 import io
 import json
 import os
 import re
+from collections import namedtuple
 from math import floor
 from unicodedata import normalize
 
@@ -16,6 +18,7 @@ from extentions import (
     JSTTime,
     communitytool,
     config,
+    makeembed,
     evjson,
     log,
     maintenances,
@@ -28,17 +31,15 @@ from extentions import (
     supportrequest,
     twitterpost,
     voicechat,
-    embed
 )
 from extentions.aclient import client, voice_clients_list
-from collections import namedtuple
-import atexit
 
 logger = log.setup_logger()
 
 #global変数
 remindThreadID = 0
 guildID = config.main_server
+preset_names = []
 
 test = config.test
 dir = os.path.abspath(__file__ + "/../")
@@ -165,12 +166,17 @@ async def on_ready():
         #voice_statusの初期化
         voicechat.write_voice_status({})
         
+        #presetの初期化
+        presets_dict = load_json("presets.json")
+        global preset_names
+        preset_names = list(presets_dict.keys())
+        
     except Exception as e:
         logger.exception(f"[on_ready]にて エラー：{e}")
         
     logger.info(f"{client.user} 、準備完了です！")
     
-    await asyncio.sleep(40)
+    await asyncio.sleep(60)
     
     #ボイスクライアントのロード
     if voicechat.voicechat is True:
@@ -179,7 +185,9 @@ async def on_ready():
             await voicechat.text_to_speech("ボイスクライアントをロードします")
             logger.info("ボイスクライアントのロードが完了しました")
         except Exception as e:
-            logger.error(f"ボイスクライアントのロードに失敗しました！\n{e}")
+            logger.warning(f"ボイスクライアントのロードに失敗しました！\n{e}")
+            await asyncio.sleep(60)
+            await voicechat.text_to_speech("ボイスクライアントをロードします")
 
 @client.event
 async def setup_hook() -> None:
@@ -203,9 +211,25 @@ async def on_message(message: discord.Message):
     user_message = message.content
     channel = message.channel
     channelID = message.channel.id
+    
+    #preset
+    if user_message.startswith("."):
+        if user_message == ".help":
+            presets_dict = load_json("presets.json")
+            preset_describe = "\n- **.help**：この一覧を表示します"
+            for preset in presets_dict:
+                preset_describe += f"\n- **{preset}**：{presets_dict[preset]["description"]}"
+                
+            embed = discord.Embed(title = "プリセット一覧", description = f"## 以下が現在利用できるプリセットです！\n{preset_describe}", color = discord.Color.green())
+            embed.set_footer(text = "プリセットを利用する場合は、.(ドット)から始まるプリセット名をメッセージに送信するだけでOKです！")
+            await message.reply(embed = embed)
+            return
+        if user_message in preset_names:
+            presets_dict = load_json("presets.json")
+            await message.reply(presets_dict[user_message]["bodytext"])
+            return
 
     if message.guild:
-                    
         
         if channelID == remindThreadID:
             
@@ -292,6 +316,14 @@ async def on_message(message: discord.Message):
                             icon_url=config.server_icon)
             await message.author.send(embed=mail)
             
+def load_json(file_name: str):
+    with open(os.path.join(dir, f"jsons\\{file_name}"), "r", encoding="utf-8") as f:
+        return json.load(f)
+    
+def save_json(file_name: str, data: dict):
+    with open(os.path.join(dir, f"jsons\\{file_name}"), "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+     
 async def load_reactions(reaction: discord.Reaction):
     with open(os.path.join(dir, "jsons/reactions.json"), "r", encoding="utf-8") as f:
         reactions = json.load(f)
@@ -725,6 +757,27 @@ async def send_text_message(interaction: discord.Interaction, text: str, channel
         channel = client.get_channel(channelid)
     await channel.send(text)
     await interaction.response.send_message("完了しました")
+    
+@client.tree.command(name="add_preset", description="プリセットを追加します(現在はスタッフオンリー)")
+@app_commands.describe(name="プリセットの名前(必ず.から始めてください)", description="プリセットの説明(.helpで表示)", bodytext="プリセットへの返答内容(本文)")
+@discord.app_commands.default_permissions(manage_messages=True)
+@discord.app_commands.guild_only()
+@discord.app_commands.checks.has_permissions(manage_messages=True)
+async def add_preset(interaction: discord.Interaction, name: str, description: str, bodytext: str):
+    if interaction.user == client.user:
+        return
+    if name.startswith(".") is False:
+        embed = discord.Embed(title="プリセット名が不正です！", description="プリセット名は必ず「.」から始めてください", color=discord.Color.red())
+        await interaction.response.send_message(embed=embed)
+        return
+    await interaction.response.defer()
+    presets_dict = load_json("presets.json")
+    presets_dict[name] = {"description": description, "bodytext": bodytext}
+    save_json("presets.json", presets_dict)
+    global preset_names
+    preset_names = list(presets_dict.keys())
+    embed = discord.Embed(title="プリセット追加完了", description=f"プリセット名: {name}\n説明: {description}\n本文: {bodytext}", color=discord.Color.green())
+    await interaction.followup.send(embed=embed)
 
 class DoctorNameCommand(app_commands.Group):
 
