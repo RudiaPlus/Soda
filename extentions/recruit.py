@@ -64,7 +64,6 @@ async def find_common_tags(reference_tags, operators):
         if len(combination) > 3:
             continue
         combination_set = frozenset(combination)
-        logger.debug(f"start match searching: {combination_set}")
         for operator in operators:
             matchtags = set(operator["tags"]) & combination_set
             
@@ -91,7 +90,6 @@ async def find_common_tags(reference_tags, operators):
         matching_combinations[tag]["min_rarity"] = rarity
         
     sorted_match = sorted(matching_combinations.values(), key = lambda item: (-item["min_rarity"], len(item["operators"])))
-    logger.debug(f"sorted_match: {sorted_match}")
     return sorted_match 
 
 async def output_results(selected_tags):
