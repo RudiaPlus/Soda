@@ -27,7 +27,6 @@ from extentions import (
     multiplayertool,  # noqa: F401
     recruit,
     reminder,
-    responses,
     supportrequest,
     twitterpost,
     voicechat,
@@ -656,17 +655,6 @@ async def ping(interaction: discord.Interaction):
     waittime_ms = round(waittime.total_seconds() * 1000)
     await response.edit(content=f"WebSocket待機時間:{ping_ms}ms\n送信までの待機時間:{waittime_ms}ms")
 
-@client.tree.command(name="rechat",
-                        description="for dev only",
-                        guild=discord.Object(config.testserverid))
-async def rechat(interaction: discord.Interaction):
-    if interaction.user == client.user:
-        return
-
-    await interaction.response.defer()
-    await responses.get_response("reset", reset=True)
-    await interaction.followup.send("完了しました！")
-
 @client.tree.command(name="maintenance",
                         description="メンテナンスについて",
                         guild=discord.Object(config.testserverid))
@@ -881,7 +869,6 @@ async def morning():
     try:
         logger.info("時間になりました。モーニングルーティンを始めます")
         await reminder.remind("morning")
-        await responses.get_response("reset", reset=True)
 
     except Exception as e:
         logger.exception(f"[morning]にてエラー：{e}")  

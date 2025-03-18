@@ -14,6 +14,9 @@ def timeJST(type: str):
         weekday = week[now.weekday()]
         month = str(now.month).zfill(2)
         day = str(now.day).zfill(2)
+        hour = str(now.hour).zfill(2)
+        minute = str(now.minute).zfill(2)
+        second = str(now.second).zfill(2)
 
         if type == "full":
             return(f"{now.year}年{now.month}月{now.day}日 ({weekday}) {now.hour}時{now.minute}分{now.second}秒")
@@ -31,6 +34,12 @@ def timeJST(type: str):
             return(f"{month}{day}")
         elif type == "timestamp":
             return(math.floor(now.timestamp()))
+        elif type == "timefull":
+            return(f"{now.year}-{month}-{day} {hour}:{minute}:{second}")
+        elif type == "time":   
+            return(f"{hour}:{minute}")
+        elif type == "file":
+            return(f"{now.year}-{month}-{day}_{hour}-{minute}-{second}")
         else :
             raise ValueError("argument 'type' didn't match correctly.")
         

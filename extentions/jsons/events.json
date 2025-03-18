@@ -11,28 +11,6 @@
         "monthlyUpdate": [
         ]
     },
-    "act35side": {
-        "id": "act35side",
-        "type": "SIDESTORY",
-        "stageAdd": true,
-        "name": "太陽すらも追い越して",
-        "news": "https://www.arknights.jp/news/465",
-        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88136_%E5%A4%AA%E9%99%BD%E3%81%99%E3%82%89%E3%82%82%E8%BF%BD%E3%81%84%E8%B6%8A%E3%81%97%E3%81%A6",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/d0391b41a7b2f20ae353d30595ffe2bc.png",
-        "startTime": 1737010800,
-        "endTime": 1738781999,
-        "rewardEndTime": 1739386799,
-        "additionalStage": [
-            {
-                "name": "豊穣祭",
-                "startTime": 1737615600
-            },
-            {
-                "name": "宝物庫",
-                "startTime": 1738220400
-            }
-        ]
-    },
     "dis_rogue_4": {
         "id": "dis_rogue_4",
         "type": "ROGUELIKE",
@@ -51,16 +29,34 @@
             }
         ]
     },
-    "act17mini": {
-    "id": "act17mini",
-    "type": "MINISTORY",
-    "stageAdd": false,
-    "name": "溶炉『還魂』 譚",
-    "news": "https://arknights.jp/news/469",
-    "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88137_%E6%BA%B6%E7%82%89%E3%80%8C%E9%82%84%E9%AD%82%E3%80%8D%E8%AD%9A",
-    "pic": "https://webusstatic.yo-star.com/uy0news/aj/7df30b315e7b2753c6441beee715e1cc.png",
-    "startTime": 1738911600,
-    "endTime": 1739473199,
-    "rewardEndTime": 1739732399
+    "act28sre": {
+        "id": "act28sre",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "ダーティマネー(復刻)",
+        "news":"https://arknights.jp/news/471",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88138_%E3%83%80%E3%83%BC%E3%83%86%E3%82%A3%E3%83%9E%E3%83%8D%E3%83%BC%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/0c32fd567f265c93e6378b4e6e8da607.png",
+        "startTime": 1740726000,
+        "endTime": 1741546799,
+        "rewardEndTime": 1741892399
+    },
+    "act36side": {
+        "id": "act36side",
+        "type": "SIDESTORY",
+        "stageAdd": true,
+        "name": "テラ飯",
+        "news": "https://www.arknights.jp/news/472",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88139_%E3%83%86%E3%83%A9%E9%A3%AF",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/2eaa5a68bac46d7d53b6aa90ec799969.png",
+        "startTime": 1741590000,
+        "endTime": 1742756399,
+        "rewardEndTime": 1743361199,
+        "additionalStage": [
+            {
+                "name": "テラを旅する",
+                "startTime": 1742194800
+            }
+        ]
     }
 }

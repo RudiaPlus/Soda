@@ -8,7 +8,7 @@ import discord
 import numpy
 from PIL import Image
 
-from extentions import config, log, supportrequest
+from extentions import config, log, supportrequest, JSTTime
 from extentions.aclient import client
 from extentions.aOCR import ocr
 
@@ -666,11 +666,11 @@ async def ocr_tag_from_screenshot(image_path):
     im = Image.open(image_path)
     im_width, im_height = im.size
     
-    tags_center_hrz = im_width * 0.48
-    tags_center_vrt = im_height * 0.57
+    tags_center_hrz = im_width * 0.50
+    tags_center_vrt = im_height * 0.60
     
-    tags_height = im_height * 0.16
-    tags_width = tags_height * 4
+    tags_height = im_height * 0.20
+    tags_width = tags_height * 3.5
     
     im_cropped = im.crop((tags_center_hrz - (tags_width/2), tags_center_vrt - (tags_height/2), 
                           tags_center_hrz + (tags_width/2), tags_center_vrt + (tags_height/2)))
@@ -688,15 +688,24 @@ async def ocr_tag_from_screenshot(image_path):
     
     result = ocr.ocr(img = np_binaried, cls = False)
     result_tags = []
+    logger.debug(f"タグを{len(result[0])}個検出")
+    logger.debug(f"検出されたタグ: {result[0]}")
     
     for i in range(len(result[0])):
-        tag = result[0][i][1][0]
+        tag: str = result[0][i][1][0]
         closest_match = get_close_matches(tag, possible_tag_list, n=1, cutoff=0.1)
         if not closest_match:
             logger.error(f"タグの検出が出来ませんでした: {tag}")
         else:
             result_tags.append(closest_match[0])
             
+        if tag != closest_match[0]:
+            filetime = JSTTime.timeJST("file")
+            logger.warning(f"OCR結果「{tag}」は「{closest_match[0]}」に修正されました。 デバッグ用画像はimages/debugフォルダに「ocr_debug_{tag}_{filetime}.png」で保存されました。")
+            #cv2は日本語ファイル名をサポートしていないため、tempで保存してから改名
+            cv2.imwrite(os.path.join(image_dir, "debug\\ocr_debug_temp.png"), binaried)
+            os.rename(os.path.join(image_dir, "debug\\ocr_debug_temp.png"), os.path.join(image_dir, f"debug\\ocr_debug_{tag}_{filetime}.png"))
+               
     return result_tags
 
 async def recruit_from_screenshot(image_path, message: discord.Message):
