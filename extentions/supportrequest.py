@@ -6,8 +6,9 @@ from typing import List
 
 import discord
 
-from extentions import config, log
+from extentions import log
 from extentions.aclient import client
+from extentions.config import static
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
@@ -60,7 +61,7 @@ class RequestConfirm(discord.ui.View):
                 
                 channel = self.original_message.channel
                 thread_create_message = await channel.fetch_message(channel.last_message_id)
-                if thread_create_message.id != self.original_message.id and thread_create_message.author.id != config.me:
+                if thread_create_message.id != self.original_message.id and thread_create_message.author.id != static.me:
                     await thread_create_message.delete()
                 else:
                     logger.warning("スレッド作成のメッセージが送信されていませんので、削除しませんでした。")
@@ -321,7 +322,7 @@ async def send_request(user, operator, skill = None, skill_level = None, module:
         "respondUserID": None
     }
 
-    channel = client.get_channel(config.request)
+    channel = client.get_channel(static.request)
     embed = discord.Embed(
         title=f"サポートオペレーター「{operator_emojis[operator]}{operator}」のリクエスト",
         description=f"リクエスト者：{user.mention}\n{doctorname_display}\n__**希望条件**__\n{lv_name}{skill_name}{module_name}{remarks_name}\n**是非ご協力ください！**"
@@ -651,7 +652,7 @@ async def operator_autocomplete(interaction: discord.Interaction, current: str) 
 async def delete_old_request():
     
     request_list = await request_load()
-    channel = client.get_channel(config.request)
+    channel = client.get_channel(static.request)
     for item in request_list:
         request_message = await channel.fetch_message(item["messageID"])
         if request_message.thread:
@@ -729,7 +730,7 @@ async def support_request(interaction: discord.Interaction,
             requests = await request_load()
             for item in requests:
                 if item["userID"] == interaction.user.id:
-                    await interaction.followup.send(f"あなたは既にリクエストを送信しています！<#{config.request}>をご覧ください！")
+                    await interaction.followup.send(f"あなたは既にリクエストを送信しています！<#{static.request}>をご覧ください！")
                     return
 
             embed = discord.Embed(title=f"サポートオペレーター「{operator_emojis[operator]}{operator}」のリクエスト",

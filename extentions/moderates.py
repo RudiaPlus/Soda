@@ -5,8 +5,9 @@ from typing import List
 
 import discord
 
-from extentions import JSTTime, config, log, modmails
+from extentions import JSTTime, log, modmails
 from extentions.aclient import client
+from extentions.config import static
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
@@ -191,7 +192,7 @@ async def warning_and_timeout(interaction: discord.Interaction, member: discord.
             # logger.info(member_punishments)
 
         embed = discord.Embed(title="⚠️メンバーに「警告」を科しました。",
-                              description=f"メンバー「{member_got.display_name}」に「**警告**」を科しました。\n- タイムアウト: {timeout_minutes}\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰です。\n「警告」が数回重なった場合、より重い処罰が科される場合があります。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
+                              description=f"メンバー「{member_got.display_name}」に「**警告**」を科しました。\n- タイムアウト: {timeout_minutes}\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰です。\n「警告」が数回重なった場合、より重い処罰が科される場合があります。\n[サーバールール]({static.server_rule_link})や[Discordのコミュニティガイドライン]({static.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
                               color=member_got.accent_color)
         embed.set_author(name=member_got.display_name, icon_url=member_got.display_avatar)
         embed.set_footer(text=f"{now} | このメッセージは削除しないでください。")
@@ -215,19 +216,19 @@ async def warning_and_timeout(interaction: discord.Interaction, member: discord.
             punishments[search_id] = new
             await punishment_write(punishments)
 
-        if interaction.channel_id != config.moderatorchannel:
-            channel = client.get_channel(config.moderatorchannel)
+        if interaction.channel_id != static.moderatorchannel:
+            channel = client.get_channel(static.moderatorchannel)
             await channel.send(embed=embed)
 
         if reason:
             if timeout:
-                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告とタイムアウト**」が科されました。\n- あなたはこれより**{timeout_minutes}**、メッセージの送信やVCへの参加が出来ません。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとより重いタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
+                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告とタイムアウト**」が科されました。\n- あなたはこれより**{timeout_minutes}**、メッセージの送信やVCへの参加が出来ません。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとより重いタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({static.server_rule_link})や[Discordのコミュニティガイドライン]({static.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
             else:
-                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告**」が科されました。\n- メッセージの送信やVCへの参加は引き続き可能です。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
+                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告**」が科されました。\n- メッセージの送信やVCへの参加は引き続き可能です。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({static.server_rule_link})や[Discordのコミュニティガイドライン]({static.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
             embed = discord.Embed(title="⚠️あなたはスタッフから警告されました",
                                   description=description)
             embed.set_author(
-                name="あしたはこぶね", url=config.server_invite_link, icon_url=config.server_icon)
+                name="あしたはこぶね", url=static.server_invite_link, icon_url=static.server_icon)
             logger.info(f"DMを送信しました。: {embed.description}")
             await member_got.send(embed=embed)
             
@@ -330,7 +331,7 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
             member_punishments = criminal_record["punishments"]
 
         embed = discord.Embed(title="⚠️メンバーを追放しました",
-                              description=f"メンバー「{member_got.display_name}」をサーバーから「**追放**」しました。\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰で、このメンバーはサーバーに入りなおすことが出来ます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
+                              description=f"メンバー「{member_got.display_name}」をサーバーから「**追放**」しました。\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰で、このメンバーはサーバーに入りなおすことが出来ます。\n[サーバールール]({static.server_rule_link})や[Discordのコミュニティガイドライン]({static.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
                               color=member_got.accent_color)
         embed.set_author(name=member_got.display_name, icon_url=member_got.display_avatar)
         embed.set_footer(text=f"{now} | このメッセージは削除しないでください。")
@@ -354,15 +355,15 @@ async def kick(interaction:  discord.Interaction, member:  discord.Member = None
             punishments[search_id] = new
             await punishment_write(punishments)
 
-        if interaction.channel_id != config.moderatorchannel:
-            channel = client.get_channel(config.moderatorchannel)
+        if interaction.channel_id != static.moderatorchannel:
+            channel = client.get_channel(static.moderatorchannel)
             await channel.send(embed=embed)
 
         if reason != "無し":
             embed = discord.Embed(title="⚠️あなたはサーバーから追放されました",
                                   description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーから「**追放**」されました。\n- 処罰の理由: {reason}\n\nあなたはまたサーバーに入りなおすことが出来ますが、これは{len(member_punishments)}回目の処罰です。回数が重なると、あなたはサーバーに入りなおすことが出来なくなります。\nこの処罰に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
             embed.set_author(
-                name="あしたはこぶね", url=config.server_invite_link, icon_url=config.server_icon)
+                name="あしたはこぶね", url=static.server_invite_link, icon_url=static.server_icon)
             logger.info(f"DMを送信しました。: {embed.description}")
             await member_got.send(embed=embed)
 
@@ -406,7 +407,7 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
             member_punishments = criminal_record["punishments"]
 
         embed = discord.Embed(title="⚠️メンバーをBanしました",
-                              description=f"メンバー「{member_got.display_name}」を「**Ban**」しました。\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰で、このメンバーは二度とサーバーに参加することは出来ません。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
+                              description=f"メンバー「{member_got.display_name}」を「**Ban**」しました。\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰で、このメンバーは二度とサーバーに参加することは出来ません。\n[サーバールール]({static.server_rule_link})や[Discordのコミュニティガイドライン]({static.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
                               color=member_got.accent_color)
         embed.set_author(name=member_got.display_name, icon_url=member_got.display_avatar)
         embed.set_footer(text=f"{now} | このメッセージは削除しないでください。")
@@ -430,15 +431,15 @@ async def ban(interaction:  discord.Interaction, member:  discord.Member = None,
             punishments[search_id] = new
             await punishment_write(punishments)
 
-        if interaction.channel_id != config.moderatorchannel:
-            channel = client.get_channel(config.moderatorchannel)
+        if interaction.channel_id != static.moderatorchannel:
+            channel = client.get_channel(static.moderatorchannel)
             await channel.send(embed=embed)
 
         if reason != "無し" and member:
             embed = discord.Embed(title="⚠️あなたはサーバーからBanされました",
                                   description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーから「**Ban**」されました。\n- 処罰の理由: {reason}\n\nあなたはもう二度とサーバーに入りなおす事が出来ませんが、この処罰に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
             embed.set_author(
-                name="あしたはこぶね", url=config.server_invite_link, icon_url=config.server_icon)
+                name="あしたはこぶね", url=static.server_invite_link, icon_url=static.server_icon)
             logger.info(f"DMを送信しました。: {embed.description}")
             await member_got.send(embed=embed)
 
@@ -487,21 +488,21 @@ async def unban(interaction:  discord.Interaction, member:  discord.Member = Non
         await punishment_write(punishments)
 
         embed = discord.Embed(title="✅メンバーのBanを解除しました",
-                              description=f"スタッフの判断により、メンバー「{member_got.display_name}」の「**Banを解除**」しました。\nこのメンバーはまたサーバーに参加することが出来ます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
+                              description=f"スタッフの判断により、メンバー「{member_got.display_name}」の「**Banを解除**」しました。\nこのメンバーはまたサーバーに参加することが出来ます。\n[サーバールール]({static.server_rule_link})や[Discordのコミュニティガイドライン]({static.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
                               color=member_got.accent_color)
         embed.set_author(name=str(member_got), icon_url=member_got.avatar)
         embed.set_footer(text=f"{now}")
         await interaction.followup.send(embed=embed)
 
-        if interaction.channel_id != config.moderatorchannel:
-            channel = client.get_channel(config.moderatorchannel)
+        if interaction.channel_id != static.moderatorchannel:
+            channel = client.get_channel(static.moderatorchannel)
             await channel.send(embed=embed)
 
         if delete is True and member:
             embed = discord.Embed(title="✅あなたのBanは解除されました",
                                   description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーからの「**Banを解除**」されました。\nBanの経歴も削除されます。\n「あしたはこぶね」をクリックすると、サーバーに入りなおすことができます。これからも「あしたはこぶね」をよろしくお願いします。")
             embed.set_author(
-                name="あしたはこぶね", url=config.server_invite_link, icon_url=config.server_icon)
+                name="あしたはこぶね", url=static.server_invite_link, icon_url=static.server_icon)
             logger.info(f"DMを送信しました。: {embed.description}")
             await member_got.send(embed=embed)
 
@@ -521,13 +522,13 @@ class ModerateCommand(discord.app_commands.Group):
     async def show_all_bots(self, interaction:  discord.Interaction):
         await interaction.response.defer()
         try:
-            if interaction.channel_id != config.moderatorchannel:
+            if interaction.channel_id != static.moderatorchannel:
                 embed = discord.Embed(title="専用チャンネルで使用してください！",
-                                      description=f"このコマンドは<#{config.moderatorchannel}>限定のコマンドです。")
+                                      description=f"このコマンドは<#{static.moderatorchannel}>限定のコマンドです。")
                 await interaction.followup.send(embed=embed)
                 return
             
-            bot_role = interaction.guild.get_role(config.spam_role)
+            bot_role = interaction.guild.get_role(static.spam_role)
             spam_members = bot_role.members
             
             if len(spam_members) <= 25:
@@ -553,13 +554,13 @@ class ModerateCommand(discord.app_commands.Group):
     async def kick_all_bots(self, interaction:  discord.Interaction):
         await interaction.response.defer()
         try:
-            if interaction.channel_id != config.moderatorchannel:
+            if interaction.channel_id != static.moderatorchannel:
                 embed = discord.Embed(title="専用チャンネルで使用してください！",
-                                      description=f"このコマンドは<#{config.moderatorchannel}>限定のコマンドです。")
+                                      description=f"このコマンドは<#{static.moderatorchannel}>限定のコマンドです。")
                 await interaction.followup.send(embed=embed)
                 return
             
-            bot_role = interaction.guild.get_role(config.spam_role)
+            bot_role = interaction.guild.get_role(static.spam_role)
             spam_members = bot_role.members
             now = str(JSTTime.timeJST("raw"))
             punishments = await punishment_load()
@@ -576,7 +577,7 @@ class ModerateCommand(discord.app_commands.Group):
                     member_punishments = criminal_record["punishments"]
 
                 embed = discord.Embed(title="⚠️メンバーを追放しました",
-                                    description=f"メンバー「{member_got.display_name}」をサーバーから「**追放**」しました。\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰で、このメンバーはサーバーに入りなおすことが出来ます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
+                                    description=f"メンバー「{member_got.display_name}」をサーバーから「**追放**」しました。\n- 理由：{reason}\n- これは{len(member_punishments)+1}回目の処罰で、このメンバーはサーバーに入りなおすことが出来ます。\n[サーバールール]({static.server_rule_link})や[Discordのコミュニティガイドライン]({static.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。",
                                     color=member_got.accent_color)
                 embed.set_author(name=member_got.display_name, icon_url=member_got.display_avatar)
                 embed.set_footer(text=f"{now} | このメッセージは削除しないでください。")
@@ -602,7 +603,7 @@ class ModerateCommand(discord.app_commands.Group):
                 embed = discord.Embed(title="⚠️あなたはサーバーから追放されました",
                                     description=f"{member_got.display_name}さん、あなたはスタッフの判断によってサーバーから「**追放**」されました。\n- 処罰の理由: {reason}\n\nあなたはまたサーバーに入りなおすことが出来ますが、これは{len(member_punishments)+1}回目の処罰です。回数が重なると、あなたはサーバーに入りなおすことが出来なくなります。\nこの処罰に身に覚えが無い場合、あなたは/modmailコマンドでアピールすることが出来ます。")
                 embed.set_author(
-                    name="あしたはこぶね", url=config.server_invite_link, icon_url=config.server_icon)
+                    name="あしたはこぶね", url=static.server_invite_link, icon_url=static.server_icon)
                 logger.info(f"DMを送信しました。: {embed.description}")
                 await member_got.send(embed=embed)
 
@@ -665,9 +666,9 @@ class ModerateCommand(discord.app_commands.Group):
                 await interaction.followup.send(embed=embed)
                 return
 
-            if interaction.channel_id != config.moderatorchannel:
+            if interaction.channel_id != static.moderatorchannel:
                 embed = discord.Embed(title="専用チャンネルで使用してください！",
-                                      description=f"このコマンドは<#{config.moderatorchannel}>限定のコマンドです。")
+                                      description=f"このコマンドは<#{static.moderatorchannel}>限定のコマンドです。")
                 await interaction.followup.send(embed=embed)
                 return
 
@@ -734,7 +735,7 @@ class ModerateCommand(discord.app_commands.Group):
             
             await modmails.create_modmail(member_got)
             embed = discord.Embed(title="あしたはこぶね・個別連絡", description="**運営スタッフからの個別連絡が始まりました！**\nスタッフから連絡が入るまで今しばらくお待ちください。", color=discord.Color.green())
-            embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
+            embed.set_author(name="あしたはこぶねスタッフ", icon_url=static.server_icon)
             
             await member_got.send(embed=embed)
             await interaction.followup.send("Modmailの作成に成功しました！", ephemeral=True)

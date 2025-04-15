@@ -17,16 +17,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
 
-from extentions import JSTTime, config, log
+from extentions import JSTTime, log
 from extentions.aclient import client
 import feedparser
 import asyncio
 
+from extentions.config import static
+
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger()
-test = config.test
+test = static.test
 last_tweet_url = ""
-web = config.selenium # Switch of web
+web = static.selenium # Switch of web
 agent = 'Chromium";v="130","Google Chrome";v="130","Not?A_Brand";v="99'
 headers = {'User-Agent': agent}
 twitterurl = "https://twstalker.com/AKEndfieldJP"
@@ -220,7 +222,7 @@ async def ake_tweet_retrieve():
         
 @tasks.loop(minutes = 5)
 async def ake_feed_retrieve():
-    channel = client.get_channel(config.ake_news)
+    channel = client.get_channel(static.ake_news)
     last_message = await channel.fetch_message(channel.last_message_id)
     last_published_time = last_message.created_at
     """response, text = await get_response(feedurl)

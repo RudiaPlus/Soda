@@ -5,20 +5,21 @@ import time
 
 import discord
 import requests
-from extentions import JSTTime, config, evjson, log, maintenances, supportrequest
+from extentions import JSTTime, evjson, log, maintenances, supportrequest
 from extentions.aclient import client
+from extentions.config import static
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger()
-test = config.test
+test = static.test
 
 @client.tree.command(name="set_remind",
                         description="リマインドを作り直します",
-                        guild=discord.Object(config.testserverid))
+                        guild=discord.Object(static.testserverid))
 @discord.app_commands.describe(version="リマインドの時間 morning/afternoon/evening")
 async def set_remind(interaction: discord.Interaction, version: str):
     await interaction.response.defer()
-    channel = client.get_channel(config.remind) if test is False else client.get_channel(config.remind_TEST)
+    channel = client.get_channel(static.remind) if test is False else client.get_channel(static.remind_TEST)
     message = await channel.send("リマインダーを作り直します")
     remind_dic = await load_remind_dic()
     remind_dic["remindMessage"] = {"id": message.id, "thread_id": 0}
@@ -176,7 +177,7 @@ async def daily_message_maker(remind_dic: dict):
     else:
         monthly = ""
     
-    content = f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！  {first}{special_day}{eventnow}{eventendToday}{eventend}{eventfuture}{weekday}{monthly}\n- イベント情報はこちら！→<#{config.remind}>"
+    content = f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！  {first}{special_day}{eventnow}{eventendToday}{eventend}{eventfuture}{weekday}{monthly}\n- イベント情報はこちら！→<#{static.remind}>"
     return content
 
 async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_dic: dict) -> None:
@@ -273,7 +274,7 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
 async def remind(mode = "morning"):
     events = evjson.eventget()
     maintenance = await maintenances.maintenance_list()
-    channel = client.get_channel(config.remind) if test is False else client.get_channel(config.remind_TEST)
+    channel = client.get_channel(static.remind) if test is False else client.get_channel(static.remind_TEST)
     embeds = []
     files = []
 

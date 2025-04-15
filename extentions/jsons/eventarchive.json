@@ -1219,6 +1219,37 @@
             }
         ]
     },
+    "act1vecb": {
+        "id": "act1vecb",
+        "type": "EVENT",
+        "stageAdd": false,
+        "name": "鋒矢突破",
+        "news": "https://www.arknights.jp/news/475",
+        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88140_%E9%8B%92%E7%9F%A2%E7%AA%81%E7%A0%B4",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/fab143136144fd99d567aa95eb0793e2.png",
+        "startTime": 1742886000,
+        "endTime": 1744052399,
+        "rewardEndTime": 1744311599,
+        "additionalStage": null
+    },
+    "act37side": {
+        "id": "act37side",
+        "type": "SIDESTORY",
+        "stageAdd": true,
+        "name": "落日の向こうへ",
+        "news": "https://www.arknights.jp/news/478",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88141_%E8%90%BD%E6%97%A5%E3%81%AE%E5%90%91%E3%81%93%E3%81%86%E3%81%B8",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/8d356cd8d96107097d406caf4ed6f862.png",
+        "startTime": 1744095600,
+        "endTime": 1745261999,
+        "rewardEndTime": 1745866799,
+        "additionalStage": [
+            {
+                "name": "幕引かぬ過去",
+                "startTime": 1744700400
+            }
+        ]
+    },
     "dis_perm_sandbox_1": {
         "id": "dis_perm_sandbox_1",
         "type": "SANDBOX",

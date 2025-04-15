@@ -7,8 +7,9 @@ from datetime import datetime
 import discord
 from discord.ext import tasks
 
-from extentions import JSTTime, config, log, data_update
+from extentions import JSTTime, log, data_update
 from extentions.aclient import client
+from extentions.config import static
 
 codes_path = os.path.abspath("C:\\Users\\Siratama\\Documents\\codes")
 logger = log.setup_logger()
@@ -51,7 +52,7 @@ async def maintenance_list():
     return maint_list
     
 async def maintenance_end(maint_name: str, entry: int):
-    channel = client.get_channel(config.maintenance)
+    channel = client.get_channel(static.maintenance)
     maintenances = await read_json()
     link = maintenances[entry]["link"]
     embed = discord.Embed(title = f"{maint_name}が終了しました！",
@@ -97,7 +98,7 @@ async def maintenance_timer():
                 
             if maintenances[entry]["doing"] is False and maint_start < time.time():
                 #メンテナンス開始
-                channel = client.get_channel(config.maintenance)
+                channel = client.get_channel(static.maintenance)
                 start = "<t:{0}:F>( <t:{0}:R> )".format(maint_start)
                 end = "<t:{0}:F>( <t:{0}:R> )".format(maint_end)
                 embed = discord.Embed(title = f"{maint_name}が開始されました！",

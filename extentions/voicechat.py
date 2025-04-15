@@ -11,8 +11,9 @@ import discord
 from discord.ext import tasks
 import requests
 
-from extentions import config, log
+from extentions import log
 from extentions.aclient import client, voice_clients_list
+from extentions.config import static
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "\\..\\")
@@ -74,7 +75,7 @@ async def synthesis(speaker, query_data, max_retry, intonationScale = 1.0, outpu
     else:
         raise ConnectionError("音声エラー：リトライ回数が上限に到達しました。 synthesis : ", r)
 
-async def text_to_speech(texts, speaker=config.aivis_speaker_ids["ノーマル"], max_retry=20, intonationScale = 1.0, outputSamplingRate = 44100, outputStereo = False, pauseLength = None, pauseLengthScale = 1.0, pitchScale = 0.0, postPhonemeLength = 0.1, prePhonemeLength = 0.1, speedScale = 1.0, tempoDynamicsScale = 1.0, volumeScale = 1.0, split_count = 0, is_ogg = False):
+async def text_to_speech(texts, speaker=static.aivis_speaker_ids["ノーマル"], max_retry=20, intonationScale = 1.0, outputSamplingRate = 44100, outputStereo = False, pauseLength = None, pauseLengthScale = 1.0, pitchScale = 0.0, postPhonemeLength = 0.1, prePhonemeLength = 0.1, speedScale = 1.0, tempoDynamicsScale = 1.0, volumeScale = 1.0, split_count = 0, is_ogg = False):
     if texts is None:
         texts=""
     
@@ -114,12 +115,12 @@ async def text_to_speech(texts, speaker=config.aivis_speaker_ids["ノーマル"]
 
 async def send_voice_message(text: str, channelid: int):
 
-    file = await text_to_speech(text, speaker= config.aivis_speaker_ids["通常"], volumeScale=0.5, is_ogg=True)
+    file = await text_to_speech(text, speaker= static.aivis_speaker_ids["通常"], volumeScale=0.5, is_ogg=True)
     
     async with aiohttp.ClientSession() as session:
         #アップロードurlの取得
         headers = {
-            "authorization": f"Bot {config.token}",
+            "authorization": f"Bot {static.token}",
             "content-type": "application/json"
         }
         data = {
@@ -142,7 +143,7 @@ async def send_voice_message(text: str, channelid: int):
         with open(file, "rb") as f:
             data = f.read()
         headers = {
-            "authorization": f"Bot {config.token}",
+            "authorization": f"Bot {static.token}",
             "content-type": "audio/ogg"
         }
         async with session.put(upload_url, headers=headers, data=data) as resp:
@@ -152,7 +153,7 @@ async def send_voice_message(text: str, channelid: int):
         
         #ボイスメッセージの送信
         headers = {
-            "authorization": f"Bot {config.token}",
+            "authorization": f"Bot {static.token}",
             "content-type": "application/json"
         }
         data = {
@@ -163,7 +164,7 @@ async def send_voice_message(text: str, channelid: int):
                     "filename": "voice-message.ogg",
                     "uploaded_filename": upload_filename,
                     "duration_secs": os.path.getsize(file) / 10000,
-                    "waveform": config.default_waveform_base64
+                    "waveform": static.default_waveform_base64
                 }
             ]
         }
@@ -174,7 +175,7 @@ async def send_voice_message(text: str, channelid: int):
                 return
             return resp.status
 
-if config.voicechat is True:
+if static.voicechat is True:
     
     voicechat = True
     
@@ -194,7 +195,7 @@ async def join_voice(interaction: discord.Interaction, channel: discord.VoiceCha
         user = interaction.user
         available_client = None
         connected = False
-        for i in range(config.voice_clients):
+        for i in range(static.voice_clients):
             checking_voice_client: discord.Client = voice_clients_list[i]
             available = True
             for connected_voice_client in checking_voice_client.voice_clients:
@@ -267,7 +268,7 @@ async def leave(interaction:  discord.Interaction):
             return
         
         connected_client = None
-        for i in range(config.voice_clients):
+        for i in range(static.voice_clients):
             checking_voice_client: discord.Client = voice_clients_list[i]
             connected = False
             for connected_voice_client in checking_voice_client.voice_clients:
@@ -307,7 +308,7 @@ async def leave(interaction:  discord.Interaction):
         embed.set_author(name = "チャット読み上げ")
         await interaction.followup.send(embed = embed)
         
-for i in range(config.voice_clients):
+for i in range(static.voice_clients):
 
     client_voice = voice_clients_list[i]
     
@@ -369,7 +370,7 @@ for i in range(config.voice_clients):
                     voice_status[str(client_voice.user.id)]["queues"] -= 1 if voice_status[str(client_voice.user.id)]["queues"] > 0 else 0
                     write_voice_status(voice_status)
                     
-    @tasks.loop(time=datetime.time(hour=4, minute = 50, tzinfo=config.JST))
+    @tasks.loop(time=datetime.time(hour=4, minute = 50, tzinfo=static.JST))
     async def before_reboot(client_voice = client_voice):
         try:
             #再起動前に接続しているVCに告知する

@@ -8,39 +8,40 @@ import discord
 import numpy
 from PIL import Image
 
-from extentions import config, log, supportrequest, JSTTime
+from extentions import log, supportrequest, JSTTime
 from extentions.aclient import client
 from extentions.aOCR import ocr
+from extentions.config import static
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
 image_dir = os.path.join(dir, "images")
 operators_json = "jsons/operators.json"
 
-possible_tag_list = config.tagList
+possible_tag_list = static.tagList
 
 tag_select = discord.ui.Select(placeholder = "タグを選択してください")
-tag_list = config.tagList
+tag_list = static.tagList
 tag_rarity_list = []
 tag_prof_list = []
 tag_range_list = []
 tag_type_list = []
 
-for tag in config.tag_rarity:
+for tag in static.tag_rarity:
     tag_rarity = discord.SelectOption(label = tag, value = tag)
     tag_rarity_list.append(tag_rarity)
-for tag in config.tag_profession:
+for tag in static.tag_profession:
     tag_prof = discord.SelectOption(label = tag, value = tag)
     tag_prof_list.append(tag_prof)
-for tag in config.tag_range:
+for tag in static.tag_range:
     tag_range = discord.SelectOption(label = tag, value = tag)
     tag_range_list.append(tag_range)
-for tag in config.tag_type:
+for tag in static.tag_type:
     tag_type = discord.SelectOption(label = tag, value = tag)
     tag_type_list.append(tag_type)
     
 #create operators_list
-recruitList = config.recruitList
+recruitList = static.recruitList
 with open(os.path.join(dir, operators_json), "r", encoding="UTF-8") as f:
     operators = json.load(f)
     
@@ -666,11 +667,11 @@ async def ocr_tag_from_screenshot(image_path):
     im = Image.open(image_path)
     im_width, im_height = im.size
     
-    tags_center_hrz = im_width * 0.50
+    tags_center_hrz = im_width * 0.48
     tags_center_vrt = im_height * 0.60
     
     tags_height = im_height * 0.20
-    tags_width = tags_height * 3.5
+    tags_width = tags_height * 3.2
     
     im_cropped = im.crop((tags_center_hrz - (tags_width/2), tags_center_vrt - (tags_height/2), 
                           tags_center_hrz + (tags_width/2), tags_center_vrt + (tags_height/2)))
@@ -695,7 +696,8 @@ async def ocr_tag_from_screenshot(image_path):
         tag: str = result[0][i][1][0]
         closest_match = get_close_matches(tag, possible_tag_list, n=1, cutoff=0.1)
         if not closest_match:
-            logger.error(f"タグの検出が出来ませんでした: {tag}")
+            logger.error(f"検出されたタグ「{tag}」は修正されませんでした")
+            continue
         else:
             result_tags.append(closest_match[0])
             
