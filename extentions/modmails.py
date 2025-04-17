@@ -6,7 +6,7 @@ import discord
 
 from extentions import JSTTime, log
 from extentions.aclient import client
-from extentions.config import static
+from extentions.config import config
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
@@ -24,7 +24,7 @@ class ModmailButton(discord.ui.View):
         result = await create_modmail(user = interaction.user)
         
         embed = discord.Embed(title="あしたはこぶね・お問い合わせ", description="お問い合わせありがとうございます！\nこのDMにメッセージを送ることで、スタッフとの会話を開始できます\nお問い合わせを終了する場合は、下の「終了」ボタンを押してください。", color=discord.Color.green())
-        embed.set_author(name="あしたはこぶねスタッフ", icon_url=static.server_icon)
+        embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
         
         if result == "created":
             await interaction.user.send(embed=embed, view=ModmailFinish())
@@ -41,7 +41,7 @@ class ModmailFinish(discord.ui.View):
     @discord.ui.button(label = "終了", custom_id = "modmailfinish", emoji = "🔒")
     async def modmailfinish(self, interaction: discord.Interaction, button: discord.ui.Button):
         
-        guild = client.get_guild(static.main_server) if static.test is False else client.get_guild(static.testserverid)
+        guild = client.get_guild(config.main_server) if config.test is False else client.get_guild(config.testserverid)
         
         if not interaction.guild:
             
@@ -65,7 +65,7 @@ class ModmailFinish(discord.ui.View):
         if mod_channel.name == f"mail-{userID}":
                 
             embed = discord.Embed(title = "お問い合わせ/個別連絡が終了しました", description = "お問い合わせ/個別連絡が終了しました。ありがとうございました！\nなお、スタッフの判断によって再開され、スタッフからの連絡が来る場合があります。", color=discord.Color.yellow())
-            embed.set_author(name="あしたはこぶねスタッフ", icon_url=static.server_icon)
+            embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
             embed_mod = discord.Embed(title = "ModMailが終了しました", description = f"ModMailは{interaction.user.mention}によって終了しました。", color = discord.Color.yellow())
             
             if target == "member":
@@ -76,10 +76,10 @@ class ModmailFinish(discord.ui.View):
                 await user.send(embed = embed)
                 await interaction.response.send_message(embed = embed_mod)
 
-            if static.test is False:
+            if config.test is False:
             
-                Administrator = guild.get_role(static.administrator_role)
-                Moderator = guild.get_role(static.Moderator_role)
+                Administrator = guild.get_role(config.administrator_role)
+                Moderator = guild.get_role(config.Moderator_role)
                 
 
                 closed_overwrite = {
@@ -109,9 +109,9 @@ class ModmailControl(discord.ui.View):
     @discord.ui.button(label = "再開", custom_id = "modmailresume", emoji = "🔓")
     async def modmailresume(self, interaction: discord.Interaction, button: discord.ui.Button):
         
-        guild = client.get_guild(static.main_server)
-        Administrator = guild.get_role(static.administrator_role)
-        Moderator = interaction.guild.get_role(static.Moderator_role)
+        guild = client.get_guild(config.main_server)
+        Administrator = guild.get_role(config.administrator_role)
+        Moderator = interaction.guild.get_role(config.Moderator_role)
         
         reopen_overwrite = {
                 guild.me: discord.PermissionOverwrite(read_messages = True, send_messages = True, manage_channels = True),
@@ -130,7 +130,7 @@ class ModmailControl(discord.ui.View):
             await mod_channel.edit(name = f"mail-{userID}", overwrites = reopen_overwrite)
             
             embed = discord.Embed(title = "お問い合わせが再開されました", description = f"{user.display_name}さんのお問い合わせが再開されました。スタッフからの返信が来る場合があります。", color=discord.Color.green())
-            embed.set_author(name="あしたはこぶねスタッフ", icon_url=static.server_icon)
+            embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
             await user.send(embed = embed)
             
             embed_mod = discord.Embed(description = "ModMailが再開されました", color=discord.Color.green())
@@ -150,7 +150,7 @@ class ModmailControl(discord.ui.View):
             
             embed = discord.Embed(description = "このチャンネルは数秒後に削除されます。")
             await interaction.response.send_message(embed = embed)
-            await save_modmail(channel = interaction.channel, save_channel=client.get_channel(static.modmail_save_channel), delete_user = interaction.user)
+            await save_modmail(channel = interaction.channel, save_channel=client.get_channel(config.modmail_save_channel), delete_user = interaction.user)
             await interaction.channel.delete()
             
         else:
@@ -164,16 +164,16 @@ async def fetch_mod_channel(guild: discord.Guild, user: discord.User) -> discord
 
 async def create_modmail(user: discord.User):
 
-    guild = client.get_guild(static.main_server) if static.test is False else client.get_guild(static.testserverid)
+    guild = client.get_guild(config.main_server) if config.test is False else client.get_guild(config.testserverid)
     mod_channel = await fetch_mod_channel(guild=guild, user=user)
     
     if mod_channel is None:
     
         categoty = discord.utils.get(guild.categories, name = "────フィードバック────")
         
-        if static.test is False:
-            Administrator = guild.get_role(static.administrator_role)
-            Moderator = guild.get_role(static.Moderator_role)
+        if config.test is False:
+            Administrator = guild.get_role(config.administrator_role)
+            Moderator = guild.get_role(config.Moderator_role)
         
             role_overwrite = {
                     guild.me: discord.PermissionOverwrite(read_messages = True, send_messages = True, manage_channels = True),
@@ -185,7 +185,7 @@ async def create_modmail(user: discord.User):
             role_overwrite = {}
             
         mod_channel = await guild.create_text_channel(f"mail-{user.id}", category = categoty, overwrites = role_overwrite, reason = f"ModMailが開始されました:{user.id}")
-        announce_channel = client.get_channel(static.moderatorchannel)
+        announce_channel = client.get_channel(config.moderatorchannel)
         
         embed_mod = discord.Embed(title="ModMailが開始されました！", color=user.accent_color)
         embed_mod.set_author(name=str(user), icon_url=user.avatar.url)
@@ -214,7 +214,7 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User =
     channel_id = channel.id
     
     if not save_channel:
-        save_channel = client.get_channel(static.modmail_save_channel)
+        save_channel = client.get_channel(config.modmail_save_channel)
     
     users = {}
     html_header = f"<!DOCTYPE html>\n<html lang='ja'>\n<head>\n<meta charset='utf-8'>\n<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n<title>{channel_id}</title>\n<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css'>\n</head>\n<body class='bg-gray-700 text-gray-300'>\n<h1 class='text-2xl font-bold text-center my-4'>\n{channel_name} (チャンネルID: {channel_id})\n</h1>\n<div class='container mx-auto px-4'>\n"
@@ -309,7 +309,7 @@ async def modmail(interaction:  discord.Interaction):
     embed = discord.Embed(title="あしたはこぶね・お問い合わせ",
                           description="以下のボタンを押すと、スタッフとの会話が開始されます\nよろしいですか？",
                           color=discord.Color.blue())
-    embed.set_author(name="あしたはこぶねスタッフ", icon_url=static.server_icon)
+    embed.set_author(name="あしたはこぶねスタッフ", icon_url=config.server_icon)
     await interaction.followup.send(embed=embed, ephemeral=True, view=ModmailButton())
     
 """@client.tree.command(name = "modmail_form", description = "send modmail form", guild=config.testserverid)

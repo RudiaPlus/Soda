@@ -8,7 +8,7 @@ import discord
 
 from extentions import log, recruit, supportrequest, multiplayertool
 from extentions.aclient import client
-from extentions.config import static
+from extentions.config import config
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
@@ -17,7 +17,7 @@ class YaminabeRepeat(discord.ui.View):
     def __init__(self, label, operators_in_class):
         self.operators_in_class = operators_in_class
         self.label = label
-        self.classes = static.operator_classes
+        self.classes = config.operator_classes
         super().__init__(timeout = 300)
         
     @discord.ui.button(label = "引き直す", style = discord.ButtonStyle.primary, emoji = "↩️")
@@ -27,7 +27,7 @@ class YaminabeRepeat(discord.ui.View):
 class YaminabeSelect(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=300)
-        self.classes = static.operator_classes
+        self.classes = config.operator_classes
         for button_class in self.classes:
             self.add_buttons(button_class)
 
@@ -215,7 +215,7 @@ class RequestSendModal(discord.ui.Modal, title = "サポートリクエスト"):
         request_loaded = await supportrequest.request_load()
         for item in request_loaded:
             if item["userID"] == interaction.user.id:
-                await interaction.followup.send(f"あなたは既にリクエストを送信しています！<#{static.request}>をご覧ください！")
+                await interaction.followup.send(f"あなたは既にリクエストを送信しています！<#{config.request}>をご覧ください！")
                 return
         operators = await supportrequest.operators_load()
         
@@ -301,7 +301,7 @@ class ToolButtons(discord.ui.View):
         await multiplayertool.multi_create(interaction)
         logger.info(f"{interaction.user.name}がmulticreate_toolを使用しました")"""
 
-@client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = discord.Object(static.testserverid))
+@client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = discord.Object(config.testserverid))
 @discord.app_commands.describe(channelid = "フォームを送信するチャンネル デフォルトはあしたはこぶね/#ツール", edit = "新規送信ではなくメッセージの編集にしたい場合、そのメッセージのID")
 async def tool_form(interaction: discord.Interaction, channelid: str = "1142491583757951036", edit: str = None):
     await interaction.response.defer(ephemeral = True)
@@ -313,9 +313,9 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     channel = await client.fetch_channel(channelid)
     embed = discord.Embed(title = "コミュニティツール", description = "下のボタンから私の便利ツールをご利用できます！", color = discord.Color.red())
     
-    screenshot_recruit_channel = static.screenshot_recruit_channel_url
-    request_channel = static.request_url
-    multi_channel = client.get_channel(static.multiplay_request_channel)
+    screenshot_recruit_channel = config.screenshot_recruit_channel_url
+    request_channel = config.request_url
+    multi_channel = client.get_channel(config.multiplay_request_channel)
     
     #ツールの説明
     embed.add_field(name = "・公開求人ツール", value = f">>> 公開求人のタグから獲得できるオペレーターを表示します。\nスクリーンショット認識ver → {screenshot_recruit_channel}", inline=False)

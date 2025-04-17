@@ -6,7 +6,7 @@ import discord
 
 from extentions import log, supportrequest
 from extentions.aclient import client
-from extentions.config import static
+from extentions.config import config
 
 logger = log.setup_logger()
 dir = os.path.dirname(os.path.abspath(__file__))
@@ -70,9 +70,9 @@ class AKMultiJoinButton(discord.ui.View):
                 
                 if multi_dict[index]["vcLinked"]:
                     guild = interaction.guild
-                    moderator = guild.get_role(static.Moderator_role)
-                    administrator = guild.get_role(static.administrator_role)
-                    bots = guild.get_role(static.server_app_role)
+                    moderator = guild.get_role(config.Moderator_role)
+                    administrator = guild.get_role(config.administrator_role)
+                    bots = guild.get_role(config.server_app_role)
                     try:
                         vc_channel = client.get_channel(multi_dict[index]["vcLinked"])
                         overwrite = {guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
@@ -126,7 +126,7 @@ class AKMultiJoinButton(discord.ui.View):
             await interaction.followup.send("リクエストは募集を開始した本人だけが終了できます！", ephemeral=True)
 
 async def send_AK_multiplayer(user: discord.User, stage_name: str,  room_id: str, mode: str, players: int, max_players: int, remarks: str, vc_linked):
-    channel = client.get_channel(static.multiplay_request_channel)
+    channel = client.get_channel(config.multiplay_request_channel)
     multi_dict = load_multi_json()
     embed = discord.Embed(color = discord.Color.blue(), title = "マルチプレイ募集", description = f"募集者: {user.mention}")
     
@@ -171,15 +171,15 @@ class VClinkAndSendButton(discord.ui.View):
         if interaction.user.voice:
             vc_channel = interaction.user.voice.channel
             vc_channel_name = vc_channel.jump_url
-            vccreate_voice = client.get_channel(static.voicecreate_vc)
+            vccreate_voice = client.get_channel(config.voicecreate_vc)
             
-            if vc_channel.category_id == static.vccreate_category and not vc_channel == vccreate_voice:
+            if vc_channel.category_id == config.vccreate_category and not vc_channel == vccreate_voice:
                 
                 guild = interaction.guild
-                moderator = guild.get_role(static.Moderator_role)
-                administrator = guild.get_role(static.administrator_role)
-                vc_allowed = guild.get_role(static.vc_allowed_role)
-                bots = guild.get_role(static.server_app_role)
+                moderator = guild.get_role(config.Moderator_role)
+                administrator = guild.get_role(config.administrator_role)
+                vc_allowed = guild.get_role(config.vc_allowed_role)
+                bots = guild.get_role(config.server_app_role)
                 
                 overwrite = {guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
                              vc_allowed: discord.PermissionOverwrite(view_channel = True, connect = True),
@@ -208,14 +208,14 @@ class VClinkAndSendButton(discord.ui.View):
         if interaction.user.voice:
             vc_channel = interaction.user.voice.channel
             vc_channel_name = vc_channel.jump_url
-            vccreate_voice = client.get_channel(static.voicecreate_vc)
+            vccreate_voice = client.get_channel(config.voicecreate_vc)
             
-            if vc_channel.category_id == static.vccreate_category and not vc_channel == vccreate_voice:
+            if vc_channel.category_id == config.vccreate_category and not vc_channel == vccreate_voice:
                 
                 guild = interaction.guild
-                moderator = guild.get_role(static.Moderator_role)
-                administrator = guild.get_role(static.administrator_role)
-                bots = guild.get_role(static.server_app_role)
+                moderator = guild.get_role(config.Moderator_role)
+                administrator = guild.get_role(config.administrator_role)
+                bots = guild.get_role(config.server_app_role)
                 
                 overwrite = {guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
                             moderator: discord.PermissionOverwrite(view_channel = True, connect = True),
@@ -266,14 +266,14 @@ class AKMultiCreateModal(discord.ui.Modal, title = "マルチプレイ募集"):
                 
         if interaction.user.voice:
             vc_channel = interaction.user.voice.channel
-            if vc_channel.category_id == static.vccreate_category:
+            if vc_channel.category_id == config.vccreate_category:
                 embed = discord.Embed(title = "マルチプレイ募集 - ボイスチャットを使用しますか？", description=f"現在あなたが接続している{vc_channel.jump_url}はVC連携を利用できます！\n(公開)はVCに誰でも入ることが出来ますが、(非公開)は募集から参加した人だけがVCに入れます。")
                 await interaction.followup.send(embed = embed, view = VClinkAndSendButton(stage_name, room_id, mode, remarks=remarks))
                 return
             else:
                 pass
             
-        vccreate_voice = client.get_channel(static.voicecreate_vc)
+        vccreate_voice = client.get_channel(config.voicecreate_vc)
         embed = discord.Embed(title = "マルチプレイ募集 - ボイスチャットを使用しますか？", description="ボイスチャットを使用して連携を深めたい場合にご利用ください！")
         embed.add_field(name = "使用方法", value = f"1. {vccreate_voice.jump_url}をクリックし、VCを作成します(自動的に作成したVCに接続します。名前や最大人数の設定は次の操作で自動で設定されます。)チャンネルにアクセスできない場合、「チャンネル&ロール」から「ボイスチャット」のロールを取得してください！\n2. 「ボイスチャット連携」ボタンを押します。(公開)はVCに誰でも入ることが出来ますが、(非公開)は募集から参加した人だけがVCに入れます。")
         await interaction.followup.send(embed = embed, view = VClinkAndSendButton(stage_name, room_id, mode, remarks=remarks))     
@@ -288,8 +288,8 @@ async def multi_create(interaction: discord.Interaction) -> bool:
     await interaction.response.send_modal(modal)
     return True
 
-@client.tree.command(name = "vccreate", guild = discord.Object(static.testserverid))
-async def vccreate(interaction: discord.Interaction, channel: str = str(static.voicecreate_channel), edit_message: str = None):
+@client.tree.command(name = "vccreate", guild = discord.Object(config.testserverid))
+async def vccreate(interaction: discord.Interaction, channel: str = str(config.voicecreate_channel), edit_message: str = None):
     await interaction.response.defer()
     if channel and not channel.isdecimal():
         await interaction.followup.send(f"channel({channel})の型が不正です！")
@@ -300,7 +300,7 @@ async def vccreate(interaction: discord.Interaction, channel: str = str(static.v
     elif edit_message:
         edit_message = int(edit_message)
     
-    vccreate_voice = client.get_channel(static.voicecreate_vc)
+    vccreate_voice = client.get_channel(config.voicecreate_vc)
     channel_get = client.get_channel(channel)
 
     embed = discord.Embed(color = discord.Color.green(), title = "ボイスチャット作成", description=f"用途に沿った臨時ボイスチャットを作成します！\n{vccreate_voice.jump_url} を押すと**自動的に**ボイスチャットが作成されます！")

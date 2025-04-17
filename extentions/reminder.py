@@ -7,35 +7,33 @@ import discord
 import requests
 from extentions import JSTTime, evjson, log, maintenances, supportrequest
 from extentions.aclient import client
-from extentions.config import static
+from extentions.config import config
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger()
-test = static.test
+test = config.test
 
 @client.tree.command(name="set_remind",
                         description="リマインドを作り直します",
-                        guild=discord.Object(static.testserverid))
+                        guild=discord.Object(config.testserverid))
 @discord.app_commands.describe(version="リマインドの時間 morning/afternoon/evening")
 async def set_remind(interaction: discord.Interaction, version: str):
     await interaction.response.defer()
-    channel = client.get_channel(static.remind) if test is False else client.get_channel(static.remind_TEST)
+    channel = client.get_channel(config.remind) if test is False else client.get_channel(config.remind_TEST)
     message = await channel.send("リマインダーを作り直します")
-    remind_dic = await load_remind_dic()
-    remind_dic["remindMessage"] = {"id": message.id, "thread_id": 0}
-    await write_remind_dic(remind_dic)
+    config.dynamic["remindMessage"] = {"id": message.id, "thread_id": 0}
+    config.write_dynamic_config()
     await remind(version)
     await interaction.followup.send("完了しました")
     
 async def reminder_message(type: str = "message") -> int:
     
-    remind_dic = await load_remind_dic()
     if type == "message":
-        return(remind_dic["remindMessage"]["id"])
+        return(config.dynamic["remindMessage"]["id"])
     elif type == "thread":
-        return(remind_dic["remindMessage"]["thread_id"])
+        return(config.dynamic["remindMessage"]["thread_id"])
     elif type == "last_remind":
-        return(remind_dic["remindMessage"]["last_remind_id"])
+        return(config.dynamic["remindMessage"]["last_remind_id"])
         
 async def load_remind_dic() -> dict:
     today_timestamp = JSTTime.timeJST("timestamp")
@@ -177,7 +175,7 @@ async def daily_message_maker(remind_dic: dict):
     else:
         monthly = ""
     
-    content = f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！  {first}{special_day}{eventnow}{eventendToday}{eventend}{eventfuture}{weekday}{monthly}\n- イベント情報はこちら！→<#{static.remind}>"
+    content = f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！  {first}{special_day}{eventnow}{eventendToday}{eventend}{eventfuture}{weekday}{monthly}\n- イベント情報はこちら！→<#{config.remind}>"
     return content
 
 async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_dic: dict) -> None:
@@ -205,9 +203,6 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
     today = JSTTime.timeJST("weekday")
     
     for key in remind_dic:
-        
-        if key == "remindMessage":
-            continue
         
         color = 0xffffff
         value = remind_dic[key]
@@ -263,8 +258,8 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
         
     content = await daily_message_maker(remind_dic=remind_dic)
     last_remind_message = await thread.send(content = content, embeds = embeds)
-    remind_dic["remindMessage"]["last_remind_id"] = last_remind_message.id
-    await write_remind_dic(remind_dic)
+    config.dynamic["remindMessage"]["last_remind_id"] = last_remind_message.id
+    config.write_dynamic_config()
     pinned_messages = await thread.pins()
     if pinned_messages:
         for message in pinned_messages:
@@ -274,14 +269,17 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
 async def remind(mode = "morning"):
     events = evjson.eventget()
     maintenance = await maintenances.maintenance_list()
-    channel = client.get_channel(static.remind) if test is False else client.get_channel(static.remind_TEST)
+    channel = client.get_channel(config.remind) if test is False else client.get_channel(config.remind_TEST)
     embeds = []
     files = []
 
     remind_dic = await load_remind_dic()
     try:
         
-        messageid = remind_dic["remindMessage"]["id"]
+        messageid = await reminder_message("message")
+        if not messageid:
+            logger.error("リマインドメッセージが見つかりません。 /set_remindで作り直してください。")
+            return
         message = await channel.fetch_message(messageid)
         
     except discord.NotFound:
@@ -293,15 +291,19 @@ async def remind(mode = "morning"):
     
     if mode == "thread":
         try:
-            threadid = remind_dic["remindMessage"]["thread_id"]
+            threadid = await reminder_message("thread")
+            if not threadid:
+                logger.warning("リマインドスレッドは作られていません。")
+                threadid = 0
+                
             thread = channel.get_thread(threadid)
             
             if not thread:
                 logger.warning("リマインドスレッドが見つかりません。作成します")
                 thread = await create_thread(channel, message)
             
-                remind_dic["remindMessage"]["thread_id"] = thread.id
-                await write_remind_dic(remind_dic)
+                config.dynamic["remindMessage"]["thread_id"] = thread.id
+                config.write_dynamic_config()
             
         except Exception:
             logger.error("スレッドの取得と作成に失敗しました")

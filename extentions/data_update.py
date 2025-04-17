@@ -10,7 +10,7 @@ import requests
 
 from extentions import log
 from extentions.aclient import client
-from extentions.config import static
+from extentions.config import config
 
 logger = log.setup_logger()
 
@@ -46,7 +46,7 @@ async def char_table_analyze():
         if amiya_id == default_amiya:
             continue
         amiya_data = patch_json["patchChars"][amiya_id]
-        profession_name = static.profession_id_to_name[amiya_data["profession"]]
+        profession_name = config.profession_id_to_name[amiya_data["profession"]]
         amiya_name = f"{amiya_data["name"]}({profession_name})"
         amiya_chars.update({amiya_id: amiya_name})
         
@@ -87,7 +87,7 @@ async def char_table_analyze():
         else:
             raise TypeError
         
-        dic_add[char_id]["tags"].append(f"{static.profession_id_to_name[char_data['profession']]}タイプ")
+        dic_add[char_id]["tags"].append(f"{config.profession_id_to_name[char_data['profession']]}タイプ")
             
 
         if rarity_new == 5:
@@ -194,7 +194,7 @@ async def birthday_analyze():
 
 async def custom_emoji_upload():
     resource_path = os.path.join(repo_name_resource, "avatar")
-    headers = {"Authorization": f"Bot {static.token}", "Content-Type": "application/json"}
+    headers = {"Authorization": f"Bot {config.token}", "Content-Type": "application/json"}
 
     with open(os.path.join(dir, "jsons\\operators.json"), encoding="utf_8") as op:
         operators = json.load(op)
@@ -270,7 +270,7 @@ async def update_data() -> bool:
             
     return True
 
-@client.tree.command(name="update", description="ゲームデータのアップデート、インデックスの作成を行います", guild=discord.Object(static.testserverid))
+@client.tree.command(name="update", description="ゲームデータのアップデート、インデックスの作成を行います", guild=discord.Object(config.testserverid))
 async def update(interaction: discord.Interaction):
     await interaction.response.defer()
     start_time = datetime.now()

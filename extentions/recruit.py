@@ -11,37 +11,36 @@ from PIL import Image
 from extentions import log, supportrequest, JSTTime
 from extentions.aclient import client
 from extentions.aOCR import ocr
-from extentions.config import static
+from extentions.config import config
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
 image_dir = os.path.join(dir, "images")
 operators_json = "jsons/operators.json"
 
-possible_tag_list = static.tagList
+possible_tag_list = config.tagList
 
 tag_select = discord.ui.Select(placeholder = "タグを選択してください")
-tag_list = static.tagList
 tag_rarity_list = []
 tag_prof_list = []
 tag_range_list = []
 tag_type_list = []
 
-for tag in static.tag_rarity:
+for tag in config.tag_rarity:
     tag_rarity = discord.SelectOption(label = tag, value = tag)
     tag_rarity_list.append(tag_rarity)
-for tag in static.tag_profession:
+for tag in config.tag_profession:
     tag_prof = discord.SelectOption(label = tag, value = tag)
     tag_prof_list.append(tag_prof)
-for tag in static.tag_range:
+for tag in config.tag_range:
     tag_range = discord.SelectOption(label = tag, value = tag)
     tag_range_list.append(tag_range)
-for tag in static.tag_type:
+for tag in config.tag_type:
     tag_type = discord.SelectOption(label = tag, value = tag)
     tag_type_list.append(tag_type)
     
 #create operators_list
-recruitList = static.recruitList
+recruitList = config.dynamic["recruit_list"]
 with open(os.path.join(dir, operators_json), "r", encoding="UTF-8") as f:
     operators = json.load(f)
     

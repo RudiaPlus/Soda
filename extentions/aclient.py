@@ -1,6 +1,6 @@
 import discord
 from discord import app_commands
-from extentions.config import static
+from extentions.config import config
 from typing import List
 
 
@@ -44,6 +44,6 @@ class VoiceModule(discord.Client):
 client = Rhodolite()
 
 voice_clients_list: List[VoiceModule] = []
-for i in range(static.voice_clients):
+for i in range(config.voice_clients):
     voice_client = VoiceModule()
     voice_clients_list.append(voice_client)

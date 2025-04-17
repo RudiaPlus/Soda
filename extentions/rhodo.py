@@ -31,24 +31,24 @@ from extentions import (
     voicechat,
 )
 from extentions.aclient import client, voice_clients_list
-from extentions.config import static
+from extentions.config import config
 
 logger = log.setup_logger()
 
 #global変数
 remindThreadID = 0
-guildID = static.main_server
+guildID = config.main_server
 preset_names = []
 
-test = static.test
+test = config.test
 dir = os.path.abspath(__file__ + "/../")
 
 
 def run_discord_bot():
     #ログアウトイベントをループに知らせるためのtuple
     Entry = namedtuple("entry", "client event token")
-    token = static.token if static.test is False else static.test_client
-    voice_tokens = static.voice_tokens
+    token = config.token if config.test is False else config.test_client
+    voice_tokens = config.voice_tokens
     entries = [
         Entry(client = client, event = asyncio.Event(), token = token),
         Entry(client = voice_clients_list[0], event = asyncio.Event(), token = voice_tokens[0]), #読み上げ[Α]
@@ -117,7 +117,7 @@ async def on_ready():
         client.tree.add_command(moderate)
         
         synced = await client.tree.sync()
-        await client.tree.sync(guild=discord.Object(static.testserverid))
+        await client.tree.sync(guild=discord.Object(config.testserverid))
         
         logger.info(f"{len(synced)}個のコマンドを同期しました。")
         logger.debug("以下のコマンドを同期しました。" + ", ".join(map(str, synced)))
@@ -142,7 +142,7 @@ async def on_ready():
         #リマインダー(スレッド)の確認
         try:
             global remindThreadID
-            channel = client.get_channel(static.remind)
+            channel = client.get_channel(config.remind)
             remindThreadID = await reminder.reminder_message("thread")
             last_remind_id = await reminder.reminder_message("last_remind")
             remind_thread = channel.get_thread(remindThreadID)
@@ -238,7 +238,7 @@ async def on_message(message: discord.Message):
                 logger.info(f"{author.name}さんが挨拶しました！")
                 await message.add_reaction("🌟")
                 
-        if channelID == static.screenshot_recruit_channel:
+        if channelID == config.screenshot_recruit_channel:
             if not message.attachments:
                 return
             for attachment in message.attachments:
@@ -247,7 +247,7 @@ async def on_message(message: discord.Message):
                 tags_image = io.BytesIO(rq.get(attachment.url).content)
                 await recruit.recruit_from_screenshot(image_path=tags_image, message = message)
 
-        if channel.category_id == static.feedback_category and channel.name.startswith("mail"):
+        if channel.category_id == config.feedback_category and channel.name.startswith("mail"):
 
             idx = channel.name.find("-") + 1
             userID = int(channel.name[idx:])
@@ -278,7 +278,7 @@ async def on_message(message: discord.Message):
             logger.info(f"Modmailに投稿されたメッセージ(id: {message.id})を正常に転送しました")
                 
     else:
-        guild = client.get_guild(static.main_server) if static.test is False else client.get_guild(static.testserverid)
+        guild = client.get_guild(config.main_server) if config.test is False else client.get_guild(config.testserverid)
         logger.info(f"{username}に「{user_message}」と言われました。")
         mod_channel = await modmails.fetch_mod_channel(guild=guild, user=author)
         if mod_channel is not None:
@@ -312,7 +312,7 @@ async def on_message(message: discord.Message):
                 description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！",
                 color=0x979C9F)
             mail.set_author(name="あしたはこぶねスタッフ",
-                            icon_url=static.server_icon)
+                            icon_url=config.server_icon)
             await message.author.send(embed=mail)
             
 def load_json(file_name: str):
@@ -334,7 +334,7 @@ async def load_reactions(reaction: discord.Reaction):
         
         #データベースから除外する日数の閾値
         #86400 = 1日
-        if JST_timestamp - reactions[messageid]["created_at"] > static.collect_agree_days:
+        if JST_timestamp - reactions[messageid]["created_at"] > config.collect_agree_days:
             del reactions[messageid]
             continue
             
@@ -352,7 +352,7 @@ async def load_reactions(reaction: discord.Reaction):
         
         #聖堂に新しく刻まない日数の閾値
         #86400 = 1日
-        if JST_timestamp - created_at > static.collect_agree_days:
+        if JST_timestamp - created_at > config.collect_agree_days:
             return 0, 0
         
         reactions[reaction.message.id] = {"count": reaction_count, "created_at": created_at, "posted": 0}
@@ -419,10 +419,10 @@ async def on_raw_reaction_add(reaction_payload: discord.RawReactionActionEvent):
         if is_private is True:
             logger.info("プライベートチャンネルのため、聖堂入りを中止しました。")
             return
-        if message_author.get_role(static.cathedral_NG_role):
+        if message_author.get_role(config.cathedral_NG_role):
             logger.info("聖堂NGのロールを持っているため、聖堂入りを中止しました")
             return
-        channel = client.get_channel(static.cathedral)
+        channel = client.get_channel(config.cathedral)
         
         embeds = []
         embed = discord.Embed(description=message_content, timestamp=message_created_at_JST, color = discord.Color.yellow())
@@ -450,7 +450,7 @@ async def on_raw_reaction_add(reaction_payload: discord.RawReactionActionEvent):
         await posted_reaction_message(message_id, posted_message.id)
     
     if posted != 0:
-        channel = client.get_channel(static.cathedral)
+        channel = client.get_channel(config.cathedral)
         edit_message = await channel.fetch_message(posted)
         message_author = message.author
         message_jump_url = message.jump_url
@@ -459,7 +459,7 @@ async def on_raw_reaction_add(reaction_payload: discord.RawReactionActionEvent):
 @client.event
 async def on_member_join(member: discord.Member):
     embeds = await moderates.moderate_show(member)
-    channel = client.get_channel(static.action_logs)
+    channel = client.get_channel(config.action_logs)
     await channel.send(embeds=embeds)
 
 @client.event
@@ -478,7 +478,7 @@ async def on_member_update(before: discord.Member, after: discord.Member):
     try:
         is_user_bot_role = False
         for role in added_roles:
-            if role.id == static.user_bot_role:
+            if role.id == config.user_bot_role:
                 is_user_bot_role = True
                 break
         if is_user_bot_role is False:
@@ -507,7 +507,7 @@ async def on_member_update(before: discord.Member, after: discord.Member):
                 embed.add_field(name="タイムアウト状態", value="<t:{0}:F>( <t:{0}:R> )まで".format(
                     round(member_got.timed_out_until.timestamp())), inline=False)
                 
-            channel_action_log = client.get_channel(static.action_logs)
+            channel_action_log = client.get_channel(config.action_logs)
             await channel_action_log.send(embed = embed)
             
     except Exception as e:
@@ -555,7 +555,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
         logger.info(f"{str(member)}が{before.channel.name}({before.channel.id})から{after.channel.name}({after.channel.id})に接続しました。")
                         
     #vccreate
-    vccreate_voice = client.get_channel(static.voicecreate_vc)
+    vccreate_voice = client.get_channel(config.voicecreate_vc)
         
     
     if after.channel:
@@ -564,9 +564,9 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
 
         if after.channel == vccreate_voice:
             gd = after.channel.guild
-            administrator = gd.get_role(static.administrator_role)
-            moderator = gd.get_role(static.Moderator_role)
-            vc_allowed = gd.get_role(static.vc_allowed_role)
+            administrator = gd.get_role(config.administrator_role)
+            moderator = gd.get_role(config.Moderator_role)
+            vc_allowed = gd.get_role(config.vc_allowed_role)
             
             overwrite = {gd.default_role: discord.PermissionOverwrite(view_channel = False, connect = False),
                             moderator: discord.PermissionOverwrite(view_channel = True, connect = True),
@@ -575,7 +575,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
                             member: discord.PermissionOverwrite(manage_channels = True)}
             created_vc = await vccreate_category.create_voice_channel(name = "臨時VC - 名前を変更できます", overwrites=overwrite)
             await member.move_to(created_vc)
-            vccreate_channel = client.get_channel(static.voicecreate_channel)
+            vccreate_channel = client.get_channel(config.voicecreate_channel)
             embed = discord.Embed(title = "ボイスチャット作成成功", description = f"ボイスチャットの作成に成功しました！\n名前の変更、最大人数の設定などは{vccreate_channel.jump_url}をご覧ください！\n**使用されていない「しゃべるくん」以外の読み上げbotの使用はご遠慮ください。**")
             embed.set_footer(text = "VCルールとマナーを厳守してください。このVC内容はログが取られています。")
             await created_vc.send(content = member.mention, embed = embed)
@@ -590,11 +590,11 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
                 if type(overwrite) is discord.Member:
                     vc_create_user = overwrite
                     break
-            await modmails.save_modmail(channel=before.channel, vc_log=True, save_channel=client.get_channel(static.vccreate_log_channel), vc_create_user=vc_create_user)
+            await modmails.save_modmail(channel=before.channel, vc_log=True, save_channel=client.get_channel(config.vccreate_log_channel), vc_create_user=vc_create_user)
             await before.channel.delete()
             
     #suggest
-    if static.voice_suggest and after.channel and len(after.channel.members) == 1:
+    if config.voice_suggest and after.channel and len(after.channel.members) == 1:
         
         if before.channel and before.channel == after.channel:
             return
@@ -643,7 +643,7 @@ async def help(interaction: discord.Interaction):
 
 @client.tree.command(name="ping",
                         description="botの応答時間を確認します",
-                        guild=discord.Object(static.testserverid))
+                        guild=discord.Object(config.testserverid))
 async def ping(interaction: discord.Interaction):
     await interaction.response.defer()
 
@@ -657,7 +657,7 @@ async def ping(interaction: discord.Interaction):
 
 @client.tree.command(name="maintenance",
                         description="メンテナンスについて",
-                        guild=discord.Object(static.testserverid))
+                        guild=discord.Object(config.testserverid))
 @app_commands.describe(number="0からの参照番号", status="ruined(中止)/end(終了)", name="告知する名前。デフォルトは「メンテナンス」")
 async def maintenance(interaction: discord.Interaction,
                         number: int,
@@ -675,7 +675,7 @@ async def maintenance(interaction: discord.Interaction,
 
 @client.tree.command(name="remind",
                         description="リマインドのテストを送ります",
-                        guild=discord.Object(static.testserverid))
+                        guild=discord.Object(config.testserverid))
 @app_commands.describe(version="リマインドの時間 morning/afternoon/evening/thread")
 async def remind(interaction: discord.Interaction, version: str):
     if interaction.user == client.user:
@@ -695,7 +695,7 @@ async def remind(interaction: discord.Interaction, version: str):
 
 @client.tree.command(name="eventtest",
                         description="イベントリストのテストを行います",
-                        guild=discord.Object(static.testserverid))
+                        guild=discord.Object(config.testserverid))
 async def eventtest(interaction: discord.Interaction):
     if interaction.user == client.user:
         return
@@ -703,7 +703,7 @@ async def eventtest(interaction: discord.Interaction):
     events = evjson.eventget()
     await interaction.followup.send(events)
     
-@client.tree.command(name = "send_voice", description="指定したチャンネルにTTSを送信します", guild=discord.Object(static.testserverid))
+@client.tree.command(name = "send_voice", description="指定したチャンネルにTTSを送信します", guild=discord.Object(config.testserverid))
 async def send_voice(interaction: discord.Interaction, text: str, channelid: str):
     if interaction.user == client.user:
         return
@@ -716,7 +716,7 @@ async def send_voice(interaction: discord.Interaction, text: str, channelid: str
     
 @client.tree.command(name="eventcounttest",
                         description="イベントカウントのテストを行います",
-                        guild=discord.Object(static.testserverid))
+                        guild=discord.Object(config.testserverid))
 async def eventcounttest(interaction: discord.Interaction):
     if interaction.user == client.user:
         return
@@ -724,7 +724,7 @@ async def eventcounttest(interaction: discord.Interaction):
     eventcount = evjson.eventcount()
     await interaction.followup.send(f"- eventnow: {eventcount[0]}\n- eventend: {eventcount[1]}\n- eventvalue: {eventcount[2]}\n- eventtoday: {eventcount[3]}\n- eventendtoday: {eventcount[4]}")       
 
-@client.tree.command(name="shutdown", description="botを終了します", guild=discord.Object(static.testserverid))
+@client.tree.command(name="shutdown", description="botを終了します", guild=discord.Object(config.testserverid))
 async def shutdown(interaction: discord.Interaction):
     if interaction.user == client.user:
         return
@@ -735,7 +735,7 @@ async def shutdown(interaction: discord.Interaction):
 
 @client.tree.command(name="send_text_message",
                         description="channelIDが空欄の場合、リマインダースレッドに投稿します！",
-                        guild=discord.Object(static.testserverid))
+                        guild=discord.Object(config.testserverid))
 async def send_text_message(interaction: discord.Interaction, text: str, channelid: str = None):
     if not channelid:
         guild = client.get_guild(guildID)
@@ -856,7 +856,7 @@ class DoctorNameCommand(app_commands.Group):
 
 @client.tree.command(name="mainttest",
                         description="メンテナンスリストのテストを行います",
-                        guild=discord.Object(static.testserverid))
+                        guild=discord.Object(config.testserverid))
 async def mainttest(interaction: discord.Interaction):
     if interaction.user == client.user:
         return
@@ -864,7 +864,7 @@ async def mainttest(interaction: discord.Interaction):
     maintenance = await maintenances.maintenance_list()
     await interaction.followup.send(maintenance)
 
-@tasks.loop(time=static.morningtime)
+@tasks.loop(time=config.morningtime)
 async def morning():
     try:
         logger.info("時間になりました。モーニングルーティンを始めます")
@@ -873,7 +873,7 @@ async def morning():
     except Exception as e:
         logger.exception(f"[morning]にてエラー：{e}")  
         
-@tasks.loop(time=static.threadtime)
+@tasks.loop(time=config.threadtime)
 async def send_remind():
     try:
         global remindThreadID
@@ -885,7 +885,7 @@ async def send_remind():
     except Exception as e:
         logger.exception(f"[send_remind]にてエラー：{e}") 
 
-@tasks.loop(time=static.afternoontime)
+@tasks.loop(time=config.afternoontime)
 async def afternoon():
     try:
         logger.info("時間になりました。アフタヌーンルーティンを始めます")
@@ -894,7 +894,7 @@ async def afternoon():
     except Exception as e:
         logger.exception(f"[afternoon]にてエラー：{e}") 
         
-@tasks.loop(time=static.eveningtime)
+@tasks.loop(time=config.eveningtime)
 async def evening():
     try:
         logger.info("時間になりました。イヴニングルーティンを始めます")
@@ -903,7 +903,7 @@ async def evening():
     except Exception as e:
         logger.exception(f"[evening]にてエラー：{e}") 
         
-@tasks.loop(time=static.newdaytime)
+@tasks.loop(time=config.newdaytime)
 async def new_days():
     try:
         logger.info("時間になりました。０時ルーティンを始めます")

@@ -4,7 +4,7 @@ import json
 import os
 from extentions.aclient import client
 from extentions import log
-from extentions.config import static
+from extentions.config import config
 
 logger = log.setup_logger()
 dir = os.path.abspath(os.path.dirname(__file__))
@@ -28,7 +28,7 @@ async def send_embed_to_channel(channel: discord.TextChannel, file_name: str, ed
         message = await channel.fetch_message(edit_id)
         await message.edit(embeds=embeds)
     
-@client.tree.command(name="send_embed", description="filenameから埋め込みを送信します" ,guild=discord.Object(static.testserverid))
+@client.tree.command(name="send_embed", description="filenameから埋め込みを送信します" ,guild=discord.Object(config.testserverid))
 @discord.app_commands.describe(filename = "ファイル名", channel_id = "送信するチャンネルID", edit_id = "編集するメッセージID")
 async def send_embed(interaction: discord.Interaction, filename: str, channel_id: str = None, edit_id: str = None) -> None:
     await interaction.response.defer(ephemeral=True)
