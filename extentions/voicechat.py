@@ -217,7 +217,7 @@ async def join_voice(interaction: discord.Interaction, channel: discord.VoiceCha
         
         if available_client is None:
             logger.warning("/joinが実行されましたが使用できるボイスクライアントがありませんでした！")
-            embed = discord.Embed(title="利用できるbotがありません！", description= "現在利用できる読み上げbotがありません！\nしゃべるくんなど、他の読み上げbotをご利用ください！",color = discord.Color.red())
+            embed = discord.Embed(title="利用できるbotがありません！", description= "現在利用できる読み上げbotがありません！\nしゃべるくん(!sh s)など、他の読み上げbotをご利用ください！",color = discord.Color.red())
             embed.set_author(name = "チャット読み上げ")
             await interaction.followup.send(embed = embed)
             return

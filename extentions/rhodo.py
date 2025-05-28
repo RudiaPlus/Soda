@@ -132,12 +132,7 @@ async def on_ready():
         
         #ルーティン
         maintenances.maintenance_timer.start()
-        
-        if twitterpost.web is True:
-            """url = twitterpost.last_tweet_url
-            await twitterpost.publish_tweet_from_nitter_url(url)
-            twitterpost.ake_tweet_retrieve.start()"""
-            twitterpost.ake_feed_retrieve.start()
+        twitterpost.ake_tweet_retrieve.start()
         
         #リマインダー(スレッド)の確認
         try:
@@ -190,6 +185,7 @@ async def on_ready():
 
 @client.event
 async def setup_hook() -> None:
+    await twitterpost.setup_app()
     voicechat.before_reboot.start()
     morning.start()
     send_remind.start()
@@ -528,9 +524,7 @@ class VoiceSpeechButtons(discord.ui.View):
     @discord.ui.button(label = "いいえ", style = discord.ButtonStyle.danger)
     async def dontspeech(self, interaction: discord.Interaction, button: discord.ui.Button):
         
-        await interaction.message.delete()
-        
-        
+        await interaction.message.delete()  
     
 @client.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
@@ -593,7 +587,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
             await modmails.save_modmail(channel=before.channel, vc_log=True, save_channel=client.get_channel(config.vccreate_log_channel), vc_create_user=vc_create_user)
             await before.channel.delete()
             
-    #suggest
+    #suggest/auto-join
     if config.voice_suggest and after.channel and len(after.channel.members) == 1:
         
         if before.channel and before.channel == after.channel:
@@ -601,7 +595,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
         if after.channel == vccreate_voice:
             return
         try:
-            if after.channel.category_id == vccreate_category.id:
+            if after.channel.category_id == vccreate_category.id or after.channel.id == config.event_stage_channel:
 
                 join_channel = after.channel
                 logger.info(f"{member.name}にボイス読み上げの提案を行います")
@@ -618,7 +612,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
                     pass
                 
         except Exception as e:
-            logger.error(e)        
+            logger.error(e)    
         
 @client.tree.command(name="help",
                         description="現在実装されているコマンドの使い方を簡単に説明します！")
@@ -723,6 +717,18 @@ async def eventcounttest(interaction: discord.Interaction):
     await interaction.response.defer()
     eventcount = evjson.eventcount()
     await interaction.followup.send(f"- eventnow: {eventcount[0]}\n- eventend: {eventcount[1]}\n- eventvalue: {eventcount[2]}\n- eventtoday: {eventcount[3]}\n- eventendtoday: {eventcount[4]}")       
+
+@client.tree.command(name="config_reload", description="dynamic configのリロードを行います", guild=discord.Object(config.testserverid))
+async def config_reload(interaction: discord.Interaction):
+    if interaction.user == client.user:
+        return
+    await interaction.response.defer()
+    try:
+        config.reload()
+        await interaction.followup.send("完了しました")
+    except Exception as e:
+        logger.error(f"configのリロードに失敗しました！\n{e}")
+        await interaction.followup.send(f"configのリロードに失敗しました！\n{e}")
 
 @client.tree.command(name="shutdown", description="botを終了します", guild=discord.Object(config.testserverid))
 async def shutdown(interaction: discord.Interaction):

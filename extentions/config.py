@@ -1,6 +1,7 @@
 import datetime
-import os
 import json
+import os
+
 
 class Config():
     def __init__(self):
@@ -105,11 +106,17 @@ class Config():
         self.multiplay_request_channel = 1306450120669139024 #
 
         self.logging_channel = 1318532200588640297
+        
+        self.event_stage_channel = 1232585432756129813 #イベント
 
 
         #categories
         self.feedback_category = 1108189699715125268
         self.vccreate_category = 1305500357958307860
+        
+        #Twitter
+        self.twitter_account_name = "Eluneige"
+        self.twitter_account_token = os.environ["TWITTER_ACCOUNT_TOKEN"]
 
         #speech
         self.default_waveform_base64 = "acU6Va9UcSVZzsVw7IU/80s0Kh/pbrTcwmpR9da4mvQejIMykkgo9F2FfeCd235K/atHZtSAmxKeTUgKxAdNVO8PAoZq1cHNQXT/PHthL2sfPZGSdxNgLH0AuJwVeI7QZJ02ke40+HkUcBoDdqGDZeUvPqoIRbE23Kr+sexYYe4dVq+zyCe3ci/6zkMWbVBpCjq8D8ZZEFo/lmPJTkgjwqnqHuf6XT4mJyLNphQjvFH9aRqIZpPoQz1sGwAY2vssQ5mTy5J5muGo+n82b0xFROZwsJpumDsFi4Da/85uWS/YzjY5BdxGac8rgUqm9IKh7E6GHzOGOy0LQIz3O4ntTg=="

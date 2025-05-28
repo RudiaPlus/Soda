@@ -1,28 +1,26 @@
+import asyncio
+import atexit
 import datetime
+import html
 import json as js
 import os
 import re
-from typing import List, Tuple
 import time
-import atexit
-import html
+from typing import List, Tuple
 
 import aiohttp
+import aiosqlite
+import feedparser
 from discord import Color, Embed
 from discord.ext import tasks
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
-from bs4 import BeautifulSoup
+from tweety import Twitter
+from tweety.types import Tweet
 
 from extentions import JSTTime, log
 from extentions.aclient import client
-import feedparser
-import asyncio
-
 from extentions.config import config
+
+from typing import Optional, Union, Optional
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger()
@@ -37,7 +35,92 @@ feedurl_alter = "https://nitter.privacydev.net/AKEndfieldJP/rss"
 twstalker = "https://twstalker.com/AKEndfieldJP"
 timeout = aiohttp.ClientTimeout(total=10)
 
+app :Optional[Twitter] = None
 
+def date_comparator(date1: Union[datetime.datetime, str], date2: Union[datetime.datetime, str], FORMAT: str = '%Y-%m-%d %H:%M:%S%z') -> int:
+    date1, date2 = [datetime.datetime.strptime(date, FORMAT) if isinstance(date, str) else date for date in (date1, date2)]
+    return (date1 > date2) - (date1 < date2)
+
+async def get_tweets(tweets: List[Tweet], username: str) -> Optional[list[Tweet]]:
+    channel = client.get_channel(config.ake_news)
+    last_message = await channel.fetch_message(channel.last_message_id)
+    last_published_time = last_message.created_at
+    
+    tweets = [tweet for tweet in tweets if tweet.author.screen_name == username and date_comparator(tweet.created_on, last_published_time) == 1]
+    
+    if tweets != []:
+        return sorted(tweets, key=lambda x: x.created_on)
+    else:
+        return None
+    
+async def setup_app():
+    async def authenticate_account(account_name, account_token):
+        app = Twitter(account_name)
+        max_attempts = 2
+        for attempt in range(max_attempts):
+            try:
+                await app.load_auth_token(account_token)
+                logger.info(f"Authenticated {account_name} successfully.")
+                return app
+            except Exception as e:
+                logger.error(f"Authentication failed for {account_name}: {e}")
+                if attempt < max_attempts - 1:
+                    await asyncio.sleep(4 ** attempt)
+                else:
+                    logger.error(f"Failed to authenticate {account_name} after {max_attempts} attempts.")
+                    raise
+    
+    global app
+    app = await authenticate_account(config.twitter_account_name, config.twitter_account_token)
+
+async def notification(tweets, username: str, client_used: str):
+    latest_tweets = await get_tweets(tweets[client_used], username)
+    if latest_tweets is None:
+        return
+    
+    for tweet in latest_tweets:
+        logger.info(f"New tweet from {username}: {tweet.text}")
+        url = tweet.url
+        embeds, video_urls = await create_embed(url)
+        channel = client.get_channel(config.ake_news)
+        message = await channel.send(f"<{url}>", embeds=embeds)
+        await message.publish()
+        if video_urls:
+            for url in video_urls:
+                await message.reply(content = f"[ブラウザで開く]({url})")
+        logger.info(f"新規ツイート({url})をアナウンスしました。")
+    else:
+        logger.info(f"新規ツイート({url})は既にアナウンスされています。投稿を中止しました。")
+        
+async def tweets_updater(app: Twitter):
+    try:
+        tweet_notifications = await app.get_tweet_notifications()
+        if not tweet_notifications:
+            return
+        tweets = tweet_notifications.tweets
+        return tweets
+    except Exception as e:
+        logger.error(f"Failed to get tweet notifications: {e}")
+        return
+
+@tasks.loop(seconds = 30)
+async def ake_tweet_retrieve(): 
+    global app
+    if app is None:
+        logger.debug("Twitterへの接続がありません")
+        return
+    
+    try:
+        tweets = await tweets_updater(app)
+        if tweets is None:
+            logger.debug("No new tweets found or failed to retrieve tweets.")
+            return
+        
+        await notification(tweets, "AKEndfieldJP", "twitter")
+        
+    except Exception as e:
+        logger.error(f"Error in ake_tweet_retrieve: {e}")
+        
 async def get_response(url, json: bool = False):
     async with aiohttp.ClientSession(timeout=timeout, headers=headers) as session:
         async with session.get(url) as r:
@@ -47,17 +130,6 @@ async def get_response(url, json: bool = False):
             else:
                 r_json =  await r.json()
                 return r, r_json
-
-driver = None
-
-if web is True:
-
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    #options.add_argument("--headless=new")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disale-dev-shm-usage")
         
 async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
     twitter_x_pattern = r"https?:\/\/(www\.)?(x|twitter)\.com\/[^/]+\/status\/(\d+)"
@@ -220,15 +292,15 @@ async def ake_tweet_retrieve():
     except Exception as e:
         print(f"error: {e}")"""
         
-@tasks.loop(minutes = 5)
+"""@tasks.loop(minutes = 5)
 async def ake_feed_retrieve():
     channel = client.get_channel(config.ake_news)
     last_message = await channel.fetch_message(channel.last_message_id)
     last_published_time = last_message.created_at
-    """response, text = await get_response(feedurl)
+    response, text = await get_response(feedurl)
     if response.status != 200:
         logger.error(f"ツイートにアクセスできませんでした。ステータスコード: {response.status}")
-        return"""
+        return
         
     driver = await asyncio.to_thread(webdriver.Chrome, options = options)
     try:
@@ -285,4 +357,4 @@ async def ake_feed_retrieve():
         if video_urls:
             for url in video_urls:
                 await message.reply(content = f"[ブラウザで開く]({url})")
-        logger.info(f"新規ツイート({new_tweet_url_twitter})をアナウンスしました。")
+        logger.info(f"新規ツイート({new_tweet_url_twitter})をアナウンスしました。")"""

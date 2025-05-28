@@ -120,14 +120,6 @@
     "startTime": null,
     "endTime": null
   },
-  "anniRemind_10": {
-    "name": "殲滅依頼「閉ざされし雪渓」",
-    "description": null,
-    "type": "anni",
-    "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%A4%E3%82%A7%E3%83%A9%E3%82%B0%E3%80%8C%E9%96%89%E3%81%96%E3%81%95%E3%82%8C%E3%81%97%E9%9B%AA%E6%B8%93%E3%80%8D",
-    "startTime": 1741546800,
-    "endTime": 1746385199
-  },
   "sssRemind_6": {
     "name": "荒原保全駐在",
     "description": null,
@@ -135,5 +127,13 @@
     "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#gc83f043",
     "startTime": 1742065200,
     "endTime": 1749085199
+  },
+  "anniRemind_11": {
+      "name": "殲滅依頼「66号航路」",
+      "description": null,
+      "type": "anni",
+      "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%AF%E3%83%AB%E3%83%93%E3%82%A2%E3%80%8C66%E5%8F%B7%E8%88%AA%E8%B7%AF%E3%80%8D",
+      "startTime": 1746385200,
+      "endTime": 1752433199
   }
 }

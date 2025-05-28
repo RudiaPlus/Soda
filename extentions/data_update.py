@@ -130,6 +130,10 @@ async def char_table_analyze():
                 dic_add_D = module_json["equipDict"][index]["uniEquipName"]
                 add_id = "Δ"
         
+        #エリートオペレーターの除外
+        if char_id not in charjson.keys():
+            continue
+        
         if "modules" in charjson[char_id] and add_id:
             if charjson[char_id]["modules"][add_id] is None:
                 charjson[char_id]["modules"][add_id] = dic_add_X if add_id == "X" else dic_add_Y if add_id == "Y" else dic_add_D
@@ -260,13 +264,12 @@ async def update_data() -> bool:
     os.system("git pull origin main")
     logger.info("リソースのアップデートが完了しました")
     
-    try:
-        await char_table_analyze()
-        await birthday_analyze()
-        await custom_emoji_upload()
-    except Exception as e:
-        logger.error(e)
-        return False
+    await char_table_analyze()
+    logger.info("キャラテーブルの解析が完了しました")
+    await birthday_analyze()
+    logger.info("誕生日の解析が完了しました")
+    await custom_emoji_upload()
+    logger.info("カスタム絵文字のアップロードが完了しました")
             
     return True
 

@@ -1250,6 +1250,53 @@
             }
         ]
     },
+    "act38side": {
+        "id": "act38side",
+        "type": "SIDESTORY",
+        "stageAdd": true,
+        "name": "幕開く者たち",
+        "news": "https://www.arknights.jp/news/481",
+        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88142_%E5%B9%95%E9%96%8B%E3%81%8F%E8%80%85%E3%81%9F%E3%81%A1",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/d86dfa59564b7bef9af2e39c5436ee37.png",
+        "startTime": 1745478000,
+        "endTime": 1747249199,
+        "rewardEndTime": 1747853999,
+        "additionalStage": [
+            {
+                "name": "煌めく遊覧車",
+                "startTime": 1746082800
+            },
+            {
+                "name": "荒寥の舞",
+                "startTime": 1746687600
+            }
+        ]
+    },
+    "act1vautochess": {
+        "id": "act1vautochess",
+        "type": "EVENT",
+        "stageAdd": false,
+        "name": "堅守協定",
+        "news": "https://www.arknights.jp/news/486",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88143_%E5%A0%85%E5%AE%88%E5%8D%94%E5%AE%9A",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/a60ab8d0eb68ef0b265dbe8938a7357f.png",
+        "startTime": 1746687600,
+        "endTime": 1747853999,
+        "rewardEndTime": 1748113199,
+        "additionalStage": null
+    },
+    "act29sre": {
+        "id": "act29sre",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "ツヴィリングトゥルムの黄金(復刻)",
+        "news":"https://arknights.jp/news/488",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88144_%E3%83%84%E3%83%B4%E3%82%A3%E3%83%AA%E3%83%B3%E3%82%B0%E3%83%88%E3%82%A5%E3%83%AB%E3%83%A0%E3%81%AE%E9%BB%84%E9%87%91%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/e7da9aae51572ed7aac0e2ed4202ad6f.png",
+        "startTime": 1747897200,
+        "endTime": 1748717999,
+        "rewardEndTime": 1749063599
+    },
     "dis_perm_sandbox_1": {
         "id": "dis_perm_sandbox_1",
         "type": "SANDBOX",
