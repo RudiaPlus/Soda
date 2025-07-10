@@ -165,6 +165,40 @@ async def on_ready():
         global preset_names
         preset_names = list(presets_dict.keys())
         
+        async def scheduled_task(): 
+            await asyncio.sleep(wait_seconds)
+            try:
+                config.add_recruit_list(operator_list)
+                logger.info(f"予約されたadd_recruitタスクを実行しました。オペレーター: {', '.join(operator_list)}")
+                # 完了通知を元のチャンネルに送信
+                await interaction.channel.send(
+                    f"{interaction.user.mention} 予約されていた公開求人オペレーターの追加が完了しました！\n"
+                    f"対象: `{', '.join(operator_list)}`"
+                )
+            except Exception as e:
+                logger.error(f"予約されたadd_recruitタスクの実行中にエラーが発生しました: {e}")
+                await interaction.channel.send(
+                    f"{interaction.user.mention} 予約されていた公開求人オペレーターの追加処理中にエラーが発生しました。"
+                )
+            finally:
+                # タスク完了後はスケジュールから削除
+                for task in scheduled_tasks:
+                    if task["task_id"] == f"add_recruit_{add_time_dt.strftime('%Y%m%d%H%M%S')}":
+                        scheduled_tasks.remove(task)
+                        save_json("scheduled_tasks.json", scheduled_tasks)
+                        break
+        
+        #タスク読み込み
+        scheduled_tasks = load_json("scheduled_tasks.json")
+        for task in scheduled_tasks:
+            now = datetime.datetime.now(JSTTime.tz_JST)
+            if task["excute_at"] <= now.isoformat():
+                # タスクを実行
+                asyncio.create_task(scheduled_task())   
+                # タスクを削除
+                scheduled_tasks.remove(task)
+        save_json("scheduled_tasks.json", scheduled_tasks)
+
     except Exception as e:
         logger.exception(f"[on_ready]にて エラー：{e}")
         
