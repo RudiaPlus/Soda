@@ -61,14 +61,17 @@ async def maintenance_end(maint_name: str, entry: int):
                                       url = link
                                       )
     await channel.send("<@&1090976873774854177>", embed = embed)
+    channel_announcement = client.get_channel(config.announcement)
     del maintenances[entry]
     await write_json(maintenances)
     start_time = datetime.now()
+    await channel_announcement.send("botのリソース更新を行います！完了するまでbotの動作が不安定になる可能性がありますので、ご注意ください！")
     result = await data_update.update_data()
     if result is True:
         result_time = datetime.now()
         result_delta = result_time - start_time
         logger.info(f"データ更新に成功しました！\n経過した時間: {result_delta.total_seconds()}秒")
+        await channel_announcement.send("botのリソース更新が完了しました！現在、botの動作は安定しています！")
     else:
         await logger.warn("更新に失敗しました......")
     

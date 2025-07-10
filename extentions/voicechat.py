@@ -9,7 +9,6 @@ import aiohttp
 
 import discord
 from discord.ext import tasks
-import requests
 
 from extentions import log
 from extentions.aclient import client, voice_clients_list
@@ -17,6 +16,7 @@ from extentions.config import config
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "\\..\\")
+jsons_dir = os.path.join(dir, "jsons")
 voice_status_json_name = "jsons\\voice_status.json"
 
 host = "127.0.0.1"
@@ -36,21 +36,21 @@ def write_voice_status(dict):
         json.dump(dict, f, ensure_ascii=False, indent=4)
     return
 
-async def audio_query(text, speaker, max_retry):
+async def audio_query(session: aiohttp.ClientSession, text: str, speaker: int, max_retry: int):
     # 音声合成用のクエリを作成する
     query_payload = {"text": text, "speaker": speaker}
-    for query_i in range(max_retry):
-        r = requests.post(f"http://{host}:{port}/audio_query", 
-                        params=query_payload, timeout=(10.0, 300.0))
-        if r.status_code == 200:
-            query_data = r.json()
-            break
-        asyncio.sleep(1)
+    for _ in range(max_retry):
+        try:
+            async with session.post(f"http://{host}:{port}/audio_query", params=query_payload, timeout=300.0) as resp:
+                if resp.status == 200:
+                    return await resp.json()
+        except asyncio.TimeoutError:
+            logger.warning("audio_query timed out.")
+        await asyncio.sleep(1)
     else:
-        raise ConnectionError("リトライ回数が上限に到達しました。 audio_query : ", "/", text[:40], r.text)
-    return query_data
+        raise ConnectionError(f"リトライ回数が上限に到達しました。 audio_query : / {text[:40]}")
 
-async def synthesis(speaker, query_data, max_retry, intonationScale = 1.0, outputSamplingRate = 44100, outputStereo = False, pauseLength = None, pauseLengthScale = 1.0, pitchScale = 0.0, postPhonemeLength = 0.1, prePhonemeLength = 0.1, speedScale = 1.0, tempoDynamicsScale = 1.0, volumeScale = 1.0):
+async def synthesis(session: aiohttp.ClientSession, speaker: int, query_data: dict, max_retry: int, intonationScale = 1.0, outputSamplingRate = 44100, outputStereo = False, pauseLength = None, pauseLengthScale = 1.0, pitchScale = 0.0, postPhonemeLength = 0.1, prePhonemeLength = 0.1, speedScale = 1.0, tempoDynamicsScale = 1.0, volumeScale = 1.0):
     synth_payload = {"speaker": speaker}
     
     query_data["intonationScale"] = intonationScale
@@ -65,15 +65,16 @@ async def synthesis(speaker, query_data, max_retry, intonationScale = 1.0, outpu
     query_data["tempoDynamicsScale"] = tempoDynamicsScale
     query_data["volumeScale"] = volumeScale
     
-    for synth_i in range(max_retry):
-        r = requests.post(f"http://{host}:{port}/synthesis", params=synth_payload, 
-                          data=json.dumps(query_data), timeout=(10.0, 300.0))
-        if r.status_code == 200:
-            #音声ファイルを返す
-            return r.content
-        asyncio.sleep(1)
+    for _ in range(max_retry):
+        try:
+            async with session.post(f"http://{host}:{port}/synthesis", params=synth_payload, data=json.dumps(query_data), timeout=300.0) as resp:
+                if resp.status == 200:
+                    return await resp.read()
+        except asyncio.TimeoutError:
+            logger.warning("synthesis timed out.")
+        await asyncio.sleep(1)
     else:
-        raise ConnectionError("音声エラー：リトライ回数が上限に到達しました。 synthesis : ", r)
+        raise ConnectionError("音声エラー：リトライ回数が上限に到達しました。 synthesis")
 
 async def text_to_speech(texts, speaker=config.aivis_speaker_ids["ノーマル"], max_retry=20, intonationScale = 1.0, outputSamplingRate = 44100, outputStereo = False, pauseLength = None, pauseLengthScale = 1.0, pitchScale = 0.0, postPhonemeLength = 0.1, prePhonemeLength = 0.1, speedScale = 1.0, tempoDynamicsScale = 1.0, volumeScale = 1.0, split_count = 0, is_ogg = False):
     if texts is None:
@@ -85,17 +86,22 @@ async def text_to_speech(texts, speaker=config.aivis_speaker_ids["ノーマル"]
     emoji_pattern = r"<:.+?:\d+>"
     texts = re.sub(emoji_pattern, '', texts)
     
+    #<>,~,@,|,*,#などの特殊文字を削除
+    non_text_pattern = r"[<>~@[\]|*#]"
+    texts = re.sub(non_text_pattern, '', texts)
+
     if len(texts) > split_count and split_count > 0:
         texts = texts[:40] + "以下略"
         
-    if len(texts) == 0:
-        return
+    if len(texts) == 0 or not texts.strip():
+        return None
     
-        
-    # audio_query
-    query_data = await audio_query(texts,speaker,max_retry)
-    # synthesis
-    voice_data = await synthesis(speaker,query_data,max_retry,intonationScale,outputSamplingRate,outputStereo,pauseLength,pauseLengthScale,pitchScale,postPhonemeLength,prePhonemeLength,speedScale,tempoDynamicsScale,volumeScale)
+    async with aiohttp.ClientSession() as session:
+        # audio_query
+        query_data = await audio_query(session, texts,speaker,max_retry)
+        # synthesis
+        voice_data = await synthesis(session, speaker,query_data,max_retry,intonationScale,outputSamplingRate,outputStereo,pauseLength,pauseLengthScale,pitchScale,postPhonemeLength,prePhonemeLength,speedScale,tempoDynamicsScale,volumeScale)
+    
     filepath = "TTS\\voice.wav"
     ogg_filepath = "TTS\\voice.ogg"
     with open(os.path.join(dir, filepath), mode = "wb") as f:
@@ -109,13 +115,24 @@ async def text_to_speech(texts, speaker=config.aivis_speaker_ids["ノーマル"]
             "-i", os.path.join(dir, filepath),
             os.path.join(dir, ogg_filepath)
         ]
-        subprocess.run(command, check = True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        process = await asyncio.create_subprocess_exec(
+            *command,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL
+        )
+        await process.wait()
+        if process.returncode != 0:
+            logger.error(f"ffmpeg failed with exit code {process.returncode}")
+            return None
         return os.path.join(dir, ogg_filepath)
     return os.path.join(dir, filepath)
 
 async def send_voice_message(text: str, channelid: int):
 
     file = await text_to_speech(text, speaker= config.aivis_speaker_ids["通常"], volumeScale=0.5, is_ogg=True)
+    if file is None or not os.path.exists(file):
+        logger.error("音声ファイルの生成に失敗しました。")
+        return
     
     async with aiohttp.ClientSession() as session:
         #アップロードurlの取得
@@ -234,7 +251,7 @@ async def join_voice(interaction: discord.Interaction, channel: discord.VoiceCha
         await available_client.join_voice_channel(join_channel)
         
         voice_status = voice_client_status()
-        voice_status.update({available_client.user.id: {"connected_channel": join_channel.id, "target_chats": target_chats, "queues": 0}})
+        voice_status.update({available_client.user.id: {"connected_channel": join_channel.id, "target_chats": target_chats}})
         write_voice_status(voice_status)
         
         target_chat_str = "<#" + ">, <#".join(map(str,target_chats)) + ">"
@@ -310,6 +327,7 @@ async def leave(interaction:  discord.Interaction):
         
 for i in range(config.voice_clients):
 
+    guild_queues = {}
     client_voice = voice_clients_list[i]
     
     @client_voice.event
@@ -331,10 +349,66 @@ for i in range(config.voice_clients):
                     
                     write_voice_status(voice_status)
     
+    async def play_next_in_queue(guild: discord.Guild, client_voice = client_voice):
+        """
+        キューから次のメッセージを取り出して再生する関数。
+        一つの音声の再生が終わるたびに after コールバックから呼び出される。
+        """
+        queue = guild_queues.get(guild.id)
+        if not queue or queue.empty():
+            # キューが空なら再生処理を終了
+            return
+
+        # キューから次のメッセージを取得
+        message = await queue.get()
+        
+        try:
+            # キューの現在のサイズに基づいて再生速度を動的に決定
+            queue_size = queue.qsize()
+            speedScale = 1.0
+            if queue_size > 1:  # キューに2つ以上待機している場合
+                # キューが多いほど少し速くする
+                speedScale = 1.0 + queue_size * 0.1 if queue_size < 10 else 2.0
+            
+            # TTSを生成（この処理が完了するまで次の再生は始まらない）
+            source_path = await text_to_speech(message.content, volumeScale=0.5, speedScale=speedScale, split_count=40)
+            if source_path is None:
+                logger.debug(f"音声ファイルの生成をスキップしました。メッセージ内容: {message.content[:40]}")
+                await play_next_in_queue(guild, client_voice)
+                return
+            
+            source = discord.FFmpegPCMAudio(
+                executable="C:\\Program Files\\FFmpeg\\bin\\ffmpeg.exe",
+                source=source_path
+            )
+
+            # afterコールバックで、再生終了後に再度この関数を呼び出すように設定
+            # コールバックは別スレッドで実行されるため、asyncio.run_coroutine_threadsafe を使うのが安全
+            guild.voice_client.play(
+                source, 
+                after=lambda e: asyncio.run_coroutine_threadsafe(
+                    play_next_in_queue(guild, client_voice), 
+                    client_voice.loop
+                ).result() # エラーハンドリングのために .result() を呼ぶこともできます
+            )
+
+        except Exception as e:
+            logger.error(f"Error during playback for guild {guild.id}: {e}")
+            # エラーが発生しても、次のメッセージの再生を試みる
+            asyncio.run_coroutine_threadsafe(
+                play_next_in_queue(guild, client_voice), 
+                client_voice.loop
+            )
+        finally:
+            # キューのタスクが完了したことを通知
+            queue.task_done()    
+    
     @client_voice.event
     async def on_message(message: discord.Message, client_voice = client_voice):
 
         if message.author == client_voice.user or message.author.bot is True:
+            return
+        if not message.guild or not message.guild.voice_client:
             return
 
         author = message.author
@@ -342,35 +416,27 @@ for i in range(config.voice_clients):
         user_message = message.content  # noqa: F841
         channel = message.channel  # noqa: F841
         channelID = message.channel.id
-
-        if message.guild:
-                            
-            if message.guild.voice_client:
-                voice_status = voice_client_status()
-                try:
-                    target_channels = voice_status[str(client_voice.user.id)]["target_chats"]
+ 
+        voice_status = voice_client_status()
+        try:
+            target_channels = voice_status[str(client_voice.user.id)]["target_chats"]
+            
+        except KeyError:
+            logger.error("読み上げクライアントが接続しているのにも関わらず、ボイスステータスが記録されていません！")
+            return
+        
+        if channelID not in target_channels:
+            return
+        
+        guild_id = message.guild.id
+        if guild_id not in guild_queues:
+            # 新しいギルドのキューを初期化
+            guild_queues[guild_id] = asyncio.Queue()
+        await guild_queues[guild_id].put(message)
+        if not message.guild.voice_client.is_playing():
+            await play_next_in_queue(message.guild, client_voice)
                     
-                except KeyError:
-                    logger.error("読み上げクライアントが接続しているのにも関わらず、ボイスステータスが記録されていません！")
-                    return
-                
-                speedScale = 1.0
-                    
-                if channelID in target_channels:
-                    if message.guild.voice_client.is_playing():
-                        voice_status[str(client_voice.user.id)]["queues"] += 1
-                        write_voice_status(voice_status)
-                        if voice_status[str(client_voice.user.id)]["queues"] > 2:
-                            speedScale = 1.0 + (voice_status[str(client_voice.user.id)]["queues"] - 1) * 0.1
-                    while message.guild.voice_client.is_playing():
-                        await asyncio.sleep(0.3)
-                    source = discord.FFmpegPCMAudio(executable="C:\\Program Files\\FFmpeg\\bin\\ffmpeg.exe",source= await text_to_speech(message.content, volumeScale=0.5, speedScale=speedScale, split_count=40))
-                    message.guild.voice_client.play(source)
-                    voice_status = voice_client_status()
-                    voice_status[str(client_voice.user.id)]["queues"] -= 1 if voice_status[str(client_voice.user.id)]["queues"] > 0 else 0
-                    write_voice_status(voice_status)
-                    
-    @tasks.loop(time=datetime.time(hour=4, minute = 50, tzinfo=config.JST))
+    @tasks.loop(time = datetime.time(hour = 4, minute = 50, tzinfo = config.JST))
     async def before_reboot(client_voice = client_voice):
         try:
             #再起動前に接続しているVCに告知する

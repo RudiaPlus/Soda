@@ -1297,13 +1297,56 @@
         "endTime": 1748717999,
         "rewardEndTime": 1749063599
     },
+    "act39side": {
+        "id": "act39side",
+        "type": "SIDESTORY",
+        "stageAdd": true,
+        "name": "白き海の彼方へ",
+        "news": "https://www.arknights.jp/news/491",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88141_%E8%90%BD%E6%97%A5%E3%81%AE%E5%90%91%E3%81%93%E3%81%86%E3%81%B8",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/8d356cd8d96107097d406caf4ed6f862.png",
+        "startTime": 1749106800,
+        "endTime": 1750273199,
+        "rewardEndTime": 1750877999,
+        "additionalStage": [
+            {
+                "name": "骸礁突破",
+                "startTime": 1749711600
+            }
+        ]
+    },
+    "act1arcade": {
+        "id": "act1arcade",
+        "type": "EVENT",
+        "stageAdd": false,
+        "name": "視像博物館",
+        "news": "https://www.arknights.jp/news/492",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88146_%E8%A6%96%E5%83%8F%E5%8D%9A%E7%89%A9%E9%A4%A8",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/0a0de2b497e59c52e702bd193c6417e0.png",
+        "startTime": 1749711600,
+        "endTime": 1750877999,
+        "rewardEndTime": 1751137199,
+        "additionalStage": null
+    },
+    "act30sre": {
+        "id": "act30sre",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "銀心湖鉄道(復刻)",
+        "news":"https://arknights.jp/news/493",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88147_%E9%8A%80%E5%BF%83%E6%B9%96%E9%89%84%E9%81%93%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/91fe97f2c471861ad8f72a16b9367544.png",
+        "startTime": 1750402800,
+        "endTime": 1751223599,
+        "rewardEndTime": 1751569199
+    },
     "dis_perm_sandbox_1": {
         "id": "dis_perm_sandbox_1",
         "type": "SANDBOX",
         "name": "生息演算「熱砂秘聞」",
         "news": "https://arknights.jp/news/431",
-        "link": "https://arknights.wikiru.jp/?%E7%94%9F%E6%81%AF%E6%BC%94%E7%AE%97%E3%80%8C%E7%86%B1%E7%A0%82%E7%A7%98%E8%81%9E%E3%80%8D",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/5d655d15263acb8249a6cc5cec51d49e.png",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88145_%E7%99%BD%E3%81%8D%E6%B5%B7%E3%81%AE%E5%BD%BC%E6%96%B9%E3%81%B8",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/4bece3ef00c25d50e87f259da2549fa2.png",
         "startTime": 1723014000,
         "endTime": 1754506799,
         "monthlyUpdate": [

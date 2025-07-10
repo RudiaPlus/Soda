@@ -8,7 +8,7 @@ import re
 from collections import namedtuple
 from math import floor
 from unicodedata import normalize
-
+from typing import Literal
 import discord
 import requests as rq
 from discord import app_commands
@@ -133,6 +133,7 @@ async def on_ready():
         #ルーティン
         maintenances.maintenance_timer.start()
         twitterpost.ake_tweet_retrieve.start()
+        await recruit.operators_list_refresh()
         
         #リマインダー(スレッド)の確認
         try:
@@ -171,14 +172,13 @@ async def on_ready():
                 config.add_recruit_list(operator_list)
                 logger.info(f"予約されたadd_recruitタスクを実行しました。オペレーター: {', '.join(operator_list)}")
                 # 完了通知を元のチャンネルに送信
-                await interaction.channel.send(
-                    f"{interaction.user.mention} 予約されていた公開求人オペレーターの追加が完了しました！\n"
-                    f"対象: `{', '.join(operator_list)}`"
+                await user.send(
+                    f"予約されていた公開求人オペレーターの追加が完了しました！\n対象: `{', '.join(operator_list)}`"
                 )
             except Exception as e:
                 logger.error(f"予約されたadd_recruitタスクの実行中にエラーが発生しました: {e}")
-                await interaction.channel.send(
-                    f"{interaction.user.mention} 予約されていた公開求人オペレーターの追加処理中にエラーが発生しました。"
+                await user.send(
+                    "予約されていた公開求人オペレーターの追加処理中にエラーが発生しました。"
                 )
             finally:
                 # タスク完了後はスケジュールから削除
@@ -192,11 +192,24 @@ async def on_ready():
         scheduled_tasks = load_json("scheduled_tasks.json")
         for task in scheduled_tasks:
             now = datetime.datetime.now(JSTTime.tz_JST)
-            if task["excute_at"] <= now.isoformat():
+            if task["excute_at"] >= now.isoformat():
                 # タスクを実行
-                asyncio.create_task(scheduled_task())   
+                wait_seconds = (datetime.datetime.fromisoformat(task["excute_at"]) - now).total_seconds()
+                operator_list = task["data"]["operators"]
+                add_time_dt = datetime.datetime.fromisoformat(task["excute_at"])
+                user = await client.fetch_user(task["user_id"])
+                asyncio.create_task(scheduled_task())
                 # タスクを削除
                 scheduled_tasks.remove(task)
+            #実行時間が過ぎている場合、待機時間0秒でタスクを実行
+            else:
+                wait_seconds = 0
+                operator_list = task["data"]["operators"]
+                add_time_dt = datetime.datetime.fromisoformat(task["excute_at"])
+                user = await client.fetch_user(task["user_id"])
+                asyncio.create_task(scheduled_task())
+                scheduled_tasks.remove(task)
+        
         save_json("scheduled_tasks.json", scheduled_tasks)
 
     except Exception as e:
@@ -700,6 +713,186 @@ async def maintenance(interaction: discord.Interaction,
         await interaction.response.defer()
         await maintenances.maintenance_end(name, number)
         await interaction.followup.send("完了しました")
+        
+@client.tree.command(name="edit_dynamic_config",
+                        description="動的configの編集を行います",
+                        guild=discord.Object(config.testserverid))
+@app_commands.describe(key="編集するキー", value="新しい値")
+async def edit_dynamic_config(interaction: discord.Interaction, key: str, value: str):
+    if interaction.user == client.user:
+        return
+    await interaction.response.defer()
+    try:
+        config.dynamic_set(key, value)
+        await interaction.followup.send("完了しました")
+    except Exception as e:
+        logger.error(f"動的configの編集に失敗しました！\n{e}")
+        await interaction.followup.send(f"動的configの編集に失敗しました！\n{e}")
+
+@client.tree.command(name="add_event", description="イベントを追加します", guild=discord.Object(config.testserverid))
+@app_commands.describe(name="イベントの名前", 
+                       event_type="イベントの種類(例: SIDESTORY, MINISTORY, EVENT, MAIN, MULTIPLAY)",
+                       start_time="イベントの開始時間(例: 2023-10-01 16:00:00)", 
+                       end_time="イベントの終了時間(例: 2023-10-15 3:59:59)", 
+                       stage_add="ステージ追加があるかどうか(T/F)",
+                       news_url="ニュースURL",
+                       wiki_url="WikiのURL",
+                       image_url="イベントの画像URL",
+                       reward_end_time="報酬交換期限(入力無の場合、終了時間から7日後の午前3時59分59秒になります)",
+                       event_id="イベントID(入力無の場合、イベント名を小文字にしてスペースをアンダースコアに置き換えたものになります)")
+async def add_event(interaction: discord.Interaction, name: str, event_type: Literal["SIDESTORY", "MINISTORY", "EVENT", "MAIN", "MULTIPLAY"], start_time: str, end_time: str, stage_add: str, news_url: str, wiki_url: str, image_url: str, reward_end_time: str = None, event_id: str = None):
+
+    """新しいイベント情報をeventarchive.jsonに追加します。"""
+    await interaction.response.defer()
+
+    try:
+        # タイムゾーン設定 (日本時間)
+        jst = JSTTime.tz_JST
+        time_format = "%Y-%m-%d %H:%M:%S"
+
+        # 時間文字列をパースしてUnixタイムスタンプに変換
+        dt_start = datetime.datetime.strptime(start_time, time_format)
+        localized_dt_start = dt_start.replace(tzinfo=jst)
+        start_timestamp = int(localized_dt_start.timestamp())
+
+        dt_end = datetime.datetime.strptime(end_time, time_format)
+        localized_dt_end = dt_end.replace(tzinfo=jst)
+        end_timestamp = int(localized_dt_end.timestamp())
+
+        # 報酬交換期限の処理
+        if reward_end_time:
+            dt_reward_end = datetime.datetime.strptime(reward_end_time, time_format)
+            localized_dt_reward_end = dt_reward_end.replace(tzinfo=jst)
+            reward_end_timestamp = int(localized_dt_reward_end.timestamp())
+        else:
+            # 指定がない場合は終了時間の7日後の3:59:59
+            reward_dt = localized_dt_end.replace(hour=3, minute=59, second=59) + datetime.timedelta(days=7)
+            reward_end_timestamp = int(reward_dt.timestamp())
+            
+        event_id = name.lower().replace(" ", "_") if event_id is None else event_id
+
+        # 新しいイベントデータを作成
+        new_event = {
+            "id": event_id,
+            "type": event_type,
+            "stageAdd": stage_add,
+            "name": name,
+            "news": news_url,
+            "link": wiki_url,
+            "pic": image_url,
+            "startTime": start_timestamp,
+            "endTime": end_timestamp,
+            "rewardEndTime": reward_end_timestamp
+        }
+
+        # JSONファイルを読み込む
+        events_data = load_json("eventarchive.json")
+
+        # データを追加
+        events_data[event_id] = new_event
+
+        save_json("eventarchive.json", events_data)
+
+        # 成功メッセージをEmbedで表示
+        embed = discord.Embed(title="イベント追加成功", color=discord.Color.green())
+        embed.description = f"イベント「{name}」をeventarchive.jsonに追加しました。確認後、events.jsonに反映してください。"
+        embed.add_field(name="ID", value=event_id, inline=False)
+        embed.add_field(name="開始日時", value=f"<t:{start_timestamp}:F>", inline=True)
+        embed.add_field(name="終了日時", value=f"<t:{end_timestamp}:F>", inline=True)
+        embed.add_field(name="報酬交換期限", value=f"<t:{reward_end_timestamp}:F>", inline=True)
+        embed.set_image(url=image_url)
+
+        await interaction.followup.send(embed=embed)
+
+    except ValueError:
+        await interaction.followup.send(f"エラー: 時間のフォーマットが正しくありません。`{time_format}`の形式で入力してください。")
+    except Exception as e:
+        await interaction.followup.send(f"予期せぬエラーが発生しました: {e}")
+
+
+
+
+@client.tree.command(name="add_recruit",
+                     description="公開求人対象のオペレーターを追加します（複数追加可能）",
+                        guild=discord.Object(config.testserverid))
+@app_commands.describe(operators="追加するオペレーターの名前をカンマ区切りで入力してください", add_time="追加する時間(例: 2023-10-01 12:00:00)")
+async def add_recruit(interaction: discord.Interaction, operators: str, add_time: str):
+    await interaction.response.defer(ephemeral=True)
+
+    scheduled_tasks = load_json("scheduled_tasks.json")
+    operator_list = [op.strip() for op in operators.split(",")]
+
+    try:
+        # 時間文字列をdatetimeオブジェクトに変換 (JSTとして解釈)
+        naive_dt = datetime.datetime.strptime(add_time, "%Y-%m-%d %H:%M:%S")
+        add_time_dt = naive_dt.replace(tzinfo=JSTTime.tz_JST)
+
+        # 現在時刻 (JST)
+        now_jst = datetime.datetime.now(JSTTime.tz_JST)
+
+        # 未来の時刻かチェック
+        if add_time_dt <= now_jst:
+            await interaction.followup.send("過去または現在の時刻は指定できません。", ephemeral=True)
+            return
+
+        # 待機秒数を計算
+        wait_seconds = (add_time_dt - now_jst).total_seconds()
+
+        # バックグラウンドで実行するタスク
+        async def scheduled_task():
+            await asyncio.sleep(wait_seconds)
+            try:
+                config.add_recruit_list(operator_list)
+                logger.info(f"予約されたadd_recruitタスクを実行しました。オペレーター: {', '.join(operator_list)}")
+                # 完了通知を元のチャンネルに送信
+                await interaction.channel.send(
+                    f"{interaction.user.mention} 予約されていた公開求人オペレーターの追加が完了しました！\n"
+                    f"対象: `{', '.join(operator_list)}`"
+                )
+            except Exception as e:
+                logger.error(f"予約されたadd_recruitタスクの実行中にエラーが発生しました: {e}")
+                await interaction.channel.send(
+                    f"{interaction.user.mention} 予約されていた公開求人オペレーターの追加処理中にエラーが発生しました。"
+                )
+            finally:
+                # タスク完了後はスケジュールから削除
+                for task in scheduled_tasks:
+                    if task["task_id"] == f"add_recruit_{add_time_dt.strftime('%Y%m%d%H%M%S')}":
+                        scheduled_tasks.remove(task)
+                        save_json("scheduled_tasks.json", scheduled_tasks)
+                        break
+
+        # タスクを作成
+        asyncio.create_task(scheduled_task())
+        new_task = {
+            "task_id": f"add_recruit_{add_time_dt.strftime('%Y%m%d%H%M%S')}",
+            "task_type": "add_recruit",
+            "excute_at": add_time_dt.isoformat(),
+            "user_id": interaction.user.id,
+            "data": {
+                "operators": operator_list
+            }
+        }
+        scheduled_tasks.append(new_task)
+        save_json("scheduled_tasks.json", scheduled_tasks)
+        
+        # ユーザーに予約完了を通知
+        await interaction.followup.send(
+            f"`{add_time_dt.strftime('%Y-%m-%d %H:%M:%S')}` にオペレーター追加を予約しました。",
+            ephemeral=True
+        )
+
+    except ValueError:
+        await interaction.followup.send(
+            "時間の形式が正しくありません。`YYYY-MM-DD HH:MM:SS` の形式で入力してください。",
+            ephemeral=True
+        )
+    except Exception as e:
+        logger.error(f"add_recruitコマンドでエラーが発生: {e}")
+        await interaction.followup.send(
+            "コマンドの処理中に予期せぬエラーが発生しました。",
+            ephemeral=True
+        )
 
 @client.tree.command(name="remind",
                         description="リマインドのテストを送ります",
@@ -759,6 +952,7 @@ async def config_reload(interaction: discord.Interaction):
     await interaction.response.defer()
     try:
         config.reload()
+        await recruit.operators_list_refresh()
         await interaction.followup.send("完了しました")
     except Exception as e:
         logger.error(f"configのリロードに失敗しました！\n{e}")
@@ -951,5 +1145,3 @@ async def new_days():
 
     except Exception as e:
         logger.exception(f"[new_days]にてエラー：{e}") 
-
-

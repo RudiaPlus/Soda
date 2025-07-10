@@ -19,7 +19,7 @@ async def gachaget():
     await network.close()
     gacha_dict = {}
     for announce in announce_dict["announceList"]:
-        if "スカウト" in announce["title"] or "セレクト" in announce["title"]:
+        if "スカウト" in announce["title"] or "セレクト" in announce["title"] or "ロドスの道のり" in announce["title"]:
             announce_response = ""
             try:
                 announce_response = requests.get(announce["webUrl"])

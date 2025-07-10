@@ -109,6 +109,8 @@ class Config():
         
         self.event_stage_channel = 1232585432756129813 #イベント
 
+        self.announcement = 1019202000975560754 #アナウンス
+
 
         #categories
         self.feedback_category = 1108189699715125268
@@ -117,6 +119,7 @@ class Config():
         #Twitter
         self.twitter_account_name = "Eluneige"
         self.twitter_account_token = os.environ["TWITTER_ACCOUNT_TOKEN"]
+        self.notify_list_id = 1936269194817163642 #通知リストID
 
         #speech
         self.default_waveform_base64 = "acU6Va9UcSVZzsVw7IU/80s0Kh/pbrTcwmpR9da4mvQejIMykkgo9F2FfeCd235K/atHZtSAmxKeTUgKxAdNVO8PAoZq1cHNQXT/PHthL2sfPZGSdxNgLH0AuJwVeI7QZJ02ke40+HkUcBoDdqGDZeUvPqoIRbE23Kr+sexYYe4dVq+zyCe3ci/6zkMWbVBpCjq8D8ZZEFo/lmPJTkgjwqnqHuf6XT4mJyLNphQjvFH9aRqIZpPoQz1sGwAY2vssQ5mTy5J5muGo+n82b0xFROZwsJpumDsFi4Da/85uWS/YzjY5BdxGac8rgUqm9IKh7E6GHzOGOy0LQIz3O4ntTg=="
@@ -147,6 +150,20 @@ class Config():
         with open(os.path.join(self.dir, "configs\\dynamic.json"), "w", encoding="utf-8") as f:
             json.dump(self.dynamic, f, indent=4, ensure_ascii=False)
         self.reload()
-            
+        
+    #dynamic_set
+    def dynamic_set(self, key, value):
+        self.dynamic[key] = value
+        self.write_dynamic_config()
+        
+    #add_recruit_list (overwrite existing list if exists in dynamic.json)
+    def add_recruit_list(self, diff_list: list):
+        if "recruit_list" not in self.dynamic:
+            self.dynamic["recruit_list"] = []
+        self.dynamic["recruit_list"] = self.dynamic["recruit_list"] + diff_list
+        self.write_dynamic_config()
+        
+
+
 config = Config()
 config.reload()

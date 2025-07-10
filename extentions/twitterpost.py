@@ -14,7 +14,7 @@ import feedparser
 from discord import Color, Embed
 from discord.ext import tasks
 from tweety import Twitter
-from tweety.types import Tweet
+from tweety.types import Tweet, HOME_TIMELINE_TYPE_FOLLOWING, SelfThread, ConversationThread
 
 from extentions import JSTTime, log
 from extentions.aclient import client
@@ -41,12 +41,35 @@ def date_comparator(date1: Union[datetime.datetime, str], date2: Union[datetime.
     date1, date2 = [datetime.datetime.strptime(date, FORMAT) if isinstance(date, str) else date for date in (date1, date2)]
     return (date1 > date2) - (date1 < date2)
 
+async def tweet_expand(tweets, expanded_tweets=None) -> List[Tweet]:
+    """
+    Expand tweets to include threads and conversations.
+    """
+    if expanded_tweets is None:
+        expanded_tweets = []
+    for tweet in tweets:
+        if isinstance(tweet, (SelfThread, ConversationThread)):
+            await tweet_expand(tweet.tweets, expanded_tweets)
+        elif isinstance(tweet, Tweet):
+            expanded_tweets.append(tweet)
+    return expanded_tweets
+
 async def get_tweets(tweets: List[Tweet], username: str) -> Optional[list[Tweet]]:
-    channel = client.get_channel(config.ake_news)
-    last_message = await channel.fetch_message(channel.last_message_id)
+    if username == "AKEndfieldJP":
+        channel = client.get_channel(config.ake_news)
+    
+    try:
+        last_message = await channel.fetch_message(channel.last_message_id)
+    except Exception as e:
+        logger.warning(f"キャッシュからの最後のメッセージ取得に失敗しました: {e}")
+        async for message in channel.history(limit=10):
+            if message.author.id == client.user.id:
+                last_message = message
+                break
     last_published_time = last_message.created_at
     
-    tweets = [tweet for tweet in tweets if tweet.author.screen_name == username and date_comparator(tweet.created_on, last_published_time) == 1]
+    expanded_tweets = await tweet_expand(tweets)
+    tweets = [tweet for tweet in expanded_tweets if tweet.author.screen_name == username and date_comparator(tweet.created_on, last_published_time) == 1]
     
     if tweets != []:
         return sorted(tweets, key=lambda x: x.created_on)
@@ -61,6 +84,13 @@ async def setup_app():
             try:
                 await app.load_auth_token(account_token)
                 logger.info(f"Authenticated {account_name} successfully.")
+                tl = await app.get_home_timeline(timeline_type=HOME_TIMELINE_TYPE_FOLLOWING)
+                if not tl:
+                    logger.error(f"Failed to retrieve home timeline for {account_name}.")
+                    raise ValueError("Home timeline is empty.")
+                else:
+                    logger.info(f"Successfully retrieved home timeline for {account_name}.")
+                    logger.debug(f"Last tweets of timeline: {tl.tweets[0].text[:30]}...")
                 return app
             except Exception as e:
                 logger.error(f"Authentication failed for {account_name}: {e}")
@@ -73,37 +103,37 @@ async def setup_app():
     global app
     app = await authenticate_account(config.twitter_account_name, config.twitter_account_token)
 
-async def notification(tweets, username: str, client_used: str):
-    latest_tweets = await get_tweets(tweets[client_used], username)
+async def notification(tweets, username: str):
+    latest_tweets = await get_tweets(tweets, username)
     if latest_tweets is None:
         return
     
     for tweet in latest_tweets:
-        logger.info(f"New tweet from {username}: {tweet.text}")
+        logger.info(f"New tweet from {username}: {tweet.text[:30]}...")
         url = tweet.url
         embeds, video_urls = await create_embed(url)
-        channel = client.get_channel(config.ake_news)
+        if username == "AKEndfieldJP":
+            channel = client.get_channel(config.ake_news)
         message = await channel.send(f"<{url}>", embeds=embeds)
         await message.publish()
         if video_urls:
             for url in video_urls:
                 await message.reply(content = f"[ブラウザで開く]({url})")
         logger.info(f"新規ツイート({url})をアナウンスしました。")
-    else:
-        logger.info(f"新規ツイート({url})は既にアナウンスされています。投稿を中止しました。")
         
 async def tweets_updater(app: Twitter):
     try:
-        tweet_notifications = await app.get_tweet_notifications()
+        tweet_notifications = await app.get_list_tweets(list_id=config.notify_list_id)
         if not tweet_notifications:
             return
         tweets = tweet_notifications.tweets
+        logger.debug(f"notified tweets found: {len(tweets)}")
         return tweets
     except Exception as e:
         logger.error(f"Failed to get tweet notifications: {e}")
         return
 
-@tasks.loop(seconds = 30)
+@tasks.loop(minutes = 5)
 async def ake_tweet_retrieve(): 
     global app
     if app is None:
@@ -116,7 +146,7 @@ async def ake_tweet_retrieve():
             logger.debug("No new tweets found or failed to retrieve tweets.")
             return
         
-        await notification(tweets, "AKEndfieldJP", "twitter")
+        await notification(tweets, "AKEndfieldJP")
         
     except Exception as e:
         logger.error(f"Error in ake_tweet_retrieve: {e}")

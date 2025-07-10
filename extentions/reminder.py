@@ -621,7 +621,10 @@ async def remind(mode = "morning"):
             with open(os.path.join(image_dir, image_name), "wb") as f:
                 f.write(gacha_image)
 
-            if "中堅" in gacha:
+            if "ロドスの道のり" in gacha:
+                author_name = "スペシャルスカウト・ロドスの道のり"
+                color = discord.Color.green()
+            elif "中堅" in gacha:
                 author_name = "中堅スカウト"
                 color = discord.Color.blue()
             elif "常設" in gacha:

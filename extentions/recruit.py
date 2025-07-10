@@ -40,16 +40,21 @@ for tag in config.tag_type:
     tag_type_list.append(tag_type)
     
 #create operators_list
-recruitList = config.dynamic["recruit_list"]
-with open(os.path.join(dir, operators_json), "r", encoding="UTF-8") as f:
-    operators = json.load(f)
-    
+
 operators_list = []
-    
-for index in operators:
-    if operators[index]["name"] in recruitList:
-        dict_add = {"name": operators[index]["name"], "rarity": operators[index]["rarity"], "tags": operators[index]["tags"]}
-        operators_list.append(dict_add)
+
+async def operators_list_refresh():
+    global operators_list
+    recruitList = config.dynamic["recruit_list"]
+    with open(os.path.join(dir, operators_json), "r", encoding="UTF-8") as f:
+        operators = json.load(f)
+        
+    operators_list = []
+        
+    for index in operators:
+        if operators[index]["name"] in recruitList:
+            dict_add = {"name": operators[index]["name"], "rarity": operators[index]["rarity"], "tags": operators[index]["tags"]}
+            operators_list.append(dict_add)
 
 async def find_common_tags(reference_tags, operators):
     
