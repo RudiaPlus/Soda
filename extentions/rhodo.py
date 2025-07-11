@@ -199,8 +199,6 @@ async def on_ready():
                 add_time_dt = datetime.datetime.fromisoformat(task["excute_at"])
                 user = await client.fetch_user(task["user_id"])
                 asyncio.create_task(scheduled_task())
-                # タスクを削除
-                scheduled_tasks.remove(task)
             #実行時間が過ぎている場合、待機時間0秒でタスクを実行
             else:
                 wait_seconds = 0
@@ -208,7 +206,6 @@ async def on_ready():
                 add_time_dt = datetime.datetime.fromisoformat(task["excute_at"])
                 user = await client.fetch_user(task["user_id"])
                 asyncio.create_task(scheduled_task())
-                scheduled_tasks.remove(task)
         
         save_json("scheduled_tasks.json", scheduled_tasks)
 
@@ -775,7 +772,7 @@ async def add_event(interaction: discord.Interaction, name: str, event_type: Lit
         new_event = {
             "id": event_id,
             "type": event_type,
-            "stageAdd": stage_add,
+            "stageAdd": True if stage_add.lower() == "t" else False,
             "name": name,
             "news": news_url,
             "link": wiki_url,

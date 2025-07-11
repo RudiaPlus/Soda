@@ -29,47 +29,16 @@
             }
         ]
     },
-    "act39side": {
-        "id": "act39side",
-        "type": "SIDESTORY",
-        "stageAdd": true,
-        "name": "白き海の彼方へ",
-        "news": "https://www.arknights.jp/news/491",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88141_%E8%90%BD%E6%97%A5%E3%81%AE%E5%90%91%E3%81%93%E3%81%86%E3%81%B8",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/4bece3ef00c25d50e87f259da2549fa2.png",
-        "startTime": 1749106800,
-        "endTime": 1750273199,
-        "rewardEndTime": 1750877999,
-        "additionalStage": [
-            {
-                "name": "骸礁突破",
-                "startTime": 1749711600
-            }
-        ]
-    },
-    "act1arcade": {
-        "id": "act1arcade",
-        "type": "EVENT",
-        "stageAdd": false,
-        "name": "視像博物館",
-        "news": "https://www.arknights.jp/news/492",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88146_%E8%A6%96%E5%83%8F%E5%8D%9A%E7%89%A9%E9%A4%A8",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/0a0de2b497e59c52e702bd193c6417e0.png",
-        "startTime": 1749711600,
-        "endTime": 1750877999,
-        "rewardEndTime": 1751137199,
-        "additionalStage": null
-    },
-    "act30sre": {
-        "id": "act30sre",
+    "懐黍離(復刻)": {
+        "id": "懐黍離(復刻)",
         "type": "SIDESTORY",
         "stageAdd": false,
-        "name": "銀心湖鉄道(復刻)",
-        "news":"https://arknights.jp/news/493",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88147_%E9%8A%80%E5%BF%83%E6%B9%96%E9%89%84%E9%81%93%28%E5%BE%A9%E5%88%BB%29",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/91fe97f2c471861ad8f72a16b9367544.png",
-        "startTime": 1750402800,
-        "endTime": 1751223599,
-        "rewardEndTime": 1751569199
+        "name": "懐黍離(復刻)",
+        "news": "https://arknights.jp/news/495",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88149_%E6%87%90%E9%BB%8D%E9%9B%A2%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/d4172429bb8c2ade567045477dd26d6d.png",
+        "startTime": 1751526000,
+        "endTime": 1752346799,
+        "rewardEndTime": 1752692399
     }
 }

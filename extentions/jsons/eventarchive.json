@@ -14,7 +14,7 @@
         "type": "CRISIS",
         "name": "危機契約#10 作戦コード「塵環」",
         "link": "https://arknights.wikiru.jp/index.php?%A5%A4%A5%D9%A5%F3%A5%C879_%B4%ED%B5%A1%B7%C0%CC%F3%A1%F410",
-        "stageAdd":"CRISIS",
+        "stageAdd": "CRISIS",
         "startTime": 1675407600,
         "firstAddTime": 1675969200,
         "endTime": 1676573999,
@@ -145,15 +145,15 @@
         ]
     },
     "act12mini": {
-      "id": "act12mini",
-      "type": "MINISTORY",
-      "stageAdd": false,
-      "name": "夕景に影ありて",
-      "link": "https://00m.in/JrJ6G",
-      "pic": "https://webusstatic.yo-star.com/uy0news/aj/8fa86f454c3a05fc8e93e2bb148b0e5f.png",
-      "startTime": 1680246000,
-      "endTime": 1680807599,
-      "rewardEndTime": 1681066799
+        "id": "act12mini",
+        "type": "MINISTORY",
+        "stageAdd": false,
+        "name": "夕景に影ありて",
+        "link": "https://00m.in/JrJ6G",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/8fa86f454c3a05fc8e93e2bb148b0e5f.png",
+        "startTime": 1680246000,
+        "endTime": 1680807599,
+        "rewardEndTime": 1681066799
     },
     "act13mini": {
         "id": "act13mini",
@@ -225,7 +225,7 @@
         "name": "危機契約#11 作戦コード「贋波」",
         "link": "https://00m.in/348wf",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/0f403a4bb822ce6f226870df3ad7baa4.png",
-        "stageAdd":"CRISIS",
+        "stageAdd": "CRISIS",
         "startTime": 1687503600,
         "firstAddTime": 1688065200,
         "endTime": 1688065199,
@@ -395,7 +395,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "吾れ先導者たらん(復刻)",
-        "news":"https://arknights.jp/news/354",
+        "news": "https://arknights.jp/news/354",
         "link": "https://00m.in/OUgcV",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/26d663c7aba752280f7692237c360a28.png",
         "startTime": 1695279600,
@@ -408,7 +408,7 @@
         "name": "https://arknights.jp/news/357",
         "link": "https://00m.in/qDt35",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/0f403a4bb822ce6f226870df3ad7baa4.png",
-        "stageAdd":"CRISIS",
+        "stageAdd": "CRISIS",
         "startTime": 1696143600,
         "firstAddTime": 1696705200,
         "endTime": 1697309999,
@@ -557,7 +557,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "狂人号(復刻)",
-        "news":"https://arknights.jp/news/369",
+        "news": "https://arknights.jp/news/369",
         "link": "https://00m.in/OUgcV",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/bbfe3562ff514654d67b4880a4678a79.png",
         "startTime": 1701154800,
@@ -569,7 +569,7 @@
         "type": "OTHER",
         "stageAdd": false,
         "name": "尖滅試験作戦",
-        "news":"https://arknights.jp/news/373",
+        "news": "https://arknights.jp/news/373",
         "link": "",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/a38d26a0da707c5496d5f65ee3efaee8.png",
         "startTime": 1701759600,
@@ -599,7 +599,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "塵影に交わる残響(復刻)",
-        "news":"https://arknights.jp/news/383",
+        "news": "https://arknights.jp/news/383",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88105_%E5%A1%B5%E5%BD%B1%E3%81%AB%E4%BA%A4%E3%82%8F%E3%82%8B%E6%AE%8B%E9%9F%BF%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/94b20bef6c87d1815be8efe7be46ecc2.png",
         "startTime": 1704438000,
@@ -647,13 +647,13 @@
             {
                 "month": 9,
                 "startTime": 1693508400,
-                "endTime":  1696100399,
+                "endTime": 1696100399,
                 "contents": "- 【多面探索】モード実装\n- 追憶映写04: ハイモア「星海の泡沫」"
             },
             {
                 "month": 10,
                 "startTime": 1696100400,
-                "endTime":  1698778799,
+                "endTime": 1698778799,
                 "contents": "- 追憶映写05: スペクター「虚無よりきたる」"
             },
             {
@@ -681,7 +681,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "理想都市-エンドレスカーニバル-(復刻)",
-        "news":"https://arknights.jp/news/389",
+        "news": "https://arknights.jp/news/389",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88107_%E7%90%86%E6%83%B3%E9%83%BD%E5%B8%82-%E3%82%A8%E3%83%B3%E3%83%89%E3%83%AC%E3%82%B9%E3%82%AB%E3%83%BC%E3%83%8B%E3%83%90%E3%83%AB-%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/0b5a9ed682a7b8979fa8deef58771dea.png",
         "startTime": 1707202800,
@@ -700,7 +700,7 @@
         "endTime": 1708887599,
         "rewardEndTime": 1709146799
     },
-        "act15mini": {
+    "act15mini": {
         "id": "act15mini",
         "type": "MINISTORY",
         "stageAdd": false,
@@ -717,7 +717,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "翠玉の夢(復刻)",
-        "news":"https://arknights.jp/news/395",
+        "news": "https://arknights.jp/news/395",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88110_%E7%BF%A0%E7%8E%89%E3%81%AE%E5%A4%A2%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/f8afe4e244e549cd6ea5c8a5e09fafe6.png",
         "startTime": 1709622000,
@@ -812,7 +812,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "シラクザーノ(復刻)",
-        "news":"https://arknights.jp/news/417",
+        "news": "https://arknights.jp/news/417",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88116_%E3%82%B7%E3%83%A9%E3%82%AF%E3%82%B6%E3%83%BC%E3%83%8E%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/91f925d31d16990580cc4c1f82fbe394.png",
         "startTime": 1716447600,
@@ -826,7 +826,7 @@
         "news": "https://arknights.jp/news/419",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88117_%E5%8D%B1%E6%A9%9F%E5%A5%91%E7%B4%84BATTLEPLAN%EF%BC%831",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/870f5556c3954d7e49701758cccd78d2.png",
-        "stageAdd":"CRISIS",
+        "stageAdd": "CRISIS",
         "startTime": 1717570800,
         "endTime": 1718737199,
         "eventColor": "441312",
@@ -876,23 +876,23 @@
         ]
     },
     "act16mini": {
-    "id": "act16mini",
-    "type": "MINISTORY",
-    "stageAdd": false,
-    "name": "ニヤニヤ谷へ",
-    "news": "https://arknights.jp/news/424",
-    "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88120_%E3%83%8B%E3%83%A4%E3%83%8B%E3%83%A4%E8%B0%B7%E3%81%B8",
-    "pic": "https://webusstatic.yo-star.com/uy0news/aj/cba00e960cb93cc0effad4034daca1d0.png",
-    "startTime": 1720508400,
-    "endTime": 1721069999,
-    "rewardEndTime": 1721329199
+        "id": "act16mini",
+        "type": "MINISTORY",
+        "stageAdd": false,
+        "name": "ニヤニヤ谷へ",
+        "news": "https://arknights.jp/news/424",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88120_%E3%83%8B%E3%83%A4%E3%83%8B%E3%83%A4%E8%B0%B7%E3%81%B8",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/cba00e960cb93cc0effad4034daca1d0.png",
+        "startTime": 1720508400,
+        "endTime": 1721069999,
+        "rewardEndTime": 1721329199
     },
     "act22sre": {
         "id": "act22sre",
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "登臨意(復刻)",
-        "news":"https://arknights.jp/news/426",
+        "news": "https://arknights.jp/news/426",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88121_%E7%99%BB%E8%87%A8%E6%84%8F%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://arknights.jp/news/426",
         "startTime": 1721286000,
@@ -938,7 +938,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "この炎が照らす先(復刻)",
-        "news":"https://arknights.jp/news/435",
+        "news": "https://arknights.jp/news/435",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88124_%E3%81%93%E3%81%AE%E7%82%8E%E3%81%8C%E7%85%A7%E3%82%89%E3%81%99%E5%85%88%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/87239bb913f933248614f67df2c6e05e.png",
         "startTime": 1724223600,
@@ -968,7 +968,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "オペレーション オリジニウムダスト(復刻)",
-        "news":"https://arknights.jp/news/439",
+        "news": "https://arknights.jp/news/439",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88126_%E3%82%AA%E3%83%9A%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3+%E3%82%AA%E3%83%AA%E3%82%B8%E3%83%8B%E3%82%A6%E3%83%A0%E3%83%80%E3%82%B9%E3%83%88%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/60fd80105e9fd679eb1f5f6286b3e4f4.png",
         "startTime": 1726729200,
@@ -982,7 +982,7 @@
         "news": "https://arknights.jp/news/440",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88127_%E5%8D%B1%E6%A9%9F%E5%A5%91%E7%B4%84BATTLEPLAN%EF%BC%832",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/4568b72cb572cd80b07ce76e38e4aeae.png",
-        "stageAdd":"CRISIS",
+        "stageAdd": "CRISIS",
         "startTime": 1727334000,
         "endTime": 1728500399,
         "eventColor": "F7D267",
@@ -1070,7 +1070,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "孤星(復刻)",
-        "news":"https://arknights.jp/news/451",
+        "news": "https://arknights.jp/news/451",
         "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88131_%E5%AD%A4%E6%98%9F%28%E5%BE%A9%E5%88%BB%29#levels3b",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/60fcc744aa19f59a733ef0090299547e.png",
         "startTime": 1732172400,
@@ -1100,7 +1100,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "空想の花庭(復刻)",
-        "news":"https://arknights.jp/news/460",
+        "news": "https://arknights.jp/news/460",
         "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88134_%E7%A9%BA%E6%83%B3%E3%81%AE%E8%8A%B1%E5%BA%AD%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/dbda6141671f19dceb5a551fb17ad49e.png",
         "startTime": 1735023600,
@@ -1112,13 +1112,13 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "火山と雲と夢色の旅路(復刻)",
-        "news":"https://arknights.jp/news/464",
+        "news": "https://arknights.jp/news/464",
         "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88135_%E7%81%AB%E5%B1%B1%E3%81%A8%E9%9B%B2%E3%81%A8%E5%A4%A2%E8%89%B2%E3%81%AE%E6%97%85%E8%B7%AF%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/793ce43bb4a238948c2361cfe0433bc7.png",
         "startTime": 1735887600,
         "endTime": 1736708399,
         "rewardEndTime": 1737053999
-        },
+    },
     "dis_rogue_3": {
         "id": "dis_rogue_3",
         "type": "ROGUELIKE",
@@ -1139,19 +1139,19 @@
                 "month": 4,
                 "startTime": 1711911600,
                 "endTime": 1714503599,
-                "contents": "- 探索者記録02: ティフォン「直視」"   
+                "contents": "- 探索者記録02: ティフォン「直視」"
             },
             {
                 "month": 8,
                 "startTime": 1722452400,
                 "endTime": 1725130799,
-                "contents": "- 探索者記録06: ミュルジス「血脈」"   
+                "contents": "- 探索者記録06: ミュルジス「血脈」"
             },
             {
                 "month": 9,
                 "startTime": 1725130800,
                 "endTime": 1727722799,
-                "contents": "- 探索者記録07: ケルシー「使命」"   
+                "contents": "- 探索者記録07: ケルシー「使命」"
             }
         ]
     },
@@ -1178,23 +1178,23 @@
         ]
     },
     "act17mini": {
-    "id": "act17mini",
-    "type": "MINISTORY",
-    "stageAdd": false,
-    "name": "溶炉『還魂』 譚",
-    "news": "https://arknights.jp/news/469",
-    "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88137_%E6%BA%B6%E7%82%89%E3%80%8C%E9%82%84%E9%AD%82%E3%80%8D%E8%AD%9A",
-    "pic": "https://webusstatic.yo-star.com/uy0news/aj/7df30b315e7b2753c6441beee715e1cc.png",
-    "startTime": 1738911600,
-    "endTime": 1739473199,
-    "rewardEndTime": 1739732399
+        "id": "act17mini",
+        "type": "MINISTORY",
+        "stageAdd": false,
+        "name": "溶炉『還魂』 譚",
+        "news": "https://arknights.jp/news/469",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88137_%E6%BA%B6%E7%82%89%E3%80%8C%E9%82%84%E9%AD%82%E3%80%8D%E8%AD%9A",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/7df30b315e7b2753c6441beee715e1cc.png",
+        "startTime": 1738911600,
+        "endTime": 1739473199,
+        "rewardEndTime": 1739732399
     },
     "act28sre": {
         "id": "act28sre",
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "ダーティマネー(復刻)",
-        "news":"https://arknights.jp/news/471",
+        "news": "https://arknights.jp/news/471",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88138_%E3%83%80%E3%83%BC%E3%83%86%E3%82%A3%E3%83%9E%E3%83%8D%E3%83%BC%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/0c32fd567f265c93e6378b4e6e8da607.png",
         "startTime": 1740726000,
@@ -1290,7 +1290,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "ツヴィリングトゥルムの黄金(復刻)",
-        "news":"https://arknights.jp/news/488",
+        "news": "https://arknights.jp/news/488",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88144_%E3%83%84%E3%83%B4%E3%82%A3%E3%83%AA%E3%83%B3%E3%82%B0%E3%83%88%E3%82%A5%E3%83%AB%E3%83%A0%E3%81%AE%E9%BB%84%E9%87%91%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/e7da9aae51572ed7aac0e2ed4202ad6f.png",
         "startTime": 1747897200,
@@ -1333,7 +1333,7 @@
         "type": "SIDESTORY",
         "stageAdd": false,
         "name": "銀心湖鉄道(復刻)",
-        "news":"https://arknights.jp/news/493",
+        "news": "https://arknights.jp/news/493",
         "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88147_%E9%8A%80%E5%BF%83%E6%B9%96%E9%89%84%E9%81%93%28%E5%BE%A9%E5%88%BB%29",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/91fe97f2c471861ad8f72a16b9367544.png",
         "startTime": 1750402800,
@@ -1354,7 +1354,7 @@
                 "month": 9,
                 "startTime": 1725130800,
                 "endTime": 1727722799,
-                "contents": "- 闘争の潮流: 「獲物は霧の中」"   
+                "contents": "- 闘争の潮流: 「獲物は霧の中」"
             }
         ]
     },
@@ -1375,5 +1375,17 @@
                 "contents": "- 語り手の目録01: ニンフ"
             }
         ]
+    },
+    "懐黍離(復刻)": {
+        "id": "懐黍離(復刻)",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "懐黍離(復刻)",
+        "news": "https://arknights.jp/news/495",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88149_%E6%87%90%E9%BB%8D%E9%9B%A2%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/d4172429bb8c2ade567045477dd26d6d.png",
+        "startTime": 1751526000,
+        "endTime": 1752346799,
+        "rewardEndTime": 1752692399
     }
 }

@@ -67,9 +67,11 @@ async def synthesis(session: aiohttp.ClientSession, speaker: int, query_data: di
     
     for _ in range(max_retry):
         try:
-            async with session.post(f"http://{host}:{port}/synthesis", params=synth_payload, data=json.dumps(query_data), timeout=300.0) as resp:
+            async with session.post(f"http://{host}:{port}/synthesis", params=synth_payload, json=query_data, timeout=300.0) as resp:
                 if resp.status == 200:
                     return await resp.read()
+                else:
+                    logger.error(f"音声合成に失敗しました。ステータスコード: {resp.status}, メッセージ: {await resp.json()}")
         except asyncio.TimeoutError:
             logger.warning("synthesis timed out.")
         await asyncio.sleep(1)
