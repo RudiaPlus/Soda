@@ -40,5 +40,27 @@
         "startTime": 1751526000,
         "endTime": 1752346799,
         "rewardEndTime": 1752692399
+    },
+    "相見歓": {
+        "id": "相見歓",
+        "type": "SIDESTORY",
+        "stageAdd": true,
+        "name": "相見歓",
+        "news": "https://arknights.jp/news/497",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88150_%E7%9B%B8%E8%A6%8B%E6%AD%93",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/5ed64a1b72c437a3fd1827f32b4b8507.png",
+        "startTime": 1752735600,
+        "endTime": 1754506799,
+        "rewardEndTime": 1755111599,
+        "additionalStage": [
+            {
+                "name": "閲世情",
+                "startTime": 1753340400
+            },
+            {
+                "name": "悵別離",
+                "startTime": 1753945200
+            }
+        ]
     }
 }

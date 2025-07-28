@@ -7,8 +7,9 @@ import os
 import re
 from collections import namedtuple
 from math import floor
-from unicodedata import normalize
 from typing import Literal
+from unicodedata import normalize
+
 import discord
 import requests as rq
 from discord import app_commands
@@ -16,11 +17,12 @@ from discord.ext import tasks
 
 from extentions import (
     JSTTime,
+    chat,
     communitytool,
-    makeembed,
     evjson,
     log,
     maintenances,
+    makeembed,
     moderates,
     modmails,
     multiplayertool,  # noqa: F401
@@ -208,6 +210,9 @@ async def on_ready():
                 asyncio.create_task(scheduled_task())
         
         save_json("scheduled_tasks.json", scheduled_tasks)
+        
+        #Twitter検索
+        await twitterpost.gather_reed_arts(since=datetime.datetime.now(tz=JSTTime.tz_JST))
 
     except Exception as e:
         logger.exception(f"[on_ready]にて エラー：{e}")
@@ -347,15 +352,11 @@ async def on_message(message: discord.Message):
             logger.info(f"Modmailへ投稿されたメッセージ(id: {message.id})を正常に転送しました")
 
         else:
-            mail = discord.Embed(
-                title="お問い合わせの場合は、/modmailをご利用ください！",
-                description="DMありがとうございます！\nスタッフと個別で会話をしたい場合は、コマンド/modmailをご利用ください！",
-                color=0x979C9F)
-            mail.set_author(name="あしたはこぶねスタッフ",
-                            icon_url=config.server_icon)
-            await message.author.send(embed=mail)
+            response = await chat.direct_chat(author, message)
+            if response:
+                logger.info(f"{username}さんのメッセージ{user_message}に対して、{response}と返答しました")
             
-def load_json(file_name: str):
+def load_json(file_name: str) -> dict:
     with open(os.path.join(dir, f"jsons\\{file_name}"), "r", encoding="utf-8") as f:
         return json.load(f)
     
@@ -678,6 +679,61 @@ async def help(interaction: discord.Interaction):
     logger.info(f"{interaction.user.name}がコマンド/helpを使用しました")
 
     await interaction.followup.send(embed=embed, ephemeral=True)
+    
+@client.tree.command(name="add_reminder", description="remindarchive.jsonにanniRemind、sssRemindを追加します", guild=discord.Object(config.testserverid))
+@app_commands.describe(
+    remind_id = "リマインダーID(anniRemind-202507, sssRemind-202507等)",
+    remind_name = "殲滅作戦or保全駐在の名前(例: 殲滅依頼「66号航路」, 協奏保全駐在)",
+    remind_type = "anni or sss",
+    link = "攻略Wikiのリンク",
+    start_time = "開始時間(例: 2023-10-01 16:00:00)",
+    end_time = "終了時間(例: 2023-10-15 3:59:59)"
+)
+async def add_reminder(interaction: discord.Interaction, remind_id: str, remind_name: str, remind_type: Literal["anni", "sss"], link: str, start_time: str, end_time: str):
+    """リマインダーを追加します。"""
+    if interaction.user == client.user:
+        return
+    
+    await interaction.response.defer(ephemeral=True)
+    
+    try:
+        startTime = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+        endTime = datetime.datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        logger.error("日付のフォーマットエラーです。「YYYY-MM-DD HH:MM:SS」")
+        await interaction.followup.send("日付のフォーマットが正しくありません。「YYYY-MM-DD HH:MM:SS」の形式で入力してください。")
+        return
+    
+    startTime_timestamp = floor(startTime.astimezone(tz=JSTTime.tz_JST).timestamp())
+    endTime_timestamp = floor(endTime.astimezone(tz=JSTTime.tz_JST).timestamp())
+    
+    new_remind_dict = {
+        remind_id: {
+            "name": remind_name,
+            "description": None,
+            "type": remind_type,
+            "link": link,
+            "startTime": startTime_timestamp,
+            "endTime": endTime_timestamp
+        }
+    }
+    
+    remind_archive = load_json("reminds.json")
+    if remind_id in remind_archive:
+        logger.error(f"リマインダーID {remind_id} は既に存在します。")
+        await interaction.followup.send(f"リマインダーID `{remind_id}` は既に存在します。別のIDを使用してください。")
+        return
+    remind_archive.update(new_remind_dict)
+    save_json("reminds.json", remind_archive)
+    
+    await interaction.followup.send(f"リマインダー `{remind_id}` が追加されました！\n名前: {remind_name}\nタイプ: {remind_type}\nリンク: {link}\n開始時間: {startTime.strftime('%Y-%m-%d %H:%M:%S')}\n終了時間: {endTime.strftime('%Y-%m-%d %H:%M:%S')}")
+    
+@client.tree.command(name="gather_reed_arts",
+                        description="Twitterから必要な情報を収集します",)
+async def gather_reed_arts(interaction: discord.Interaction):
+    await interaction.response.defer()
+    await twitterpost.gather_reed_arts(since=datetime.datetime.now(tz=JSTTime.tz_JST))
+    await interaction.followup.send("Twitterからの情報収集を開始しました。完了までしばらくお待ちください。")
 
 @client.tree.command(name="ping",
                         description="botの応答時間を確認します",
@@ -711,6 +767,31 @@ async def maintenance(interaction: discord.Interaction,
         await maintenances.maintenance_end(name, number)
         await interaction.followup.send("完了しました")
         
+@client.tree.command(name="nickname", description="ロードに覚えてほしいあなたの呼び方を設定します")
+@app_commands.describe(name="AIに覚えてほしいあなたの呼び方(後ろに先輩が付きます)")
+async def nickname(interaction: discord.Interaction, name: str):
+    await interaction.response.defer(ephemeral=True)
+    try:
+        user_id_str = str(interaction.user.id)
+        await chat.update_long_term_memory(user_id_str, 'nickname', name)
+        await interaction.followup.send(f"あなたの呼び方を「{name}」として覚えました！\nこれからの会話に活かしていきますね。")
+    except Exception as e:
+        logger.error(f"Error in /nickname command: {e}")
+        await interaction.followup.send("エラーが発生して、名前を覚えられませんでした。ごめんなさい。")
+        
+@client.tree.command(name="companion", description="アークナイツに関する質問に答えます。キャラクター、イベント、統合戦略について詳しく聞いてみて下さい。")
+@app_commands.describe(question="質問内容")
+async def companion(interaction: discord.Interaction, question: str):
+    await interaction.response.defer()
+    try:
+        response = await chat.arknights_agent_with_chat_memory(interaction.user, question)
+        if not response:
+            await interaction.followup.send("ごめんなさい。何か問題があったようです！")
+            return
+        await interaction.followup.send(response)
+    except Exception as e:
+        logger.error(f"Error in /companion command: {e}")
+                
 @client.tree.command(name="edit_dynamic_config",
                         description="動的configの編集を行います",
                         guild=discord.Object(config.testserverid))
@@ -739,7 +820,7 @@ async def edit_dynamic_config(interaction: discord.Interaction, key: str, value:
                        event_id="イベントID(入力無の場合、イベント名を小文字にしてスペースをアンダースコアに置き換えたものになります)")
 async def add_event(interaction: discord.Interaction, name: str, event_type: Literal["SIDESTORY", "MINISTORY", "EVENT", "MAIN", "MULTIPLAY"], start_time: str, end_time: str, stage_add: str, news_url: str, wiki_url: str, image_url: str, reward_end_time: str = None, event_id: str = None):
 
-    """新しいイベント情報をeventarchive.jsonに追加します。"""
+    """新しいイベント情報をevents.jsonに追加します。"""
     await interaction.response.defer()
 
     try:
@@ -783,12 +864,12 @@ async def add_event(interaction: discord.Interaction, name: str, event_type: Lit
         }
 
         # JSONファイルを読み込む
-        events_data = load_json("eventarchive.json")
+        events_data = load_json("events.json")
 
         # データを追加
         events_data[event_id] = new_event
 
-        save_json("eventarchive.json", events_data)
+        save_json("events.json", events_data)
 
         # 成功メッセージをEmbedで表示
         embed = discord.Embed(title="イベント追加成功", color=discord.Color.green())
@@ -805,9 +886,6 @@ async def add_event(interaction: discord.Interaction, name: str, event_type: Lit
         await interaction.followup.send(f"エラー: 時間のフォーマットが正しくありません。`{time_format}`の形式で入力してください。")
     except Exception as e:
         await interaction.followup.send(f"予期せぬエラーが発生しました: {e}")
-
-
-
 
 @client.tree.command(name="add_recruit",
                      description="公開求人対象のオペレーターを追加します（複数追加可能）",

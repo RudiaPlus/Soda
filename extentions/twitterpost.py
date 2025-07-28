@@ -6,7 +6,7 @@ import json as js
 import os
 import re
 import time
-from typing import List, Tuple
+from typing import List, Optional, Tuple, Union
 
 import aiohttp
 import aiosqlite
@@ -14,13 +14,16 @@ import feedparser
 from discord import Color, Embed
 from discord.ext import tasks
 from tweety import Twitter
-from tweety.types import Tweet, HOME_TIMELINE_TYPE_FOLLOWING, SelfThread, ConversationThread
+from tweety.types import (
+    HOME_TIMELINE_TYPE_FOLLOWING,
+    ConversationThread,
+    SelfThread,
+    Tweet,
+)
 
 from extentions import JSTTime, log
 from extentions.aclient import client
 from extentions.config import config
-
-from typing import Optional, Union, Optional
 
 dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger()
@@ -102,7 +105,24 @@ async def setup_app():
     
     global app
     app = await authenticate_account(config.twitter_account_name, config.twitter_account_token)
-
+    
+async def gather_reed_arts(since: datetime.datetime):
+    query = '("苇草" OR "Reed" OR "loughshinny" OR "爱布拉娜" OR "拉芙希妮" OR "ラフシニー" OR "エブラナ" OR "Eblana" OR "リード" OR "死芒" OR "ネクラス" OR "Necrass") min_retweets:3 (アークナイツ OR 明日方舟 OR Arknights OR 명일방주) (filter:images OR filter:videos)'
+    since_delta = since - datetime.timedelta(days=1)
+    since_str = since_delta.strftime('%Y-%m-%d')
+    query += f' since:{since_str}'
+    channel = client.get_channel(1393533104391589952)  # Reed Arts channel ID
+    try:
+        search_results = await app.search(keyword = query)
+        tweets:List[Tweet] = search_results.results
+        for tweet in tweets:
+            tweet_url = tweet.url.replace("x.com", "fxtwitter.com")
+            await channel.send(tweet_url)
+        return
+    
+    except Exception as e:
+        logger.error(f"Failed to gather Reed Arts tweets: {e}")
+    
 async def notification(tweets, username: str):
     latest_tweets = await get_tweets(tweets, username)
     if latest_tweets is None:

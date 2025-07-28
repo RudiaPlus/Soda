@@ -120,14 +120,6 @@
     "startTime": null,
     "endTime": null
   },
-  "anniRemind_11": {
-      "name": "殲滅依頼「66号航路」",
-      "description": null,
-      "type": "anni",
-      "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%AF%E3%83%AB%E3%83%93%E3%82%A2%E3%80%8C66%E5%8F%B7%E8%88%AA%E8%B7%AF%E3%80%8D",
-      "startTime": 1746385200,
-      "endTime": 1752433199
-  },
     "sssRemind_7": {
         "name": "協奏保全駐在",
         "description": null,
@@ -135,5 +127,13 @@
         "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#maf74853",
         "startTime": 1749063600,
         "endTime": 1760554799
+    },
+    "anniRemind-202507": {
+        "name": "殲滅依頼「壬午号水田」",
+        "description": null,
+        "type": "anni",
+        "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E7%82%8E%E5%9B%BD%E3%80%8C%E5%A3%AC%E5%8D%88%E5%8F%B7%E6%B0%B4%E7%94%B0%E3%80%8D",
+        "startTime": 1752433200,
+        "endTime": 1757271599
     }
 }

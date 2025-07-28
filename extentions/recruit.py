@@ -5,7 +5,7 @@ from difflib import get_close_matches
 
 import cv2
 import discord
-import numpy
+import re
 from PIL import Image
 
 from extentions import log, supportrequest, JSTTime
@@ -120,75 +120,79 @@ async def output_results(selected_tags):
         logger.exception(f"[output_results]にてエラー：{e}")
         
 async def result_embed_maker(result_list: list, all: bool) -> list:
+    EMBED_LIMIT = 6000
+    FIELD_LIMIT = 1024
+    FIELD_MAX = 25
     embeds = []
     operator_emojis = supportrequest.operator_emoji_load()
-    
-    if all is True:
-        embed_ope = discord.Embed(title = "獲得できる全てのオペレーター", color = discord.Color.blue())
-        count = 0
-        for tag in result_list:
-            value = ""
-            field_name = " ".join(tag["tags"])
-            inline = False
-            i = 1
-            for ope in tag["operators"]:
-                rarity = ope["rarity"]
-                name = ope["name"]
-                value += f"☆{rarity+1}{name} "
-                if i > 20:
-                    count += len(value)
-                    embed_ope.add_field(name = field_name, value = value, inline = inline)
-                    field_name = ""
-                    value = ""
-                    i = 0
-                i += 1
-            count += len(value)
-            if value:
-                embed_ope.add_field(name = field_name, value = value, inline = inline)
-            if count > 2000:
-                embeds.append(embed_ope)
-                embed_ope = discord.Embed(color = discord.Color.blue())
-                count = 0
-        if embed_ope.fields:                    
-            embeds.append(embed_ope)
-            
+
+    def add_field_with_limit(embed, name, value, inline, total_length, field_count):
+        if len(value) > FIELD_LIMIT:
+            value = value[:FIELD_LIMIT]
+        if len(name) > 256:
+            name = name[:256]
+        total_length += len(name) + len(value)
+        field_count += 1
+        if total_length > EMBED_LIMIT:
+            embed.title = (embed.title or "") + "（字数制限のため打ち切りました。「全てのタグを表示する」ボタンを押してください）"
+            embeds.append(embed)
+            return None, total_length, field_count, True
+        if field_count > FIELD_MAX:
+            embeds.append(embed)
+            embed = discord.Embed(color=discord.Color.blue())
+            total_length = len(embed.title or "") + len(embed.description or "")
+            field_count = 1
+        embed.add_field(name=name, value=value, inline=inline)
+        return embed, total_length, field_count, False
+
+    if all:
+        title = "獲得できる全てのオペレーター"
+        show_list = result_list
+        use_emoji = False
     else:
-        rare_list = []
-        for result in result_list:
-            if ("ロボット" in result["tags"] or result["min_rarity"] > 2):
-                rare_list.append(result)
-                
-        embed_ope = discord.Embed(title = "獲得できる高レアなオペレーター", color = discord.Color.blue())
-        count = 0
-        if not rare_list:
-            embed_ope.add_field(name = "該当タグ無し", value = "☆4以上のオペレーターを確定で引ける組み合わせはありません。\n全ての組み合わせを見る場合、「全てのタグを表示する」ボタンを押してください。")
-        for tag in rare_list:
-            value = ""
-            field_name = " ".join(tag["tags"])
-            inline = False
-            i = 1
-            for ope in tag["operators"]:
-                rarity = ope["rarity"]
-                name = ope["name"]
+        title = "獲得できる高レアなオペレーター"
+        show_list = [r for r in result_list if ("ロボット" in r["tags"] or r["min_rarity"] > 2)]
+        use_emoji = True
+
+    embed_ope = discord.Embed(title=title, color=discord.Color.blue())
+    total_length = len(embed_ope.title or "") + len(embed_ope.description or "")
+    field_count = 0
+
+    if not show_list and not all:
+        embed_ope.add_field(
+            name="該当タグ無し",
+            value="☆4以上のオペレーターを確定で引ける組み合わせはありません。\n全ての組み合わせを見る場合、「全てのタグを表示する」ボタンを押してください。"
+        )
+        embeds.append(embed_ope)
+        return embeds
+
+    for tag in show_list:
+        value = ""
+        field_name = " ".join(tag["tags"])
+        inline = False
+        i = 1
+        for ope in tag["operators"]:
+            rarity = ope["rarity"]
+            name = ope["name"]
+            if use_emoji:
                 value += f"☆{rarity+1}{operator_emojis[name]}{name} "
-                if i > 20:
-                    count += len(value)
-                    embed_ope.add_field(name = field_name, value = value, inline = inline)
-                    field_name = ""
-                    value = ""
-                    i = 0
-                i += 1
-            count += len(value)
-            if value:
-                embed_ope.add_field(name = field_name, value = value, inline = inline)
-            if count > 2000:
-                embeds.append(embed_ope)
-                embed_ope = discord.Embed(color = discord.Color.blue())
-                count = 0
-        if embed_ope.fields:                    
-            embeds.append(embed_ope)
-    
-    return(embeds)
+            else:
+                value += f"☆{rarity+1}{name} "
+            if i > 20:
+                embed_ope, total_length, field_count, over = add_field_with_limit(embed_ope, field_name, value, inline, total_length, field_count)
+                if over:
+                    return embeds
+                field_name = ""
+                value = ""
+                i = 0
+            i += 1
+        if value:
+            embed_ope, total_length, field_count, over = add_field_with_limit(embed_ope, field_name, value, inline, total_length, field_count)
+            if over:
+                return embeds
+    if embed_ope.fields:
+        embeds.append(embed_ope)
+    return embeds
         
 
 class TagUndoOnly(discord.ui.View):
@@ -688,16 +692,26 @@ async def ocr_tag_from_screenshot(image_path):
     
     cv2.imwrite(os.path.join(image_dir, "image_binaried.png"), binaried)
     
-    im_binaried = Image.open(os.path.join(image_dir, "image_binaried.png"))
-    np_binaried = numpy.asarray(im_binaried)
-    
-    result = ocr.ocr(img = np_binaried, cls = False)
+    result = ocr.predict(os.path.join(image_dir, "image_binaried.png"))
+    logger.debug("OCRを実行しました")
     result_tags = []
-    logger.debug(f"タグを{len(result[0])}個検出")
-    logger.debug(f"検出されたタグ: {result[0]}")
+    recognized_tags = result[0]["rec_texts"]
+    logger.debug(f"検出されたタグ: {recognized_tags}")
     
-    for i in range(len(result[0])):
-        tag: str = result[0][i][1][0]
+    def normalize_tag(tag):
+        #「タイプ」系の誤認識
+        tag = re.sub(r"(タイ[フブラ])", "タイプ", tag)
+        # 「上級エリート」系の誤認識
+        tag = re.sub(r"(.級エリー.)", "上級エリート", tag)
+        tag = re.sub(r"(エリー.)", "エリート", tag)
+        # その他よくあるパターンを追加
+        return tag
+    
+    for tag in recognized_tags:
+        tag = normalize_tag(tag)
+        if len(tag) <= 1:
+            logger.warning(f"OCR結果「{tag}」は1文字のため除外されました。")
+            continue
         closest_match = get_close_matches(tag, possible_tag_list, n=1, cutoff=0.1)
         if not closest_match:
             logger.error(f"検出されたタグ「{tag}」は修正されませんでした")

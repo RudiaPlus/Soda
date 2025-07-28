@@ -1,7 +1,8 @@
 from paddleocr import PaddleOCR
 
 ocr = PaddleOCR(
-    use_gpu = True,
-    lang = "japan",
-    max_text_length = 20
+    use_doc_orientation_classify=False, 
+    use_doc_unwarping=False, 
+    use_textline_orientation=False,
+    lang="japan"
 )

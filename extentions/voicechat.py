@@ -14,6 +14,8 @@ from extentions import log
 from extentions.aclient import client, voice_clients_list
 from extentions.config import config
 
+from discord.errors import ClientException
+
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "\\..\\")
 jsons_dir = os.path.join(dir, "jsons")
@@ -84,10 +86,11 @@ async def text_to_speech(texts, speaker=config.aivis_speaker_ids["ノーマル"]
     
     url_pattern = r'https?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
     texts = re.sub(url_pattern, 'URL省略', texts)
-    
-    emoji_pattern = r"<:.+?:\d+>"
-    texts = re.sub(emoji_pattern, '', texts)
-    
+
+    # メンション・タグ・絵文字など <...> で囲まれたもの全てを削除
+    tag_pattern = r"<[^>]+>"
+    texts = re.sub(tag_pattern, '', texts)
+
     #<>,~,@,|,*,#などの特殊文字を削除
     non_text_pattern = r"[<>~@[\]|*#]"
     texts = re.sub(non_text_pattern, '', texts)
@@ -330,6 +333,8 @@ async def leave(interaction:  discord.Interaction):
 for i in range(config.voice_clients):
 
     guild_queues = {}
+    guild_locks = {}
+    guild_playing_flags = {}
     client_voice = voice_clients_list[i]
     
     @client_voice.event
@@ -358,52 +363,82 @@ for i in range(config.voice_clients):
         """
         queue = guild_queues.get(guild.id)
         if not queue or queue.empty():
-            # キューが空なら再生処理を終了
+            guild_playing_flags[guild.id] = False
             return
-
-        # キューから次のメッセージを取得
-        message = await queue.get()
         
-        try:
-            # キューの現在のサイズに基づいて再生速度を動的に決定
-            queue_size = queue.qsize()
-            speedScale = 1.0
-            if queue_size > 1:  # キューに2つ以上待機している場合
-                # キューが多いほど少し速くする
-                speedScale = 1.0 + queue_size * 0.1 if queue_size < 10 else 2.0
+        if guild_playing_flags.get(guild.id, False):
+            return
+        
+        lock = guild_locks.setdefault(guild.id, asyncio.Lock())
+        
+        async with lock:
             
-            # TTSを生成（この処理が完了するまで次の再生は始まらない）
-            source_path = await text_to_speech(message.content, volumeScale=0.5, speedScale=speedScale, split_count=40)
-            if source_path is None:
-                logger.debug(f"音声ファイルの生成をスキップしました。メッセージ内容: {message.content[:40]}")
-                await play_next_in_queue(guild, client_voice)
+            if guild_playing_flags.get(guild.id, False):
                 return
             
-            source = discord.FFmpegPCMAudio(
-                executable="C:\\Program Files\\FFmpeg\\bin\\ffmpeg.exe",
-                source=source_path
-            )
+            # キューから次のメッセージを取得
+            message = await queue.get()
+            guild_playing_flags[guild.id] = True
+            
+            try:
+                # キューの現在のサイズに基づいて再生速度を動的に決定
+                queue_size = queue.qsize()
+                speedScale = 1.0
+                if queue_size > 1:  # キューに2つ以上待機している場合
+                    # キューが多いほど少し速くする
+                    speedScale = 1.0 + queue_size * 0.1 if queue_size < 10 else 2.0
+                
+                # TTSを生成（この処理が完了するまで次の再生は始まらない）
+                source_path = await text_to_speech(message.content, volumeScale=0.5, speedScale=speedScale, split_count=40)
+                if source_path is None:
+                    logger.debug(f"音声ファイルの生成をスキップしました。メッセージ内容: {message.content[:40]}")
+                    guild_playing_flags[guild.id] = False
+                    asyncio.create_task(play_next_in_queue(guild, client_voice))
+                    return
+                
+                source = discord.FFmpegPCMAudio(
+                    executable="C:\\Program Files\\FFmpeg\\bin\\ffmpeg.exe",
+                    source=source_path
+                )
 
-            # afterコールバックで、再生終了後に再度この関数を呼び出すように設定
-            # コールバックは別スレッドで実行されるため、asyncio.run_coroutine_threadsafe を使うのが安全
-            guild.voice_client.play(
-                source, 
-                after=lambda e: asyncio.run_coroutine_threadsafe(
+                # afterコールバックで、再生終了後に再度この関数を呼び出すように設定
+                # コールバックは別スレッドで実行されるため、asyncio.run_coroutine_threadsafe を使うのが安全
+                def after_playback(e):
+                    guild_playing_flags[guild.id] = False
+                    asyncio.run_coroutine_threadsafe(
+                        play_next_in_queue(guild, client_voice),
+                        client_voice.loop
+                    )
+                
+                guild.voice_client.play(
+                    source, 
+                    after=after_playback
+                )
+
+            except Exception as e:
+                logger.error(f"Error during playback for guild {guild.id}: {type(e)}:{e}")
+                # エラーが発生しても、次のメッセージの再生を試みる
+                if "Not connected to voice" in str(e):
+                    # 再接続処理
+                    try:
+                        voice_status = voice_client_status()
+                        channel_id = voice_status.get(str(client_voice.user.id), {}).get("connected_channel")
+                        if channel_id:
+                            channel = client_voice.get_channel(channel_id)
+                            if channel:
+                                await channel.connect(reconnect=True)
+                                logger.info(f"再接続しました: {channel}")
+                    except Exception as reconnect_e:
+                        logger.error(f"再接続に失敗しました: {reconnect_e}")
+
+                guild_playing_flags[guild.id] = False
+                asyncio.run_coroutine_threadsafe(
                     play_next_in_queue(guild, client_voice), 
                     client_voice.loop
-                ).result() # エラーハンドリングのために .result() を呼ぶこともできます
-            )
-
-        except Exception as e:
-            logger.error(f"Error during playback for guild {guild.id}: {e}")
-            # エラーが発生しても、次のメッセージの再生を試みる
-            asyncio.run_coroutine_threadsafe(
-                play_next_in_queue(guild, client_voice), 
-                client_voice.loop
-            )
-        finally:
-            # キューのタスクが完了したことを通知
-            queue.task_done()    
+                )
+            finally:
+                # キューのタスクが完了したことを通知
+                queue.task_done()    
     
     @client_voice.event
     async def on_message(message: discord.Message, client_voice = client_voice):

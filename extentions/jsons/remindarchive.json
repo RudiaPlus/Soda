@@ -16,55 +16,103 @@
                 "id": "LS",
                 "type": "資源調達",
                 "name": "戦術演習(作戦記録)",
-                "available": ["月", "火", "水", "木", "金", "土", "日"]
+                "available": [
+                    "月",
+                    "火",
+                    "水",
+                    "木",
+                    "金",
+                    "土",
+                    "日"
+                ]
             },
             {
                 "id": "AP",
                 "type": "資源調達",
                 "name": "防御突破(購買資格証)",
-                "available": ["月", "木", "土", "日"]
+                "available": [
+                    "月",
+                    "木",
+                    "土",
+                    "日"
+                ]
             },
             {
                 "id": "SK",
                 "type": "資源調達",
                 "name": "資源確保(炭素材)",
-                "available": ["月", "水", "金", "土"]
+                "available": [
+                    "月",
+                    "水",
+                    "金",
+                    "土"
+                ]
             },
             {
                 "id": "CA",
                 "type": "資源調達",
                 "name": "空軍迎撃(アーツ学)",
-                "available": ["火", "水", "金", "日"]
+                "available": [
+                    "火",
+                    "水",
+                    "金",
+                    "日"
+                ]
             },
             {
                 "id": "CE",
                 "type": "資源調達",
                 "name": "貨物輸送(龍門幣)",
-                "available": ["火", "木", "土", "日"]
+                "available": [
+                    "火",
+                    "木",
+                    "土",
+                    "日"
+                ]
             },
             {
                 "id": "PR-A",
                 "type": "SoC探索",
                 "name": "重装・医療SoC",
-                "available": ["月", "木", "金", "日"]
+                "available": [
+                    "月",
+                    "木",
+                    "金",
+                    "日"
+                ]
             },
             {
                 "id": "PR-B",
                 "type": "SoC探索",
                 "name": "狙撃・術師SoC",
-                "available": ["月", "火", "金", "土"]
+                "available": [
+                    "月",
+                    "火",
+                    "金",
+                    "土"
+                ]
             },
             {
                 "id": "PR-C",
                 "type": "SoC探索",
                 "name": "先鋒・補助SoC",
-                "available": ["水", "木", "土", "日"]
+                "available": [
+                    "水",
+                    "木",
+                    "土",
+                    "日"
+                ]
             },
             {
                 "id": "PR-D",
                 "type": "SoC探索",
                 "name": "前衛・特殊SoC",
-                "available": ["火", "水", "土", "日"]
+                "available": [
+                    "火",
+                    "水",
+                    "土",
+                    "日"
+                ]
             }
         ]
     },
@@ -83,7 +131,6 @@
         "link": "https://00m.in/hyYtg",
         "startTime": 1694372400,
         "endTime": 1699210799
-
     },
     "sssRemind_1": {
         "name": "極西保全駐在",
@@ -100,7 +147,6 @@
         "link": "https://00m.in/99r0q",
         "startTime": 1699210800,
         "endTime": 1705258799
-
     },
     "sssRemind_2": {
         "name": "掠地保全駐在",
@@ -117,7 +163,6 @@
         "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%83%B4%E3%82%A3%E3%82%AF%E3%83%88%E3%83%AA%E3%82%A2%E3%80%8C%E8%96%84%E6%9A%97%E3%81%84%E6%B3%A5%E6%B2%BC%E3%80%8D",
         "startTime": 1705258800,
         "endTime": 1710097199
-
     },
     "anniRemind_4": {
         "name": "サルゴン「特製小さな水たまり」",
@@ -152,12 +197,12 @@
         "endTime": 1725821999
     },
     "sssRemind_4": {
-      "name": "辺境保全駐在",
-      "description": null,
-      "type": "sss",
-      "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#ib028f3e",
-      "startTime": 1721070000,
-      "endTime": 1731697199
+        "name": "辺境保全駐在",
+        "description": null,
+        "type": "sss",
+        "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#ib028f3e",
+        "startTime": 1721070000,
+        "endTime": 1731697199
     },
     "anniRemind_7": {
         "name": "殲滅依頼「ニューホテル通り」",
@@ -176,12 +221,12 @@
         "endTime": 1736708399
     },
     "sssRemind_5": {
-      "name": "音浪保全駐在",
-      "description": null,
-      "type": "sss",
-      "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#i1e9c48a",
-      "startTime": 1731697200,
-      "endTime": 1742065199
+        "name": "音浪保全駐在",
+        "description": null,
+        "type": "sss",
+        "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#i1e9c48a",
+        "startTime": 1731697200,
+        "endTime": 1742065199
     },
     "anniRemind_9": {
         "name": "殲滅依頼「燃える市街地」",
@@ -200,12 +245,12 @@
         "endTime": 1746385199
     },
     "sssRemind_6": {
-      "name": "荒原保全駐在",
-      "description": null,
-      "type": "sss",
-      "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#gc83f043",
-      "startTime": 1742065200,
-      "endTime": 1749085199
+        "name": "荒原保全駐在",
+        "description": null,
+        "type": "sss",
+        "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#gc83f043",
+        "startTime": 1742065200,
+        "endTime": 1749085199
     },
     "anniRemind_11": {
         "name": "殲滅依頼「66号航路」",
@@ -222,5 +267,13 @@
         "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#maf74853",
         "startTime": 1749063600,
         "endTime": 1760554799
+    },
+    "anniRemind-202507": {
+        "name": "殲滅依頼「壬午号水田」",
+        "description": null,
+        "type": "anni",
+        "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E7%82%8E%E5%9B%BD%E3%80%8C%E5%A3%AC%E5%8D%88%E5%8F%B7%E6%B0%B4%E7%94%B0%E3%80%8D",
+        "startTime": 1752433200,
+        "endTime": 1757271599
     }
 }
