@@ -26,6 +26,12 @@ tag_prof_list = []
 tag_range_list = []
 tag_type_list = []
 
+TOTAL_CHARS_LIMIT = 5500
+EMBED_FIELDS_LIMIT = 25
+FIELD_VALUE_LIMIT = 1000
+MAX_EMBEDS_PER_MESSAGE = 10
+ZERO_WIDTH_SPACE = "\u200b"
+
 for tag in config.tag_rarity:
     tag_rarity = discord.SelectOption(label = tag, value = tag)
     tag_rarity_list.append(tag_rarity)
@@ -98,6 +104,7 @@ async def find_common_tags(reference_tags, operators):
     return sorted_match 
 
 async def output_results(selected_tags):
+    logger.debug(f"selected_tags type: {type(selected_tags)}")
     try:
         result_operators = await find_common_tags(reference_tags=selected_tags, operators = operators_list)
         
@@ -118,32 +125,24 @@ async def output_results(selected_tags):
         return result_operators, goodresult_list
     except Exception as e:
         logger.exception(f"[output_results]にてエラー：{e}")
-        
-async def result_embed_maker(result_list: list, all: bool) -> list:
-    EMBED_LIMIT = 6000
-    FIELD_LIMIT = 1024
-    FIELD_MAX = 25
-    embeds = []
-    operator_emojis = supportrequest.operator_emoji_load()
 
-    def add_field_with_limit(embed, name, value, inline, total_length, field_count):
-        if len(value) > FIELD_LIMIT:
-            value = value[:FIELD_LIMIT]
-        if len(name) > 256:
-            name = name[:256]
-        total_length += len(name) + len(value)
-        field_count += 1
-        if total_length > EMBED_LIMIT:
-            embed.title = (embed.title or "") + "（字数制限のため打ち切りました。「全てのタグを表示する」ボタンを押してください）"
-            embeds.append(embed)
-            return None, total_length, field_count, True
-        if field_count > FIELD_MAX:
-            embeds.append(embed)
-            embed = discord.Embed(color=discord.Color.blue())
-            total_length = len(embed.title or "") + len(embed.description or "")
-            field_count = 1
-        embed.add_field(name=name, value=value, inline=inline)
-        return embed, total_length, field_count, False
+def get_embed_length(embed: discord.Embed) -> int:
+    """Embedオブジェクトの現在の総文字数を計算します。"""
+    length = len(embed.title or "") + len(embed.description or "")
+    if embed.footer:
+        length += len(embed.footer.text or "")
+    if embed.author:
+        length += len(embed.author.name or "")
+    for field in embed.fields:
+        length += len(field.name or "") + len(field.value or "")
+    return length
+
+async def result_embed_maker(result_list: list, all: bool) -> list:
+    """
+    結果リストからDiscordの制限を遵守したEmbedのリストを生成します。(最終改善版)
+    文字数オーバーの際はフィールド追加を中止し、分割フィールド名を空に見せます。
+    """
+    # === STEP 1: 表示するフィールドのコンテンツをすべて事前に生成する ===
 
     if all:
         title = "獲得できる全てのオペレーター"
@@ -153,47 +152,94 @@ async def result_embed_maker(result_list: list, all: bool) -> list:
         title = "獲得できる高レアなオペレーター"
         show_list = [r for r in result_list if ("ロボット" in r["tags"] or r["min_rarity"] > 2)]
         use_emoji = True
-
-    embed_ope = discord.Embed(title=title, color=discord.Color.blue())
-    total_length = len(embed_ope.title or "") + len(embed_ope.description or "")
-    field_count = 0
+    
+    operator_emojis = supportrequest.operator_emoji_load()
 
     if not show_list and not all:
-        embed_ope.add_field(
+        embed = discord.Embed(title=title, color=discord.Color.blue())
+        embed.add_field(
             name="該当タグ無し",
             value="☆4以上のオペレーターを確定で引ける組み合わせはありません。\n全ての組み合わせを見る場合、「全てのタグを表示する」ボタンを押してください。"
         )
-        embeds.append(embed_ope)
-        return embeds
+        return [embed]
 
+    field_contents = []
     for tag in show_list:
-        value = ""
         field_name = " ".join(tag["tags"])
-        inline = False
-        i = 1
-        for ope in tag["operators"]:
-            rarity = ope["rarity"]
-            name = ope["name"]
-            if use_emoji:
-                value += f"☆{rarity+1}{operator_emojis[name]}{name} "
-            else:
-                value += f"☆{rarity+1}{name} "
-            if i > 20:
-                embed_ope, total_length, field_count, over = add_field_with_limit(embed_ope, field_name, value, inline, total_length, field_count)
-                if over:
-                    return embeds
-                field_name = ""
-                value = ""
-                i = 0
-            i += 1
-        if value:
-            embed_ope, total_length, field_count, over = add_field_with_limit(embed_ope, field_name, value, inline, total_length, field_count)
-            if over:
-                return embeds
-    if embed_ope.fields:
-        embeds.append(embed_ope)
-    return embeds
         
+        operator_strings = []
+        for ope in tag["operators"]:
+            name = ope["name"]
+            rarity = ope["rarity"]
+            if use_emoji:
+                ope_str = f"☆{rarity+1}{operator_emojis.get(name, '')}{name} "
+            else:
+                ope_str = f"☆{rarity+1}{name} "
+            operator_strings.append(ope_str)
+        
+        if not operator_strings:
+            continue
+        
+        current_chunk = ""
+        is_first_chunk = True
+        for op_str in operator_strings:
+            if len(current_chunk) + len(op_str) > FIELD_VALUE_LIMIT:
+                name_to_add = field_name if is_first_chunk else ZERO_WIDTH_SPACE
+                field_contents.append((name_to_add, current_chunk))
+                is_first_chunk = False
+                current_chunk = op_str
+            else:
+                current_chunk += op_str
+        
+        if current_chunk:
+            name_to_add = field_name if is_first_chunk else ZERO_WIDTH_SPACE
+            field_contents.append((name_to_add, current_chunk))
+
+    # === STEP 2: 生成したフィールドを制限に合わせてEmbedに詰めていく ===
+    
+    embeds = []
+    current_embed = discord.Embed(title=title, color=discord.Color.blue())
+
+    # 新しいEmbedが作られる際のタイトルのテンプレート
+
+    for name, value in field_contents:
+        # ---- チェックポイント ----
+        # 1. 現在のEmbedにフィールドを追加できるか？ (フィールド数と文字数)
+        can_add_to_current = (
+            len(current_embed.fields) < EMBED_FIELDS_LIMIT and
+            get_embed_length(current_embed) + len(name) + len(value) <= TOTAL_CHARS_LIMIT
+        )
+
+        if not can_add_to_current:
+            # 現在のEmbedに追加できない場合、新しいEmbedを作成する
+            if current_embed.fields:
+                embeds.append(current_embed)
+
+            # 2. Embedの最大数に達していないか？
+            if len(embeds) >= MAX_EMBEDS_PER_MESSAGE:
+                logger.warning(f"Embedが{MAX_EMBEDS_PER_MESSAGE}個の上限に達したため、処理を中断しました。")
+                embeds[0].title = f"{title} (一部のみ表示)"
+                return embeds
+
+            current_embed = discord.Embed(title="(続き)", color=discord.Color.blue())
+
+        # 3.【最重要】このフィールドを追加すると、メッセージ全体の総文字数上限を超えるか？
+        total_chars_so_far = sum(get_embed_length(e) for e in embeds)
+        predicted_total_chars = total_chars_so_far + get_embed_length(current_embed) + len(name) + len(value)
+
+        if predicted_total_chars > TOTAL_CHARS_LIMIT:
+            logger.warning("次のフィールドを追加すると総文字数を超えるため、処理を中断します。")
+            embeds[0].title = f"{title} (一部のみ表示)"
+            return embeds
+
+        # 全てのチェックをクリアしたので、フィールドを追加
+        current_embed.add_field(name=name, value=value, inline=False)
+        
+    # ループ終了後、作業中のEmbedが残っていればリストに追加
+    if current_embed.fields and len(embeds) < MAX_EMBEDS_PER_MESSAGE:
+        embeds.append(current_embed)
+
+    return embeds
 
 class TagUndoOnly(discord.ui.View):
     def __init__(self, selected_tags: list, all: bool, rare: bool = False, undo: bool = True):
@@ -687,27 +733,38 @@ async def ocr_tag_from_screenshot(image_path):
     im_cropped.save(os.path.join(image_dir, "image_cropped.png"))
     
     binaryThreshold = 170
-    binary_target = cv2.imread(os.path.join(image_dir, "image_cropped.png"), 0)
-    ret, binaried = cv2.threshold(binary_target, binaryThreshold, 255, cv2.THRESH_BINARY_INV)
+    try:
+        binary_target = cv2.imread(os.path.join(image_dir, "image_cropped.png"), 0)
+        logger.debug(f"binary_target type: {type(binary_target)}")
+        ret, binaried = cv2.threshold(binary_target, binaryThreshold, 255, cv2.THRESH_BINARY_INV)
+        
+        cv2.imwrite(os.path.join(image_dir, "image_binaried.png"), binaried)
+        ocr_image =  cv2.imread(os.path.join(image_dir, "image_binaried.png"))
+        result = ocr.ocr(ocr_image, cls=False)
+
+    except Exception as e:
+        logger.error(f"OCR前処理にてエラー: {e}")
+        raise e
     
-    cv2.imwrite(os.path.join(image_dir, "image_binaried.png"), binaried)
     
-    result = ocr.predict(os.path.join(image_dir, "image_binaried.png"))
     logger.debug("OCRを実行しました")
     result_tags = []
-    recognized_tags = result[0]["rec_texts"]
-    logger.debug(f"検出されたタグ: {recognized_tags}")
+    if not result or not result[0]:
+        logger.warning("OCR結果が空です。")
+        return []
+    
+    recognized_data = result[0]
+    logger.debug(f"検出されたタグ: {recognized_data}")
     
     def normalize_tag(tag):
-        #「タイプ」系の誤認識
         tag = re.sub(r"(タイ[フブラ])", "タイプ", tag)
-        # 「上級エリート」系の誤認識
         tag = re.sub(r"(.級エリー.)", "上級エリート", tag)
         tag = re.sub(r"(エリー.)", "エリート", tag)
-        # その他よくあるパターンを追加
         return tag
     
-    for tag in recognized_tags:
+    for box, (text, score) in recognized_data:
+        tag = text.strip()
+        logger.debug(f"OCR結果: {tag} (信頼度: {score})")
         tag = normalize_tag(tag)
         if len(tag) <= 1:
             logger.warning(f"OCR結果「{tag}」は1文字のため除外されました。")
@@ -725,7 +782,7 @@ async def ocr_tag_from_screenshot(image_path):
             #cv2は日本語ファイル名をサポートしていないため、tempで保存してから改名
             cv2.imwrite(os.path.join(image_dir, "debug\\ocr_debug_temp.png"), binaried)
             os.rename(os.path.join(image_dir, "debug\\ocr_debug_temp.png"), os.path.join(image_dir, f"debug\\ocr_debug_{tag}_{filetime}.png"))
-               
+                
     return result_tags
 
 async def recruit_from_screenshot(image_path, message: discord.Message):

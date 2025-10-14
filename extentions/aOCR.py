@@ -1,8 +1,5 @@
-from paddleocr import PaddleOCR
+from onnxocr.onnx_paddleocr import ONNXPaddleOcr
 
-ocr = PaddleOCR(
-    use_doc_orientation_classify=False, 
-    use_doc_unwarping=False, 
-    use_textline_orientation=False,
-    lang="japan"
+ocr = ONNXPaddleOcr(
+    lang="japan", use_gpu = False
 )

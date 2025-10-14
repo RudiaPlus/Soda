@@ -8,8 +8,7 @@
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/5d655d15263acb8249a6cc5cec51d49e.png",
         "startTime": 1723014000,
         "endTime": 1754506799,
-        "monthlyUpdate": [
-        ]
+        "monthlyUpdate": []
     },
     "dis_rogue_4": {
         "id": "dis_rogue_4",
@@ -29,37 +28,79 @@
             }
         ]
     },
-    "懐黍離(復刻)": {
-        "id": "懐黍離(復刻)",
-        "type": "SIDESTORY",
-        "stageAdd": false,
-        "name": "懐黍離(復刻)",
-        "news": "https://arknights.jp/news/495",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88149_%E6%87%90%E9%BB%8D%E9%9B%A2%28%E5%BE%A9%E5%88%BB%29",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/d4172429bb8c2ade567045477dd26d6d.png",
-        "startTime": 1751526000,
-        "endTime": 1752346799,
-        "rewardEndTime": 1752692399
-    },
-    "相見歓": {
-        "id": "相見歓",
+    "挽歌が灰に還る時": {
+        "id": "挽歌が灰に還る時",
         "type": "SIDESTORY",
         "stageAdd": true,
-        "name": "相見歓",
-        "news": "https://arknights.jp/news/497",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88150_%E7%9B%B8%E8%A6%8B%E6%AD%93",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/5ed64a1b72c437a3fd1827f32b4b8507.png",
-        "startTime": 1752735600,
-        "endTime": 1754506799,
-        "rewardEndTime": 1755111599,
+        "name": "挽歌が灰に還る時",
+        "news": "https://arknights.jp/news/1564",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88153_%E6%8C%BD%E6%AD%8C%E3%81%8C%E7%81%B0%E3%81%AB%E9%82%84%E3%82%8B%E6%99%82",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/22/83vUpd3y.png",
+        "startTime": 1756364400,
+        "endTime": 1757530799,
+        "rewardEndTime": 1758135599,
         "additionalStage": [
             {
-                "name": "閲世情",
-                "startTime": 1753340400
+                "name": "消えゆく炎",
+                "startTime": 1756969200
+            }
+        ]
+    },
+    "協心競技#1": {
+        "id": "協心競技#1",
+        "type": "MULTIPLAY",
+        "stageAdd": false,
+        "name": "協心競技#1",
+        "news": "https://arknights.jp/news/1569",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88154_%E5%8D%94%E5%BF%83%E7%AB%B6%E6%8A%80%EF%BC%831",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/29/2lhxJb1X.png",
+        "startTime": 1756969200,
+        "endTime": 1758740399,
+        "rewardEndTime": 1758999599
+    },
+    "解離結合": {
+        "id": "解離結合",
+        "type": "MAIN",
+        "stageAdd": false,
+        "name": "解離結合",
+        "news": "https://arknights.jp/news/1615",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88155_%E7%AC%AC%E5%8D%81%E4%BA%94%E7%AB%A0%E5%85%AC%E9%96%8B",
+        "pic": "https://arknights.wikiru.jp/attach2/E382A4E38399E383B3E383883135355FE7ACACE58D81E4BA94E7ABA0E585ACE9968B_657031352E706E67.png",
+        "startTime": 1758006000,
+        "endTime": 1759172399,
+        "rewardEndTime": 1759172399
+    },
+    "バベル(復刻)": {
+        "id": "バベル(復刻)",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "バベル(復刻)",
+        "news": "https://arknights.jp/news/1672",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88156_%E3%83%90%E3%83%99%E3%83%AB%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/09/25/_GgDj6Ze.png",
+        "startTime": 1759215600,
+        "endTime": 1760036399,
+        "rewardEndTime": 1760381999
+    },
+    "命ある者の旅": {
+        "id": "命ある者の旅",
+        "type": "SIDESTORY",
+        "stageAdd": true,
+        "name": "命ある者の旅",
+        "news": "https://arknights.jp/news/1688",
+        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88157_%E5%91%BD%E3%81%82%E3%82%8B%E8%80%85%E3%81%AE%E6%97%85",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/10/07/Qxq4qdhY.png",
+        "startTime": 1760425200,
+        "endTime": 1762196399,
+        "rewardEndTime": 1762801199,
+        "additionalStage": [
+            {
+                "name": "主への謁見",
+                "startTime": 1761030000
             },
             {
-                "name": "悵別離",
-                "startTime": 1753945200
+                "name": "安息の地",
+                "startTime": 1761634800
             }
         ]
     }

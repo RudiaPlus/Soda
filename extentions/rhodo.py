@@ -149,6 +149,7 @@ async def on_ready():
             now_utc = now_utc.replace(tzinfo=datetime.timezone.utc)
             now_utc_timestamp = now_utc.timestamp()
             tz_JST = JSTTime.tz_JST
+            now_JST = now_utc.astimezone(tz_JST)
 
             passed_second = floor(now_utc_timestamp - last_remind.created_at.timestamp())               
             logger.info(f"前回のリマインダーは{last_remind.created_at.astimezone(tz_JST)}({passed_second}秒前)に投稿されています")
@@ -211,8 +212,11 @@ async def on_ready():
         
         save_json("scheduled_tasks.json", scheduled_tasks)
         
-        #Twitter検索
-        await twitterpost.gather_reed_arts(since=datetime.datetime.now(tz=JSTTime.tz_JST))
+        #Twitter検索(5時起動時のみ実行)
+        if now_JST.hour == 5:
+            await twitterpost.gather_reed_arts(since=datetime.datetime.now(tz=JSTTime.tz_JST))
+        
+        await chat.init_models()
 
     except Exception as e:
         logger.exception(f"[on_ready]にて エラー：{e}")
@@ -283,7 +287,7 @@ async def on_message(message: discord.Message):
                 logger.info(f"{author.name}さんが挨拶しました！")
                 await message.add_reaction("🌟")
                 
-        if channelID == config.screenshot_recruit_channel:
+        if channelID == config.screenshot_recruit_channel or channelID == config.screenshot_recruit_channel_test:
             if not message.attachments:
                 return
             for attachment in message.attachments:
@@ -615,7 +619,7 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
             created_vc = await vccreate_category.create_voice_channel(name = "臨時VC - 名前を変更できます", overwrites=overwrite)
             await member.move_to(created_vc)
             vccreate_channel = client.get_channel(config.voicecreate_channel)
-            embed = discord.Embed(title = "ボイスチャット作成成功", description = f"ボイスチャットの作成に成功しました！\n名前の変更、最大人数の設定などは{vccreate_channel.jump_url}をご覧ください！\n**使用されていない「しゃべるくん」以外の読み上げbotの使用はご遠慮ください。**")
+            embed = discord.Embed(title = "ボイスチャット作成成功", description = f"ボイスチャットの作成に成功しました！\n名前の変更、最大人数の設定などは{vccreate_channel.jump_url}をご覧ください！")
             embed.set_footer(text = "VCルールとマナーを厳守してください。このVC内容はログが取られています。")
             await created_vc.send(content = member.mention, embed = embed)
             return
@@ -778,19 +782,6 @@ async def nickname(interaction: discord.Interaction, name: str):
     except Exception as e:
         logger.error(f"Error in /nickname command: {e}")
         await interaction.followup.send("エラーが発生して、名前を覚えられませんでした。ごめんなさい。")
-        
-@client.tree.command(name="companion", description="アークナイツに関する質問に答えます。キャラクター、イベント、統合戦略について詳しく聞いてみて下さい。")
-@app_commands.describe(question="質問内容")
-async def companion(interaction: discord.Interaction, question: str):
-    await interaction.response.defer()
-    try:
-        response = await chat.arknights_agent_with_chat_memory(interaction.user, question)
-        if not response:
-            await interaction.followup.send("ごめんなさい。何か問題があったようです！")
-            return
-        await interaction.followup.send(response)
-    except Exception as e:
-        logger.error(f"Error in /companion command: {e}")
                 
 @client.tree.command(name="edit_dynamic_config",
                         description="動的configの編集を行います",

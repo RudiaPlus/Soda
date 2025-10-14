@@ -113,34 +113,27 @@ async def char_table_analyze():
         dic_add = await make_char_json(index, patch_json["patchChars"][index], rarity_new)
         charjson.update(dic_add)
         
-    for index in module_json["equipDict"]:
-        dic_add_X = None
-        dic_add_Y = None
-        dic_add_D = None
-        add_id = None
-        char_id = module_json["equipDict"][index]["tmplId"] if "tmplId" in module_json["equipDict"][index] else module_json["equipDict"][index]["charId"]
-        if "typeName2" in module_json["equipDict"][index] is not None:
-            if module_json["equipDict"][index]["typeName2"] == "X":
-                dic_add_X = module_json["equipDict"][index]["uniEquipName"]
-                add_id = "X"
-            elif module_json["equipDict"][index]["typeName2"] == "Y":
-                dic_add_Y = module_json["equipDict"][index]["uniEquipName"]
-                add_id = "Y"
-            elif module_json["equipDict"][index]["typeName2"] == "D":
-                dic_add_D = module_json["equipDict"][index]["uniEquipName"]
-                add_id = "Δ"
-        
-        #エリートオペレーターの除外
-        if char_id not in charjson.keys():
+    # モジュール種別コードと表示シンボルのマッピング
+    module_type_map = {
+        "X": "X",
+        "Y": "Y",
+        "D": "Δ",
+        "A": "α",
+    }
+
+    for equip_data in module_json["equipDict"].values():
+        char_id = equip_data.get("tmplId", equip_data.get("charId"))
+
+        # エリートオペレーターなどを除外
+        if not char_id or char_id not in charjson:
             continue
-        
-        if "modules" in charjson[char_id] and add_id:
-            if charjson[char_id]["modules"][add_id] is None:
-                charjson[char_id]["modules"][add_id] = dic_add_X if add_id == "X" else dic_add_Y if add_id == "Y" else dic_add_D
-        else:
-                            
-            dic_add = {"modules": {"X": dic_add_X, "Y": dic_add_Y, "Δ": dic_add_D}}
-            charjson[char_id].update(dic_add)
+
+        module_type_code = equip_data.get("typeName2")
+        module_symbol = module_type_map.get(module_type_code)
+
+        if module_symbol:
+            modules_dict = charjson[char_id].setdefault("modules", {})
+            modules_dict[module_symbol] = equip_data["uniEquipName"]
 
     with open(os.path.join(dir, "jsons\\operators.json"), "w", encoding = "utf-8") as f:
         json.dump(charjson, f, indent = 2, ensure_ascii = False)

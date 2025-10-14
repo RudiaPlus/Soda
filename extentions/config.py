@@ -97,6 +97,7 @@ class Config():
         self.modmail_save_channel = 1108480334024167514 #議事録
 
         self.screenshot_recruit_channel = 1284115621465948171 #公開求人ツール（スクショ認識）
+        self.screenshot_recruit_channel_test = 1426407681865810030 #求人テスト
         self.screenshot_recruit_channel_url = f"https://discord.com/channels/{self.main_server}/{self.screenshot_recruit_channel}"
 
         self.voicecreate_channel = 1305508824781815899 #個別VC作成方法

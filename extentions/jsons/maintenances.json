@@ -1,2 +1,10 @@
 [
+  {
+    "type": "MAINTENANCE",
+    "startTime": 1760403600,
+    "endTime": 1760425200,
+    "doing": true,
+    "link": null,
+    "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/20/f_WAwhPj.png"
+  }
 ]

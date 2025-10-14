@@ -1409,5 +1409,55 @@
                 "startTime": 1753945200
             }
         ]
+    },
+    "cc2#3": {
+        "id": "cc2#3",
+        "type": "CRISIS",
+        "name": "危機契約#3 作戦コード「浄罪」",
+        "news": "https://arknights.jp/news/1524",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88152_%E5%8D%B1%E6%A9%9F%E5%A5%91%E7%B4%84BATTLEPLAN%EF%BC%833",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/06/ZhRr9S1E.png",
+        "stageAdd": "CRISIS",
+        "startTime": 1755154800,
+        "endTime": 1756321199,
+        "eventColor": "A53042",
+        "permStage": {
+            "stageType": "PERM",
+            "stageName": "血塗られし焦土"
+        },
+        "dailyStage": [
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 1,
+                "stageName": "蝕裂の氷湖"
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 2,
+                "stageName": "第13区跡"
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 3,
+                "stageName": "降塵の路地"
+            },
+            {
+                "stageType": "DAILY_FINAL",
+                "dailyNumber": 4,
+                "stageName": "改修中のビーチ"
+            }
+        ]
+    },
+    "また明日": {
+        "id": "また明日",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "また明日",
+        "news": "https://arknights.jp/news/1498",
+        "link": "https://arknights.wikiru.jp/?イベント151_また明日",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/07/31/qoushjkL.png",
+        "startTime": 1754550000,
+        "endTime": 1755111599,
+        "rewardEndTime": 1755370799
     }
 }

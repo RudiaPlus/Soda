@@ -25,6 +25,8 @@ host = "127.0.0.1"
 port = "10101"
 sleep_time = 0.5
 
+voicechat = False
+
 #新しいVCを登録する場合、channels.jsonも忘れずに
 #二つ以上の場合、最後がVC_chatが望ましい
 
@@ -38,6 +40,172 @@ def write_voice_status(dict):
         json.dump(dict, f, ensure_ascii=False, indent=4)
     return
 
+async def get_user_dict(session: aiohttp.ClientSession, max_retry: int = 3):
+    """
+    VOICEVOX互換APIのユーザー辞書を取得します。
+
+    Args:
+        session (aiohttp.ClientSession): aiohttpのセッション。
+        max_retry (int): 失敗時の最大リトライ回数。
+
+    Returns:
+        dict: ユーザー辞書の内容。
+    """
+    url = f"http://{host}:{port}/user_dict"
+    for i in range(max_retry):
+        try:
+            async with session.get(url, timeout=10.0) as resp:
+                if resp.status == 200:
+                    return await resp.json()
+                else:
+                    logger.error(f"ユーザー辞書の取得に失敗しました。ステータス: {resp.status}")
+        except asyncio.TimeoutError:
+            logger.warning(f"ユーザー辞書の取得処理がタイムアウトしました。リトライします... ({i + 1}/{max_retry})")
+        except aiohttp.ClientError as e:
+            logger.error(f"クライアントエラーが発生しました: {e}。リトライします... ({i + 1}/{max_retry})")
+        
+        if i < max_retry - 1:
+            await asyncio.sleep(1)
+
+    logger.error("リトライ回数の上限に到達したため、ユーザー辞書の取得に失敗しました。")
+    return {}
+
+async def add_user_word(
+    surface: str,
+    pronunciation: str,
+    accent_type: int,
+    max_retry: int = 3,
+):
+    """
+    VOICEVOX互換APIのユーザー辞書に単語を登録します。
+
+    Args:
+        session (aiohttp.ClientSession): aiohttpのセッション。
+        surface (str): 登録する単語の表記。
+        pronunciation (str): 単語の読み方（カタカナ）。
+        accent_type (int): アクセント核の位置（0は平板型）。
+        max_retry (int): 失敗時の最大リトライ回数。
+
+    Returns:
+        bool: 登録に成功した場合はTrue、失敗した場合はFalse。
+    """
+    params = {
+        "surface": surface,
+        "pronunciation": pronunciation,
+        "accent_type": accent_type,
+    }
+    url = f"http://{host}:{port}/user_dict_word"
+    async with aiohttp.ClientSession() as session:
+        for i in range(max_retry):
+            try:
+                # /user_dict_word エンドポイントにPOSTリクエストを送信
+                async with session.post(url, params=params, timeout=10.0) as resp:
+                    # 成功（ステータスコード 200 OK または 204 No Content）
+                    if resp.status in [200, 204]:
+                        logger.info(f"ユーザー辞書に単語を追加しました: {surface}")
+                        return True
+                    else:
+                        error_text = await resp.text()
+                        logger.error(
+                            f"単語の追加に失敗しました。ステータス: {resp.status}, "
+                            f"レスポンス: {error_text}"
+                        )
+            except asyncio.TimeoutError:
+                logger.warning(f"単語の追加処理がタイムアウトしました。リトライします... ({i + 1}/{max_retry})")
+            except aiohttp.ClientError as e:
+                logger.error(f"クライアントエラーが発生しました: {e}。リトライします... ({i + 1}/{max_retry})")
+            
+            if i < max_retry - 1:
+                await asyncio.sleep(1)
+
+        logger.error(f"リトライ回数の上限に到達したため、単語 '{surface}' の追加に失敗しました。")
+        return False
+    
+async def edit_user_word(
+    surface: str,
+    pronunciation: str,
+    accent_type: int,
+    max_retry: int = 3,
+):
+    params = {
+        "surface": surface,
+        "pronunciation": pronunciation,
+        "accent_type": accent_type,
+    }
+    async with aiohttp.ClientSession() as session:
+        #単語のUUIDを取得
+        user_dict = await get_user_dict(session, max_retry)
+        uuid = None
+        for uid in user_dict:
+            if user_dict[uid]["surface"] == surface:
+                uuid = uid
+                break
+        else:
+            logger.error(f"単語 '{surface}' がユーザー辞書に存在しません。編集できません。")
+            return False
+        
+        # /user_dict_word エンドポイントにPUTリクエストを送信
+        url = f"http://{host}:{port}/user_dict_word/{uuid}"
+        for i in range(max_retry):
+            try:
+                async with session.put(url, params=params, timeout=10.0) as resp:
+                    if resp.status in [200, 204]:
+                        logger.info(f"ユーザー辞書の単語を編集しました: {surface}")
+                        return True
+                    else:
+                        error_text = await resp.text()
+                        logger.error(
+                            f"単語の編集に失敗しました。ステータス: {resp.status}, "
+                            f"レスポンス: {error_text}"
+                        )
+            except asyncio.TimeoutError:
+                logger.warning(f"単語の編集処理がタイムアウトしました。リトライします... ({i + 1}/{max_retry})")
+            except aiohttp.ClientError as e:
+                logger.error(f"クライアントエラーが発生しました: {e}。リトライします... ({i + 1}/{max_retry})")
+            
+            if i < max_retry - 1:
+                await asyncio.sleep(1)
+
+        logger.error(f"リトライ回数の上限に到達したため、単語 '{surface}' の編集に失敗しました。")
+        return False
+    
+async def delete_user_word(surface: str, max_retry: int = 3):
+    async with aiohttp.ClientSession() as session:
+        # 単語のUUIDを取得
+        user_dict = await get_user_dict(session, max_retry)
+        uuid = None
+        for uid in user_dict:
+            if user_dict[uid]["surface"] == surface:
+                uuid = uid
+                break
+        else:
+            logger.error(f"単語 '{surface}' がユーザー辞書に存在しません。削除できません。")
+            return False
+
+        url = f"http://{host}:{port}/user_dict_word/{uuid}"
+        for i in range(max_retry):
+            try:
+                # /user_dict_word エンドポイントにDELETEリクエストを送信
+                async with session.delete(url, timeout=10.0) as resp:
+                    if resp.status == 204:  # No Content
+                        logger.info(f"ユーザー辞書から単語を削除しました: {surface}")
+                        return True
+                    else:
+                        error_text = await resp.text()
+                        logger.error(
+                            f"単語の削除に失敗しました。ステータス: {resp.status}, "
+                            f"レスポンス: {error_text}"
+                        )
+            except asyncio.TimeoutError:
+                logger.warning(f"単語の削除処理がタイムアウトしました。リトライします... ({i + 1}/{max_retry})")
+            except aiohttp.ClientError as e:
+                logger.error(f"クライアントエラーが発生しました: {e}。リトライします... ({i + 1}/{max_retry})")
+            
+            if i < max_retry - 1:
+                await asyncio.sleep(1)
+        logger.error(f"リトライ回数の上限に到達したため、単語 '{surface}' の削除に失敗しました。")
+        return False
+    
 async def audio_query(session: aiohttp.ClientSession, text: str, speaker: int, max_retry: int):
     # 音声合成用のクエリを作成する
     query_payload = {"text": text, "speaker": speaker}
