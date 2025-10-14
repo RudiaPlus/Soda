@@ -1,10 +1,10 @@
 [
   {
-    "type": "MAINTENANCE",
-    "startTime": 1760403600,
-    "endTime": 1760425200,
+    "type": "EMERGENCY",
+    "startTime": 1760425500,
+    "endTime": 1760468400,
     "doing": true,
-    "link": null,
+    "link": "https://x.com/arknightsstaff/status/1977990225453609339?s=46&t=Vf8Iazur2UcQZ9_RorIB5Q",
     "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/20/f_WAwhPj.png"
   }
 ]

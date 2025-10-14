@@ -756,19 +756,34 @@ async def ping(interaction: discord.Interaction):
 @client.tree.command(name="maintenance",
                         description="メンテナンスについて",
                         guild=discord.Object(config.testserverid))
-@app_commands.describe(number="0からの参照番号", status="ruined(中止)/end(終了)", name="告知する名前。デフォルトは「メンテナンス」")
-async def maintenance(interaction: discord.Interaction,
-                        number: int,
-                        status: str,
-                        name: str = "メンテナンス"):
+@app_commands.describe(number="0からの参照番号", status="ruined(中止)/end(終了)/change(終了時間変更)", name="告知する名前。デフォルトは「メンテナンス」", new_end="新しい終了時間(例: 2023-10-01 16:00:00)")
+async def maintenance(interaction: discord.Interaction, number: int, status: Literal["ruined", "end", "change"], name: str = "メンテナンス", new_end: str = None):
+    if interaction.user == client.user:
+        return
+    
     if status == "ruined":
         await interaction.response.defer()
         await maintenances.maintenance_ruined(number)
         await interaction.followup.send("完了しました")
 
-    if status == "end":
+    elif status == "end":
         await interaction.response.defer()
         await maintenances.maintenance_end(name, number)
+        await interaction.followup.send("完了しました")
+        
+    elif status == "change":
+        if new_end is None:
+            await interaction.response.send_message("新しい終了時間を指定してください", ephemeral=True)
+            return
+        try:
+            new_end_dt = datetime.datetime.strptime(new_end, "%Y-%m-%d %H:%M:%S")
+            new_end_timestamp = floor(new_end_dt.astimezone(tz=JSTTime.tz_JST).timestamp())
+        except ValueError:
+            logger.error("日付のフォーマットエラーです。「YYYY-MM-DD HH:MM:SS」")
+            await interaction.response.send_message("日付のフォーマットが正しくありません。「YYYY-MM-DD HH:MM:SS」の形式で入力してください。", ephemeral=True)
+            return
+        await interaction.response.defer()
+        await maintenances.change_maint_end(number, new_end_timestamp)
         await interaction.followup.send("完了しました")
         
 @client.tree.command(name="nickname", description="ロードに覚えてほしいあなたの呼び方を設定します")

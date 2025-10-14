@@ -50,20 +50,21 @@ async def maintenance_list():
             maint_list.append({"name": maint_name, "time": f"開始:{maint_start}\n終了:{maint_end}", "link": link, "pic": pic})
     
     return maint_list
-    
-async def maintenance_end(maint_name: str, entry: int):
+
+async def announce_and_delete(entry: int):
     channel = client.get_channel(config.maintenance)
     maintenances = await read_json()
     link = maintenances[entry]["link"]
-    embed = discord.Embed(title = f"{maint_name}が終了しました！",
-                                      description = "サーバーに入れる状態です！",
-                                      color = 0x8dbf9d,
-                                      url = link
-                                      )
+    embed = discord.Embed(title = "メンテナンスが終了しました！", description = "サーバーに入れる状態です！", color = 0x8dbf9d, url = link)
+    
     await channel.send("<@&1090976873774854177>", embed = embed)
-    channel_announcement = client.get_channel(config.announcement)
+    
     del maintenances[entry]
     await write_json(maintenances)
+
+async def maintenance_end(maint_name: str, entry: int):
+    
+    channel_announcement = client.get_channel(config.announcement)
     start_time = datetime.now()
     await channel_announcement.send("botのリソース更新を行います！完了するまでbotの動作が不安定になる可能性がありますので、ご注意ください！")
     result = await data_update.update_data()
@@ -79,6 +80,17 @@ async def maintenance_ruined(entry):
     maintenances = await read_json()
     del maintenances[entry]
     await write_json(maintenances)
+    
+# メンテナンス終了時間変更
+async def change_maint_end(entry: int, new_end: int):
+    maintenances = await read_json()
+    maintenances[entry]["endTime"] = new_end
+    await write_json(maintenances)
+    logger.info(f"メンテナンス終了時間を変更しました: {entry} -> {new_end}")
+    channel = client.get_channel(config.maintenance)
+    end = "<t:{0}:F>( <t:{0}:R> )".format(new_end)
+    embed = discord.Embed(title = "メンテナンス終了時間が変更されました！", description = f"終了:{end}", color = 0xf5b642, url = maintenances[entry]["link"])
+    await channel.send("<@&1090976873774854177>", embed = embed)
 
 @tasks.loop(seconds=60)
 async def maintenance_timer():

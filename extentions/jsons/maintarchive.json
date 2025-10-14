@@ -188,5 +188,13 @@
         "doing": false,
         "link": null,
         "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/20/f_WAwhPj.png"
+    },
+    {
+        "type": "EMERGENCY",
+        "startTime": 1760425500,
+        "endTime": 1767193199,
+        "doing": false,
+        "link": "https://x.com/arknightsstaff/status/1977990225453609339?s=46&t=Vf8Iazur2UcQZ9_RorIB5Q",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/20/f_WAwhPj.png"
     }
 ]

@@ -3,6 +3,7 @@ import json
 import os
 import sqlite3
 from datetime import datetime, timedelta
+from typing import Any, List, Optional, TypedDict, Dict
 from uuid import uuid4
 
 import chromadb
@@ -15,9 +16,10 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CrossEncoderReranker
 from langchain_chroma import Chroma
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
-from tavily import AsyncTavilyClient
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI
+from langgraph.graph import END, START, StateGraph
+from tavily import AsyncTavilyClient
 
 from extentions import JSTTime, log
 from extentions.aclient import client
@@ -101,7 +103,9 @@ ak_retriever=None
 analyze_model=None
 search = None
 reranker = None
+app = None
 
+# === 初期化 ===
 async def init_models():
     global db_client, embedding_model, model, agent_model, ak_collection, ak_retriever, analyze_model, search, reranker
     db_client = await get_akdb_conn()
@@ -127,6 +131,21 @@ async def init_models():
         base_compressor=reranker,
         base_retriever=retriever
     )
+    app = setup_chat_graph()
+    
+class ChatState(TypedDict, total=False):
+    user_id: str
+    message: str
+    history_str: str                     # 直近履歴（あなたのDBから取得済みの文字列）
+    analysis: Dict[str, Any]             # analyze_message のJSON結果
+    memory_note: Optional[str]           # memory 操作の応答文（UI表示用に保持）
+    wiki_text: Optional[str]             # wiki由来の原文連結
+    web_text: Optional[str]              # web由来の原文連結
+    merged_info: str                     # wiki / web を見出し付きで合成
+    extracted: str                       # 抽出済みの要点（回答に使う最小文）
+    response_text: str                   # 最終回答
+
+# === ヘルパー関数群 ===
 
 async def similar_document_search(query: str):
     results = await ak_retriever.ainvoke(input=query)
@@ -138,6 +157,46 @@ async def similar_document_search(query: str):
         return None
     return results
 
+async def analyze_information(information: str, question: str):
+    prompt = f"""
+    あなたは与えられた情報から要点を正確に抽出する専門家です。
+    以下の「ユーザーの質問」に答えるために、提供された「参考情報」の中から、必要な部分を判断して抽出してください。
+    
+    ## ルール
+    - 質問に直接関連する情報のみを抽出してください。
+    - 情報を追加したり、自分の言葉で解釈したりしないでください。参考情報にある文章を基に、忠実に抜き出してください。
+    - 関連する情報が何も見つからない場合は、空の文字列を返してください。
+    - 出力は、箇条書きや文章の形式でまとめてください。
+    
+    ## ユーザーの質問
+    {question}
+    
+    ## 参考情報
+    {information}
+    """
+    try:
+        response = await analyze_model.ainvoke(prompt)
+        extracted_info = response.content
+        logger.debug(f"Extracted information: {extracted_info}")
+        return extracted_info
+    except Exception as e:
+        logger.error(f"エラーが発生しました: {e}")
+        return ""
+
+def get_metadata_dict(meta_item):
+    """
+    Safely extracts the metadata dictionary from a potentially nested list.
+    Handles cases where the item is a dictionary or a list containing a dictionary.
+    """
+    if isinstance(meta_item, dict):
+        return meta_item
+    if isinstance(meta_item, list) and meta_item and isinstance(meta_item[0], dict):
+        # Handles the case where meta_item is a list like: [{'key': 'value'}]
+        return meta_item[0]
+    # Return an empty dictionary for other unexpected formats to prevent errors
+    return {}
+
+# === DB操作関数群 ===
 
 async def add_message_to_db(user_id: str, role: str, content: str):
     #データベースにメッセージを追加し、挿入された行のIDを返す
@@ -162,6 +221,8 @@ async def delete_message_from_db(message_id: int):
     #データベースからメッセージを削除
     cur.execute("DELETE FROM chat_history WHERE id = ?", (message_id,))
     conn.commit()
+    
+# === 長期記憶操作関数群 ===
     
 async def update_long_term_memory(user_id: str, key: str, value: str):
     """長期記憶を追加または更新する"""
@@ -202,21 +263,13 @@ async def get_long_term_memories(user_id: str) -> dict:
     rows = cur.fetchall()
     return {row[0]: row[1] for row in rows}
 
-def get_metadata_dict(meta_item):
-    """
-    Safely extracts the metadata dictionary from a potentially nested list.
-    Handles cases where the item is a dictionary or a list containing a dictionary.
-    """
-    if isinstance(meta_item, dict):
-        return meta_item
-    if isinstance(meta_item, list) and meta_item and isinstance(meta_item[0], dict):
-        # Handles the case where meta_item is a list like: [{'key': 'value'}]
-        return meta_item[0]
-    # Return an empty dictionary for other unexpected formats to prevent errors
-    return {}
+# === Graphノード関数 ===
 
-async def analyze_message(user_id_str: str, user_message: str, history: str):
-
+async def analyze_message(state: ChatState) -> ChatState:
+    user_id_str = state["user_id"]
+    user_message = state["message"]
+    history = state["history_str"]
+    
     prompt = f'''
     あなたは、ユーザーとの会話を分析し、後続のシステムが必要とするアクションを判断する、優秀なアシスタントです。
     特に、アークナイツのWikiデータベースとWeb検索を効率的に活用するための検索クエリ生成を得意とします。
@@ -277,120 +330,117 @@ async def analyze_message(user_id_str: str, user_message: str, history: str):
     response = await analyze_model.ainvoke(prompt)
     logger.debug(f"Analyze response: {response.content}")
     try:
-        return json.loads(response.content)
+        analysis = json.loads(response.content)
     except json.JSONDecodeError:
         logger.error(f"JSONの解析に失敗しました: {response.content}")
         # デフォルトの応答（検索しないなど）を返す
-        return {"is_retrieval_needed": False, "retrieval_query": None, "web_search_query": None}
-    
-async def handle_memory_operation(analysis_result: dict, user_id_str: str):
+        analysis = {"is_retrieval_needed": False, "retrieval_query": None, "web_search_query": None}
+        
+    state["analysis"] = analysis
+    return state
+
+async def handle_memory_operation(state: ChatState) -> ChatState:
+    analysis_result = state["analysis"]
+    user_id_str = state["user_id"]
     operation = analysis_result.get("memory_operation")
     content = analysis_result.get("memory_content")
     
     if operation is None or content is None:
-        return ""
-    
+        return state
+
     try:
         if operation == "store":
             # 長期記憶に保存
             await update_long_term_memory(user_id_str, "store_memory", content)
-            return f"「{content}」を記憶しました。"
+            state["memory_note"] = f"「{content}」を記憶しました。"
         elif operation == "delete":
             # 長期記憶から削除
             await update_long_term_memory(user_id_str, "delete_memory", content)
-            return f"「{content}」を忘れました。"
+            state["memory_note"] = f"「{content}」を忘れました。"
         else:
             logger.warning(f"Unknown memory operation: {operation}")
-            return ""
-        
+            return state
+        return state
     except Exception as e:
         logger.error(f"メモリ操作中にエラーが発生しました: {e}")
-        return "メモリ操作中にエラーが発生しました。もう一度試してください。"
+        state["memory_note"] = "メモリ操作中にエラーが発生しました。もう一度試してください。"
+        return state
 
-async def analyze_information(information: str, question: str):
-    prompt = f"""
-    あなたは与えられた情報から要点を正確に抽出する専門家です。
-    以下の「ユーザーの質問」に答えるために、提供された「参考情報」の中から、必要な部分を判断して抽出してください。
-    
-    ## ルール
-    - 質問に直接関連する情報のみを抽出してください。
-    - 情報を追加したり、自分の言葉で解釈したりしないでください。参考情報にある文章を基に、忠実に抜き出してください。
-    - 関連する情報が何も見つからない場合は、空の文字列を返してください。
-    - 出力は、箇条書きや文章の形式でまとめてください。
-    
-    ## ユーザーの質問
-    {question}
-    
-    ## 参考情報
-    {information}
-    """
+async def wiki_retrieve(state: ChatState) -> ChatState:
+    analysis_result = state["analysis"]
+    if not analysis_result.get("retrieval_query"):
+        state["wiki_text"] = None
+        return state
     try:
-        response = await analyze_model.ainvoke(prompt)
-        extracted_info = response.content
-        logger.debug(f"Extracted information: {extracted_info}")
-        return extracted_info
+        docs = await similar_document_search(analysis_result["retrieval_query"])
+        buf = []
+        if docs:
+            for doc in docs:
+                headers = []
+                if doc.metadata:
+                    #header1からheader5までをチェック
+                    for i in range(1, 6):
+                        header_key = f"header{i}"
+                        if header_key in doc.metadata:
+                            headers.append(doc.metadata[header_key])
+                h = f"見出し：{' > '.join(headers)}" if headers else ""
+                buf.append(f"{h}\n{doc.page_content}")
+        state["wiki_text"] = "\n\n".join(buf) if buf else None
     except Exception as e:
-        logger.error(f"エラーが発生しました: {e}")
-        return ""
+        logger.error(f"Wiki情報の取得中にエラーが発生しました: {e}")
+        state["wiki_text"] = None
+    return state
 
-async def information_retrieval(queries: dict):
-    if not queries.get("is_retrieval_needed", False):
-        logger.debug("情報検索は不要と判断されました。")
-        return None
-    retrieval_query = queries.get("retrieval_query")
-    web_search_query = queries.get("web_search_query")
-    
+async def web_retrieve(state: ChatState) -> ChatState:
+    analysis_result = state["analysis"]
+    query = analysis_result.get("web_search_query")
+    if not query:
+        state["web_text"] = None
+        return state
     try:
-        results = await similar_document_search(retrieval_query)
-        retrieval_result = ""
-        
-        for doc in results:
-            header_parts = []
-            if doc.metadata:
-                #header1からheader5までをチェック
-                for i in range(1, 6):
-                    header_key = f"header{i}"
-                    if header_key in doc.metadata:
-                        header_parts.append(doc.metadata[header_key])
-            
-            header_str = "見出し：" + " > ".join(header_parts) if header_parts else ""
-            retrieval_result += f"{header_str}\n{doc.page_content}\n\n"
-            
-    except Exception as e:
-        logger.error(f"情報検索中にエラーが発生しました: {e}")
-        retrieval_result = None
-    
-    try:
-        web_search_result_json = await search.search(web_search_query, include_answer="basic")
-        web_search_result = ""
-        if isinstance(web_search_result_json, dict):
-            llm_answer = web_search_result_json.get("answer", "")
-            web_search_result += f"**AIによる要約:**\n{llm_answer}\n\n" if llm_answer else ""
-            for item in web_search_result_json.get("results", []):
+        res = await search.search(query, include_answer="basic")
+        txt = []
+        if isinstance(res, dict):
+            llm_answer = res.get("answer", "")
+            if llm_answer:
+                txt.append(f"**AIによる要約:**\n{llm_answer}\n")
+            for item in res.get("results", []):
                 if isinstance(item, dict):
                     title = item.get("title", "タイトルなし")
                     content = item.get("content", "本文なし")
                     link = item.get("url", "#")
-                    web_search_result += f"**{title}**\n{content}\n[リンク]({link})\n\n"
+                    txt.append(f"**{title}**\n{content}\n[リンク]({link})\n")
                 else:
                     logger.warning(f"Unexpected item format in web search results: {item}")
-        else:
-            logger.warning(f"Unexpected web search results format: {web_search_result_json}")
+        state["web_text"] = "\n\n".join(txt) if txt else None
     except Exception as e:
-        logger.error(f"Web検索中にエラーが発生しました: {e}")
-        web_search_result = None
-        
-    result = f"""
-    # Wikiからの参考情報(アークナイツのみ)
-    {retrieval_result if retrieval_result else "関連する情報が見つかりませんでした。"}
-    
-    # Webからの参考情報(アークナイツ以外も含む。優先度低)
-    {web_search_result if web_search_result else "関連する情報が見つかりませんでした。"}
-    """
-    logger.debug(f"情報検索結果: {result}")
-    return result
+        logger.error(f"Web情報の取得中にエラーが発生しました: {e}")
+        state["web_text"] = None
+    return state
 
-async def response_generation_from_information(user_id_str: str, question: str, information: str, history: str):
+async def merge_refs(state: ChatState) -> ChatState:
+    wiki = state["wiki_text"]
+    web = state["web_text"]
+    merged = []
+    merged.append("# Wikiからの参考情報\n" + (wiki if wiki else "関連する情報が見つかりませんでした。"))
+    merged.append("# Webからの参考情報\n" + (web if web else "関連する情報が見つかりませんでした。"))
+    state["merged_info"] = "\n\n".join(merged)
+    return state
+
+async def extract_relevant(state: ChatState) -> ChatState:
+    info = state.get
+    question = state["message"]
+    extracted = await analyze_information(info, question)
+    state["extracted"] = extracted or ""
+    return state
+
+async def response_generation_from_information(state: ChatState) -> ChatState:
+    
+    user_id_str = state["user_id"]
+    question = state["message"]
+    history = state["history_str"]
+    information = state.get("extracted", "")
+    
     # --- APIに渡すメッセージリストを作成 ---
     # 1. 長期記憶からシステムプロンプトを動的に生成
     long_term_memories = await get_long_term_memories(user_id_str)
@@ -449,74 +499,76 @@ async def response_generation_from_information(user_id_str: str, question: str, 
         output_text = output_text.split("ロード:")[-1].strip()
     if output_text.startswith("「") and output_text.endswith("」"):
         output_text = output_text[1:-1]
-    return output_text
+
+    state["response_text"] = output_text
+    return state
+
+def setup_chat_graph():
+    graph = StateGraph(ChatState)
+    graph.add_node("analyze", analyze_message)
+    graph.add_node("memory_op", handle_memory_operation)
+    graph.add_node("wiki_retrieve", wiki_retrieve)
+    graph.add_node("web_search", web_retrieve)
+    graph.add_node("merge_refs", merge_refs)
+    graph.add_node("extract_relevant", extract_relevant)
+    graph.add_node("generate", response_generation_from_information)
+    
+    graph.add_edge(START, "analyze")
+    graph.add_edge("analyze", "memory_op")
+    
+    def need_retrieval(state: ChatState) -> str:
+        a = state.get("analysis", {})
+        return "search" if a.get("is_retrieval_needed") else "nosrch"
+    
+    graph.add_conditional_edges(
+        "memory_op",
+        need_retrieval,
+        {
+            "search": "wiki_or_web",
+            "nosrch": "generate",
+        },
+    )
+    # wiki と web を“並列”に走らせるためのハブ
+    graph.add_node("wiki_or_web", lambda s: s)  # ダミー分岐ノード
+    graph.add_edge("wiki_or_web", "wiki_retrieve")
+    graph.add_edge("wiki_or_web", "web_search")
+    
+    # 並列の合流 → 抽出 → 生成
+    graph.add_edge("wiki_retrieve", "merge_refs")
+    graph.add_edge("web_search", "merge_refs")
+    graph.add_edge("merge_refs", "extract_relevant")
+    graph.add_edge("extract_relevant", "generate")
+    graph.add_edge("generate", END)
+
+    # コンパイル（async）
+    app = graph.compile()
+    return app
+
+async def run_graph(user_id_str: str, message: discord.Message):
+    hist = await get_history_from_db(user_id_str, limit=10)
+    hist = [msg for msg in hist if msg["role"] != "system"]
+    hist_str = "\n".join([f"{msg['role']}: {msg['content']}" for msg in hist])
+    
+    state: ChatState = {
+        "user_id": user_id_str,
+        "message": message.content,
+        "history_str": hist_str,
+    }
+    
+    final_state = await app.ainvoke(state)
+    return final_state.get("response_text")
 
 async def direct_chat(user: discord.User, message: discord.Message):
-    total_start_time = datetime.now()
-
     user_id_str = str(user.id)
-    
-    # ユーザーのメッセージをDBに追加 (エラー時に削除するためIDを保持)
-    user_message_id = await add_message_to_db(user_id_str, "user", message.content)
-
-    # ユーザーの過去の会話履歴を取得
-    history = await get_history_from_db(user_id_str, limit=10)
-    history_without_system_prompt = [msg for msg in history if msg["role"] != "system"]
-    history_str = "\n".join([f"{msg['role']}: {msg['content']}" for msg in history_without_system_prompt])
-    
-    async with message.channel.typing():
-        try:
-            # 1. メッセージ分析
-            analysis_start_time = datetime.now()
-            analysis_result = await analyze_message(user_id_str, message.content, history_str)
-            analysis_end_time = datetime.now()
-            logger.debug(f"メッセージ分析時間: {(analysis_end_time - analysis_start_time).total_seconds():.2f}秒")
-            
-            if analysis_result.get("memory_operation") in ["store", "delete"]:
-                memory_response = await handle_memory_operation(analysis_result, user_id_str)
-                logger.debug(f"Memory operation response: {memory_response}")
-            
-            if not analysis_result.get("is_retrieval_needed", False):
-                # 2. (検索なし) 応答生成
-                logger.debug("情報検索は不要と判断されました。")
-                generation_start_time = datetime.now()
-                response_text = await response_generation_from_information(user_id_str, message.content, "", history_str)
-                generation_end_time = datetime.now()
-                logger.debug(f"応答生成時間 (検索なし): {(generation_end_time - generation_start_time).total_seconds():.2f}秒")
-
-                await add_message_to_db(user_id_str, "assistant", response_text)
-                await message.channel.send(response_text)
-                total_end_time = datetime.now()
-                logger.info(f"総処理時間 (検索なし): {(total_end_time - total_start_time).total_seconds():.2f}秒")
-                return response_text
-            
-            # 2. 情報検索
-            retrieval_start_time = datetime.now()
-            information_raw = await information_retrieval(analysis_result)
-            retrieval_end_time = datetime.now()
-            logger.debug(f"情報検索時間: {(retrieval_end_time - retrieval_start_time).total_seconds():.2f}秒")
-
-            # 3. 情報の要約・抽出
-            extraction_start_time = datetime.now()
-            information = await analyze_information(information_raw, message.content)
-            extraction_end_time = datetime.now()
-            logger.debug(f"情報抽出時間: {(extraction_end_time - extraction_start_time).total_seconds():.2f}秒")
-
-            # 4. 応答生成
-            generation_start_time = datetime.now()
-            response_text = await response_generation_from_information(user_id_str, message.content, information, history_str)
-            generation_end_time = datetime.now()
-            logger.debug(f"応答生成時間 (検索あり): {(generation_end_time - generation_start_time).total_seconds():.2f}秒")
-
-            logger.debug(f"Response text: {response_text}")
-            await add_message_to_db(user_id_str, "assistant", response_text)
-            await message.channel.send(response_text)
-            total_end_time = datetime.now()
-            logger.info(f"総処理時間 (検索あり): {(total_end_time - total_start_time).total_seconds():.2f}秒")
-            return response_text
-
-        except Exception as e:
-            logger.error(f"Error in direct_chat: {e}")
-            await message.channel.send("ごめんなさい、エラーが発生したみたいです。少し待ってからもう一度試してみてください。")
-            await delete_message_from_db(user_message_id)
-            return None
+    msg_id = await add_message_to_db(user_id_str, "user", message.content)
+    try:
+        async with message.channel.typing():
+            response_text = await run_graph(user_id_str, message.content) # message.contentを渡す
+        await add_message_to_db(user_id_str, "assistant", response_text)
+        await message.channel.send(response_text)
+        return response_text
+    except Exception as e:
+        logger.error(f"Graph error: {e}", exc_info=True)
+        await delete_message_from_db(msg_id)
+        await message.channel.send("ごめんなさい！今はうまく返答できないんです。後でもう一度お話ししましょう！")
+        return None
