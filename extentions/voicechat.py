@@ -1,20 +1,19 @@
 import asyncio
+import atexit
+import datetime
 import json
 import os
 import re
-import datetime
 import subprocess
-import atexit
-import aiohttp
 
+import aiohttp
 import discord
+from discord.errors import ClientException
 from discord.ext import tasks
 
 from extentions import log
 from extentions.aclient import client, voice_clients_list
 from extentions.config import config
-
-from discord.errors import ClientException
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "\\..\\")
@@ -31,14 +30,48 @@ voicechat = False
 #二つ以上の場合、最後がVC_chatが望ましい
 
 def voice_client_status():
-    with open(os.path.join(dir, voice_status_json_name), "r", encoding = "utf-8") as f:
-        status_dict = json.load(f)
-    return status_dict
+    with open(os.path.join(dir, voice_status_json_name), "r", encoding="utf-8") as f:
+        return json.load(f)
 
-def write_voice_status(dict):
-    with open(os.path.join(dir, voice_status_json_name), "w", encoding = "utf-8") as f:
-        json.dump(dict, f, ensure_ascii=False, indent=4)
+def write_voice_status(d: dict):
+    # normalize keys to str to avoid int/str mismatch
+    normalized = {str(k): v for k, v in d.items()}
+    with open(os.path.join(dir, voice_status_json_name), "w", encoding="utf-8") as f:
+        json.dump(normalized, f, ensure_ascii=False, indent=4)
     return
+
+def split_to_moras(kana: str) -> list[str]:
+    # 小書きゃゅょァィゥェォャュョッー等を前の仮名に連結
+    small = set("ァィゥェォャュョヮぁぃぅぇぉゃゅょゎッっー")
+    moras = []
+    for ch in kana:
+        if moras and (ch in small or ch == "ー"):
+            moras[-1] += ch
+        else:
+            moras.append(ch)
+    return moras
+
+def accent_from_marked_pron(pron: str) -> tuple[str, int|None]:
+    # 例: まっけ'んゆう -> ("まっけんゆう", 3)
+    if "'" not in pron:
+        return pron.replace("'", ""), None
+    plain = pron.replace("'", "")
+    left, _, right = pron.partition("'")
+    moras = split_to_moras(plain)
+    # マーク位置のモーラ index を数える
+    idx = len(split_to_moras(left))
+    # 下がる直前のモーラを 1-indexed で指定
+    accent_type = idx
+    return plain, accent_type
+
+def guess_accent_type(pron: str) -> int:
+    # 超簡易: 平板を既定、長語は中高寄り
+    n = len(split_to_moras(pron))
+    if n <= 2:
+        return 1  # 短語は頭高が無難なことが多い
+    if n >= 5:
+        return max(2, min(n-1, round(n/2)))
+    return 0  # 平板
 
 async def get_user_dict(session: aiohttp.ClientSession, max_retry: int = 3):
     """
@@ -206,6 +239,46 @@ async def delete_user_word(surface: str, max_retry: int = 3):
         logger.error(f"リトライ回数の上限に到達したため、単語 '{surface}' の削除に失敗しました。")
         return False
     
+async def user_word_exists(surface: str, max_retry: int = 3) -> bool:
+    async with aiohttp.ClientSession() as session:
+        user_dict = await get_user_dict(session, max_retry)
+        for uid in user_dict:
+            try:
+                if user_dict[uid]["surface"] == surface:
+                    return True
+            except Exception:
+                continue
+    return False
+
+@client.tree.command(name="add_word", description="読み上げ辞書に単語を追加します。")
+@discord.app_commands.describe(surface="単語の表記", yomi="単語の読み方。アクセントが下がる部分に'を挿入してください(例: ド'クター、くだ'もの)", accent="アクセント(音高が下がる直前のモーラのインデックスを数字で入力。めんどくさかったらautoと入力すると適当に決めます)")
+async def add_word(interaction: discord.Interaction, surface: str, yomi: str, accent: str = "auto"):
+    await interaction.response.defer()
+    
+    yomi_plain, a_type_mark = accent_from_marked_pron(yomi)
+    
+    if a_type_mark is not None:
+        accent_type = a_type_mark
+    
+    elif accent == "auto":
+        accent_type = guess_accent_type(yomi_plain)
+    
+    elif accent.isdigit():
+        accent_type = int(accent)
+    
+    else:
+        await interaction.followup.send("アクセントを入力してください。yomiまたはaccentにて入力できます。")
+        
+    n = len(split_to_moras(yomi_plain))
+    accent_type = max(0, min(n, accent_type))
+    await add_user_word(surface, yomi_plain, accent_type)
+    embed = discord.Embed(
+        color = discord.Color.green(),
+        title = "読み上げ辞書に単語を追加しました",
+        description=f"表記：{surface} 読み：{yomi_plain} アクセント位置：{accent_type}"
+    )
+    await interaction.followup.send(embed=embed)
+
 async def audio_query(session: aiohttp.ClientSession, text: str, speaker: int, max_retry: int):
     # 音声合成用のクエリを作成する
     query_payload = {"text": text, "speaker": speaker}
@@ -383,63 +456,76 @@ async def join_voice(interaction: discord.Interaction, channel: discord.VoiceCha
     await interaction.response.defer()
     try:
         user = interaction.user
-        available_client = None
-        connected = False
-        for i in range(config.voice_clients):
-            checking_voice_client: discord.Client = voice_clients_list[i]
-            available = True
-            for connected_voice_client in checking_voice_client.voice_clients:
-                if connected_voice_client.channel.guild == interaction.guild:
-                    available = False
-                if connected_voice_client.channel == interaction.user.voice.channel:
-                    connected = True
-                    break
-            
-            if available is True:
-                available_client = checking_voice_client
-                break
-            
-        if connected is True:
-            embed = discord.Embed(title="既にボイスチャンネルに接続しています", description= "既にボイスチャンネルに接続しています。`/leave`で読み上げを終了します。",color = discord.Color.red())
-            embed.set_author(name = "チャット読み上げ")
-            await interaction.followup.send(embed = embed)
+
+        # 先にVC接続の有無を確認
+        if not user.voice:
+            embed = discord.Embed(title="ボイスチャンネルに接続してください", description="ボイスチャンネルに接続してからコマンドを実行してください。", color=discord.Color.red())
+            embed.set_author(name="チャット読み上げ")
+            await interaction.followup.send(embed=embed)
             return
-        
+
+        join_channel = user.voice.channel if not channel else channel
+
+        # すでに同一のVCに接続中かチェック（いずれかの読み上げクライアント）
+        for checking_voice_client in voice_clients_list:
+            if any(vc.channel == join_channel for vc in checking_voice_client.voice_clients):
+                embed = discord.Embed(title="既にボイスチャンネルに接続しています", description="既にこのボイスチャンネルに接続しています。`/leave`で読み上げを終了します。", color=discord.Color.red())
+                embed.set_author(name="チャット読み上げ")
+                await interaction.followup.send(embed=embed)
+                return
+
+        # 読み上げ対象テキストチャンネルの重複チェック
+        # 同じテキストチャンネルを複数クライアントが担当しないようにする
+        for _, status in voice_client_status().items():
+            if interaction.channel.id in status.get("target_chats", []):
+                embed = discord.Embed(
+                    title="このテキストチャンネルは既に読み上げ中です",
+                    description="`/leave`で一度終了してから、もう一度お試しください。",
+                    color=discord.Color.red(),
+                )
+                embed.set_author(name="チャット読み上げ")
+                await interaction.followup.send(embed=embed)
+                return
+
+        # 利用可能な読み上げクライアントを探す（どこにも接続していないものを優先）
+        available_client = next((vc for vc in voice_clients_list if not vc.voice_clients), None)
+
         if available_client is None:
             logger.warning("/joinが実行されましたが使用できるボイスクライアントがありませんでした！")
-            embed = discord.Embed(title="利用できるbotがありません！", description= "現在利用できる読み上げbotがありません！\nしゃべるくん(!sh s)など、他の読み上げbotをご利用ください！",color = discord.Color.red())
-            embed.set_author(name = "チャット読み上げ")
-            await interaction.followup.send(embed = embed)
+            embed = discord.Embed(title="利用できるbotがありません！", description="現在利用できる読み上げbotがありません！\nしゃべるくん(!sh s)など、他の読み上げbotをご利用ください！", color=discord.Color.red())
+            embed.set_author(name="チャット読み上げ")
+            await interaction.followup.send(embed=embed)
             return
-        
-        if not user.voice:
-            embed = discord.Embed(title="ボイスチャンネルに接続してください", description= "ボイスチャンネルに接続してからコマンドを実行してください。",color = discord.Color.red())
-            embed.set_author(name = "チャット読み上げ")
-            await interaction.followup.send(embed = embed)
-            return
-                
-        join_channel = user.voice.channel if not channel else channel
-        target_chats = [interaction.channel.id, join_channel.id] if interaction.channel != join_channel else [interaction.channel.id]
-        
+
+        # 読み上げ対象は「コマンド実行テキストチャンネル」＋「VCのテキストチャット(同一ID)」
+        target_chats = [interaction.channel.id, join_channel.id] if interaction.channel.id != join_channel.id else [interaction.channel.id]
+
         await available_client.join_voice_channel(join_channel)
-        
+        # 記憶しておく（voice_status が消されていても再接続可能にするため）
+        try:
+            if not hasattr(available_client, "guild_connected_channels"):
+                available_client.guild_connected_channels = {}
+            available_client.guild_connected_channels[join_channel.guild.id] = join_channel.id
+        except Exception:
+            pass
+
         voice_status = voice_client_status()
-        voice_status.update({available_client.user.id: {"connected_channel": join_channel.id, "target_chats": target_chats}})
+        voice_status.update({str(available_client.user.id): {"connected_channel": join_channel.id, "target_chats": target_chats}})
         write_voice_status(voice_status)
-        
-        target_chat_str = "<#" + ">, <#".join(map(str,target_chats)) + ">"
-        
-        embed = discord.Embed(title="ボイスチャンネルに接続しました", description= "チャット読み上げを開始します。\n`/leave`で読み上げを終了します。", color = discord.Color.green())
-        embed.add_field(name = "接続したチャンネル", value = f"<#{join_channel.id}>")
-        embed.add_field(name = "読み上げ対象のチャンネル", value = target_chat_str)
-        embed.set_author(name = "チャット読み上げ")
-        await interaction.followup.send(embed = embed)
-        
+
+        target_chat_str = "<#" + ">, <#".join(map(str, target_chats)) + ">"
+
+        embed = discord.Embed(title="ボイスチャンネルに接続しました", description="チャット読み上げを開始します。\n`/leave`で読み上げを終了します。", color=discord.Color.green())
+        embed.add_field(name="接続したチャンネル", value=f"<#{join_channel.id}>")
+        embed.add_field(name="読み上げ対象のチャンネル", value=target_chat_str)
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
+
     except asyncio.TimeoutError as e:
         logger.error(f"[join]にてエラー{e}")
-        embed = discord.Embed(title="ボイスチャンネルに接続出来ませんでした", description= "もう一度お試しください。このエラーが繰り返す場合、Botが落ちている可能性があります。",color = discord.Color.red())
-        embed.set_author(name = "チャット読み上げ")
-        await interaction.followup.send(embed = embed)
+        embed = discord.Embed(title="ボイスチャンネルに接続出来ませんでした", description="もう一度お試しください。このエラーが繰り返す場合、Botが落ちている可能性があります。", color=discord.Color.red())
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
 
 @client.tree.command(name="join", description="【まずこちらを使ってください】利用できる読み上げクライアントを探し、チャット読み上げを開始します")
 @discord.app_commands.describe(channel="参加するチャンネル(任意)")
@@ -497,13 +583,56 @@ async def leave(interaction:  discord.Interaction):
         embed = discord.Embed(title="ボイスチャンネルを退出出来ませんでした", description= "もう一度お試しください。このエラーが繰り返す場合、Botが落ちている可能性があります。",color = discord.Color.red())
         embed.set_author(name = "チャット読み上げ")
         await interaction.followup.send(embed = embed)
+
+# ===== ユーザー辞書操作コマンド =====
+@client.tree.command(name="dict_add", description="TTS辞書に単語を追加（存在時は更新）します")
+@discord.app_commands.describe(surface="登録する単語の表記", yomi="読み（カタカナ）", accent="アクセント核の位置（0=平板）")
+async def dict_add(interaction: discord.Interaction, surface: str, yomi: str, accent: int = 0):
+    await interaction.response.defer()
+    try:
+        # 既存確認 → 既存なら編集、無ければ追加
+        exists = await user_word_exists(surface)
+        ok = await (edit_user_word(surface, yomi, accent) if exists else add_user_word(surface, yomi, accent))
+        if ok:
+            action = "更新" if exists else "追加"
+            embed = discord.Embed(title=f"ユーザー辞書に{action}しました", description=f"{surface} / {yomi} / accent={accent}", color=discord.Color.green())
+        else:
+            action = "更新" if exists else "追加"
+            embed = discord.Embed(title=f"ユーザー辞書の{action}に失敗しました", description=f"{surface} / {yomi} / accent={accent}", color=discord.Color.red())
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
+    except Exception as e:
+        logger.error(f"[dict_add] error: {e}")
+        embed = discord.Embed(title="ユーザー辞書の登録に失敗しました", description=str(e), color=discord.Color.red())
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
+
+@client.tree.command(name="dict_delete", description="TTS辞書から単語を削除します")
+@discord.app_commands.describe(surface="削除する単語の表記")
+async def dict_delete(interaction: discord.Interaction, surface: str):
+    await interaction.response.defer()
+    try:
+        ok = await delete_user_word(surface)
+        if ok:
+            embed = discord.Embed(title="ユーザー辞書から削除しました", description=surface, color=discord.Color.green())
+        else:
+            embed = discord.Embed(title="ユーザー辞書の削除に失敗しました", description=surface, color=discord.Color.red())
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
+    except Exception as e:
+        logger.error(f"[dict_delete] error: {e}")
+        embed = discord.Embed(title="ユーザー辞書の削除に失敗しました", description=str(e), color=discord.Color.red())
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
         
 for i in range(config.voice_clients):
 
-    guild_queues = {}
-    guild_locks = {}
-    guild_playing_flags = {}
     client_voice = voice_clients_list[i]
+    # per-voice-client state containers
+    client_voice.guild_queues = {}
+    client_voice.guild_locks = {}
+    client_voice.guild_playing_flags = {}
+    client_voice.guild_connected_channels = {}
     
     @client_voice.event
     async def on_ready(client_voice = client_voice):
@@ -523,32 +652,77 @@ for i in range(config.voice_clients):
                             break
                     
                     write_voice_status(voice_status)
+                    # also clear in-memory connected channel so we don't auto-reconnect unintentionally
+                    try:
+                        if before.channel.guild.id in client_voice.guild_connected_channels:
+                            del client_voice.guild_connected_channels[before.channel.guild.id]
+                    except Exception:
+                        pass
     
-    async def play_next_in_queue(guild: discord.Guild, client_voice = client_voice):
+    async def play_next_in_queue(guild: discord.Guild, client_voice = client_voice, vc: discord.VoiceClient | None = None):
         """
         キューから次のメッセージを取り出して再生する関数。
         一つの音声の再生が終わるたびに after コールバックから呼び出される。
         """
-        queue = guild_queues.get(guild.id)
-        if not queue or queue.empty():
-            guild_playing_flags[guild.id] = False
+        queue = client_voice.guild_queues.setdefault(guild.id, asyncio.Queue())
+        
+        if client_voice.guild_playing_flags.get(guild.id, False):
+            logger.debug(f"[voice:{client_voice.user.id}] already playing for guild {guild.id}")
             return
         
-        if guild_playing_flags.get(guild.id, False):
-            return
-        
-        lock = guild_locks.setdefault(guild.id, asyncio.Lock())
+        lock = client_voice.guild_locks.setdefault(guild.id, asyncio.Lock())
         
         async with lock:
             
-            if guild_playing_flags.get(guild.id, False):
+            if client_voice.guild_playing_flags.get(guild.id, False):
+                logger.debug(f"[voice:{client_voice.user.id}] playing flag set; skip start for guild {guild.id}")
                 return
             
-            # キューから次のメッセージを取得
+            # キューから次のメッセージを取得（空なら到着まで待つ）
+            logger.debug(f"[voice:{client_voice.user.id}] waiting for message; qsize={queue.qsize()}")
             message = await queue.get()
-            guild_playing_flags[guild.id] = True
+            logger.debug(f"[voice:{client_voice.user.id}] dequeued message; remaining qsize={queue.qsize()}")
+            client_voice.guild_playing_flags[guild.id] = True
             
             try:
+                # ボイスクライアントを特定（このクライアントが当該ギルドで接続しているもの）
+                if vc is None:
+                    for _vc in client_voice.voice_clients:
+                        if _vc.guild.id == guild.id:
+                            vc = _vc
+                            break
+                if vc is None:
+                    logger.debug(f"[voice:{client_voice.user.id}] vc not found for guild {guild.id}")
+                    client_voice.guild_playing_flags[guild.id] = False
+                    return
+
+                # 接続が切れている場合は必要に応じて再接続
+                if not vc.is_connected():
+                    # 再接続先を決める: 優先はメモリ -> voice_status.json
+                    channel_id = client_voice.guild_connected_channels.get(guild.id)
+                    if not channel_id:
+                        vs = voice_client_status()
+                        channel_id = vs.get(str(client_voice.user.id), {}).get("connected_channel")
+                    if channel_id:
+                        channel = client_voice.get_channel(channel_id)
+                        if channel:
+                            try:
+                                await client_voice.join_voice_channel(channel)
+                                client_voice.guild_connected_channels[guild.id] = channel_id
+                                logger.info(f"[voice:{client_voice.user.id}] 自動再接続: {channel.name}")
+                                # 再取得
+                                for _vc in client_voice.voice_clients:
+                                    if _vc.guild.id == guild.id:
+                                        vc = _vc
+                                        break
+                            except Exception as reconnect_e:
+                                logger.error(f"[voice:{client_voice.user.id}] 再接続に失敗: {reconnect_e}")
+                                client_voice.guild_playing_flags[guild.id] = False
+                                return
+                    else:
+                        logger.debug(f"[voice:{client_voice.user.id}] not connected and no reconnect info; skip playback")
+                        client_voice.guild_playing_flags[guild.id] = False
+                        return
                 # キューの現在のサイズに基づいて再生速度を動的に決定
                 queue_size = queue.qsize()
                 speedScale = 1.0
@@ -557,10 +731,11 @@ for i in range(config.voice_clients):
                     speedScale = 1.0 + queue_size * 0.1 if queue_size < 10 else 2.0
                 
                 # TTSを生成（この処理が完了するまで次の再生は始まらない）
+                logger.debug(f"[voice:{client_voice.user.id}] synthesize start; speedScale={speedScale}")
                 source_path = await text_to_speech(message.content, volumeScale=0.5, speedScale=speedScale, split_count=40)
                 if source_path is None:
                     logger.debug(f"音声ファイルの生成をスキップしました。メッセージ内容: {message.content[:40]}")
-                    guild_playing_flags[guild.id] = False
+                    client_voice.guild_playing_flags[guild.id] = False
                     asyncio.create_task(play_next_in_queue(guild, client_voice))
                     return
                 
@@ -569,16 +744,15 @@ for i in range(config.voice_clients):
                     source=source_path
                 )
 
-                # afterコールバックで、再生終了後に再度この関数を呼び出すように設定
-                # コールバックは別スレッドで実行されるため、asyncio.run_coroutine_threadsafe を使うのが安全
                 def after_playback(e):
-                    guild_playing_flags[guild.id] = False
+                    client_voice.guild_playing_flags[guild.id] = False
                     asyncio.run_coroutine_threadsafe(
-                        play_next_in_queue(guild, client_voice),
+                        play_next_in_queue(guild, client_voice, vc=vc),
                         client_voice.loop
                     )
                 
-                guild.voice_client.play(
+                logger.debug(f"[voice:{client_voice.user.id}] playback start")
+                vc.play(
                     source, 
                     after=after_playback
                 )
@@ -587,21 +761,24 @@ for i in range(config.voice_clients):
                 logger.error(f"Error during playback for guild {guild.id}: {type(e)}:{e}")
                 # エラーが発生しても、次のメッセージの再生を試みる
                 if "Not connected to voice" in str(e):
-                    # 再接続処理
+                    # 再接続処理を試みる（メモリ > voice_status）
                     try:
-                        voice_status = voice_client_status()
-                        channel_id = voice_status.get(str(client_voice.user.id), {}).get("connected_channel")
+                        channel_id = client_voice.guild_connected_channels.get(guild.id)
+                        if not channel_id:
+                            voice_status = voice_client_status()
+                            channel_id = voice_status.get(str(client_voice.user.id), {}).get("connected_channel")
                         if channel_id:
                             channel = client_voice.get_channel(channel_id)
                             if channel:
-                                await channel.connect(reconnect=True)
-                                logger.info(f"再接続しました: {channel}")
+                                await client_voice.join_voice_channel(channel)
+                                client_voice.guild_connected_channels[guild.id] = channel_id
+                                logger.info(f"[voice:{client_voice.user.id}] 自動再接続しました: {channel.name}")
                     except Exception as reconnect_e:
-                        logger.error(f"再接続に失敗しました: {reconnect_e}")
+                        logger.error(f"[voice:{client_voice.user.id}] 再接続に失敗しました: {reconnect_e}")
 
-                guild_playing_flags[guild.id] = False
+                client_voice.guild_playing_flags[guild.id] = False
                 asyncio.run_coroutine_threadsafe(
-                    play_next_in_queue(guild, client_voice), 
+                    play_next_in_queue(guild, client_voice, vc=vc), 
                     client_voice.loop
                 )
             finally:
@@ -612,34 +789,55 @@ for i in range(config.voice_clients):
     async def on_message(message: discord.Message, client_voice = client_voice):
 
         if message.author == client_voice.user or message.author.bot is True:
+            logger.debug(f"[voice:{client_voice.user.id}] ignore bot/self message in {getattr(message.channel, 'id', 'N/A')}")
             return
-        if not message.guild or not message.guild.voice_client:
+        if not message.guild:
+            logger.debug(f"[voice:{client_voice.user.id}] ignore DM message")
+            return
+        # このクライアント自身が当該ギルドで接続しているか判定
+        vc = None
+        for _vc in client_voice.voice_clients:
+            if _vc.guild.id == message.guild.id:
+                vc = _vc
+                break
+        if vc is None:
             return
 
-        author = message.author
-        username = str(author)  # noqa: F841
-        user_message = message.content  # noqa: F841
-        channel = message.channel  # noqa: F841
         channelID = message.channel.id
- 
-        voice_status = voice_client_status()
-        try:
-            target_channels = voice_status[str(client_voice.user.id)]["target_chats"]
-            
-        except KeyError:
+        parent_id = getattr(message.channel, "parent_id", None)
+
+        target_channels = None
+        
+        # 自分の担当チャンネルを取得
+        my_status = voice_client_status().get(str(client_voice.user.id))
+        if my_status:
+            target_channels = my_status.get("target_chats", [])
+
+        # 他のクライアントが担当しているチャンネルか確認
+        for other_client_id, status in voice_client_status().items():
+            if other_client_id != str(client_voice.user.id) and (channelID in status.get("target_chats", []) or (parent_id and parent_id in status.get("target_chats", []))):
+                logger.debug(f"[voice:{client_voice.user.id}] channel {channelID} is owned by other client {other_client_id}")
+                return
+
+        if target_channels is None:
             logger.error("読み上げクライアントが接続しているのにも関わらず、ボイスステータスが記録されていません！")
             return
-        
-        if channelID not in target_channels:
+
+        is_target = channelID in target_channels or (parent_id and parent_id in target_channels)
+        if not is_target:
+            logger.debug(f"[voice:{client_voice.user.id}] channel {channelID} (parent {parent_id}) not in targets {target_channels}")
             return
         
         guild_id = message.guild.id
-        if guild_id not in guild_queues:
+        if guild_id not in client_voice.guild_queues:
             # 新しいギルドのキューを初期化
-            guild_queues[guild_id] = asyncio.Queue()
-        await guild_queues[guild_id].put(message)
-        if not message.guild.voice_client.is_playing():
-            await play_next_in_queue(message.guild, client_voice)
+            client_voice.guild_queues[guild_id] = asyncio.Queue()
+        await client_voice.guild_queues[guild_id].put(message)
+        logger.debug(f"[voice:{client_voice.user.id}] enqueued message from channel {channelID} (parent {parent_id}); qsize={client_voice.guild_queues[guild_id].qsize()}")
+        # 再生が始まっていない場合やフラグが立っていない場合に起動
+        if not client_voice.guild_playing_flags.get(guild_id, False) or not vc.is_playing():
+            logger.debug(f"[voice:{client_voice.user.id}] start playback trigger; guild={message.guild.id}")
+            await play_next_in_queue(message.guild, client_voice, vc=vc)
                     
     @tasks.loop(time = datetime.time(hour = 4, minute = 50, tzinfo = config.JST))
     async def before_reboot(client_voice = client_voice):
