@@ -7,100 +7,63 @@
         "link": "https://arknights.wikiru.jp/?%E7%94%9F%E6%81%AF%E6%BC%94%E7%AE%97%E3%80%8C%E7%86%B1%E7%A0%82%E7%A7%98%E8%81%9E%E3%80%8D",
         "pic": "https://webusstatic.yo-star.com/uy0news/aj/5d655d15263acb8249a6cc5cec51d49e.png",
         "startTime": 1723014000,
-        "endTime": 1754506799,
+        "endTime": 1798729199,
         "monthlyUpdate": []
     },
-    "dis_rogue_4": {
-        "id": "dis_rogue_4",
+    "dis_rogue_5": {
+        "id": "dis_rogue_5",
         "type": "ROGUELIKE",
-        "name": "統合戦略「サルカズの炉辺奇談」",
-        "news": "https://arknights.jp/news/470",
-        "link": "https://arknights.wikiru.jp/?%E7%B5%B1%E5%90%88%E6%88%A6%E7%95%A5%E3%80%8C%E3%82%B5%E3%83%AB%E3%82%AB%E3%82%BA%E3%81%AE%E7%82%89%E8%BE%BA%E5%A5%87%E8%AB%87%E3%80%8D",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/d47d0fa0e91459b97500efea7fc2bb1e.png",
-        "startTime": 1739516400,
-        "endTime": 1764529199,
-        "monthlyUpdate": [
-            {
-                "month": 2,
-                "startTime": 1738350000,
-                "endTime": 1740769199,
-                "contents": "- 語り手の目録01: ニンフ"
-            }
-        ]
+        "name": "統合戦略「歳の界園志異」",
+        "news": "https://arknights.jp/news/2119",
+        "link": "https://arknights.wikiru.jp/?%E7%B5%B1%E5%90%88%E6%88%A6%E7%95%A5%E3%80%8C%E6%AD%B3%E3%81%AE%E7%95%8C%E5%9C%92%E5%BF%97%E7%95%B0%E3%80%8D",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/08/P1tioSJu.png",
+        "startTime": 1766041200,
+        "endTime": 1790794799,
+        "monthlyUpdate": []
     },
-    "挽歌が灰に還る時": {
-        "id": "挽歌が灰に還る時",
+    "鏡中集": {
+        "id": "鏡中集",
+        "type": "MINISTORY",
+        "stageAdd": false,
+        "name": "鏡中集",
+        "news": "https://arknights.jp/news/2097",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88163_%E9%8F%A1%E4%B8%AD%E9%9B%86",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/04/q4gSM8tO.png",
+        "startTime": 1765436400,
+        "endTime": 1765997999,
+        "rewardEndTime": 1766257199
+    },
+    "太陽すらも追い越して(復刻)": {
+        "id": "太陽すらも追い越して(復刻)",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "太陽すらも追い越して(復刻)",
+        "news": "https://www.arknights.jp/news/2273",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88164_%E5%A4%AA%E9%99%BD%E3%81%99%E3%82%89%E3%82%82%E8%BF%BD%E3%81%84%E8%B6%8A%E3%81%97%E3%81%A6%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/26/mkd7DQSM.png",
+        "startTime": 1767682800,
+        "endTime": 1768503599,
+        "rewardEndTime": 1768849199
+    },
+    "墟": {
+        "id": "墟",
         "type": "SIDESTORY",
         "stageAdd": true,
-        "name": "挽歌が灰に還る時",
-        "news": "https://arknights.jp/news/1564",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88153_%E6%8C%BD%E6%AD%8C%E3%81%8C%E7%81%B0%E3%81%AB%E9%82%84%E3%82%8B%E6%99%82",
-        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/22/83vUpd3y.png",
-        "startTime": 1756364400,
-        "endTime": 1757530799,
-        "rewardEndTime": 1758135599,
+        "name": "墟",
+        "news": "https://arknights.jp/news/2333",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88165_%E5%A2%9F",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/01/09/Om7qfXi4.png",
+        "startTime": 1768546800,
+        "endTime": 1770317999,
+        "rewardEndTime": 1770922799,
         "additionalStage": [
             {
-                "name": "消えゆく炎",
-                "startTime": 1756969200
-            }
-        ]
-    },
-    "協心競技#1": {
-        "id": "協心競技#1",
-        "type": "MULTIPLAY",
-        "stageAdd": false,
-        "name": "協心競技#1",
-        "news": "https://arknights.jp/news/1569",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88154_%E5%8D%94%E5%BF%83%E7%AB%B6%E6%8A%80%EF%BC%831",
-        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/29/2lhxJb1X.png",
-        "startTime": 1756969200,
-        "endTime": 1758740399,
-        "rewardEndTime": 1758999599
-    },
-    "解離結合": {
-        "id": "解離結合",
-        "type": "MAIN",
-        "stageAdd": false,
-        "name": "解離結合",
-        "news": "https://arknights.jp/news/1615",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88155_%E7%AC%AC%E5%8D%81%E4%BA%94%E7%AB%A0%E5%85%AC%E9%96%8B",
-        "pic": "https://arknights.wikiru.jp/attach2/E382A4E38399E383B3E383883135355FE7ACACE58D81E4BA94E7ABA0E585ACE9968B_657031352E706E67.png",
-        "startTime": 1758006000,
-        "endTime": 1759172399,
-        "rewardEndTime": 1759172399
-    },
-    "バベル(復刻)": {
-        "id": "バベル(復刻)",
-        "type": "SIDESTORY",
-        "stageAdd": false,
-        "name": "バベル(復刻)",
-        "news": "https://arknights.jp/news/1672",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88156_%E3%83%90%E3%83%99%E3%83%AB%28%E5%BE%A9%E5%88%BB%29",
-        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/09/25/_GgDj6Ze.png",
-        "startTime": 1759215600,
-        "endTime": 1760036399,
-        "rewardEndTime": 1760381999
-    },
-    "命ある者の旅": {
-        "id": "命ある者の旅",
-        "type": "SIDESTORY",
-        "stageAdd": true,
-        "name": "命ある者の旅",
-        "news": "https://arknights.jp/news/1688",
-        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88157_%E5%91%BD%E3%81%82%E3%82%8B%E8%80%85%E3%81%AE%E6%97%85",
-        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/10/07/Qxq4qdhY.png",
-        "startTime": 1760425200,
-        "endTime": 1762196399,
-        "rewardEndTime": 1762801199,
-        "additionalStage": [
-            {
-                "name": "主への謁見",
-                "startTime": 1761030000
+                "name": "鍛冶町跡",
+                "startTime": 1769151600
             },
             {
-                "name": "安息の地",
-                "startTime": 1761634800
+                "name": "縁切り石段",
+                "startTime": 1769756400
             }
         ]
     }

@@ -250,34 +250,46 @@ async def user_word_exists(surface: str, max_retry: int = 3) -> bool:
                 continue
     return False
 
-@client.tree.command(name="add_word", description="読み上げ辞書に単語を追加します。")
-@discord.app_commands.describe(surface="単語の表記", yomi="単語の読み方。アクセントが下がる部分に'を挿入してください(例: ド'クター、くだ'もの)", accent="アクセント(音高が下がる直前のモーラのインデックスを数字で入力。めんどくさかったらautoと入力すると適当に決めます)")
-async def add_word(interaction: discord.Interaction, surface: str, yomi: str, accent: str = "auto"):
+# ===== ユーザー辞書操作コマンド =====
+@client.tree.command(name="dict_add", description="TTS辞書に単語を追加（存在時は更新）します")
+@discord.app_commands.describe(surface="登録する単語の表記", yomi="読み（カタカナ）", accent="アクセント核の位置（0=平板）")
+async def dict_add(interaction: discord.Interaction, surface: str, yomi: str, accent: int = 0):
     await interaction.response.defer()
-    
-    yomi_plain, a_type_mark = accent_from_marked_pron(yomi)
-    
-    if a_type_mark is not None:
-        accent_type = a_type_mark
-    
-    elif accent == "auto":
-        accent_type = guess_accent_type(yomi_plain)
-    
-    elif accent.isdigit():
-        accent_type = int(accent)
-    
-    else:
-        await interaction.followup.send("アクセントを入力してください。yomiまたはaccentにて入力できます。")
+    try:
+        # 既存確認 → 既存なら編集、無ければ追加
+        exists = await user_word_exists(surface)
+        ok = await (edit_user_word(surface, yomi, accent) if exists else add_user_word(surface, yomi, accent))
+        if ok:
+            action = "更新" if exists else "追加"
+            embed = discord.Embed(title=f"ユーザー辞書に{action}しました", description=f"{surface} / {yomi} / accent={accent}", color=discord.Color.green())
+        else:
+            action = "更新" if exists else "追加"
+            embed = discord.Embed(title=f"ユーザー辞書の{action}に失敗しました", description=f"{surface} / {yomi} / accent={accent}", color=discord.Color.red())
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
+    except Exception as e:
+        logger.error(f"[dict_add] error: {e}")
+        embed = discord.Embed(title="ユーザー辞書の登録に失敗しました", description=str(e), color=discord.Color.red())
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
         
-    n = len(split_to_moras(yomi_plain))
-    accent_type = max(0, min(n, accent_type))
-    await add_user_word(surface, yomi_plain, accent_type)
-    embed = discord.Embed(
-        color = discord.Color.green(),
-        title = "読み上げ辞書に単語を追加しました",
-        description=f"表記：{surface} 読み：{yomi_plain} アクセント位置：{accent_type}"
-    )
-    await interaction.followup.send(embed=embed)
+@client.tree.command(name="dict_delete", description="TTS辞書から単語を削除します")
+@discord.app_commands.describe(surface="削除する単語の表記")
+async def dict_delete(interaction: discord.Interaction, surface: str):
+    await interaction.response.defer()
+    try:
+        ok = await delete_user_word(surface)
+        if ok:
+            embed = discord.Embed(title="ユーザー辞書から削除しました", description=surface, color=discord.Color.green())
+        else:
+            embed = discord.Embed(title="ユーザー辞書の削除に失敗しました", description=surface, color=discord.Color.red())
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
+    except Exception as e:
+        logger.error(f"[dict_delete] error: {e}")
+        embed = discord.Embed(title="ユーザー辞書の削除に失敗しました", description=str(e), color=discord.Color.red())
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
 
 async def audio_query(session: aiohttp.ClientSession, text: str, speaker: int, max_retry: int):
     # 音声合成用のクエリを作成する
@@ -583,47 +595,6 @@ async def leave(interaction:  discord.Interaction):
         embed = discord.Embed(title="ボイスチャンネルを退出出来ませんでした", description= "もう一度お試しください。このエラーが繰り返す場合、Botが落ちている可能性があります。",color = discord.Color.red())
         embed.set_author(name = "チャット読み上げ")
         await interaction.followup.send(embed = embed)
-
-# ===== ユーザー辞書操作コマンド =====
-@client.tree.command(name="dict_add", description="TTS辞書に単語を追加（存在時は更新）します")
-@discord.app_commands.describe(surface="登録する単語の表記", yomi="読み（カタカナ）", accent="アクセント核の位置（0=平板）")
-async def dict_add(interaction: discord.Interaction, surface: str, yomi: str, accent: int = 0):
-    await interaction.response.defer()
-    try:
-        # 既存確認 → 既存なら編集、無ければ追加
-        exists = await user_word_exists(surface)
-        ok = await (edit_user_word(surface, yomi, accent) if exists else add_user_word(surface, yomi, accent))
-        if ok:
-            action = "更新" if exists else "追加"
-            embed = discord.Embed(title=f"ユーザー辞書に{action}しました", description=f"{surface} / {yomi} / accent={accent}", color=discord.Color.green())
-        else:
-            action = "更新" if exists else "追加"
-            embed = discord.Embed(title=f"ユーザー辞書の{action}に失敗しました", description=f"{surface} / {yomi} / accent={accent}", color=discord.Color.red())
-        embed.set_author(name="チャット読み上げ")
-        await interaction.followup.send(embed=embed)
-    except Exception as e:
-        logger.error(f"[dict_add] error: {e}")
-        embed = discord.Embed(title="ユーザー辞書の登録に失敗しました", description=str(e), color=discord.Color.red())
-        embed.set_author(name="チャット読み上げ")
-        await interaction.followup.send(embed=embed)
-
-@client.tree.command(name="dict_delete", description="TTS辞書から単語を削除します")
-@discord.app_commands.describe(surface="削除する単語の表記")
-async def dict_delete(interaction: discord.Interaction, surface: str):
-    await interaction.response.defer()
-    try:
-        ok = await delete_user_word(surface)
-        if ok:
-            embed = discord.Embed(title="ユーザー辞書から削除しました", description=surface, color=discord.Color.green())
-        else:
-            embed = discord.Embed(title="ユーザー辞書の削除に失敗しました", description=surface, color=discord.Color.red())
-        embed.set_author(name="チャット読み上げ")
-        await interaction.followup.send(embed=embed)
-    except Exception as e:
-        logger.error(f"[dict_delete] error: {e}")
-        embed = discord.Embed(title="ユーザー辞書の削除に失敗しました", description=str(e), color=discord.Color.red())
-        embed.set_author(name="チャット読み上げ")
-        await interaction.followup.send(embed=embed)
         
 for i in range(config.voice_clients):
 

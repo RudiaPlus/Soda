@@ -106,6 +106,7 @@ class Config():
         self.vccreate_log_channel = 1305570776690200636 #個別VCチャットログ
         self.multiplay_request_channel = 1306450120669139024 #
 
+        self.asset_channel = 1428660744315998359 #画像アップロード用
         self.logging_channel = 1318532200588640297
         
         self.event_stage_channel = 1232585432756129813 #イベント

@@ -1,16 +1,9 @@
 import asyncio
-import atexit
 import datetime
-import html
-import json as js
-import os
 import re
-import time
 from typing import List, Optional, Tuple, Union
 
 import aiohttp
-import aiosqlite
-import feedparser
 from discord import Color, Embed
 from discord.ext import tasks
 from tweety import Twitter
@@ -21,390 +14,304 @@ from tweety.types import (
     Tweet,
 )
 
-from extentions import JSTTime, log
+from extentions import log
 from extentions.aclient import client
 from extentions.config import config
 
-dir = os.path.abspath(__file__ + "/../")
+# Logger and constants
 logger = log.setup_logger()
-test = config.test
-last_tweet_url = ""
-web = config.selenium # Switch of web
-agent = 'Chromium";v="130","Google Chrome";v="130","Not?A_Brand";v="99'
-headers = {'User-Agent': agent}
-twitterurl = "https://twstalker.com/AKEndfieldJP"
-feedurl = "https://nitter.poast.org/AKEndfieldJP/rss"
-feedurl_alter = "https://nitter.privacydev.net/AKEndfieldJP/rss"
-twstalker = "https://twstalker.com/AKEndfieldJP"
-timeout = aiohttp.ClientTimeout(total=10)
+APP: Optional[Twitter] = None
 
-app :Optional[Twitter] = None
+FXTWITTER_ENDPOINT = "https://api.fxtwitter.com/status/{id}"
+HTTP_TIMEOUT = aiohttp.ClientTimeout(total=10)
+HTTP_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/130 Safari/537.36"
+    ),
+    "Accept-Encoding": "gzip, deflate, br",
+}
 
-def date_comparator(date1: Union[datetime.datetime, str], date2: Union[datetime.datetime, str], FORMAT: str = '%Y-%m-%d %H:%M:%S%z') -> int:
-    date1, date2 = [datetime.datetime.strptime(date, FORMAT) if isinstance(date, str) else date for date in (date1, date2)]
-    return (date1 > date2) - (date1 < date2)
+TARGET_USERNAME = "AKEndfieldJP"
 
-async def tweet_expand(tweets, expanded_tweets=None) -> List[Tweet]:
+
+def date_comparator(
+    date1: Union[datetime.datetime, str],
+    date2: Union[datetime.datetime, str],
+    fmt: str = "%Y-%m-%d %H:%M:%S%z",
+) -> int:
+    """Compare two datetimes (aware) or formatted strings.
+
+    Returns 1 if date1 > date2, -1 if date1 < date2, 0 if equal.
     """
-    Expand tweets to include threads and conversations.
-    """
-    if expanded_tweets is None:
-        expanded_tweets = []
-    for tweet in tweets:
-        if isinstance(tweet, (SelfThread, ConversationThread)):
-            await tweet_expand(tweet.tweets, expanded_tweets)
-        elif isinstance(tweet, Tweet):
-            expanded_tweets.append(tweet)
-    return expanded_tweets
+    d1 = datetime.datetime.strptime(date1, fmt) if isinstance(date1, str) else date1
+    d2 = datetime.datetime.strptime(date2, fmt) if isinstance(date2, str) else date2
+    return (d1 > d2) - (d1 < d2)
 
-async def get_tweets(tweets: List[Tweet], username: str) -> Optional[list[Tweet]]:
-    if username == "AKEndfieldJP":
-        channel = client.get_channel(config.ake_news)
-    
+
+async def _expand_tweets(items) -> List[Tweet]:
+    """Flatten threads/conversations into a simple Tweet list."""
+    result: List[Tweet] = []
+    for item in items:
+        if isinstance(item, (SelfThread, ConversationThread)):
+            result.extend(await _expand_tweets(item.tweets))
+        elif isinstance(item, Tweet):
+            result.append(item)
+    return result
+
+
+async def _channel_for_username(username: str):
+    if username == TARGET_USERNAME:
+        return client.get_channel(config.ake_news)
+    return None
+
+
+async def _filter_new_tweets(tweets: List[Tweet], username: str) -> Optional[List[Tweet]]:
+    """Filter tweets posted after the last bot message in target channel."""
+    channel = await _channel_for_username(username)
+    if channel is None:
+        return None
+
+    # Determine last published time by the bot in the channel.
     try:
         last_message = await channel.fetch_message(channel.last_message_id)
     except Exception as e:
-        logger.warning(f"キャッシュからの最後のメッセージ取得に失敗しました: {e}")
-        async for message in channel.history(limit=10):
+        logger.warning(f"最後のメッセージ取得に失敗しました: {e} / 履歴から探索します")
+        last_message = None
+        async for message in channel.history(limit=20):
             if message.author.id == client.user.id:
                 last_message = message
                 break
-    last_published_time = last_message.created_at
-    
-    expanded_tweets = await tweet_expand(tweets)
-    tweets = [tweet for tweet in expanded_tweets if tweet.author.screen_name == username and date_comparator(tweet.created_on, last_published_time) == 1]
-    
-    if tweets != []:
-        return sorted(tweets, key=lambda x: x.created_on)
+        if last_message is None:
+            # Fallback to now-1day to avoid flooding on first run.
+            last_published_time = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
+        else:
+            last_published_time = last_message.created_at
     else:
+        last_published_time = last_message.created_at
+
+    expanded = await _expand_tweets(tweets)
+    own_new = [
+        t
+        for t in expanded
+        if t.author.screen_name == username and date_comparator(t.created_on, last_published_time) == 1
+    ]
+    if not own_new:
         return None
-    
+    return sorted(own_new, key=lambda t: t.created_on)
+
+
 async def setup_app():
-    async def authenticate_account(account_name, account_token):
-        app = Twitter(account_name)
+    """Authenticate Tweety client and verify timeline access."""
+    async def authenticate(account_name: str, account_token: str) -> Twitter:
+        twitter = Twitter(account_name)
         max_attempts = 2
         for attempt in range(max_attempts):
             try:
-                await app.load_auth_token(account_token)
-                logger.info(f"Authenticated {account_name} successfully.")
-                tl = await app.get_home_timeline(timeline_type=HOME_TIMELINE_TYPE_FOLLOWING)
+                await twitter.load_auth_token(account_token)
+                logger.info(f"Twitter認証に成功: {account_name}")
+                tl = await twitter.get_home_timeline(timeline_type=HOME_TIMELINE_TYPE_FOLLOWING)
                 if not tl:
-                    logger.error(f"Failed to retrieve home timeline for {account_name}.")
-                    raise ValueError("Home timeline is empty.")
-                else:
-                    logger.info(f"Successfully retrieved home timeline for {account_name}.")
-                    logger.debug(f"Last tweets of timeline: {tl.tweets[0].text[:30]}...")
-                return app
+                    raise ValueError("Home timeline is empty")
+                logger.debug(f"ホームTL取得成功 / 先頭ツイート: {tl.tweets[0].text[:30]}...")
+                return twitter
             except Exception as e:
-                logger.error(f"Authentication failed for {account_name}: {e}")
+                logger.error(f"Twitter認証に失敗 ({account_name}): {e}")
                 if attempt < max_attempts - 1:
                     await asyncio.sleep(4 ** attempt)
                 else:
-                    logger.error(f"Failed to authenticate {account_name} after {max_attempts} attempts.")
                     raise
-    
-    global app
-    app = await authenticate_account(config.twitter_account_name, config.twitter_account_token)
-    
+
+    global APP
+    APP = await authenticate(config.twitter_account_name, config.twitter_account_token)
+
+
 async def gather_reed_arts(since: datetime.datetime):
-    query = '("苇草" OR "Reed" OR "loughshinny" OR "爱布拉娜" OR "拉芙希妮" OR "ラフシニー" OR "エブラナ" OR "Eblana" OR "リード" OR "死芒" OR "ネクラス" OR "Necrass") min_retweets:3 (アークナイツ OR 明日方舟 OR Arknights OR 명일방주) (filter:images OR filter:videos)'
-    since_delta = since - datetime.timedelta(days=1)
-    since_str = since_delta.strftime('%Y-%m-%d')
-    query += f' since:{since_str}'
-    channel = client.get_channel(1393533104391589952)  # Reed Arts channel ID
+    """Search and post recent Reed-related arts since given date (JST)."""
+    # Keywords intentionally broad to collect fan arts; limit by media and retweets.
+    query = (
+        '("苇芦" OR "Reed" OR "loughshinny" OR "爱因威" OR "拉芙希妮" OR '
+        '"ラフシニー" OR "エブラナ" OR "Eblana" OR "リード" OR "死者" OR '
+        '"ネクラス" OR "Necrass") min_retweets:3 '
+        '(アークナイツ OR 明日方舟 OR Arknights) (filter:images OR filter:videos)'
+    )
+    since_str = (since - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    query += f" since:{since_str}"
+
     try:
-        search_results = await app.search(keyword = query)
-        tweets:List[Tweet] = search_results.results
-        for tweet in tweets:
-            tweet_url = tweet.url.replace("x.com", "fxtwitter.com")
-            await channel.send(tweet_url)
-        return
-    
+        assert APP is not None, "Twitterクライアント未初期化"
+        search_results = await APP.search(keyword=query)
+        tweets: List[Tweet] = getattr(search_results, "results", []) or []
+        channel = client.get_channel(1393533104391589952)  # Reed Arts channel ID
+        for t in tweets:
+            await channel.send(t.url.replace("x.com", "fxtwitter.com"))
     except Exception as e:
-        logger.error(f"Failed to gather Reed Arts tweets: {e}")
-    
-async def notification(tweets, username: str):
-    latest_tweets = await get_tweets(tweets, username)
-    if latest_tweets is None:
+        logger.error(f"Reed Arts 検索に失敗: {e}")
+
+
+async def _notify(tweets: List[Tweet], username: str):
+    latest = await _filter_new_tweets(tweets, username)
+    if not latest:
         return
-    
-    for tweet in latest_tweets:
-        logger.info(f"New tweet from {username}: {tweet.text[:30]}...")
-        url = tweet.url
+
+    channel = await _channel_for_username(username)
+    if channel is None:
+        return
+
+    for t in latest:
+        url = t.url
         embeds, video_urls = await create_embed(url)
-        if username == "AKEndfieldJP":
-            channel = client.get_channel(config.ake_news)
-        message = await channel.send(f"<{url}>", embeds=embeds)
-        await message.publish()
-        if video_urls:
-            for url in video_urls:
-                await message.reply(content = f"[ブラウザで開く]({url})")
-        logger.info(f"新規ツイート({url})をアナウンスしました。")
-        
-async def tweets_updater(app: Twitter):
-    try:
-        tweet_notifications = await app.get_list_tweets(list_id=config.notify_list_id)
-        if not tweet_notifications:
-            return
-        tweets = tweet_notifications.tweets
-        logger.debug(f"notified tweets found: {len(tweets)}")
-        return tweets
-    except Exception as e:
-        logger.error(f"Failed to get tweet notifications: {e}")
-        return
-
-@tasks.loop(minutes = 5)
-async def ake_tweet_retrieve(): 
-    global app
-    if app is None:
-        logger.debug("Twitterへの接続がありません")
-        return
-    
-    try:
-        tweets = await tweets_updater(app)
-        if tweets is None:
-            logger.debug("No new tweets found or failed to retrieve tweets.")
-            return
-        
-        await notification(tweets, "AKEndfieldJP")
-        
-    except Exception as e:
-        logger.error(f"Error in ake_tweet_retrieve: {e}")
-        
-async def get_response(url, json: bool = False):
-    async with aiohttp.ClientSession(timeout=timeout, headers=headers) as session:
-        async with session.get(url) as r:
-            if json is False:
-                r_text = await r.text()
-                return r, r_text
-            else:
-                r_json =  await r.json()
-                return r, r_json
-        
-async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
-    twitter_x_pattern = r"https?:\/\/(www\.)?(x|twitter)\.com\/[^/]+\/status\/(\d+)"
-    links_twitter_x = re.finditer(twitter_x_pattern, content)
-    if not links_twitter_x:
-        return [], []
-    
-    ids = []
-    for matched in links_twitter_x:
-        link = matched.group()
-        index = link.find("/status/")
-        id = link[index+8:]
-        ids.append(id)
-        
-    responses = []
-    for id in ids:
-        response, tweet_json = await get_response(f"https://api.fxtwitter.com/status/{id}", json = True)
-        if response.status == 200:
-            tweet_data = tweet_json["tweet"]
-            
-            tweet_url = tweet_data["url"]
-            
-            author = tweet_data["author"]
-            
-            if "avatar_url" in author:
-                avatar_url = author["avatar_url"]
-            else:
-                avatar_url = None
-            
-            tweet_text = tweet_data["text"]
-            
-            created_at = tweet_data["created_timestamp"]
-            
-            replying_to = tweet_data["replying_to"]
-            
-            media_urls = []
-            video_urls = []
-            
-            if "media" in tweet_data:
-                
-                for key in tweet_data["media"]:
-                    if key != "photos" and key != "videos":
-                        continue
-                    
-                    tweet_medias = tweet_data["media"][key]                        
-                    for media in tweet_medias:
-                        url = media["url"]
-                        if key == "photos":
-                            media_urls.append(url)
-                        elif key == "videos":
-                            video_urls.append(url)
-            
-            tweet_dict = {"id": id, "url": tweet_url, "author_name": author["name"], "screen_name": author["screen_name"], "author_avatar": avatar_url, "text": tweet_text, "created_at": created_at, "media_urls": media_urls, "video_urls": video_urls, "replying_to": replying_to}
-            responses.append(tweet_dict)
-    
-    embeds = []
-    video_urls = []
-    
-    for dic in responses:
-        timestamp = datetime.datetime.fromtimestamp(dic["created_at"])
-        tweet_embed = Embed(color = Color.blue(), description=dic["text"], timestamp = timestamp)
-        if replying_to:
-            tweet_embed.set_author(name = f"{dic['author_name']} @{dic['screen_name']} の @{dic['replying_to']} へのリプライ", url = dic["url"], icon_url=dic["author_avatar"])
-        else:
-            tweet_embed.set_author(name = f"{dic['author_name']} @{dic['screen_name']}", url = dic["url"], icon_url=dic["author_avatar"])
-        embeds.append(tweet_embed)
-        
-        if dic["media_urls"]:
-            for url in dic["media_urls"]:
-                media_embed = Embed(color = Color.blue(), description=f"[ブラウザで開く]({url})")
-                media_embed.set_image(url = url)
-                embeds.append(media_embed)
-                
-        if dic["video_urls"]:
-            for url in dic["video_urls"]:
-                video_urls.append(url)
-    
-    return embeds, video_urls
-
-    """except Exception as e:
-        logger.error(f"[create_embed]にてエラー: {e}")
-        return [], []"""
-            
-        
-"""async def check_duplicate(url: str) -> bool:
-    json_name = "jsons/tweeted.json"
-    with open(os.path.join(dir, json_name), "r", encoding = "UTF-8") as f:
-        tweeted_list = json.load(f)
-    if url in tweeted_list:
-        duplicate = True
-    else:
-        duplicate = False
-        tweeted_list.append(url)
-        if len(tweeted_list) > 10:
-            tweeted_list.pop(0)
-        with open(os.path.join(dir, json_name), "w", encoding = "UTF-8") as f:
-            json.dump(tweeted_list, f, indent=4, ensure_ascii=False)
-    return duplicate
-
-async def publish_tweet_from_nitter_url(url: str) -> None:
-    if not url:
-        return
-    target = url.find(".com/")
-    new_tweet_url_splitted = url[target+5:]
-    new_tweet_url_twitter = f"https://x.com/{new_tweet_url_splitted}"
-    duplicate = await check_duplicate(new_tweet_url_twitter)
-    if duplicate is False:
-        channel = client.get_channel(config.ake_news)
-        embeds, video_urls = await create_embed(new_tweet_url_twitter)
-        message = await channel.send(f"<{new_tweet_url_twitter}>", embeds = embeds)
-        await message.publish()
-        if video_urls:
-            for url in video_urls:
-                await message.reply(content = f"[ブラウザで開く]({url})")
-        logger.info(f"新規ツイート({new_tweet_url_twitter})をアナウンスしました。")
-    else:
-        logger.info(f"新規ツイート({new_tweet_url_twitter})は既にアナウンスされています。投稿を中止しました。")
-   
-@tasks.loop(minutes=7)
-async def ake_tweet_retrieve():
-    global last_tweet_url
-    try:
-        logger.debug("ツイートを取得します")
-        response, json = await get_response(twitterurl)
-        if response.status != 200:
-            logger.error(f"ツイートにアクセスできませんでした。ステータスコード: {response.status}")
-            return
-        time_before_refresh = JSTTime.timeJST("raw")
-        new_tweet_urls = []
-        driver.refresh()
-        new_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, '(//div[@class="user-text3"])[1]/span')))
-        
-        new_tweet_url = new_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
-        
-        if new_tweet_url != last_tweet_url:
-            current_tweet_url = new_tweet_url
-            count = 1
-            while current_tweet_url != last_tweet_url and count < 10:
-                count += 1
-                new_tweet_urls.append(current_tweet_url)
-                print(current_tweet_url)
-                current_tweet = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//div[@class="user-text3"])[{count}]/span')))
-                
-                current_tweet_url = current_tweet.find_element(By.XPATH, ".//a").get_attribute("href")
-            
-            last_tweet_url = new_tweet_urls[0]
-            
-            logger.info(f"@AKEndfieldJPの最新ツイートを{count-1}個twstalkerにて取得しました: {new_tweet_urls}")
-            
-            new_tweet_urls = list(reversed(new_tweet_urls))
-            
-            for url in new_tweet_urls:
-                await publish_tweet_from_nitter_url(url)
-        
-        time_after_retrieve = JSTTime.timeJST("raw")
-        time_passed = time_after_retrieve - time_before_refresh
-        logger.debug(f"ツイート取得完了 経過時間: {time_passed.total_seconds()}")
-
-            
-    except Exception as e:
-        print(f"error: {e}")"""
-        
-"""@tasks.loop(minutes = 5)
-async def ake_feed_retrieve():
-    channel = client.get_channel(config.ake_news)
-    last_message = await channel.fetch_message(channel.last_message_id)
-    last_published_time = last_message.created_at
-    response, text = await get_response(feedurl)
-    if response.status != 200:
-        logger.error(f"ツイートにアクセスできませんでした。ステータスコード: {response.status}")
-        return
-        
-    driver = await asyncio.to_thread(webdriver.Chrome, options = options)
-    try:
-        driver.set_page_load_timeout(15)
-        await asyncio.to_thread(driver.get, feedurl)
-        await asyncio.sleep(15)
-        source = driver.page_source
-        soup = BeautifulSoup(source, "html.parser")
-        pre_soup = soup.find("pre")
-        pre_content = pre_soup.text
-        
-    except Exception:
+        msg = await channel.send(f"<{url}>", embeds=embeds)
         try:
-            driver.set_page_load_timeout(15)
-            await asyncio.to_thread(driver.get, feedurl_alter)
-            await asyncio.sleep(5)
-            source = driver.page_source
-            soup = BeautifulSoup(source, "html.parser")
-            pre_soup = soup.find("pre")
-            pre_content = pre_soup.text
-            
-        except Exception as e:
-            logger.warning(f"フィードにアクセスできませんでした: {type(e)}")
-            return
-    
-    finally:
-        await asyncio.to_thread(driver.quit)
-    
-    decoded_xml = html.unescape(pre_content)
-    
-    try:
-        feed = await asyncio.wait_for(asyncio.to_thread(feedparser.parse, decoded_xml), timeout=10)
-    except asyncio.TimeoutError:
-        logger.warning("feedparser.parseがタイムアウトしました。")
-        return
+            await msg.publish()
+        except Exception:
+            # Non-news channels can't publish; ignore.
+            pass
+        for v in video_urls:
+            await msg.reply(content=f"[ブラウザで開く]({v})")
+        logger.info(f"新規ツイートをアナウンス: {url}")
 
-    new_tweets = []
-    for entry in feed["entries"]:
-        post_time = entry['published_parsed']
-        post_datetime = datetime.datetime(*post_time[:6], tzinfo = datetime.timezone.utc)
-        if post_datetime > last_published_time:
-            url = entry["link"]
-            target = url.find(".org/") if ".org" in url else url.find(".net/")
-            #利用するサイトのドメインから決める
-            target_end = url.find("#m")
-            new_tweet_url_splitted = url[target+5:target_end]
-            new_tweet_url_twitter = f"https://x.com/{new_tweet_url_splitted}"
-            new_tweets.append(new_tweet_url_twitter)
-    new_tweets.reverse()
-    for entry in new_tweets:
-        embeds, video_urls = await create_embed(entry)
-        message = await channel.send(f"<{entry}>", embeds = embeds)
-        await message.publish()
-        if video_urls:
-            for url in video_urls:
-                await message.reply(content = f"[ブラウザで開く]({url})")
-        logger.info(f"新規ツイート({new_tweet_url_twitter})をアナウンスしました。")"""
+
+async def _fetch_list_tweets(api: Twitter):
+    try:
+        notifications = await api.get_list_tweets(list_id=config.notify_list_id)
+        if not notifications:
+            return None
+        return notifications.tweets
+    except Exception as e:
+        logger.error(f"通知リストの取得に失敗: {e}")
+        return None
+
+
+@tasks.loop(minutes=5)
+async def ake_tweet_retrieve():
+    global APP
+    if APP is None:
+        logger.debug("Twitterクライアント未接続")
+        return
+    try:
+        tweets = await _fetch_list_tweets(APP)
+        if not tweets:
+            logger.debug("新着ツイートなし / 取得失敗")
+            return
+        await _notify(tweets, TARGET_USERNAME)
+    except Exception as e:
+        logger.error(f"ake_tweet_retrieveにてエラー: {e}")
+
+
+async def get_response(url: str, as_json: bool = False):
+    """HTTP GET with robust content-encoding handling.
+
+    Forces manual decompression to work around servers replying with zstd
+    (or other encodings) that aiohttp doesn't decode by default.
+    """
+    async with aiohttp.ClientSession(
+        timeout=HTTP_TIMEOUT,
+        headers=HTTP_HEADERS,
+        auto_decompress=False,
+    ) as session:
+        async with session.get(url) as r:
+            raw = await r.read()
+            encoding = (r.headers.get("Content-Encoding") or "").lower()
+
+            try:
+                if encoding == "zstd":
+                    import zstandard as zstd  # type: ignore
+                    raw = zstd.ZstdDecompressor().decompress(raw)
+                elif encoding in ("br",):
+                    import brotli  # type: ignore
+                    raw = brotli.decompress(raw)
+                elif encoding in ("gzip",):
+                    import gzip
+                    raw = gzip.decompress(raw)
+                elif encoding in ("deflate",):
+                    import zlib
+                    raw = zlib.decompress(raw)
+            except Exception:
+                pass
+
+            if not as_json:
+                charset = r.charset or "utf-8"
+                try:
+                    text = raw.decode(charset, errors="replace")
+                except Exception:
+                    text = raw.decode("utf-8", errors="replace")
+                return r, text
+
+            import json
+            try:
+                return r, json.loads(raw)
+            except Exception:
+                return r, {}
+
+
+async def create_embed(content: str) -> Tuple[List[Embed], List[str]]:
+    """Create Tweet embeds and collect video URLs from an x.com/twitter.com link."""
+    pattern = r"https?://(?:www\.)?(?:x|twitter)\.com/[^/]+/status/(\d+)"
+    ids = [m.group(1) for m in re.finditer(pattern, content)]
+    if not ids:
+        return [], []
+
+    items = []
+    for tid in ids:
+        resp, payload = await get_response(FXTWITTER_ENDPOINT.format(id=tid), as_json=True)
+        if resp.status != 200:
+            continue
+        data = payload.get("tweet", {})
+        author = data.get("author", {})
+        media_urls: List[str] = []
+        video_urls: List[str] = []
+        for kind, medias in (data.get("media") or {}).items():
+            if kind not in ("photos", "videos"):
+                continue
+            for m in medias:
+                url = m.get("url")
+                if not url:
+                    continue
+                if kind == "photos":
+                    media_urls.append(url)
+                else:
+                    video_urls.append(url)
+
+        items.append(
+            {
+                "url": data.get("url"),
+                "author_name": author.get("name"),
+                "screen_name": author.get("screen_name"),
+                "author_avatar": author.get("avatar_url"),
+                "text": data.get("text", ""),
+                "created_at": data.get("created_timestamp", 0),
+                "media_urls": media_urls,
+                "video_urls": video_urls,
+                "replying_to": data.get("replying_to"),
+            }
+        )
+
+    embeds: List[Embed] = []
+    videos: List[str] = []
+    for d in items:
+        ts = datetime.datetime.fromtimestamp(d["created_at"]) if d["created_at"] else None
+        base = Embed(color=Color.blue(), description=d["text"], timestamp=ts)
+        if d.get("replying_to"):
+            base.set_author(
+                name=f"{d['author_name']} @{d['screen_name']} の @{d['replying_to']} へのリプライ",
+                url=d["url"],
+                icon_url=d.get("author_avatar"),
+            )
+        else:
+            base.set_author(
+                name=f"{d['author_name']} @{d['screen_name']}",
+                url=d["url"],
+                icon_url=d.get("author_avatar"),
+            )
+        embeds.append(base)
+
+        for u in d["media_urls"]:
+            e = Embed(color=Color.blue(), description=f"[ブラウザで開く]({u})")
+            e.set_image(url=u)
+            embeds.append(e)
+        for v in d["video_urls"]:
+            videos.append(v)
+
+    return embeds, videos

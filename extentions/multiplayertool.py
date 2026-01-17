@@ -12,6 +12,200 @@ logger = log.setup_logger()
 dir = os.path.dirname(os.path.abspath(__file__))
 multi_json_name = "jsons\\multi.json"
 
+# --- Extensibility helpers (game/mode profile) ---
+class GameModeProfile:
+    """Lightweight profile to customize labels and destinations per game/mode.
+
+    Add new entries to `_GAME_MODE_REGISTRY` to support other games/modes without
+    changing the core logic.
+    """
+    def __init__(self,
+                 key: str,
+                 title: str,
+                 request_channel_id: int,
+                 thread_name_template: str,
+                 labels: dict,
+                 footer_text: str):
+        self.key = key
+        self.title = title
+        self.request_channel_id = request_channel_id
+        self.thread_name_template = thread_name_template
+        self.labels = labels
+        self.footer_text = footer_text
+
+
+_GAME_MODE_REGISTRY: dict[str, GameModeProfile] = {
+    # Default profile keeps current behavior/texts
+    "default": GameModeProfile(
+        key="default",
+        title="マルチプレイ募集",
+        request_channel_id=getattr(config, "multiplay_request_channel", 0),
+        thread_name_template="マルチプレイチャット #{user_id}",
+        labels={
+            "room": "ルーム番号",
+            "players": "プレイヤー数",
+            "vc": "ボイスチャット連携",
+            "playtime": "プレイ時間",
+            "remarks": "遊び方",
+            "owner_prefix": "募集主",
+        },
+        footer_text=(
+            "作戦が終わった、もしくは募集を終えた場合は"
+            "「削除」ボタンを押してください"
+        ),
+    ),
+    # 協心競技
+    "協心競技": GameModeProfile(
+        key="協心競技",
+        title="協心競技 募集",
+        request_channel_id=getattr(config, "multiplay_request_channel", 0),
+        thread_name_template="協心競技チャット #{user_id}",
+        labels={
+            "room": "ルーム番号",
+            "players": "プレイヤー数",
+            "vc": "ボイスチャット連携",
+            "playtime": "プレイ時間",
+            "remarks": "遊び方",
+            "owner_prefix": "募集主",
+        },
+        footer_text=(
+            "作戦が終わった、もしくは募集を終えた場合は"
+            "「削除」ボタンを押してください"
+        ),
+    ),
+    # デュエルチャンネル
+    "デュエルチャンネル": GameModeProfile(
+        key="デュエルチャンネル",
+        title="デュエルチャンネル 募集",
+        request_channel_id=getattr(config, "multiplay_request_channel", 0),
+        thread_name_template="デュエルチャンネルチャット #{user_id}",
+        labels={
+            "room": "ルーム番号",
+            "players": "プレイヤー数",
+            "vc": "ボイスチャット連携",
+            "playtime": "プレイ時間",
+            "remarks": "遊び方",
+            "owner_prefix": "募集主",
+        },
+        footer_text=(
+            "作戦が終わった、もしくは募集を終えた場合は"
+            "「削除」ボタンを押してください"
+        ),
+    ),
+    # その他
+    "その他": GameModeProfile(
+        key="その他",
+        title="その他 募集",
+        request_channel_id=getattr(config, "multiplay_request_channel", 0),
+        thread_name_template="マルチプレイチャット #{user_id}",
+        labels={
+            "room": "ルーム番号",
+            "players": "プレイヤー数",
+            "vc": "ボイスチャット連携",
+            "playtime": "プレイ時間",
+            "remarks": "遊び方",
+            "owner_prefix": "募集主",
+        },
+        footer_text=(
+            "作戦が終わった、もしくは募集を終えた場合は"
+            "「削除」ボタンを押してください"
+        ),
+    )
+}
+
+
+def get_game_mode_profile(mode: str | None) -> GameModeProfile:
+    """Return a registered game/mode profile; fallback to 'default'."""
+    if not mode:
+        return _GAME_MODE_REGISTRY["default"]
+    return _GAME_MODE_REGISTRY.get(mode, _GAME_MODE_REGISTRY["default"])
+
+
+def build_multiplayer_embed_from_item(owner: discord.User, item: dict) -> discord.Embed:
+    """Build an embed from a stored request item using its mode profile."""
+    profile = get_game_mode_profile(item.get("mode"))
+    vc_linked_str = "有効" if item.get("vcLinked") else "無効"
+    playtime = item.get("playtime") or "未定"
+    remarks_str = item.get("remarks") or "無し"
+
+    embed = discord.Embed(
+        color=discord.Color.blue(),
+        title=profile.title,
+        description=f"{profile.labels.get('owner_prefix', '募集主')} {owner.mention}",
+    )
+    embed.add_field(name=profile.labels.get("room", "ルーム番号"), value=item.get("roomID", "-"), inline=False)
+    players = int(item.get('players', 0) or 0)
+    max_players = item.get('maxPlayers')
+    # 0 or None means unlimited
+    if not max_players:
+        players_str = f"{players}/∞"
+    else:
+        players_str = f"{players}/{max_players}"
+    embed.add_field(
+        name=profile.labels.get("players", "プレイヤー数"),
+        value=players_str,
+    )
+    embed.add_field(name=profile.labels.get("vc", "ボイスチャット連携"), value=vc_linked_str)
+    embed.add_field(name=profile.labels.get("playtime", "プレイ時間"), value=playtime)
+    embed.add_field(name=profile.labels.get("remarks", "遊び方"), value=remarks_str, inline=False)
+    embed.set_footer(text=profile.footer_text)
+    embed.set_author(icon_url=owner.display_avatar, name=owner.display_name)
+    return embed
+
+
+def build_multiplayer_item(user: discord.User,
+                           room_id: str,
+                           players: int,
+                           max_players: int,
+                           remarks: str,
+                           playtime: str,
+                           vc_linked_channel) -> dict:
+    """Create a dict payload for storage/embedding; does not set messageID."""
+    return {
+        "userID": user.id,
+        "roomID": room_id,
+        "players": players,
+        "maxPlayers": max_players,
+        "remarks": remarks,
+        "playtime": playtime,
+        "vcLinked": (vc_linked_channel.id if vc_linked_channel else None),
+        "mode": "default",
+    }
+
+
+async def send_multiplayer(user: discord.User,
+                           room_id: str,
+                           players: int,
+                           max_players: int,
+                           remarks: str,
+                           playtime: str,
+                           vc_linked,
+                           mode: str | None = None) -> discord.Message:
+    """Generic sender that uses game/mode profiles for flexibility."""
+    profile = get_game_mode_profile(mode)
+    channel = client.get_channel(profile.request_channel_id)
+    multi_dict = load_multi_json()
+
+    item = build_multiplayer_item(user, room_id, players, max_players, remarks, playtime, vc_linked)
+    # Persist mode label if provided; otherwise default key
+    item["mode"] = mode if mode else profile.key
+    # Represent unlimited max as a human-friendly string for display and to bypass numeric equality checks
+    if not max_players:
+        item["maxPlayers"] = "∞"
+
+    embed = build_multiplayer_embed_from_item(user, item)
+    message_sent = await channel.send(embed=embed, view=AKMultiJoinButton())
+
+    item["messageID"] = message_sent.id
+    multi_dict.append(item)
+
+    thread_name = profile.thread_name_template.format(user_id=user.id)
+    created_thread = await message_sent.create_thread(name=thread_name)
+    await created_thread.send(f"{user.mention}\nこちらをマルチプレイ中のチャット、募集連絡等にお使いください")
+
+    write_multi_json(multi_dict)
+    return message_sent
+
 def load_multi_json():
     with open(os.path.join(dir, multi_json_name), encoding="utf-8") as f:
         multi_dict = json.load(f)
@@ -131,42 +325,15 @@ class AKMultiJoinButton(discord.ui.View):
             await interaction.delete_original_response()
         else:
             await interaction.followup.send("リクエストは募集を開始した本人だけが終了できます！", ephemeral=True)
-
-async def send_AK_multiplayer(user: discord.User, room_id: str, players: int, max_players: int, remarks: str, playtime: str, vc_linked):
-    channel = client.get_channel(config.multiplay_request_channel)
-    multi_dict = load_multi_json()
-    embed = discord.Embed(color = discord.Color.blue(), title = "マルチプレイ募集", description = f"募集者: {user.mention}")
-    
-    vc_linked_str = "有効" if vc_linked else "無効"
-    vc_linked_id = vc_linked.id if vc_linked else None
-    remarks_str = remarks if remarks else "無し"
-        
-    embed.add_field(name = "ルーム番号", value= room_id, inline = False)
-    embed.add_field(name = "プレイヤー数", value=  f'{players}/{max_players}')
-    embed.add_field(name = "ボイスチャット連携", value=  vc_linked_str)
-    embed.add_field(name = "プレイ時間", value= playtime)
-    embed.add_field(name = "遊び方", value= remarks_str, inline=False)
-    embed.set_footer(text = "【募集者のみ可能】作戦が終了した、もしくは募集を終了した場合は「削除」ボタンを押してください！")
-    embed.set_author(icon_url=user.display_avatar, name = user.display_name)
-    
-    message_sent = await channel.send(embed = embed, view = AKMultiJoinButton())
-    request_dict = {"userID": user.id, "roomID": room_id, "players": players, "maxPlayers": max_players, "remarks": remarks, "playtime": playtime, "vcLinked": vc_linked_id, "messageID": message_sent.id}
-    multi_dict.append(request_dict)
-    created_thread = await message_sent.create_thread(name = f"マルチプレイチャット #{user.id}")
-    
-    await created_thread.send(f"{user.mention}\nこちらをマルチプレイ中のチャット、募集者との連絡等にお使いください！")
-    
-    write_multi_json(multi_dict)
-    
-    return message_sent
     
 class VClinkAndSendButton(discord.ui.View):
-    def __init__(self, room_id: str, remarks: str , playtime: str, max_players: int):
+    def __init__(self, room_id: str, remarks: str , playtime: str, max_players: int, mode: str | None = None):
         self.room_id = room_id
         self.remarks = remarks
         self.playtime = playtime
         self.players = 1
         self.max_players = max_players
+        self.mode = mode
         super().__init__(timeout = 240) 
         
     @discord.ui.button(label = "ボイスチャット連携(公開)", style=discord.ButtonStyle.success, emoji = "✅")  
@@ -196,7 +363,7 @@ class VClinkAndSendButton(discord.ui.View):
                 await vc_channel.edit(name = f"マルチプレイヤー: {self.room_id}", overwrites = overwrite)
                 
                 #値変える
-                send_message = await send_AK_multiplayer(interaction.user, self.room_id, self.players, self.max_players, self.remarks, self.playtime, vc_channel)
+                send_message = await send_multiplayer(interaction.user, self.room_id, self.players, self.max_players, self.remarks, self.playtime, vc_channel, mode=self.mode)
                 embed = discord.Embed(color = discord.Color.green(), title = "マルチプレイ募集 - 完了", description = f"マルチプレイ募集を送信しました！\n送信した募集を見る: {send_message.jump_url}")
                 
                 await interaction.edit_original_response(embed = embed, view = None)
@@ -231,7 +398,7 @@ class VClinkAndSendButton(discord.ui.View):
                 
                 await vc_channel.edit(name = f"マルチプレイヤー: {self.room_id}", user_limit=self.max_players, overwrites = overwrite)
                 
-                send_message = await send_AK_multiplayer(interaction.user, self.room_id, self.players, self.max_players, self.remarks, self.playtime, vc_channel)
+                send_message = await send_multiplayer(interaction.user, self.room_id, self.players, self.max_players, self.remarks, self.playtime, vc_channel, mode=self.mode)
                 embed = discord.Embed(color = discord.Color.green(), title = "マルチプレイ募集 - 完了", description = f"マルチプレイ募集を送信しました！\n送信した募集を見る: {send_message.jump_url}")
                 
                 await interaction.edit_original_response(embed = embed, view = None)
@@ -246,7 +413,7 @@ class VClinkAndSendButton(discord.ui.View):
     async def sendonly_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         
-        send_message = await send_AK_multiplayer(interaction.user, self.room_id, self.players, self.max_players, self.remarks, self.playtime, None)
+        send_message = await send_multiplayer(interaction.user, self.room_id, self.players, self.max_players, self.remarks, self.playtime, None, mode=self.mode)
         embed = discord.Embed(color = discord.Color.green(), title = "マルチプレイ募集 - 完了", description = f"マルチプレイ募集を送信しました！\n送信した募集を見る: {send_message.jump_url}")
         
         await interaction.edit_original_response(embed = embed, view = None)
@@ -254,11 +421,20 @@ class VClinkAndSendButton(discord.ui.View):
 
 class AKMultiCreateModal(discord.ui.Modal, title = "マルチプレイ募集"):
     
-    #新仕様(ui.Label)
     remarks_input = discord.ui.Label(
         text="遊び方",
         description="どんな遊び方をするのかを入力してください",
-        component = discord.ui.TextInput(style=discord.TextStyle.paragraph, placeholder="例: 上級やってない所/要塞ディフェンスメイン/サッカーやろうぜ/未定", max_length=200, required=True)
+        component = discord.ui.TextInput(style=discord.TextStyle.paragraph, placeholder="攻略手伝ってください/未定", max_length=200, required=True)
+    )
+    playmode_input = discord.ui.Label(
+        text="マルチプレイのモード",
+        component = discord.ui.Select(
+            options = [
+                discord.SelectOption(label = "協心競技", value = "協心競技"),
+                discord.SelectOption(label = "デュエルチャンネル", value = "デュエルチャンネル"),
+                discord.SelectOption(label = "その他", value = "その他")
+            ]
+        )
     )
     playtime_input = discord.ui.Label(
         text="プレイ時間",
@@ -283,6 +459,7 @@ class AKMultiCreateModal(discord.ui.Modal, title = "マルチプレイ募集"):
         await interaction.response.defer(ephemeral=True, thinking=True)
         assert isinstance(self.remarks_input.component, discord.ui.TextInput)
         assert isinstance(self.playtime_input.component, discord.ui.Select)
+        assert isinstance(self.playmode_input.component, discord.ui.Select)
         assert isinstance(self.room_id_input.component, discord.ui.TextInput)
         
         room_id = self.room_id_input.component.value.upper() if self.room_id_input.component.value else "ルーム番号未設定"
@@ -298,7 +475,7 @@ class AKMultiCreateModal(discord.ui.Modal, title = "マルチプレイ募集"):
             vc_channel = interaction.user.voice.channel
             if vc_channel.category_id == config.vccreate_category:
                 embed = discord.Embed(title = "マルチプレイ募集 - ボイスチャットを使用しますか？", description=f"現在あなたが接続している{vc_channel.jump_url}はVC連携を利用できます！\n(公開)はVCに誰でも入ることが出来ますが、(非公開)は募集から参加した人だけがVCに入れます。")
-                await interaction.followup.send(embed = embed, view = VClinkAndSendButton(room_id=room_id, remarks=remarks, playtime=playtime, max_players = 2))
+                await interaction.followup.send(embed = embed, view = VClinkAndSendButton(room_id=room_id, remarks=remarks, playtime=playtime, max_players = (2 if (not self.playmode_input.component.values or (self.playmode_input.component.values[0] in ("default", "協心競技"))) else 0), mode=(self.playmode_input.component.values[0] if self.playmode_input.component.values else "default")))
                 return
             else:
                 pass
@@ -306,7 +483,7 @@ class AKMultiCreateModal(discord.ui.Modal, title = "マルチプレイ募集"):
         vccreate_voice = client.get_channel(config.voicecreate_vc)
         embed = discord.Embed(title = "マルチプレイ募集 - ボイスチャットを使用しますか？", description="ボイスチャットを使用して連携を深めたい場合にご利用ください！")
         embed.add_field(name = "使用方法", value = f"1. {vccreate_voice.jump_url}をクリックし、VCを作成します(自動的に作成したVCに接続します。名前や最大人数の設定は次の操作で自動で設定されます。)チャンネルにアクセスできない場合、「チャンネル&ロール」から「ボイスチャット」のロールを取得してください！\n2. 「ボイスチャット連携」ボタンを押します。(公開)はVCに誰でも入ることが出来ますが、(非公開)は募集から参加した人だけがVCに入れます。")
-        await interaction.followup.send(embed = embed, view = VClinkAndSendButton(room_id=room_id, remarks=remarks, playtime=playtime, max_players = 2))     
+        await interaction.followup.send(embed = embed, view = VClinkAndSendButton(room_id=room_id, remarks=remarks, playtime=playtime, max_players = (2 if (not self.playmode_input.component.values or (self.playmode_input.component.values[0] in ("default", "協心競技"))) else 0), mode=(self.playmode_input.component.values[0] if self.playmode_input.component.values else "default")))
         
 async def multi_create(interaction: discord.Interaction) -> bool:
     multi_dict = load_multi_json()

@@ -9,7 +9,6 @@ from uuid import uuid4
 import chromadb
 import discord
 import dotenv
-import torch
 from chromadb.config import Settings
 from dotenv import load_dotenv
 from langchain.retrievers import ContextualCompressionRetriever
@@ -107,7 +106,7 @@ app = None
 
 # === 初期化 ===
 async def init_models():
-    global db_client, embedding_model, model, agent_model, ak_collection, ak_retriever, analyze_model, search, reranker
+    global db_client, embedding_model, model, agent_model, ak_collection, ak_retriever, analyze_model, search, reranker, app
     db_client = await get_akdb_conn()
     model = ChatOpenAI(model="gpt-5-chat-latest")
     analyze_model = ChatOpenAI(model = "gpt-5")
@@ -282,7 +281,9 @@ async def analyze_message(state: ChatState) -> ChatState:
     2.  情報を求めている場合、その内容はアークナイツのWikiにありそうですか？（例：キャラクターの性能、イベント攻略、世界観） それともWeb全体で検索すべき新しい情報や一般的な知識ですか？
     3.  **Wiki検索クエリの生成**:
         -   Wikiに情報がありそうな場合、ベクトル検索で最もヒットしやすいように、具体的で詳細な検索クエリを生成します。
-        -   **クエリのヒント**: Wikiには「キャラクター一覧」「統合戦略」といったページが存在し、各ページは「# プロファイル」「## スキル」のような見出しで構成されています。これらの構造を意識し、例えば「統合戦略#2 ファントムと緋き貴石における秘宝「騎士の戒律」の効果と入手方法」のように、具体的なページ名やセクション名を推測して含めると、より精度が向上します。
+        -   例えば、「アークナイツのキャラクター「ホルハイヤ」の特性、素質、スキル2の詳細、昇進素材と特化素材」のように、特定のキャラクターや要素に焦点を当てたクエリを作成します。
+        -   キャラクターの評価や使い方などを調べるとき、「ゲームにおいて」という見出しに求める情報があります。
+        -   確実でない情報を推測でクエリに含むことは避けてください。質問に誠実に答えられるように生成します。
         -   アークナイツに関しない質問の場合は`null`にしてください。
     4.  **Web検索クエリの生成**:
         -   最新情報（例: 次のイベント、メンテナンス情報）、キャラクターの最新評価、またはアークナイツ以外の一般的な質問の場合に生成します。
@@ -366,11 +367,10 @@ async def handle_memory_operation(state: ChatState) -> ChatState:
         state["memory_note"] = "メモリ操作中にエラーが発生しました。もう一度試してください。"
         return state
 
-async def wiki_retrieve(state: ChatState) -> ChatState:
+async def wiki_retrieve(state: ChatState):
     analysis_result = state["analysis"]
     if not analysis_result.get("retrieval_query"):
-        state["wiki_text"] = None
-        return state
+        return {"wiki_text": None}
     try:
         docs = await similar_document_search(analysis_result["retrieval_query"])
         buf = []
@@ -385,18 +385,17 @@ async def wiki_retrieve(state: ChatState) -> ChatState:
                             headers.append(doc.metadata[header_key])
                 h = f"見出し：{' > '.join(headers)}" if headers else ""
                 buf.append(f"{h}\n{doc.page_content}")
-        state["wiki_text"] = "\n\n".join(buf) if buf else None
+        wiki_text = "\n\n".join(buf) if buf else None
     except Exception as e:
         logger.error(f"Wiki情報の取得中にエラーが発生しました: {e}")
-        state["wiki_text"] = None
-    return state
+        wiki_text = None
+    return {"wiki_text": wiki_text}
 
-async def web_retrieve(state: ChatState) -> ChatState:
+async def web_retrieve(state: ChatState):
     analysis_result = state["analysis"]
     query = analysis_result.get("web_search_query")
     if not query:
-        state["web_text"] = None
-        return state
+        return {"web_text": None}
     try:
         res = await search.search(query, include_answer="basic")
         txt = []
@@ -412,11 +411,11 @@ async def web_retrieve(state: ChatState) -> ChatState:
                     txt.append(f"**{title}**\n{content}\n[リンク]({link})\n")
                 else:
                     logger.warning(f"Unexpected item format in web search results: {item}")
-        state["web_text"] = "\n\n".join(txt) if txt else None
+        web_text = "\n\n".join(txt) if txt else None
     except Exception as e:
         logger.error(f"Web情報の取得中にエラーが発生しました: {e}")
-        state["web_text"] = None
-    return state
+        web_text = None
+    return {"web_text": web_text}
 
 async def merge_refs(state: ChatState) -> ChatState:
     wiki = state["wiki_text"]
@@ -428,7 +427,7 @@ async def merge_refs(state: ChatState) -> ChatState:
     return state
 
 async def extract_relevant(state: ChatState) -> ChatState:
-    info = state.get
+    info = state.get("merged_info", "")
     question = state["message"]
     extracted = await analyze_information(info, question)
     state["extracted"] = extracted or ""
@@ -544,14 +543,18 @@ def setup_chat_graph():
     app = graph.compile()
     return app
 
-async def run_graph(user_id_str: str, message: discord.Message):
+async def run_graph(user_id_str: str, message_content: str):
+    # Ensure the app is initialized
+    global app
+    if app is None:
+        await init_models()
     hist = await get_history_from_db(user_id_str, limit=10)
     hist = [msg for msg in hist if msg["role"] != "system"]
     hist_str = "\n".join([f"{msg['role']}: {msg['content']}" for msg in hist])
     
     state: ChatState = {
         "user_id": user_id_str,
-        "message": message.content,
+        "message": message_content,
         "history_str": hist_str,
     }
     
@@ -563,7 +566,7 @@ async def direct_chat(user: discord.User, message: discord.Message):
     msg_id = await add_message_to_db(user_id_str, "user", message.content)
     try:
         async with message.channel.typing():
-            response_text = await run_graph(user_id_str, message.content) # message.contentを渡す
+            response_text = await run_graph(user_id_str, message.content)
         await add_message_to_db(user_id_str, "assistant", response_text)
         await message.channel.send(response_text)
         return response_text

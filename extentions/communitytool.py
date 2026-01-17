@@ -3,6 +3,7 @@ import random
 import traceback
 from re import match
 from unicodedata import normalize
+from typing import Dict, List, Optional, Tuple
 
 import discord
 
@@ -11,14 +12,67 @@ from extentions.aclient import client
 from extentions.config import config
 
 logger = log.setup_logger()
-dir = os.path.abspath(__file__ + "/../")
+MODULE_DIR = os.path.abspath(__file__ + "/../")
+
+# Common UI timeouts (seconds)
+TIMEOUT_SHORT = 300
+
+# ------------------------------
+# Helpers / Utilities (internal)
+# ------------------------------
+
+async def load_operators() -> Dict[str, dict]:
+    return await supportrequest.operators_load()
+
+def load_operator_emojis() -> Dict[str, str]:
+    return supportrequest.operator_emoji_load()
+
+def find_operators_by_fragment(operators: Dict[str, dict], fragment: str) -> List[str]:
+    """Return operator names containing the fragment (case-insensitive)."""
+    fragment_lower = fragment.lower()
+    matched: List[str] = []
+    for op in operators.values():
+        name = op.get("name", "")
+        if fragment_lower in name.lower():
+            matched.append(name)
+    return matched
+
+def build_skills_dict(operator_dict: dict) -> Dict[int, str]:
+    skills = operator_dict.get("skills", {}) or {}
+    return {int(k): v for k, v in skills.items() if v is not None}
+
+def format_skill_list(skills: Dict[int, str]) -> str:
+    text = ""
+    for i in skills:
+        text += f"- スキル{i}: {skills[i]}\n"
+    return text
+
+def parse_doctorname_parts(doctorname: str) -> Tuple[str, str]:
+    index_sharp = doctorname.find("#")
+    index_dr = doctorname.find("Dr. ")
+    before_name = doctorname[index_dr + 4:index_sharp]
+    before_number = doctorname[index_sharp + 1:]
+    return before_name, before_number
+
+def is_valid_level_for_rarity(rarity: int, level: int) -> bool:
+    if rarity <= 1:
+        return False
+    if rarity == 2 and level > 55:
+        return False
+    if rarity == 3 and level > 70:
+        return False
+    if rarity == 4 and level > 80:
+        return False
+    if rarity == 5 and level > 90:
+        return False
+    return True
 
 class YaminabeRepeat(discord.ui.View):
     def __init__(self, label, operators_in_class):
         self.operators_in_class = operators_in_class
         self.label = label
         self.classes = config.operator_classes
-        super().__init__(timeout = 300)
+        super().__init__(timeout = TIMEOUT_SHORT)
         
     @discord.ui.button(label = "引き直す", style = discord.ButtonStyle.primary, emoji = "↩️")
     async def yaminabe_repeat_button(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -26,7 +80,7 @@ class YaminabeRepeat(discord.ui.View):
 
 class YaminabeSelect(discord.ui.View):
     def __init__(self):
-        super().__init__(timeout=300)
+        super().__init__(timeout=TIMEOUT_SHORT)
         self.classes = config.operator_classes
         for button_class in self.classes:
             self.add_buttons(button_class)

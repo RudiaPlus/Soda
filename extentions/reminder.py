@@ -422,6 +422,24 @@ async def remind(mode = "morning"):
                     embed.set_author(name="オムニバスストーリー")
                     embed.set_image(url=eventpic)
                     embeds.append(embed)
+                
+                #BREAKは情報が確定していないため使用しない    
+                elif events[i]["type"] == "BREAK":
+                    try:
+                        title = events[i]["name"]
+                        eventTime =  events[i]["time"]
+                        phase2StartTime = events[i]["phase2StartTime"]
+                        news = events[i]["news"]
+                        link = events[i]["link"]
+                        eventpic = events[i]["pic"]
+                        eventColor = int(events[i]["eventColor"], 16)
+                    except Exception:
+                        pass
+
+                    embed = discord.Embed(title=title,
+                                            description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}\n・ステージ追加時間 : {phase2StartTime}",
+                                            color=eventColor,
+                                            url=link)
                     
                 elif events[i]["type"] == "BOSS_RUSH":
                     try:

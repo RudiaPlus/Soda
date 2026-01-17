@@ -1459,5 +1459,118 @@
         "startTime": 1754550000,
         "endTime": 1755111599,
         "rewardEndTime": 1755370799
+    },
+    "act2vecb": {
+        "id": "act2vecb",
+        "type": "EVENT",
+        "stageAdd": false,
+        "name": "鋒矢突破#1「無機物",
+        "news": "https://www.arknights.jp/news/475",
+        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88140_%E9%8B%92%E7%9F%A2%E7%AA%81%E7%A0%B4",
+        "pic": "https://webusstatic.yo-star.com/uy0news/aj/fab143136144fd99d567aa95eb0793e2.png",
+        "startTime": 1742886000,
+        "endTime": 1744052399,
+        "rewardEndTime": 1744311599,
+        "additionalStage": null
+    },
+    "挽歌が灰に還る時": {
+        "id": "挽歌が灰に還る時",
+        "type": "SIDESTORY",
+        "stageAdd": true,
+        "name": "挽歌が灰に還る時",
+        "news": "https://arknights.jp/news/1564",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88153_%E6%8C%BD%E6%AD%8C%E3%81%8C%E7%81%B0%E3%81%AB%E9%82%84%E3%82%8B%E6%99%82",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/22/83vUpd3y.png",
+        "startTime": 1756364400,
+        "endTime": 1757530799,
+        "rewardEndTime": 1758135599,
+        "additionalStage": [
+            {
+                "name": "消えゆく炎",
+                "startTime": 1756969200
+            }
+        ]
+    },
+    "協心競技#1": {
+        "id": "協心競技#1",
+        "type": "MULTIPLAY",
+        "stageAdd": false,
+        "name": "協心競技#1",
+        "news": "https://arknights.jp/news/1569",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88154_%E5%8D%94%E5%BF%83%E7%AB%B6%E6%8A%80%EF%BC%831",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/08/29/2lhxJb1X.png",
+        "startTime": 1756969200,
+        "endTime": 1758740399,
+        "rewardEndTime": 1758999599
+    },
+    "解離結合": {
+        "id": "解離結合",
+        "type": "MAIN",
+        "stageAdd": false,
+        "name": "解離結合",
+        "news": "https://arknights.jp/news/1615",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88155_%E7%AC%AC%E5%8D%81%E4%BA%94%E7%AB%A0%E5%85%AC%E9%96%8B",
+        "pic": "https://arknights.wikiru.jp/attach2/E382A4E38399E383B3E383883135355FE7ACACE58D81E4BA94E7ABA0E585ACE9968B_657031352E706E67.png",
+        "startTime": 1758006000,
+        "endTime": 1759172399,
+        "rewardEndTime": 1759172399
+    },
+    "バベル(復刻)": {
+        "id": "バベル(復刻)",
+        "type": "SIDESTORY",
+        "stageAdd": false,
+        "name": "バベル(復刻)",
+        "news": "https://arknights.jp/news/1672",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88156_%E3%83%90%E3%83%99%E3%83%AB%28%E5%BE%A9%E5%88%BB%29",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/09/25/_GgDj6Ze.png",
+        "startTime": 1759215600,
+        "endTime": 1760036399,
+        "rewardEndTime": 1760381999
+    },
+    "命ある者の旅": {
+        "id": "命ある者の旅",
+        "type": "SIDESTORY",
+        "stageAdd": true,
+        "name": "命ある者の旅",
+        "news": "https://arknights.jp/news/1688",
+        "link": "https://arknights.wikiru.jp/index.php?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88157_%E5%91%BD%E3%81%82%E3%82%8B%E8%80%85%E3%81%AE%E6%97%85",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/10/07/Qxq4qdhY.png",
+        "startTime": 1760425200,
+        "endTime": 1762196399,
+        "rewardEndTime": 1762801199,
+        "additionalStage": [
+            {
+                "name": "主への謁見",
+                "startTime": 1761030000
+            },
+            {
+                "name": "安息の地",
+                "startTime": 1761634800
+            }
+        ]
+    },
+    "act5bossrush": {
+        "id": "act5bossrush",
+        "type": "BOSS_RUSH",
+        "stageAdd": false,
+        "name": "導灯の試練 #5",
+        "news": "https://arknights.jp/news/2025",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88161_%E5%B0%8E%E7%81%AF%E3%81%AE%E8%A9%A6%E7%B7%B4%EF%BC%835",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/11/17/lcndlla_.png",
+        "startTime": 1763622000,
+        "endTime": 1764788399,
+        "rewardEndTime": 1765047599
+    },
+    "dis_rogue_5": {
+        "id": "dis_rogue_5",
+        "type": "ROGUELIKE",
+        "name": "統合戦略「歳の界園志異」",
+        "news": "https://arknights.jp/news/2119",
+        "link": "https://arknights.wikiru.jp/?%E7%B5%B1%E5%90%88%E6%88%A6%E7%95%A5%E3%80%8C%E6%AD%B3%E3%81%AE%E7%95%8C%E5%9C%92%E5%BF%97%E7%95%B0%E3%80%8D",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/08/P1tioSJu.png",
+        "startTime": 1766041200,
+        "endTime": 1790794799,
+        "monthlyUpdate": [
+        ]
     }
 }

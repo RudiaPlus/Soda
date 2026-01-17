@@ -150,7 +150,7 @@ def eventget():
                             
                 events.append({"name": name, "dif": "present", "type": type, "news": news, "link": link, "pic": pic, "month": month, "content": content, "updateTime": f"今月の任務終了: {updateEndTime}",
                                "nextmonth": nextmonth, "nextcontent": nextcontent, "nextUpdateTime": f"開始: {nextUpdateStartTime}"})    
-
+            
             elif type == "SANDBOX":
                 try:
                     monthlyUpdate = event_dic[event_now_list[i]]["monthlyUpdate"]
@@ -175,6 +175,15 @@ def eventget():
                             
                 events.append({"name": name, "dif": "present", "type": type, "news": news, "link": link, "pic": pic, "month": month, "content": content, "updateTime": f"闘争の潮流入れ替え: {updateEndTime}",
                                "nextmonth": nextmonth, "nextcontent": nextcontent, "nextUpdateTime": f"開始: {nextUpdateStartTime}"}) 
+            
+            elif type == "BREAK":
+                try:
+                    phase2StartTime = event_dic[event_now_list[i]]["phase2StartTime"]
+                    eventColor = event_dic[event_now_list[i]]["eventColor"]
+                except KeyError as e:
+                    logger.error(e)
+                    
+                events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "eventColor": eventColor, "phase2StartTime": "<t:{0}:F>( <t:{0}:R> )".format(phase2StartTime), "news": news, "link": link, "pic": pic})
             
             elif stageAdd is True:
                 try:

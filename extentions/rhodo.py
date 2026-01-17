@@ -596,6 +596,10 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
     #move
     elif before.channel != after.channel:
         logger.info(f"{str(member)}が{before.channel.name}({before.channel.id})から{after.channel.name}({after.channel.id})に接続しました。")
+        
+        if len(before.channel.members) < 2 and member.guild.voice_client:
+            if member.guild.voice_client.channel == before.channel:
+                await member.guild.voice_client.disconnect()
                         
     #vccreate
     vccreate_voice = client.get_channel(config.voicecreate_vc)
@@ -733,7 +737,7 @@ async def add_reminder(interaction: discord.Interaction, remind_id: str, remind_
     await interaction.followup.send(f"リマインダー `{remind_id}` が追加されました！\n名前: {remind_name}\nタイプ: {remind_type}\nリンク: {link}\n開始時間: {startTime.strftime('%Y-%m-%d %H:%M:%S')}\n終了時間: {endTime.strftime('%Y-%m-%d %H:%M:%S')}")
     
 @client.tree.command(name="gather_reed_arts",
-                        description="Twitterから必要な情報を収集します",)
+                        description="Twitterから必要な情報を収集します", guild=discord.Object(config.testserverid))
 async def gather_reed_arts(interaction: discord.Interaction):
     await interaction.response.defer()
     await twitterpost.gather_reed_arts(since=datetime.datetime.now(tz=JSTTime.tz_JST))
@@ -815,7 +819,7 @@ async def edit_dynamic_config(interaction: discord.Interaction, key: str, value:
 
 @client.tree.command(name="add_event", description="イベントを追加します", guild=discord.Object(config.testserverid))
 @app_commands.describe(name="イベントの名前", 
-                       event_type="イベントの種類(例: SIDESTORY, MINISTORY, EVENT, MAIN, MULTIPLAY)",
+                       event_type="イベントの種類(例: SIDESTORY, MINISTORY, EVENT, MAIN, MULTIPLAY, BOSS_RUSH",
                        start_time="イベントの開始時間(例: 2023-10-01 16:00:00)", 
                        end_time="イベントの終了時間(例: 2023-10-15 3:59:59)", 
                        stage_add="ステージ追加があるかどうか(T/F)",
@@ -824,7 +828,7 @@ async def edit_dynamic_config(interaction: discord.Interaction, key: str, value:
                        image_url="イベントの画像URL",
                        reward_end_time="報酬交換期限(入力無の場合、終了時間から7日後の午前3時59分59秒になります)",
                        event_id="イベントID(入力無の場合、イベント名を小文字にしてスペースをアンダースコアに置き換えたものになります)")
-async def add_event(interaction: discord.Interaction, name: str, event_type: Literal["SIDESTORY", "MINISTORY", "EVENT", "MAIN", "MULTIPLAY"], start_time: str, end_time: str, stage_add: str, news_url: str, wiki_url: str, image_url: str, reward_end_time: str = None, event_id: str = None):
+async def add_event(interaction: discord.Interaction, name: str, event_type: Literal["SIDESTORY", "MINISTORY", "EVENT", "MAIN", "MULTIPLAY", "BOSS_RUSH"], start_time: str, end_time: str, stage_add: str, news_url: str, wiki_url: str, image_url: str, reward_end_time: str = None, event_id: str = None):
 
     """新しいイベント情報をevents.jsonに追加します。"""
     await interaction.response.defer()

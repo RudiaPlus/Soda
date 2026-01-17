@@ -63,6 +63,7 @@ async def announce_and_delete(entry: int):
     await write_json(maintenances)
 
 async def maintenance_end(maint_name: str, entry: int):
+    await announce_and_delete(entry)
     
     channel_announcement = client.get_channel(config.announcement)
     start_time = datetime.now()
