@@ -31,4 +31,5 @@ dependencies = [
   "tweety-ns",
   "waitress",
   "zstandard",
+  "sentence-transformers>=5.2.0",
 ]
