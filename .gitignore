@@ -5,7 +5,6 @@ __pycache__
 .vscode
 .breakpoints
 poetry.lock
-pyproject.toml
 docker-compose.yml
 venv
 extentions/logs
@@ -17,3 +16,4 @@ extentions/images
 extentions/configs/dynamic.json
 *.tw_session
 db
+.env

@@ -1,0 +1,34 @@
+[project]
+name = "rhodo"
+version = "0.1.0"
+description = "Discord bot"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "aiohttp",
+  "arkprts",
+  "beautifulsoup4",
+  "brotli",
+  "chromadb",
+  "discord.py==2.6.4",
+  "flask",
+  "langchain==0.3.27",
+  "langchain-chroma",
+  "langchain-community==0.3.27",
+  "langchain-huggingface",
+  "langchain-openai",
+  "langchain-core==0.3.72",
+  "langgraph",
+  "loguru",
+  "lxml",
+  "onnxocr",
+  "opencv-python",
+  "Pillow",
+  "PyNaCl",
+  "python-dotenv",
+  "requests",
+  "tavily-python",
+  "tweety-ns",
+  "waitress",
+  "zstandard",
+]
