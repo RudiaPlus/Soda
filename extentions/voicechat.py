@@ -457,12 +457,11 @@ if config.voicechat is True:
     #ボイスエンジン起動
     try:
         voice_engine = subprocess.Popen([r"C:\\Program Files\\AivisSpeech-Engine\\Windows-x64\\run.exe", "--host=0.0.0.0", "--use_gpu"], creationflags=subprocess.CREATE_NEW_CONSOLE)
-        
+        atexit.register(voice_engine.terminate)
+
     except Exception as e:
         logger.error(f"ボイスエンジンの起動に失敗しました！: {e}")
         voicechat = False
-
-    atexit.register(voice_engine.terminate)
     
 async def join_voice(interaction: discord.Interaction, channel: discord.VoiceChannel = None):
     await interaction.response.defer()

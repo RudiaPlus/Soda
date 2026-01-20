@@ -8,9 +8,7 @@ from uuid import uuid4
 
 import chromadb
 import discord
-import dotenv
 from chromadb.config import Settings
-from dotenv import load_dotenv
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CrossEncoderReranker
 from langchain_chroma import Chroma
@@ -21,10 +19,7 @@ from langgraph.graph import END, START, StateGraph
 from tavily import AsyncTavilyClient
 
 from extentions import JSTTime, log
-from extentions.aclient import client
 from extentions.config import config
-
-dotenv.load_dotenv()
 
 logger = log.setup_logger()
 dir = os.path.abspath(__file__ + "/../")
@@ -33,10 +28,9 @@ db_path = os.path.join(dir, "db", "chat_history.db")
 os.makedirs(os.path.dirname(db_path), exist_ok=True)
 conn = sqlite3.connect(db_path)
 cur = conn.cursor()
-load_dotenv()
 
 # 短期的な会話履歴テーブル
-cur.execute('''
+cur.execute("""
     CREATE TABLE IF NOT EXISTS chat_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT NOT NULL,
@@ -44,11 +38,13 @@ cur.execute('''
         content TEXT NOT NULL,
         timestamp TEXT NOT NULL
     )
-''')
-cur.execute("CREATE INDEX IF NOT EXISTS idx_user_id_timestamp ON chat_history (user_id, timestamp)")
+""")
+cur.execute(
+    "CREATE INDEX IF NOT EXISTS idx_user_id_timestamp ON chat_history (user_id, timestamp)"
+)
 
 # 長期記憶用テーブル
-cur.execute('''
+cur.execute("""
     CREATE TABLE IF NOT EXISTS long_term_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT NOT NULL,
@@ -57,7 +53,7 @@ cur.execute('''
         timestamp TEXT NOT NULL,
         UNIQUE(user_id, key)
     )
-''')
+""")
 conn.commit()
 
 mcp_config = {
@@ -68,93 +64,108 @@ mcp_config = {
             "url": "https://arknights.wikiru.jp/",
             "selector": "#body",
             "exclude_selectors": [".adsbygoogle"],
-            "env": {
-                "DISPLAY": ":1"
-            }
+            "env": {"DISPLAY": ":1"},
         }
     }
 }
 
-async def get_embedding_model()->HuggingFaceEmbeddings:
+
+async def get_embedding_model() -> HuggingFaceEmbeddings:
     """
     HuggingFaceの事前学習済みのモデルをロードして返す関数
     戻り値:
         HuggingFaceEmbeddingsオブジェクト: 事前学習済みのモデルをラップしたオブジェクト
     """
-    return HuggingFaceEmbeddings(
-        model_name="sbintuitions/sarashina-embedding-v1-1b"
-    )
+    return HuggingFaceEmbeddings(model_name="sbintuitions/sarashina-embedding-v1-1b")
+
 
 async def get_akdb_conn():
     akdb_client = chromadb.HttpClient(
         host="localhost",
         port=8000,
-        settings = Settings(allow_reset=True, anonymized_telemetry=False)
+        settings=Settings(allow_reset=True, anonymized_telemetry=False),
     )
     return akdb_client
 
+
 embedding_model = None
 db_client = None
-model=None
-agent_model=None
-ak_collection=None
-ak_retriever=None
-analyze_model=None
+model = None
+agent_model = None
+ak_collection = None
+ak_retriever = None
+analyze_model = None
 search = None
 reranker = None
 app = None
 
+
 # === 初期化 ===
 async def init_models():
-    global db_client, embedding_model, model, agent_model, ak_collection, ak_retriever, analyze_model, search, reranker, app
+    global \
+        db_client, \
+        embedding_model, \
+        model, \
+        agent_model, \
+        ak_collection, \
+        ak_retriever, \
+        analyze_model, \
+        search, \
+        reranker, \
+        app
     db_client = await get_akdb_conn()
     model = ChatOpenAI(model="gpt-5-chat-latest")
-    analyze_model = ChatOpenAI(model = "gpt-5")
+    analyze_model = ChatOpenAI(model="gpt-5")
     agent_model = ChatOpenAI(model="gpt-5-mini")
     embedding_model = await get_embedding_model()
-    
+
     ak_collection = Chroma(
-        collection_name = "arknights_wiki",
+        collection_name="arknights_wiki",
         embedding_function=embedding_model,
-        client=db_client
+        client=db_client,
     )
     retriever = ak_collection.as_retriever(
         search_type="mmr",
         search_kwargs={"k": 50, "fetch_k": 100, "lambda_mult": 0.8},
     )
-    
+
     search = AsyncTavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
-    encoder = HuggingFaceCrossEncoder(model_name = "hotchpotch/japanese-reranker-xsmall-v2")
+    encoder = HuggingFaceCrossEncoder(
+        model_name="hotchpotch/japanese-reranker-xsmall-v2"
+    )
     reranker = CrossEncoderReranker(model=encoder, top_n=10)
     ak_retriever = ContextualCompressionRetriever(
-        base_compressor=reranker,
-        base_retriever=retriever
+        base_compressor=reranker, base_retriever=retriever
     )
     app = setup_chat_graph()
-    
+
+
 class ChatState(TypedDict, total=False):
     user_id: str
     message: str
-    history_str: str                     # 直近履歴（あなたのDBから取得済みの文字列）
-    analysis: Dict[str, Any]             # analyze_message のJSON結果
-    memory_note: Optional[str]           # memory 操作の応答文（UI表示用に保持）
-    wiki_text: Optional[str]             # wiki由来の原文連結
-    web_text: Optional[str]              # web由来の原文連結
-    merged_info: str                     # wiki / web を見出し付きで合成
-    extracted: str                       # 抽出済みの要点（回答に使う最小文）
-    response_text: str                   # 最終回答
+    history_str: str  # 直近履歴（あなたのDBから取得済みの文字列）
+    analysis: Dict[str, Any]  # analyze_message のJSON結果
+    memory_note: Optional[str]  # memory 操作の応答文（UI表示用に保持）
+    wiki_text: Optional[str]  # wiki由来の原文連結
+    web_text: Optional[str]  # web由来の原文連結
+    merged_info: str  # wiki / web を見出し付きで合成
+    extracted: str  # 抽出済みの要点（回答に使う最小文）
+    response_text: str  # 最終回答
+
 
 # === ヘルパー関数群 ===
 
+
 async def similar_document_search(query: str):
     results = await ak_retriever.ainvoke(input=query)
-    
+
     # 結果が空の場合は警告を出して空の結果を返す
     logger.debug(f"Query: {query}, Results: {len(results)} documents found")
     if not results:
         logger.warning("No relevant documents found for the query.")
         return None
     return results
+
 
 async def analyze_information(information: str, question: str):
     prompt = f"""
@@ -182,6 +193,7 @@ async def analyze_information(information: str, question: str):
         logger.error(f"エラーが発生しました: {e}")
         return ""
 
+
 def get_metadata_dict(meta_item):
     """
     Safely extracts the metadata dictionary from a potentially nested list.
@@ -195,81 +207,102 @@ def get_metadata_dict(meta_item):
     # Return an empty dictionary for other unexpected formats to prevent errors
     return {}
 
+
 # === DB操作関数群 ===
 
+
 async def add_message_to_db(user_id: str, role: str, content: str):
-    #データベースにメッセージを追加し、挿入された行のIDを返す
+    # データベースにメッセージを追加し、挿入された行のIDを返す
     timestamp = datetime.now(tz=JSTTime.tz_JST).isoformat()
     cur.execute(
         "INSERT INTO chat_history (user_id, role, content, timestamp) VALUES (?, ?, ?, ?)",
-        (user_id, role, content, timestamp)
+        (user_id, role, content, timestamp),
     )
     conn.commit()
     return cur.lastrowid
 
+
 async def get_history_from_db(user_id: str, limit: int = 20):
-    #データベースからユーザーのチャット履歴を取得
+    # データベースからユーザーのチャット履歴を取得
     cur.execute(
         "SELECT role, content FROM chat_history WHERE user_id = ? ORDER BY timestamp DESC LIMIT ?",
-        (user_id, limit)
+        (user_id, limit),
     )
     rows = cur.fetchall()
     return [{"role": row[0], "content": row[1]} for row in reversed(rows)]
 
+
 async def delete_message_from_db(message_id: int):
-    #データベースからメッセージを削除
+    # データベースからメッセージを削除
     cur.execute("DELETE FROM chat_history WHERE id = ?", (message_id,))
     conn.commit()
-    
+
+
 # === 長期記憶操作関数群 ===
-    
+
+
 async def update_long_term_memory(user_id: str, key: str, value: str):
     """長期記憶を追加または更新する"""
     timestamp = datetime.now(tz=JSTTime.tz_JST).isoformat()
-    
+
     if key == "delete_memory":
         longtime_memory = await get_long_term_memories(user_id)
         # "delete_memory"の場合は、指定された内容を削除
         if value in longtime_memory.values():
             # キーを取得して削除
-            key_to_delete = next((k for k, v in longtime_memory.items() if v == value), None)
+            key_to_delete = next(
+                (k for k, v in longtime_memory.items() if v == value), None
+            )
             if key_to_delete:
-                cur.execute("DELETE FROM long_term_history WHERE user_id = ? AND key = ?", (user_id, key_to_delete))
+                cur.execute(
+                    "DELETE FROM long_term_history WHERE user_id = ? AND key = ?",
+                    (user_id, key_to_delete),
+                )
                 conn.commit()
                 return
-            
+
         else:
-            logger.warning(f"指定された内容 '{value}' は長期記憶に存在しません。削除できませんでした。")
+            logger.warning(
+                f"指定された内容 '{value}' は長期記憶に存在しません。削除できませんでした。"
+            )
             return
-    
+
     if key == "store_memory":
-        #キーは"memory_[uuid]"の形式で保存
+        # キーは"memory_[uuid]"の形式で保存
         uuid = uuid4()
         key = f"memory_{uuid}"
 
-    cur.execute("""
+    cur.execute(
+        """
         INSERT INTO long_term_history (user_id, key, value, timestamp)
         VALUES (?, ?, ?, ?)
         ON CONFLICT(user_id, key) DO UPDATE SET
         value = excluded.value,
         timestamp = excluded.timestamp
-    """, (user_id, key, value, timestamp))
+    """,
+        (user_id, key, value, timestamp),
+    )
     conn.commit()
+
 
 async def get_long_term_memories(user_id: str) -> dict:
     """ユーザーの長期記憶を辞書として取得する"""
-    cur.execute("SELECT key, value FROM long_term_history WHERE user_id = ?", (user_id,))
+    cur.execute(
+        "SELECT key, value FROM long_term_history WHERE user_id = ?", (user_id,)
+    )
     rows = cur.fetchall()
     return {row[0]: row[1] for row in rows}
 
+
 # === Graphノード関数 ===
+
 
 async def analyze_message(state: ChatState) -> ChatState:
     user_id_str = state["user_id"]
     user_message = state["message"]
     history = state["history_str"]
-    
-    prompt = f'''
+
+    prompt = f"""
     あなたは、ユーザーとの会話を分析し、後続のシステムが必要とするアクションを判断する、優秀なアシスタントです。
     特に、アークナイツのWikiデータベースとWeb検索を効率的に活用するための検索クエリ生成を得意とします。
 
@@ -326,7 +359,7 @@ async def analyze_message(state: ChatState) -> ChatState:
         "memory_operation": "store",
         "memory_content": "ユーザーの好きなオペレーターはリード"
     }}
-    '''
+    """
 
     response = await analyze_model.ainvoke(prompt)
     logger.debug(f"Analyze response: {response.content}")
@@ -335,17 +368,22 @@ async def analyze_message(state: ChatState) -> ChatState:
     except json.JSONDecodeError:
         logger.error(f"JSONの解析に失敗しました: {response.content}")
         # デフォルトの応答（検索しないなど）を返す
-        analysis = {"is_retrieval_needed": False, "retrieval_query": None, "web_search_query": None}
-        
+        analysis = {
+            "is_retrieval_needed": False,
+            "retrieval_query": None,
+            "web_search_query": None,
+        }
+
     state["analysis"] = analysis
     return state
+
 
 async def handle_memory_operation(state: ChatState) -> ChatState:
     analysis_result = state["analysis"]
     user_id_str = state["user_id"]
     operation = analysis_result.get("memory_operation")
     content = analysis_result.get("memory_content")
-    
+
     if operation is None or content is None:
         return state
 
@@ -364,8 +402,11 @@ async def handle_memory_operation(state: ChatState) -> ChatState:
         return state
     except Exception as e:
         logger.error(f"メモリ操作中にエラーが発生しました: {e}")
-        state["memory_note"] = "メモリ操作中にエラーが発生しました。もう一度試してください。"
+        state["memory_note"] = (
+            "メモリ操作中にエラーが発生しました。もう一度試してください。"
+        )
         return state
+
 
 async def wiki_retrieve(state: ChatState):
     analysis_result = state["analysis"]
@@ -378,7 +419,7 @@ async def wiki_retrieve(state: ChatState):
             for doc in docs:
                 headers = []
                 if doc.metadata:
-                    #header1からheader5までをチェック
+                    # header1からheader5までをチェック
                     for i in range(1, 6):
                         header_key = f"header{i}"
                         if header_key in doc.metadata:
@@ -390,6 +431,7 @@ async def wiki_retrieve(state: ChatState):
         logger.error(f"Wiki情報の取得中にエラーが発生しました: {e}")
         wiki_text = None
     return {"wiki_text": wiki_text}
+
 
 async def web_retrieve(state: ChatState):
     analysis_result = state["analysis"]
@@ -410,21 +452,31 @@ async def web_retrieve(state: ChatState):
                     link = item.get("url", "#")
                     txt.append(f"**{title}**\n{content}\n[リンク]({link})\n")
                 else:
-                    logger.warning(f"Unexpected item format in web search results: {item}")
+                    logger.warning(
+                        f"Unexpected item format in web search results: {item}"
+                    )
         web_text = "\n\n".join(txt) if txt else None
     except Exception as e:
         logger.error(f"Web情報の取得中にエラーが発生しました: {e}")
         web_text = None
     return {"web_text": web_text}
 
+
 async def merge_refs(state: ChatState) -> ChatState:
     wiki = state["wiki_text"]
     web = state["web_text"]
     merged = []
-    merged.append("# Wikiからの参考情報\n" + (wiki if wiki else "関連する情報が見つかりませんでした。"))
-    merged.append("# Webからの参考情報\n" + (web if web else "関連する情報が見つかりませんでした。"))
+    merged.append(
+        "# Wikiからの参考情報\n"
+        + (wiki if wiki else "関連する情報が見つかりませんでした。")
+    )
+    merged.append(
+        "# Webからの参考情報\n"
+        + (web if web else "関連する情報が見つかりませんでした。")
+    )
     state["merged_info"] = "\n\n".join(merged)
     return state
+
 
 async def extract_relevant(state: ChatState) -> ChatState:
     info = state.get("merged_info", "")
@@ -433,13 +485,13 @@ async def extract_relevant(state: ChatState) -> ChatState:
     state["extracted"] = extracted or ""
     return state
 
+
 async def response_generation_from_information(state: ChatState) -> ChatState:
-    
     user_id_str = state["user_id"]
     question = state["message"]
     history = state["history_str"]
     information = state.get("extracted", "")
-    
+
     # --- APIに渡すメッセージリストを作成 ---
     # 1. 長期記憶からシステムプロンプトを動的に生成
     long_term_memories = await get_long_term_memories(user_id_str)
@@ -448,14 +500,17 @@ async def response_generation_from_information(state: ChatState) -> ChatState:
     if long_term_memories:
         memory_items = []
         for memory in long_term_memories.keys():
-        
-            if 'nickname' in memory:
-                memory_items.append(f"- ユーザーの呼び方は「{long_term_memories['nickname']}」です。\n")
+            if "nickname" in memory:
+                memory_items.append(
+                    f"- ユーザーの呼び方は「{long_term_memories['nickname']}」です。\n"
+                )
             if "memory" in memory:
-                memory_items.append(f"- ユーザーに関する記憶: {long_term_memories[memory]['memory']}\n")
-            
+                memory_items.append(
+                    f"- ユーザーに関する記憶: {long_term_memories[memory]['memory']}\n"
+                )
+
             # 他の記憶項目もここに追加可能
-            
+
         if memory_items:
             longterm_memory += "\n".join(memory_items)
 
@@ -487,10 +542,9 @@ async def response_generation_from_information(state: ChatState) -> ChatState:
     - 調べてみたのですが、参考になる情報は見つかりませんでした。
     
     """
-    
-    
+
     logger.debug(f"統合したシステムプロンプト: {prompt}")
-    
+
     # 3. システムプロンプトをAPIに渡す
     response = await model.ainvoke(prompt)
     output_text = response.content
@@ -502,6 +556,7 @@ async def response_generation_from_information(state: ChatState) -> ChatState:
     state["response_text"] = output_text
     return state
 
+
 def setup_chat_graph():
     graph = StateGraph(ChatState)
     graph.add_node("analyze", analyze_message)
@@ -511,14 +566,14 @@ def setup_chat_graph():
     graph.add_node("merge_refs", merge_refs)
     graph.add_node("extract_relevant", extract_relevant)
     graph.add_node("generate", response_generation_from_information)
-    
+
     graph.add_edge(START, "analyze")
     graph.add_edge("analyze", "memory_op")
-    
+
     def need_retrieval(state: ChatState) -> str:
         a = state.get("analysis", {})
         return "search" if a.get("is_retrieval_needed") else "nosrch"
-    
+
     graph.add_conditional_edges(
         "memory_op",
         need_retrieval,
@@ -531,7 +586,7 @@ def setup_chat_graph():
     graph.add_node("wiki_or_web", lambda s: s)  # ダミー分岐ノード
     graph.add_edge("wiki_or_web", "wiki_retrieve")
     graph.add_edge("wiki_or_web", "web_search")
-    
+
     # 並列の合流 → 抽出 → 生成
     graph.add_edge("wiki_retrieve", "merge_refs")
     graph.add_edge("web_search", "merge_refs")
@@ -543,6 +598,7 @@ def setup_chat_graph():
     app = graph.compile()
     return app
 
+
 async def run_graph(user_id_str: str, message_content: str):
     # Ensure the app is initialized
     global app
@@ -551,15 +607,16 @@ async def run_graph(user_id_str: str, message_content: str):
     hist = await get_history_from_db(user_id_str, limit=10)
     hist = [msg for msg in hist if msg["role"] != "system"]
     hist_str = "\n".join([f"{msg['role']}: {msg['content']}" for msg in hist])
-    
+
     state: ChatState = {
         "user_id": user_id_str,
         "message": message_content,
         "history_str": hist_str,
     }
-    
+
     final_state = await app.ainvoke(state)
     return final_state.get("response_text")
+
 
 async def direct_chat(user: discord.User, message: discord.Message):
     user_id_str = str(user.id)
@@ -573,5 +630,7 @@ async def direct_chat(user: discord.User, message: discord.Message):
     except Exception as e:
         logger.error(f"Graph error: {e}", exc_info=True)
         await delete_message_from_db(msg_id)
-        await message.channel.send("ごめんなさい！今はうまく返答できないんです。後でもう一度お話ししましょう！")
+        await message.channel.send(
+            "ごめんなさい！今はうまく返答できないんです。後でもう一度お話ししましょう！"
+        )
         return None
