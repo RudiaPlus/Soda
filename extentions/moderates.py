@@ -14,6 +14,25 @@ dir = os.path.abspath(__file__ + "/../")
 puni_json_path = "jsons/punishments.json"
 jst_tz = JSTTime.timeJST("JST")
 
+REPORT_REASONS = [
+    "ネタバレ/リークを含む内容",
+    "疑わしいプロフィール",
+    "迷惑なスパム行為",
+    "サーバールールの違反",
+    "差別/侮辱的な発言",
+    "ハラスメント行為",
+    "暴力的、攻撃的な発言/脅迫行為",
+    "児童への性的加害を含んだ内容",
+    "過度にネガティブな内容",
+    "無許可の勧誘行為",
+    "不適切な場所での性的な内容",
+    "他者の権利を侵害する内容",
+    "チャンネルルールの違反",
+    "トラブルの持ち込み",
+    "虚偽の情報/誤解を招く情報の共有",
+    "違法行為の助長または実行",
+]
+
 async def punishment_delete(member, id):
     punishments = await punishment_load()
     try:
@@ -49,13 +68,9 @@ async def punishment_load():
 
 
 async def reason_autocomplete(interaction: discord.Interaction, current: str) -> List[discord.app_commands.Choice[str]]:
-    reasons = ["botロールの取得",  "疑わしいプロフィール", "迷惑なスパム行為", "サーバールールの違反", "差別/侮辱的な発言", "ハラスメント行為",
-               "暴力的な発言/脅迫行為", "児童への性的加害を含んだコンテンツの共有",
-               "不適切な場所での性的なコンテンツの共有", "他者の権利を侵害するコンテンツの共有",
-               "虚偽の情報/誤解を招く情報の共有", "違法行為の助長または実行"]
     return [
         discord.app_commands.Choice(name=reason, value=reason)
-        for reason in reasons if current.lower() in reason.lower()
+        for reason in REPORT_REASONS if current.lower() in reason.lower()
     ]
     
 def timeout_choices():
@@ -245,19 +260,125 @@ async def warning_and_timeout(interaction: discord.Interaction, member: discord.
 
 class WarningDetailModal(discord.ui.Modal):
     
+    reason_select = discord.ui.Label(
+        text="理由",
+        component=discord.ui.Select(
+            placeholder="理由を選択してください",
+            options=[
+                discord.SelectOption(label="無し", value="無し"),
+                *[discord.SelectOption(label=reason, value=reason) for reason in REPORT_REASONS],
+            ],
+            min_values=1,
+            max_values=1,
+        ),
+    )
+    timeout_select = discord.ui.Label(
+        text="タイムアウト期間",
+        description="タイムアウトが不要なら「無し」を選択",
+        component=discord.ui.Select(
+            options=[
+                discord.SelectOption(label="無し", value="none"),
+                discord.SelectOption(label="30分", value="30"),
+                discord.SelectOption(label="1時間", value="60"),
+                discord.SelectOption(label="6時間", value="360"),
+                discord.SelectOption(label="12時間", value="720"),
+                discord.SelectOption(label="1日", value="1440"),
+                discord.SelectOption(label="3日", value="4320"),
+                discord.SelectOption(label="1週間", value="10080"),
+            ],
+            min_values=1,
+            max_values=1,
+        ),
+    )
+    
     def __init__(self, member, message_url) -> None:
         self.message_url = message_url
         self.member = member
         super().__init__(title=f"{member.display_name}さんに警告を科す")
     
-    reason = discord.ui.TextInput(label = "理由(任意)", required = False)
-    timeout_minutes = discord.ui.TextInput(label = "タイムアウト期間(分, 任意)" , required = False)
+    async def on_submit(self, interaction: discord.Interaction):
+        assert isinstance(self.reason_select.component, discord.ui.Select)
+        assert isinstance(self.timeout_select.component, discord.ui.Select)
+        
+        reason_value = self.reason_select.component.values[0] if self.reason_select.component.values else "無し"
+        reason = f"{self.message_url}: {reason_value}" if reason_value != "無し" else self.message_url
+        
+        timeout_value = self.timeout_select.component.values[0] if self.timeout_select.component.values else "none"
+        timeout = None if timeout_value == "none" else int(timeout_value)
+        
+        await warning_and_timeout(interaction, self.member, None, reason, timeout)
+
+class ReportMessageModal(discord.ui.Modal, title="メッセージ通報"):
+    
+    reason_input = discord.ui.Label(
+        text="通報理由",
+        component=discord.ui.Select(
+            placeholder="通報理由を選択してください",
+            options=[discord.SelectOption(label=reason, value=reason) for reason in REPORT_REASONS],
+            min_values=1,
+            max_values=1,
+        ),
+    )
+    notes_input = discord.ui.Label(
+        text="備考(任意)",
+        description="補足があれば入力してください",
+        component=discord.ui.TextInput(
+            style=discord.TextStyle.paragraph,
+            required=False,
+            max_length=500,
+            placeholder="例: 直前の発言も合わせて確認してほしい",
+        ),
+    )
+    
+    def __init__(self, message: discord.Message) -> None:
+        self.message = message
+        super().__init__()
     
     async def on_submit(self, interaction: discord.Interaction):
-        if self.timeout_minutes.value is False:
-            interaction.response.send_message("タイムアウトには有効な数字のみを入力してください！")
-        reason = f"{self.message_url}: {self.reason.value}" if self.reason.value else self.message_url
-        await warning_and_timeout(interaction, self.member, None, reason, int(self.timeout_minutes.value))
+        channel = client.get_channel(config.moderatorchannel)
+        if channel is None:
+            try:
+                channel = await client.fetch_channel(config.moderatorchannel)
+            except Exception as e:
+                logger.error(f"[report_message]通報先チャンネルの取得に失敗: {e}")
+                await interaction.response.send_message("通報先チャンネルが見つかりませんでした。", ephemeral=True)
+                return
+        
+        content_preview = self.message.clean_content.strip()
+        if not content_preview:
+            content_preview = "(内容なし)"
+        if len(content_preview) > 1000:
+            content_preview = content_preview[:997] + "..."
+        
+        attachment_lines = []
+        if self.message.attachments:
+            for attachment in self.message.attachments:
+                attachment_lines.append(f"{attachment.filename} ({attachment.url})")
+        attachment_preview = "\n".join(attachment_lines)
+        if len(attachment_preview) > 1000:
+            attachment_preview = attachment_preview[:997] + "..."
+        
+        assert isinstance(self.reason_input.component, discord.ui.Select)
+        assert isinstance(self.notes_input.component, discord.ui.TextInput)
+        reason = self.reason_input.component.values[0] if self.reason_input.component.values else "未選択"
+        embed = discord.Embed(
+            title="🚩メッセージ通報",
+            color=discord.Color.orange(),
+        )
+        embed.add_field(name="通報理由", value=reason, inline=False)
+        embed.add_field(name="備考", value=self.notes_input.component.value or "無し", inline=False)
+        embed.add_field(name="通報者", value=interaction.user.mention, inline=True)
+        embed.add_field(name="送信者", value=self.message.author.mention, inline=True)
+        embed.add_field(name="チャンネル", value=self.message.channel.mention, inline=True)
+        embed.add_field(name="内容プレビュー", value=content_preview, inline=False)
+        embed.add_field(name="メッセージリンク", value=self.message.jump_url, inline=False)
+        if attachment_preview:
+            embed.add_field(name="添付ファイル", value=attachment_preview, inline=False)
+        embed.set_footer(text=f"Message ID: {self.message.id}")
+        embed.timestamp = self.message.created_at
+        
+        await channel.send(embed=embed)
+        await interaction.response.send_message("通報を送信しました。", ephemeral=True)
         
 @client.tree.command(name="slowmode", description="全てのテキストチャンネルで低速モードを設定します。")
 @discord.app_commands.describe(seconds = "設定する秒数。0で解除")
@@ -290,6 +411,10 @@ async def warn_from_message(interaction: discord.Interaction, message: discord.M
     message_url = message.jump_url
     await interaction.response.send_modal(WarningDetailModal(member, message_url))
     
+@client.tree.context_menu(name = "メッセージを通報する")
+@discord.app_commands.guild_only()
+async def report_message(interaction: discord.Interaction, message: discord.Message):    
+    await interaction.response.send_modal(ReportMessageModal(message))
 
 @client.tree.command(name="warn", description="指定したメンバーに警告を科します。")
 @discord.app_commands.describe(member="警告するメンバー(どちらか)", member_id="警告するメンバーの ID(どちらか)", reason="警告する理由", timeout="タイムアウト(ミュート)する時間(分単位の数字)")

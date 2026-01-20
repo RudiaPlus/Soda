@@ -95,7 +95,7 @@ async def _filter_new_tweets(tweets: List[Tweet], username: str) -> Optional[Lis
     own_new = [
         t
         for t in expanded
-        if t.author.screen_name == username and date_comparator(t.created_on, last_published_time) == 1
+        if t.author.screen_name == username and t.created_on and date_comparator(t.created_on, last_published_time) == 1
     ]
     if not own_new:
         return None

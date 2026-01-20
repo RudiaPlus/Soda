@@ -13,6 +13,16 @@ logger = log.setup_logger()
 dir = os.path.abspath(os.path.dirname(__file__))
 embeds_dir = os.path.join(dir, "embeds")
 images_dir = os.path.join(dir, "images")
+THREAD_MAP = {
+    "important_points": {
+        "title": "⚠️ 注意事項(要点) ⚠️",
+        "file": "important_points.json",
+    },
+    "rules": {
+        "title": "📝 サーバールールについて 📝",
+        "file": "rules.json",
+    },
+}
 
 def load_embed_json(file_name: str) -> dict:
     with open(os.path.join(embeds_dir, file_name), "r", encoding="utf-8") as f:
@@ -90,6 +100,37 @@ def _inject_footer_date(embed_dict: Dict[str, Any]) -> Dict[str, Any]:
         today = timeJST("raw").strftime("%Y-%m-%d")
         ed["footer"] = {"text": f"最終更新: {today}"}
     return ed
+
+def _find_thread_entry_by_title(title: str) -> Dict[str, str] | None:
+    for entry in THREAD_MAP.values():
+        if entry.get("title") == title:
+            return entry
+    return None
+
+def _chunk_embeds(embeds: List[discord.Embed], chunk_size: int = 10) -> List[List[discord.Embed]]:
+    return [embeds[i:i + chunk_size] for i in range(0, len(embeds), chunk_size)]
+
+async def _clear_thread_messages(thread: discord.Thread) -> None:
+    try:
+        async for msg in thread.history(limit=None):
+            try:
+                await msg.delete()
+            except Exception:
+                continue
+    except Exception:
+        logger.exception("failed to clear thread messages")
+
+async def _send_embeds_from_json(target: discord.abc.Messageable, file_name: str) -> None:
+    embeds: List[discord.Embed] = []
+    for item in load_embed_json(file_name):
+        if isinstance(item, dict) and "embeds" in item and isinstance(item["embeds"], list):
+            for emb in item["embeds"]:
+                if isinstance(emb, dict):
+                    embeds.append(discord.Embed.from_dict(_inject_footer_date(emb)))
+        elif isinstance(item, dict):
+            embeds.append(discord.Embed.from_dict(_inject_footer_date(item)))
+    for chunk in _chunk_embeds(embeds):
+        await target.send(embeds=chunk)
         
 async def send_embed_to_channel(channel: discord.TextChannel, file_name: str, edit_id: int = None) -> None:
     embeds = []
@@ -129,12 +170,6 @@ async def send_welcome_embed(interaction: discord.Interaction, channel_id: str =
 
         main_data = load_embed_json(main_file)
 
-        # Map titles to thread files
-        thread_map = {
-            "⚠️ 注意事項 ⚠️": "important_points.json",
-            "📝 サーバールール 📝": "rules.json",
-        }
-
         for item in main_data:
             sent_message: discord.Message | None = None
 
@@ -155,8 +190,9 @@ async def send_welcome_embed(interaction: discord.Interaction, channel_id: str =
                 title = None
                 if isinstance(item, dict) and isinstance(item.get("title"), str):
                     title = item["title"].strip()
-                if title in thread_map:
-                    thread_file = thread_map.get(title)
+                entry = _find_thread_entry_by_title(title) if title else None
+                if entry:
+                    thread_file = entry.get("file")
                     if thread_file and sent_message is not None:
                         thread = await sent_message.create_thread(name=f"さらに詳しく - {title}", auto_archive_duration=10080)
                         # Try to delete the auto thread-create message, if any
@@ -183,6 +219,44 @@ async def send_welcome_embed(interaction: discord.Interaction, channel_id: str =
     except Exception as e:
         logger.error(e)
         await interaction.followup.send("送信に失敗しました")
+
+@client.tree.command(name="update_welcome_thread", description="thread_mapから該当スレッドを再展開します", guild=discord.Object(config.testserverid))
+@discord.app_commands.describe(thread_key="thread_mapの名前", thread_channel_id="対象スレッドID")
+async def update_welcome_thread(interaction: discord.Interaction, thread_key: str, thread_channel_id: str) -> None:
+    await interaction.response.defer(ephemeral=True)
+    try:
+        thread_key = normalize("NFKC", thread_key)
+        thread_channel_id = normalize("NFKC", thread_channel_id)
+    except TypeError:
+        await interaction.followup.send("不正な値が渡されました")
+        return
+
+    entry = THREAD_MAP.get(thread_key)
+    if not entry:
+        keys = ", ".join(THREAD_MAP.keys())
+        await interaction.followup.send(f"thread_mapが見つかりません: {thread_key}\n利用可能: {keys}")
+        return
+
+    thread = client.get_channel(int(thread_channel_id))
+    if not thread or not isinstance(thread, discord.Thread):
+        await interaction.followup.send("スレッドが見つかりません")
+        return
+
+    try:
+        if thread.archived:
+            await thread.edit(archived=False)
+    except Exception:
+        pass
+
+    try:
+        await _clear_thread_messages(thread)
+        thread_file = entry.get("file")
+        await _ensure_images_in_json(thread_file, thread)
+        await _send_embeds_from_json(thread, thread_file)
+        await interaction.followup.send("スレッドを更新しました")
+    except Exception as e:
+        logger.error(e)
+        await interaction.followup.send("更新に失敗しました")
 
 @client.tree.command(name="send_embed", description="filenameから埋め込みを送信します" ,guild=discord.Object(config.testserverid))
 @discord.app_commands.describe(filename = "ファイル名", channel_id = "送信するチャンネルID", edit_id = "編集するメッセージID")
