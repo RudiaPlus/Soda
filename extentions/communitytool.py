@@ -265,105 +265,6 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
             embeds.append(embed)
         await interaction.followup.send(embeds = embeds, ephemeral=True)
 
-class RedemptionCodeModal(discord.ui.Modal, title="引き換えコード登録"):
-    code_input = discord.ui.TextInput(
-        label="引き換えコード",
-        placeholder="例: ARKNIGHTS2026",
-        max_length=50,
-        required=True
-    )
-    expiration_input = discord.ui.TextInput(
-        label="交換期限 (YYYY-MM-DD HH:MM または UNIXタイムスタンプ)",
-        placeholder="例: 2026-12-31 23:59 または 1735660740",
-        required=True
-    )
-    
-    async def on_submit(self, interaction: discord.Interaction):
-        # Check permission
-        if not interaction.user.guild_permissions.view_audit_log:
-            embed = discord.Embed(
-                title="引き換えコード登録 - 権限エラー",
-                description="この機能を使用するには監査ログ閲覧権限が必要です。",
-                color=discord.Color.red()
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        await interaction.response.defer(ephemeral=True, thinking=True)
-        
-        code = self.code_input.value.strip()
-        expiration_str = self.expiration_input.value.strip()
-        
-        # Parse expiration date
-        try:
-            # Try parsing as Unix timestamp first
-            if expiration_str.isdigit():
-                expiration_timestamp = int(expiration_str)
-            else:
-                # Try parsing as datetime string
-                expiration_dt = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
-                expiration_timestamp = int(expiration_dt.timestamp())
-        except ValueError:
-            embed = discord.Embed(
-                title="引き換えコード登録 - エラー",
-                description="期限の形式が正しくありません。\n`YYYY-MM-DD HH:MM`形式またはUNIXタイムスタンプで入力してください。\n例: `2026-12-31 23:59` または `1735660740`",
-                color=discord.Color.red()
-            )
-            await interaction.followup.send(embed=embed, ephemeral=True)
-            return
-        
-        # Check if code already exists
-        codes = load_redemption_codes()
-        for existing_code in codes:
-            if existing_code["code"] == code:
-                embed = discord.Embed(
-                    title="引き換えコード登録 - エラー",
-                    description=f"コード「{code}」は既に登録されています。",
-                    color=discord.Color.red()
-                )
-                await interaction.followup.send(embed=embed, ephemeral=True)
-                return
-        
-        # Create embed for the redemption code channel
-        channel = client.get_channel(config.redemption_code_channel)
-        if not channel:
-            embed = discord.Embed(
-                title="引き換えコード登録 - エラー",
-                description="引き換えコードチャンネルが見つかりませんでした。",
-                color=discord.Color.red()
-            )
-            await interaction.followup.send(embed=embed, ephemeral=True)
-            return
-        
-        code_embed = discord.Embed(
-            title=code,
-            description=f"交換期限: <t:{expiration_timestamp}:F> (<t:{expiration_timestamp}:R>)",
-            color=discord.Color.blue()
-        )
-        code_embed.set_footer(text=f"登録者: {interaction.user.display_name}")
-        
-        # Send embed to redemption code channel
-        message = await channel.send(embed=code_embed)
-        
-        # Save to JSON
-        code_data = {
-            "code": code,
-            "expiration": expiration_timestamp,
-            "message_id": message.id,
-            "registered_by": interaction.user.id,
-            "registered_at": int(datetime.now().timestamp())
-        }
-        codes.append(code_data)
-        write_redemption_codes(codes)
-        
-        # Confirm to user
-        embed = discord.Embed(
-            title="引き換えコード登録完了",
-            description=f"コード「{code}」を登録しました。\n{channel.mention}をご確認ください。",
-            color=discord.Color.green()
-        )
-        await interaction.followup.send(embed=embed, ephemeral=True)
-        logger.info(f"{interaction.user.name}が引き換えコード「{code}」を登録しました")
 
 
 class OperatorSelectButton(discord.ui.View):
@@ -519,11 +420,6 @@ class ToolButtons(discord.ui.View):
     async def multicreate_tool(self, interaction: discord.Interaction, button: discord.ui.Button):
         await multiplayertool.multi_create(interaction)
         logger.info(f"{interaction.user.name}がmulticreate_toolを使用しました")
-    
-    @discord.ui.button(label = "引き換えコード登録", custom_id = "redemption_code_button", style = discord.ButtonStyle.primary, emoji = "🎫")
-    async def redemption_code_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_modal(RedemptionCodeModal())
-        logger.info(f"{interaction.user.name}がredemption_code_buttonを使用しました")
 
 @client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = discord.Object(config.testserverid))
 @discord.app_commands.describe(channelid = "フォームを送信するチャンネル デフォルトはあしたはこぶね/#ツール", edit = "新規送信ではなくメッセージの編集にしたい場合、そのメッセージのID")
@@ -540,7 +436,6 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     screenshot_recruit_channel = config.screenshot_recruit_channel_url
     request_channel = config.request_url
     multi_channel = client.get_channel(config.multiplay_request_channel)
-    redemption_channel = client.get_channel(config.redemption_code_channel)
     
     #ツールの説明
     embed.add_field(name = "・公開求人ツール", value = f">>> 公開求人のタグから獲得できるオペレーターを表示します。\nスクリーンショット認識ver → {screenshot_recruit_channel}", inline=False)
@@ -549,7 +444,6 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     embed.add_field(name = "・Wiki検索", value = ">>> オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。", inline = False)
     embed.add_field(name = "・闇鍋招集", value = ">>> 統合戦略でオペレーターを招集する際、職業ごとにランダムで選んでくれるツールです。", inline = False)
     embed.add_field(name = "・マルチプレイ募集 ", value = f">>> マルチプレイの募集を簡単に行えます！詳しくは{multi_channel.jump_url}をご覧ください！", inline = False)
-    embed.add_field(name = "・引き換えコード登録", value = f">>> 引き換えコードを登録できます。登録されたコードは{redemption_channel.mention}に表示され、期限が切れると自動的に削除されます。\n-# ※この機能は監査ログ閲覧権限を持つメンバーのみ使用できます。", inline = False)
     
     embed.set_author(name = "ロード", icon_url=client.user.avatar)
     if not edit:
@@ -559,3 +453,83 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
         await message.edit(embed = embed, view = ToolButtons())
     
     await interaction.followup.send("完了しました！")
+
+@client.tree.command(name="redemption", description="引き換えコードを登録します", guild=discord.Object(config.testserverid))
+@discord.app_commands.default_permissions(view_audit_log=True)
+@discord.app_commands.describe(code="登録する引き換えコード", expiration="有効期限(YYYY-MM-DD HH:MM形式 または UnixTimestamp)")
+async def redemption(interaction: discord.Interaction, code: str, expiration: str):
+    await interaction.response.defer(ephemeral=True)
+    
+    code = code.strip()
+    expiration_str = expiration.strip()
+    
+    # Parse expiration date
+    try:
+        # Try parsing as Unix timestamp first
+        if expiration_str.isdigit():
+            expiration_timestamp = int(expiration_str)
+        else:
+            # Try parsing as datetime string
+            expiration_dt = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
+            expiration_timestamp = int(expiration_dt.timestamp())
+    except ValueError:
+        embed = discord.Embed(
+            title="引き換えコード登録 - エラー",
+            description="期限の形式が正しくありません。\n`YYYY-MM-DD HH:MM`形式またはUNIXタイムスタンプで入力してください。\n例: `2026-12-31 23:59` または `1735660740`",
+            color=discord.Color.red()
+        )
+        await interaction.followup.send(embed=embed, ephemeral=True)
+        return
+    
+    # Check if code already exists
+    codes = load_redemption_codes()
+    for existing_code in codes:
+        if existing_code["code"] == code:
+            embed = discord.Embed(
+                title="引き換えコード登録 - エラー",
+                description=f"コード「{code}」は既に登録されています。",
+                color=discord.Color.red()
+            )
+            await interaction.followup.send(embed=embed, ephemeral=True)
+            return
+    
+    # Create embed for the redemption code channel
+    channel = client.get_channel(config.redemption_code_channel)
+    if not channel:
+        embed = discord.Embed(
+            title="引き換えコード登録 - エラー",
+            description="引き換えコードチャンネルが見つかりませんでした。",
+            color=discord.Color.red()
+        )
+        await interaction.followup.send(embed=embed, ephemeral=True)
+        return
+    
+    code_embed = discord.Embed(
+        title=code,
+        description=f"交換期限: <t:{expiration_timestamp}:F> (<t:{expiration_timestamp}:R>)",
+        color=discord.Color.blue()
+    )
+    code_embed.set_footer(text=f"登録者: {interaction.user.display_name}")
+    
+    # Send embed to redemption code channel
+    message = await channel.send(embed=code_embed)
+    
+    # Save to JSON
+    code_data = {
+        "code": code,
+        "expiration": expiration_timestamp,
+        "message_id": message.id,
+        "registered_by": interaction.user.id,
+        "registered_at": int(datetime.now().timestamp())
+    }
+    codes.append(code_data)
+    write_redemption_codes(codes)
+    
+    # Confirm to user
+    embed = discord.Embed(
+        title="引き換えコード登録完了",
+        description=f"コード「{code}」を登録しました。\n{channel.mention}をご確認ください。",
+        color=discord.Color.green()
+    )
+    await interaction.followup.send(embed=embed, ephemeral=True)
+    logger.info(f"{interaction.user.name}が引き換えコード「{code}」を登録しました")
