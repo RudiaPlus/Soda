@@ -454,7 +454,7 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     
     await interaction.followup.send("完了しました！")
 
-@client.tree.command(name="redemption", description="引き換えコードを登録します", guild=discord.Object(config.testserverid))
+@client.tree.command(name="redemption", description="引き換えコードを登録します")
 @discord.app_commands.default_permissions(view_audit_log=True)
 @discord.app_commands.describe(code="登録する引き換えコード", expiration="有効期限(YYYY-MM-DD HH:MM形式 または UnixTimestamp)")
 async def redemption(interaction: discord.Interaction, code: str, expiration: str):
