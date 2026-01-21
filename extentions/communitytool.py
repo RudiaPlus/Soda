@@ -4,8 +4,11 @@ import traceback
 from re import match
 from unicodedata import normalize
 from typing import Dict, List, Optional, Tuple
+import json
+from datetime import datetime
 
 import discord
+from discord.ext import tasks
 
 from extentions import log, recruit, supportrequest, multiplayertool
 from extentions.aclient import client
@@ -13,6 +16,7 @@ from extentions.config import config
 
 logger = log.setup_logger()
 MODULE_DIR = os.path.abspath(__file__ + "/../")
+REDEMPTION_CODES_JSON = os.path.join(MODULE_DIR, "jsons", "redemption_codes.json")
 
 # Common UI timeouts (seconds)
 TIMEOUT_SHORT = 300
@@ -66,6 +70,66 @@ def is_valid_level_for_rarity(rarity: int, level: int) -> bool:
     if rarity == 5 and level > 90:
         return False
     return True
+
+# ------------------------------
+# Redemption Code Management
+# ------------------------------
+
+def load_redemption_codes() -> List[dict]:
+    """Load redemption codes from JSON file."""
+    try:
+        with open(REDEMPTION_CODES_JSON, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+def write_redemption_codes(codes: List[dict]) -> None:
+    """Write redemption codes to JSON file."""
+    with open(REDEMPTION_CODES_JSON, "w", encoding="utf-8") as f:
+        json.dump(codes, f, indent=2, ensure_ascii=False)
+
+@tasks.loop(hours=1)
+async def check_expired_redemption_codes():
+    """Background task to check and delete expired redemption codes."""
+    try:
+        codes = load_redemption_codes()
+        current_time = int(datetime.now().timestamp())
+        expired_codes = []
+        remaining_codes = []
+        
+        channel = client.get_channel(config.redemption_code_channel)
+        if not channel:
+            logger.warning("引き換えコードチャンネルが見つかりませんでした")
+            return
+        
+        for code_data in codes:
+            if code_data["expiration"] <= current_time:
+                # Code is expired
+                expired_codes.append(code_data)
+                try:
+                    # Try to delete the message
+                    message = await channel.fetch_message(code_data["message_id"])
+                    await message.delete()
+                    logger.info(f"期限切れの引き換えコード「{code_data['code']}」を削除しました")
+                except discord.NotFound:
+                    logger.warning(f"引き換えコード「{code_data['code']}」のメッセージが見つかりませんでした")
+                except Exception as e:
+                    logger.error(f"引き換えコード「{code_data['code']}」の削除中にエラーが発生しました: {e}")
+            else:
+                remaining_codes.append(code_data)
+        
+        # Update JSON if any codes were expired
+        if expired_codes:
+            write_redemption_codes(remaining_codes)
+            logger.info(f"{len(expired_codes)}件の期限切れコードを削除しました")
+    except Exception as e:
+        logger.error(f"引き換えコード期限チェック中にエラーが発生しました: {e}")
+
+@check_expired_redemption_codes.before_loop
+async def before_check_expired_codes():
+    """Wait for the bot to be ready before starting the task."""
+    await client.wait_until_ready()
+    logger.info("引き換えコード期限チェックタスクを開始しました")
 
 class YaminabeRepeat(discord.ui.View):
     def __init__(self, label, operators_in_class):
@@ -200,6 +264,107 @@ class OperatorSearchModal(discord.ui.Modal, title="Wiki検索"):
             embed = discord.Embed(title = f"検索結果 - {operator_emojis[operator_name]}{operator_name}", description=f"{operator_emojis[operator_name]}{operator_name}の詳細・評価: [有志Wiki]({url})", url = url, color = discord.Color.blue())
             embeds.append(embed)
         await interaction.followup.send(embeds = embeds, ephemeral=True)
+
+class RedemptionCodeModal(discord.ui.Modal, title="引き換えコード登録"):
+    code_input = discord.ui.TextInput(
+        label="引き換えコード",
+        placeholder="例: ARKNIGHTS2026",
+        max_length=50,
+        required=True
+    )
+    expiration_input = discord.ui.TextInput(
+        label="交換期限 (YYYY-MM-DD HH:MM または UNIXタイムスタンプ)",
+        placeholder="例: 2026-12-31 23:59 または 1735660740",
+        required=True
+    )
+    
+    async def on_submit(self, interaction: discord.Interaction):
+        # Check permission
+        if not interaction.user.guild_permissions.view_audit_log:
+            embed = discord.Embed(
+                title="引き換えコード登録 - 権限エラー",
+                description="この機能を使用するには監査ログ閲覧権限が必要です。",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+        
+        await interaction.response.defer(ephemeral=True, thinking=True)
+        
+        code = self.code_input.value.strip()
+        expiration_str = self.expiration_input.value.strip()
+        
+        # Parse expiration date
+        try:
+            # Try parsing as Unix timestamp first
+            if expiration_str.isdigit():
+                expiration_timestamp = int(expiration_str)
+            else:
+                # Try parsing as datetime string
+                expiration_dt = datetime.strptime(expiration_str, "%Y-%m-%d %H:%M")
+                expiration_timestamp = int(expiration_dt.timestamp())
+        except ValueError:
+            embed = discord.Embed(
+                title="引き換えコード登録 - エラー",
+                description="期限の形式が正しくありません。\n`YYYY-MM-DD HH:MM`形式またはUNIXタイムスタンプで入力してください。\n例: `2026-12-31 23:59` または `1735660740`",
+                color=discord.Color.red()
+            )
+            await interaction.followup.send(embed=embed, ephemeral=True)
+            return
+        
+        # Check if code already exists
+        codes = load_redemption_codes()
+        for existing_code in codes:
+            if existing_code["code"] == code:
+                embed = discord.Embed(
+                    title="引き換えコード登録 - エラー",
+                    description=f"コード「{code}」は既に登録されています。",
+                    color=discord.Color.red()
+                )
+                await interaction.followup.send(embed=embed, ephemeral=True)
+                return
+        
+        # Create embed for the redemption code channel
+        channel = client.get_channel(config.redemption_code_channel)
+        if not channel:
+            embed = discord.Embed(
+                title="引き換えコード登録 - エラー",
+                description="引き換えコードチャンネルが見つかりませんでした。",
+                color=discord.Color.red()
+            )
+            await interaction.followup.send(embed=embed, ephemeral=True)
+            return
+        
+        code_embed = discord.Embed(
+            title=code,
+            description=f"交換期限: <t:{expiration_timestamp}:F> (<t:{expiration_timestamp}:R>)",
+            color=discord.Color.blue()
+        )
+        code_embed.set_footer(text=f"登録者: {interaction.user.display_name}")
+        
+        # Send embed to redemption code channel
+        message = await channel.send(embed=code_embed)
+        
+        # Save to JSON
+        code_data = {
+            "code": code,
+            "expiration": expiration_timestamp,
+            "message_id": message.id,
+            "registered_by": interaction.user.id,
+            "registered_at": int(datetime.now().timestamp())
+        }
+        codes.append(code_data)
+        write_redemption_codes(codes)
+        
+        # Confirm to user
+        embed = discord.Embed(
+            title="引き換えコード登録完了",
+            description=f"コード「{code}」を登録しました。\n{channel.mention}をご確認ください。",
+            color=discord.Color.green()
+        )
+        await interaction.followup.send(embed=embed, ephemeral=True)
+        logger.info(f"{interaction.user.name}が引き換えコード「{code}」を登録しました")
+
 
 class OperatorSelectButton(discord.ui.View):
     def __init__(self, operators: list, level: int, remarks: str, doctorname: str = None):
@@ -354,6 +519,11 @@ class ToolButtons(discord.ui.View):
     async def multicreate_tool(self, interaction: discord.Interaction, button: discord.ui.Button):
         await multiplayertool.multi_create(interaction)
         logger.info(f"{interaction.user.name}がmulticreate_toolを使用しました")
+    
+    @discord.ui.button(label = "引き換えコード登録", custom_id = "redemption_code_button", style = discord.ButtonStyle.primary, emoji = "🎫")
+    async def redemption_code_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(RedemptionCodeModal())
+        logger.info(f"{interaction.user.name}がredemption_code_buttonを使用しました")
 
 @client.tree.command(name="tool_form", description = "ツールのチャットを送信します", guild = discord.Object(config.testserverid))
 @discord.app_commands.describe(channelid = "フォームを送信するチャンネル デフォルトはあしたはこぶね/#ツール", edit = "新規送信ではなくメッセージの編集にしたい場合、そのメッセージのID")
@@ -370,6 +540,7 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     screenshot_recruit_channel = config.screenshot_recruit_channel_url
     request_channel = config.request_url
     multi_channel = client.get_channel(config.multiplay_request_channel)
+    redemption_channel = client.get_channel(config.redemption_code_channel)
     
     #ツールの説明
     embed.add_field(name = "・公開求人ツール", value = f">>> 公開求人のタグから獲得できるオペレーターを表示します。\nスクリーンショット認識ver → {screenshot_recruit_channel}", inline=False)
@@ -378,6 +549,7 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
     embed.add_field(name = "・Wiki検索", value = ">>> オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。", inline = False)
     embed.add_field(name = "・闇鍋招集", value = ">>> 統合戦略でオペレーターを招集する際、職業ごとにランダムで選んでくれるツールです。", inline = False)
     embed.add_field(name = "・マルチプレイ募集 ", value = f">>> マルチプレイの募集を簡単に行えます！詳しくは{multi_channel.jump_url}をご覧ください！", inline = False)
+    embed.add_field(name = "・引き換えコード登録", value = f">>> 引き換えコードを登録できます。登録されたコードは{redemption_channel.mention}に表示され、期限が切れると自動的に削除されます。\n-# ※この機能は監査ログ閲覧権限を持つメンバーのみ使用できます。", inline = False)
     
     embed.set_author(name = "ロード", icon_url=client.user.avatar)
     if not edit:

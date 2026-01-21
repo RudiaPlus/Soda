@@ -207,6 +207,8 @@ class Config:
         self.event_stage_channel = 1232585432756129813  # イベント
 
         self.announcement = 1019202000975560754  # アナウンス
+        
+        self.redemption_code_channel = 1463328209872621754  # 引き換えコード
 
         # categories
         self.feedback_category = 1108189699715125268
