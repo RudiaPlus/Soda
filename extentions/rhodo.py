@@ -135,6 +135,7 @@ async def on_ready():
         #ルーティン
         maintenances.maintenance_timer.start()
         twitterpost.ake_tweet_retrieve.start()
+        communitytool.check_expired_redemption_codes.start()
         await recruit.operators_list_refresh()
         
         #リマインダー(スレッド)の確認
