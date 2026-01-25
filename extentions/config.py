@@ -44,7 +44,7 @@ class Config:
         ]
 
         self.server_invite_link = "https://discord.gg/AshC"
-        self.server_rule_link = "https://discord.com/channels/1018858818345631745/1018858818932842589/1018863690914729986"
+        self.server_rule_link = "https://discord.com/channels/1018858818345631745/1460258502340509833"
         self.community_guideline_link = "https://discord.com/guidelines"
         self.main_server = 1018858818345631745  # あしたはこぶね
         self.testserverid = 1059155328584908810  # メンテナンス部屋

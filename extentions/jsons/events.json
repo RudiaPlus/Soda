@@ -66,5 +66,43 @@
                 "startTime": 1769756400
             }
         ]
+    },
+    "cc2#4": {
+        "id": "cc2#4",
+        "type": "CRISIS",
+        "name": "危機契約#4 作戦コード「弧光」",
+        "news": "https://arknights.jp/news/2476",
+        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88166_%E5%8D%B1%E6%A9%9F%E5%A5%91%E7%B4%84BATTLEPLAN%EF%BC%834",
+        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/01/19/3UiZmAp6.png",
+        "stageAdd": "CRISIS",
+        "startTime": 1769151600,
+        "endTime": 1770317999,
+        "eventColor": "A53042",
+        "permStage": {
+            "stageType": "PERM",
+            "stageName": "空に浮かぶ焦点"
+        },
+        "dailyStage": [
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 1,
+                "stageName": "連邦の監獄"
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 2,
+                "stageName": "溶炉の点検口"
+            },
+            {
+                "stageType": "DAILY",
+                "dailyNumber": 3,
+                "stageName": "枯葦の泥沼"
+            },
+            {
+                "stageType": "DAILY_FINAL",
+                "dailyNumber": 4,
+                "stageName": "巫呪の骸野"
+            }
+        ]
     }
 }
