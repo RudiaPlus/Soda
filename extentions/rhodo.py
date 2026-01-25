@@ -249,118 +249,196 @@ async def setup_hook() -> None:
     
     logger.info("タスクを開始しました")
 
-@client.event
-async def on_message(message: discord.Message):
+# Message handler functions
+async def handle_preset_message(message: discord.Message) -> bool:
+    """Handle preset commands that start with '.'
+    
+    Returns:
+        bool: True if message was handled, False otherwise
+    """
+    user_message = message.content
+    
+    if user_message == ".help":
+        presets_dict = load_json("presets.json")
+        preset_describe = "\n- **.help**：この一覧を表示します"
+        for preset in presets_dict:
+            preset_describe += f"\n- **{preset}**：{presets_dict[preset]['description']}"
+            
+        embed = discord.Embed(
+            title="プリセット一覧", 
+            description=f"## 以下が現在利用できるプリセットです！\n{preset_describe}", 
+            color=discord.Color.green()
+        )
+        embed.set_footer(text="プリセットを利用する場合は、.(ドット)から始まるプリセット名をメッセージに送信するだけでOKです！")
+        await message.reply(embed=embed)
+        return True
+        
+    if user_message in preset_names:
+        presets_dict = load_json("presets.json")
+        await message.reply(presets_dict[user_message]["bodytext"])
+        return True
+    
+    return False
 
-    if message.author == client.user or message.author.bot is True:
+
+async def handle_reminder_greeting(message: discord.Message):
+    """Handle greeting messages in the reminder thread"""
+    greet_pattern = ".*(お(は(よ|ー|～)|早)|こんにち(は|わ)|こんばん(は|わ))|ohayo.*"
+    result = re.match(greet_pattern, message.content)
+    if result:
+        logger.info(f"{message.author.name}さんが挨拶しました！")
+        await message.add_reaction("🌟")
+
+
+async def handle_recruit_screenshot(message: discord.Message):
+    """Handle recruit screenshot processing"""
+    if not message.attachments:
         return
+    
+    for attachment in message.attachments:
+        if "image" not in attachment.content_type:
+            return
+        tags_image = io.BytesIO(rq.get(attachment.url).content)
+        await recruit.recruit_from_screenshot(image_path=tags_image, message=message)
 
+
+async def handle_blueprint_message(message: discord.Message):
+    """Handle blueprint ID detection and embed creation"""
+    # Regex pattern to find blueprint IDs (EFO followed by alphanumeric characters)
+    blueprint_pattern = r'EFO[0-9A-Za-z]+'
+    blueprint_ids = re.findall(blueprint_pattern, message.content)
+    
+    if blueprint_ids:
+        # Remove duplicates while preserving order
+        unique_ids = list(dict.fromkeys(blueprint_ids))
+        
+        # Create embed for each unique ID
+        for blueprint_id in unique_ids:
+            embed = discord.Embed(
+                title="工業図面IDのコピーにご利用ください！",
+                description=blueprint_id,
+                color=discord.Color.blue()
+            )
+            await message.reply(embed=embed, mention_author=False)
+        
+        logger.info(f"工業図面ID {', '.join(unique_ids)} を検出し、埋め込みを作成しました")
+
+
+async def handle_modmail_staff_message(message: discord.Message):
+    """Handle staff messages in modmail channels"""
+    channel = message.channel
+    author = message.author
+    user_message = message.content
+    
+    idx = channel.name.find("-") + 1
+    userID = int(channel.name[idx:])
+    user = await client.fetch_user(userID)
+
+    mail = discord.Embed(
+        title=f"【スタッフ】{author.display_name}からのメッセージ", 
+        description=user_message, 
+        color=0x979C9F
+    )
+    mail.set_author(name=author.display_name, icon_url=author.avatar)
+    
+    embeds = [mail]
+    videos = []
+    
+    for attachment in message.attachments:
+        if "image" in attachment.content_type:
+            embed = discord.Embed(color=discord.Color.yellow())
+            embed.set_image(url=attachment.url)
+            embeds.append(embed)
+        
+        if "video" in attachment.content_type:
+            videos.append(attachment.url)
+    
+    await user.send(embeds=embeds)
+    for video in videos:
+        await user.send(content=f"[ブラウザで開く]({video})")
+
+    await message.add_reaction("✅")
+    logger.info(f"Modmailに投稿されたメッセージ(id: {message.id})を正常に転送しました")
+
+
+async def handle_dm_message(message: discord.Message):
+    """Handle direct messages to the bot"""
     author = message.author
     username = str(author)
     user_message = message.content
-    channel = message.channel
-    channelID = message.channel.id
     
-    #preset
-    if user_message.startswith("."):
-        if user_message == ".help":
-            presets_dict = load_json("presets.json")
-            preset_describe = "\n- **.help**：この一覧を表示します"
-            for preset in presets_dict:
-                preset_describe += f"\n- **{preset}**：{presets_dict[preset]["description"]}"
-                
-            embed = discord.Embed(title = "プリセット一覧", description = f"## 以下が現在利用できるプリセットです！\n{preset_describe}", color = discord.Color.green())
-            embed.set_footer(text = "プリセットを利用する場合は、.(ドット)から始まるプリセット名をメッセージに送信するだけでOKです！")
-            await message.reply(embed = embed)
-            return
-        if user_message in preset_names:
-            presets_dict = load_json("presets.json")
-            await message.reply(presets_dict[user_message]["bodytext"])
-            return
-
-    if message.guild:
+    guild = client.get_guild(config.main_server) if config.test is False else client.get_guild(config.testserverid)
+    logger.info(f"{username}に「{user_message}」と言われました。")
+    
+    mod_channel = await modmails.fetch_mod_channel(guild=guild, user=author)
+    if mod_channel is not None:
+        mail = discord.Embed(
+            title=f"{author.display_name}さんからのメッセージ",
+            description=message.content, 
+            color=message.author.accent_color
+        )
+        mail.set_author(name=str(message.author), icon_url=message.author.avatar)
+        embeds = [mail]
+        videos = []
         
-        if channelID == remindThreadID:
+        for attachment in message.attachments:
+            if "image" in attachment.content_type:
+                embed = discord.Embed(color=discord.Color.yellow())
+                embed.set_image(url=attachment.url)
+                embeds.append(embed)
             
-            greet_pattern = ".*(お(は(よ|ー|～)|早)|こんにち(は|わ)|こんばん(は|わ))|ohayo.*"
-            result = re.match(greet_pattern, message.content)
-            if result:
-                logger.info(f"{author.name}さんが挨拶しました！")
-                await message.add_reaction("🌟")
-                
-        if channelID == config.screenshot_recruit_channel or channelID == config.screenshot_recruit_channel_test:
-            if not message.attachments:
-                return
-            for attachment in message.attachments:
-                if "image" not in attachment.content_type:
-                    return
-                tags_image = io.BytesIO(rq.get(attachment.url).content)
-                await recruit.recruit_from_screenshot(image_path=tags_image, message = message)
-
-        if channel.category_id == config.feedback_category and channel.name.startswith("mail"):
-
-            idx = channel.name.find("-") + 1
-            userID = int(channel.name[idx:])
-            user = await client.fetch_user(userID)
-
-            mail = discord.Embed(
-                title=f"【スタッフ】{author.display_name}からのメッセージ", description=user_message, color=0x979C9F)
-            mail.set_author(name=author.display_name,
-                            icon_url=author.avatar)
+            if "video" in attachment.content_type:
+                videos.append(attachment.url)
+        
+        await mod_channel.send(embeds=embeds)
+        for video in videos:
+            await mod_channel.send(content=f"[ブラウザで開く]({video})")
             
-            embeds = [mail]
-            videos = []
-            
-            for attachment in message.attachments:
-                if "image" in attachment.content_type:
-                    embed = discord.Embed(color = discord.Color.yellow())
-                    embed.set_image(url = attachment.url)
-                    embeds.append(embed)
-                
-                if "video" in attachment.content_type:
-                    videos.append(attachment.url)
-            
-            await user.send(embeds=embeds)
-            for video in videos:
-                await user.send(content = f"[ブラウザで開く]({video})")
-
-            await message.add_reaction("✅")
-            logger.info(f"Modmailに投稿されたメッセージ(id: {message.id})を正常に転送しました")
-                
+        await message.add_reaction("✅")
+        logger.info(f"Modmailへ投稿されたメッセージ(id: {message.id})を正常に転送しました")
     else:
-        guild = client.get_guild(config.main_server) if config.test is False else client.get_guild(config.testserverid)
-        logger.info(f"{username}に「{user_message}」と言われました。")
-        mod_channel = await modmails.fetch_mod_channel(guild=guild, user=author)
-        if mod_channel is not None:
-                
-            mail = discord.Embed(title=f"{author.display_name}さんからのメッセージ",
-                                    description=message.content, color=message.author.accent_color)
-            mail.set_author(name=str(message.author),
-                            icon_url=message.author.avatar)
-            embeds = [mail]
-            videos = []
-            
-            for attachment in message.attachments:
-                if "image" in attachment.content_type:
-                    embed = discord.Embed(color = discord.Color.yellow())
-                    embed.set_image(url = attachment.url)
-                    embeds.append(embed)
-                
-                if "video" in attachment.content_type:
-                    videos.append(attachment.url)
-            
-            await mod_channel.send(embeds=embeds)
-            for video in videos:
-                await mod_channel.send(content = f"[ブラウザで開く]({video})")
-                
-            await message.add_reaction("✅")
-            logger.info(f"Modmailへ投稿されたメッセージ(id: {message.id})を正常に転送しました")
+        response = await chat.direct_chat(author, message)
+        if response:
+            logger.info(f"{username}さんのメッセージ{user_message}に対して、{response}と返答しました")
 
-        else:
-            response = await chat.direct_chat(author, message)
-            if response:
-                logger.info(f"{username}さんのメッセージ{user_message}に対して、{response}と返答しました")
-            
+
+@client.event
+async def on_message(message: discord.Message):
+    """Main message handler that routes messages to appropriate handlers"""
+    
+    # Early returns for bot messages
+    if message.author == client.user or message.author.bot is True:
+        return
+
+    # Handle preset commands (works in both DM and guild)
+    if message.content.startswith("."):
+        await handle_preset_message(message)
+        return
+
+    # Guild message handlers
+    if message.guild:
+        channel_id = message.channel.id
+        
+        # Reminder greeting handler
+        if channel_id == remindThreadID:
+            await handle_reminder_greeting(message)
+        
+        # Recruit screenshot handler
+        if channel_id in [config.screenshot_recruit_channel, config.screenshot_recruit_channel_test]:
+            await handle_recruit_screenshot(message)
+        
+        # Blueprint ID detection handler
+        if channel_id == config.blueprint_channel:
+            await handle_blueprint_message(message)
+        
+        # Modmail staff message handler
+        if message.channel.category_id == config.feedback_category and message.channel.name.startswith("mail"):
+            await handle_modmail_staff_message(message)
+    
+    # DM handlers
+    else:
+        await handle_dm_message(message)
+
 def load_json(file_name: str) -> dict:
     with open(os.path.join(dir, f"jsons\\{file_name}"), "r", encoding="utf-8") as f:
         return json.load(f)

@@ -210,6 +210,9 @@ class Config:
         
         self.redemption_code_channel = 1463328209872621754  # 引き換えコード
 
+        #endfield
+        self.blueprint_channel = 1444998719228346451 #工業図面共有
+
         # categories
         self.feedback_category = 1108189699715125268
         self.vccreate_category = 1305500357958307860
