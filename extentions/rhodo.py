@@ -301,7 +301,6 @@ async def handle_recruit_screenshot(message: discord.Message):
         tags_image = io.BytesIO(rq.get(attachment.url).content)
         await recruit.recruit_from_screenshot(image_path=tags_image, message=message)
 
-
 async def handle_blueprint_message(message: discord.Message):
     """Handle blueprint ID detection and embed creation"""
     # Regex pattern to find blueprint IDs (EFO followed by alphanumeric characters)
@@ -311,6 +310,16 @@ async def handle_blueprint_message(message: discord.Message):
     if blueprint_ids:
         # Remove duplicates while preserving order
         unique_ids = list(dict.fromkeys(blueprint_ids))
+        
+        # Check for existing replies to avoid duplicates
+        async for history_msg in message.channel.history(limit=50):
+            if history_msg.author == client.user and history_msg.reference and history_msg.reference.message_id == message.id:
+                if history_msg.embeds and history_msg.embeds[0].title == "工業図面IDのコピーにご利用ください！":
+                    if history_msg.embeds[0].description in unique_ids:
+                        unique_ids.remove(history_msg.embeds[0].description)
+        
+        if not unique_ids:
+            return
         
         # Create embed for each unique ID
         for blueprint_id in unique_ids:
@@ -438,6 +447,18 @@ async def on_message(message: discord.Message):
     # DM handlers
     else:
         await handle_dm_message(message)
+
+@client.event
+async def on_message_edit(before: discord.Message, after: discord.Message):
+    """Handle message edits"""
+    if after.author == client.user or after.author.bot is True:
+        return
+
+    if before.content == after.content:
+        return
+
+    if after.guild and after.channel.id == config.blueprint_channel:
+        await handle_blueprint_message(after)
 
 def load_json(file_name: str) -> dict:
     with open(os.path.join(dir, f"jsons\\{file_name}"), "r", encoding="utf-8") as f:
