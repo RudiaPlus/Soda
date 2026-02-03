@@ -573,7 +573,7 @@ async def remind(game="arknights"):
 
         for i in range(len(events)):
             if events[i]["dif"] == "present":
-
+                if events[i]["type"] == "CRISIS":
                     
                     try:
                         title =  events[i]["name"]
@@ -610,7 +610,7 @@ async def remind(game="arknights"):
                     
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})",
-                                            color=0x0096fa,
+                                            color=0x852B2F,
                                             url=link)
                     embed.set_author(name="統合戦略")
                     
@@ -639,7 +639,7 @@ async def remind(game="arknights"):
                     
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})",
-                                            color=0xffa500,
+                                            color=0xB0DB34,
                                             url=link)
                     embed.set_author(name="生息演算")
                     
@@ -690,15 +690,33 @@ async def remind(game="arknights"):
                     except Exception:
                         pass
                     
-                    if events[i]["type"] == "SIDESTORY":
-                        author_name = "サイドストーリー"
-                        color = discord.Color.blue()
-                    elif events[i]["type"] == "MINISTORY":
-                        author_name = "ミニストーリー"
-                        color = discord.Color.green()
+                    event_type = events[i]["type"]
+                    
+                    if event_type == "SIDESTORY":
+                        if events[i].get("stageAdd") is True:
+                            author_name = "サイドストーリー"
+                            color = 0x24ab12
+                        else:
+                            author_name = "サイドストーリー"
+                            color = 0xD94A36
+                    elif event_type == "MINISTORY":
+                        author_name = "オムニバスストーリー"
+                        color = 0xCAC531
+                    elif event_type == "BOSS_RUSH":
+                        author_name = "導灯の試練"
+                        color = 0xFFBA00
+                    elif event_type == "MULTIPLAY":
+                        author_name = "マルチイベント"
+                        color = 0xCAC531
+                    elif event_type == "MAIN":
+                        author_name = "新章実装キャンペーン"
+                        color = 0x353536
+                    elif event_type == "SUPPORT":
+                        author_name = "新章公開 - 事前準備"
+                        color = 0x5C7CA8
                     else:
                         author_name = "イベント"
-                        color = discord.Color.orange()
+                        color = 0xf29382
                     
                     embed = discord.Embed(title=title,
                                             description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}",
@@ -706,12 +724,11 @@ async def remind(game="arknights"):
                                             url=link)
                     embed.set_author(name=author_name)
                     
-                    if events[i]["remark"]:
-                        embed.add_field(name="備考",
-                                        value=events[i]["remark"],
-                                        inline=False)
+                    if events[i].get("remark"):
+                        remark = events[i]["remark"]
+                        embed.description = f"- {remark}\n" + embed.description
                     
-                    if events[i]["stageAdd"] is True:
+                    if events[i].get("stageAdd") is True:
                         embed.add_field(name="・追加ステージ",
                                         value=f'**{events[i]["nextStageName"]}**\n> 追加: {events[i]["nextAddTime"]}',
                                         inline=False)
@@ -771,38 +788,62 @@ async def remind(game="arknights"):
                 embed.set_image(url = eventpic)
                 embeds.append(embed)
         
+        logger.info(f"[remind] Processed {len(events)} events, added {len(embeds)} embeds so far")
+        
         refreshTime = JSTTime.timeJST("raw")
         refreshTime = f"<t:{round(refreshTime.timestamp())}:F>"
         
-        image_dir = os.path.join(dir, "images/gacha")
-        gacha_list = evjson.gachaGet()
+        logger.info(f"[remind] Starting gacha processing")
         
-        for gacha in gacha_list:
-            image_name = gacha + ".png"
+        # Add scout banner
+        png_name = "images/banner_scout.png"
+        file = discord.File(os.path.join(dir, png_name), filename="banner_scout.png")
+        files.append(file)
+        embed = discord.Embed(color = discord.Color.dark_grey())
+        embed.set_image(url = "attachment://banner_scout.png")
+        embeds.append(embed)
+        
+        image_dir = os.path.join(dir, "images")
+        
+        try:
+            gacha_dict = await evjson.gachaget()
+            logger.info(f"[remind] Got {len(gacha_dict)} gacha items")
             
-            if "新人" in gacha:
-                author_name = "新人スカウト"
-                color = discord.Color.green()
-            elif "中堅" in gacha:
-                author_name = "中堅スカウト"
-                color = discord.Color.blue()
-            elif "常設" in gacha:
-                author_name = "常設スカウト"
-                color = discord.Color.yellow()
-            else:
-                author_name = "イベントスカウト"
-                color = discord.Color.orange()
+            k = 0
+            for gacha, image_url in gacha_dict.items():
+                k += 1
+                image_name = f"scout_image_{k}.png"
                 
-            embed = discord.Embed(color = color)
-            embed.set_author(name = author_name)
+                # Download gacha image
+                r = requests.get(image_url)
+                gacha_image = r.content
+                with open(os.path.join(image_dir, image_name), "wb") as f:
+                    f.write(gacha_image)
                 
-            file = discord.File(os.path.join(image_dir, image_name), filename = image_name)
-            files.append(file)
-            embed.set_image(url = f"attachment://{image_name}")      
-            embeds.append(embed)
-        
+                if "ロドスの道のり" in gacha:
+                    author_name = "スペシャルスカウト・ロドスの道のり"
+                    color = discord.Color.green()
+                elif "中堅" in gacha:
+                    author_name = "中堅スカウト"
+                    color = discord.Color.blue()
+                elif "常設" in gacha:
+                    author_name = "常設スカウト"
+                    color = discord.Color.yellow()
+                else:
+                    author_name = "イベントスカウト"
+                    color = discord.Color.orange()
+                    
+                embed = discord.Embed(color = color)
+                embed.set_author(name = author_name)
+                    
+                file = discord.File(os.path.join(image_dir, image_name), filename = image_name)
+                files.append(file)
+                embed.set_image(url = f"attachment://{image_name}")      
+                embeds.append(embed)
+            
+            logger.info(f"[remind] Processed {len(gacha_dict)} gacha banners")
         except Exception as e:
-            logger.error(f"[remind] Error processing Arknights events: {e}")
+            logger.error(f"[remind] Error processing gacha: {e}")
             import traceback
             logger.error(traceback.format_exc())
         
@@ -852,13 +893,10 @@ async def remind(game="arknights"):
             event_type = event.get("type", "")
             
             if event_type == "OPSTORY":
-                color = discord.Color.blue()
+                color = 0x0096fa  # Blue for OPSTORY
                 author_name = "物語イベント"
-            elif event_type == "OTHER":
-                color = discord.Color.orange()
-                author_name = "イベント"
             else:
-                color = discord.Color.orange()
+                color = 0xFFA500  # Orange for all other events
                 author_name = "イベント"
             
             embed = discord.Embed(
@@ -888,15 +926,7 @@ async def remind(game="arknights"):
             for event in future_events[:5]:
                 event_type = event.get("type", "")
                 
-                if event_type == "OPSTORY":
-                    author_name = "物語イベント"
-                    color = discord.Color.blue()
-                elif event_type == "OTHER":
-                    author_name = "イベント"
-                    color = discord.Color.orange()
-                else:
-                    author_name = "イベント"
-                    color = discord.Color.orange()
+                color = discord.Color.orange()
                 
                 embed = discord.Embed(
                     title=event['name'],
