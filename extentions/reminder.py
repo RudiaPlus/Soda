@@ -229,7 +229,7 @@ async def endfield_daily_message_maker(remind_dic: dict) -> str:
     # Check for redemption codes expiring soon (within 1 day, considering 5:00 AM reset)
     redemption_warning = await check_endfield_redemption_codes_expiring_soon()
     
-    content = f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！ {first}{daily_tasks}{redemption_warning}"
+    content = f"<@&1468109332905459842>\nおはようございます:sunny: ロードです！ {first}{redemption_warning}"
     return content
 
 async def send_endfield_remind_to_thread(thread: discord.Thread, remind_dic: dict) -> None:
@@ -482,11 +482,12 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
             await message.unpin()
     await last_remind_message.pin()
 
-async def remind(game="arknights"):
+async def remind(game="arknights", send_to_thread=False):
     """
-    Main reminder function - updates both thread and message source
+    Main reminder function - updates message source and optionally sends to thread
     Args:
         game: "arknights" or "endfield"
+        send_to_thread: If True, sends daily reminder to thread
     """
     # Get appropriate channel
     if game == "endfield":
@@ -540,11 +541,13 @@ async def remind(game="arknights"):
         logger.error(f"{game}スレッドの取得と作成に失敗しました")
         return
     
-    # Send to thread based on game
-    if game == "endfield":
-        await send_endfield_remind_to_thread(thread, remind_dic)
-    else:
-        await send_remind_to_thread(thread, remind_dic, events)
+    # Send to thread only if send_to_thread is True
+    if send_to_thread:
+        # Send to thread based on game
+        if game == "endfield":
+            await send_endfield_remind_to_thread(thread, remind_dic)
+        else:
+            await send_remind_to_thread(thread, remind_dic, events)
     
     # Update message source (event list)
     logger.info(f"[remind] Starting message source update for {game}")

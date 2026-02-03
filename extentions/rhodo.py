@@ -1370,10 +1370,9 @@ async def morning():
 @tasks.loop(time=config.threadtime)
 async def send_remind():
     try:
-        global remindThreadID
         logger.info("時間になりました。メンバーにリマインドを送ります。")
-        await reminder.remind("arknights")
-        await reminder.remind("endfield")
+        await reminder.remind("arknights", send_to_thread=True)
+        await reminder.remind("endfield", send_to_thread=True)
         await supportrequest.delete_old_request()
 
     except Exception as e:
