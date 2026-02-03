@@ -1361,7 +1361,8 @@ async def mainttest(interaction: discord.Interaction):
 async def morning():
     try:
         logger.info("時間になりました。モーニングルーティンを始めます")
-        await reminder.remind()
+        await reminder.remind("arknights")
+        await reminder.remind("endfield")
 
     except Exception as e:
         logger.exception(f"[morning]にてエラー：{e}")  
@@ -1371,8 +1372,8 @@ async def send_remind():
     try:
         global remindThreadID
         logger.info("時間になりました。メンバーにリマインドを送ります。")
-        thread = await reminder.remind()
-        remindThreadID = thread.id
+        await reminder.remind("arknights")
+        await reminder.remind("endfield")
         await supportrequest.delete_old_request()
 
     except Exception as e:
@@ -1382,7 +1383,8 @@ async def send_remind():
 async def afternoon():
     try:
         logger.info("時間になりました。アフタヌーンルーティンを始めます")
-        await reminder.remind()
+        await reminder.remind("arknights")
+        await reminder.remind("endfield")
 
     except Exception as e:
         logger.exception(f"[afternoon]にてエラー：{e}") 
@@ -1391,7 +1393,8 @@ async def afternoon():
 async def evening():
     try:
         logger.info("時間になりました。イヴニングルーティンを始めます")
-        await reminder.remind()
+        await reminder.remind("arknights")
+        await reminder.remind("endfield")
 
     except Exception as e:
         logger.exception(f"[evening]にてエラー：{e}") 
@@ -1400,7 +1403,8 @@ async def evening():
 async def new_days():
     try:
         logger.info("時間になりました。０時ルーティンを始めます")
-        await reminder.remind()
+        await reminder.remind("arknights")
+        await reminder.remind("endfield")
 
     except Exception as e:
         logger.exception(f"[new_days]にてエラー：{e}") 
