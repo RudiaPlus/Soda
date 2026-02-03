@@ -17,3 +17,13 @@ extentions/configs/dynamic.json
 *.tw_session
 db
 .env
+
+# JSONs
+extentions/jsons/*
+!extentions/jsons/birthday.json
+!extentions/jsons/events.json
+!extentions/jsons/maintenances.json
+!extentions/jsons/operator_emojis.json
+!extentions/jsons/operators.json
+!extentions/jsons/presets.json
+!extentions/jsons/reminds.json

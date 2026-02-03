@@ -1,139 +1,163 @@
 {
+  "arknights": {
     "dailyStageRemind": {
-        "name": "本日解放の資源ステージ",
-        "description": null,
-        "type": "stage",
-        "link": null,
-        "allStartTime": 1727334000,
-        "allEndTime": 1728500399,
-        "allAvailable": false,
-        "stage": [
-            {
-                "id": "LS",
-                "type": "資源調達",
-                "name": "戦術演習(作戦記録)",
-                "available": [
-                    "月",
-                    "火",
-                    "水",
-                    "木",
-                    "金",
-                    "土",
-                    "日"
-                ]
-            },
-            {
-                "id": "AP",
-                "type": "資源調達",
-                "name": "防御突破(購買資格証)",
-                "available": [
-                    "月",
-                    "木",
-                    "土",
-                    "日"
-                ]
-            },
-            {
-                "id": "SK",
-                "type": "資源調達",
-                "name": "資源確保(炭素材)",
-                "available": [
-                    "月",
-                    "水",
-                    "金",
-                    "土"
-                ]
-            },
-            {
-                "id": "CA",
-                "type": "資源調達",
-                "name": "空軍迎撃(アーツ学)",
-                "available": [
-                    "火",
-                    "水",
-                    "金",
-                    "日"
-                ]
-            },
-            {
-                "id": "CE",
-                "type": "資源調達",
-                "name": "貨物輸送(龍門幣)",
-                "available": [
-                    "火",
-                    "木",
-                    "土",
-                    "日"
-                ]
-            },
-            {
-                "id": "PR-A",
-                "type": "SoC探索",
-                "name": "重装・医療SoC",
-                "available": [
-                    "月",
-                    "木",
-                    "金",
-                    "日"
-                ]
-            },
-            {
-                "id": "PR-B",
-                "type": "SoC探索",
-                "name": "狙撃・術師SoC",
-                "available": [
-                    "月",
-                    "火",
-                    "金",
-                    "土"
-                ]
-            },
-            {
-                "id": "PR-C",
-                "type": "SoC探索",
-                "name": "先鋒・補助SoC",
-                "available": [
-                    "水",
-                    "木",
-                    "土",
-                    "日"
-                ]
-            },
-            {
-                "id": "PR-D",
-                "type": "SoC探索",
-                "name": "前衛・特殊SoC",
-                "available": [
-                    "火",
-                    "水",
-                    "土",
-                    "日"
-                ]
-            }
-        ]
+      "name": "本日解放の資源ステージ",
+      "description": null,
+      "type": "stage",
+      "link": null,
+      "allStartTime": 1727334000,
+      "allEndTime": 1728500399,
+      "allAvailable": false,
+      "stage": [
+        {
+          "id": "LS",
+          "type": "資源調達",
+          "name": "戦術演習(作戦記録)",
+          "available": [
+            "月",
+            "火",
+            "水",
+            "木",
+            "金",
+            "土",
+            "日"
+          ]
+        },
+        {
+          "id": "AP",
+          "type": "資源調達",
+          "name": "防御突破(購買資格証)",
+          "available": [
+            "月",
+            "木",
+            "土",
+            "日"
+          ]
+        },
+        {
+          "id": "SK",
+          "type": "資源調達",
+          "name": "資源確保(炭素材)",
+          "available": [
+            "月",
+            "水",
+            "金",
+            "土"
+          ]
+        },
+        {
+          "id": "CA",
+          "type": "資源調達",
+          "name": "空軍迎撃(アーツ学)",
+          "available": [
+            "火",
+            "水",
+            "金",
+            "日"
+          ]
+        },
+        {
+          "id": "CE",
+          "type": "資源調達",
+          "name": "貨物輸送(龍門幣)",
+          "available": [
+            "火",
+            "木",
+            "土",
+            "日"
+          ]
+        },
+        {
+          "id": "PR-A",
+          "type": "SoC探索",
+          "name": "重装・医療SoC",
+          "available": [
+            "月",
+            "木",
+            "金",
+            "日"
+          ]
+        },
+        {
+          "id": "PR-B",
+          "type": "SoC探索",
+          "name": "狙撃・術師SoC",
+          "available": [
+            "月",
+            "火",
+            "金",
+            "土"
+          ]
+        },
+        {
+          "id": "PR-C",
+          "type": "SoC探索",
+          "name": "先鋒・補助SoC",
+          "available": [
+            "水",
+            "木",
+            "土",
+            "日"
+          ]
+        },
+        {
+          "id": "PR-D",
+          "type": "SoC探索",
+          "name": "前衛・特殊SoC",
+          "available": [
+            "火",
+            "水",
+            "土",
+            "日"
+          ]
+        }
+      ]
     },
     "weeklyRemind": {
-        "name": "各種報酬期限",
-        "description": "- 週間任務、殲滅作戦(合成玉)の報酬期限:\n  {0}\n- 保全駐在の報酬期限:\n  {1}",
-        "type": "regular",
-        "link": null,
-        "startTime": null,
-        "endTime": null
+      "name": "各種報酬期限",
+      "description": "- 週間任務、殲滅作戦(合成玉)の報酬期限:\n  {0}\n- 保全駐在の報酬期限:\n  {1}",
+      "type": "regular",
+      "link": null,
+      "startTime": null,
+      "endTime": null
     },
     "sssRemind-202510": {
-        "name": "清音保全駐在",
-        "description": null,
-        "type": "sss",
-        "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#i90594e1",
-        "startTime": 1760598000,
-        "endTime": 1771181999
+      "name": "清音保全駐在",
+      "description": null,
+      "type": "sss",
+      "link": "https://arknights.wikiru.jp/?%E4%BF%9D%E5%85%A8%E9%A7%90%E5%9C%A8#i90594e1",
+      "startTime": 1760598000,
+      "endTime": 1771181999
     },
     "anniRemind_202511": {
-        "name": "殲滅依頼「グランドバザール」",
-        "description": null,
-        "type": "anni",
-        "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%B5%E3%83%AB%E3%82%B4%E3%83%B3%E3%80%8C%E3%82%B0%E3%83%A9%E3%83%B3%E3%83%89%E3%83%90%E3%82%B6%E3%83%BC%E3%83%AB%E3%80%8D",
-        "startTime": 1762110000,
-        "endTime": 1769972399
+      "name": "殲滅依頼「グランドバザール」",
+      "description": null,
+      "type": "anni",
+      "link": "https://arknights.wikiru.jp/?%E6%AE%B2%E6%BB%85%E4%BD%9C%E6%88%A6/%E3%82%B5%E3%83%AB%E3%82%B4%E3%83%B3%E3%80%8C%E3%82%B0%E3%83%A9%E3%83%B3%E3%83%89%E3%83%90%E3%82%B6%E3%83%BC%E3%83%AB%E3%80%8D",
+      "startTime": 1762110000,
+      "endTime": 1769972399
     }
+  },
+  "endfield": {
+    "weeklyRemind": {
+      "name": "各種報酬期限",
+      "description": "- ウィークリークエストの報酬期限:\n  {0}",
+      "type": "regular",
+      "link": null,
+      "startTime": null,
+      "endTime": null
+    },
+    "skportRemind": {
+      "name": "SKPORTログインボーナス",
+      "description": "公式コミュニティでログインボーナスを受け取りましょう",
+      "type": "endfield_daily",
+      "link": "https://game.skport.com/endfield/sign-in"
+    },
+    "redemptionCodeRemind": {
+      "name": "引き換えコード期限",
+      "description": "期限が近い引き換えコードがあります",
+      "type": "endfield_redemption",
+      "warningDays": 1
+    }
+  }
 }

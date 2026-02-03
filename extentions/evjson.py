@@ -33,254 +33,367 @@ async def gachaget():
     return gacha_dict
                     
 
-def eventget():
+def eventget(game: str = "arknights"):
+    """
+    Get events for specified game
+    Args:
+        game: "arknights" or "endfield"
+    """
     dir = os.path.abspath(__file__ + "/../")
     json_name = "jsons/events.json"
     with open(os.path.join(dir, json_name), encoding="utf-8") as f:
-        event_dic = json.load(f)
+        all_events = json.load(f)
         
-        eventtime = 0
-        eventEndtime = 0
-        eventRewardEndTime = 0
-        event_value = 0
-        event_now = 0
-        event_end = 0
-        event_value_list = []
-        event_now_list = []
-        event_end_list = []
-        events = []
-        link = ""
+        # Get game-specific events
+        event_dic = all_events.get(game, {})
         
-        for k in event_dic.keys():
-            #イベントのJsonから開始時間、終了時間、報酬受け取り期限を取得
+        if game == "endfield":
+            return _process_endfield_events(event_dic)
+        else:
+            return _process_arknights_events(event_dic)
+
+
+
+def _process_arknights_events(event_dic: dict) -> list:
+    """Process Arknights events (existing logic)"""
+    
+    eventtime = 0
+    eventEndtime = 0
+    eventRewardEndTime = 0
+    event_value = 0
+    event_now = 0
+    event_end = 0
+    event_value_list = []
+    event_now_list = []
+    event_end_list = []
+    events = []
+    link = ""
+    
+    for k in event_dic.keys():
+        #イベントのJsonから開始時間、終了時間、報酬受け取り期限を取得
+        try:
+            type =  event_dic[k]["type"]
+            eventtime = event_dic[k]["startTime"]
+            eventEndtime = event_dic[k]["endTime"]
+            eventRewardEndTime = event_dic[k]["rewardEndTime"]
+        
+        except KeyError:
+            pass
+        
+        #開始時間より今の時間が早かった場合、開催予定リストに入れる
+        if time.time() < eventtime:
+            event_value += 1
+            event_value_list.append(k)
+        
+        #終了時間より今の時間が早かった場合、開催中リストに入れる    
+        elif time.time() < eventEndtime:
+            event_now += 1
+            event_now_list.append(k)
+        
+        #報酬受け取り期限より今の時間が早かった場合、終了リストに入れる  
+        elif time.time() < eventRewardEndTime:
+            event_end += 1
+            event_end_list.append(k)
+    
+    for i in range(len(event_now_list)):
+        #開催中リストから「名前(name)、イベントの種類(type)、開始時間(startTime)、*終了時間(endTime)*、公式告知(news)、攻略リンク(link)、*ステージ追加(stageAdd)*」の有無を取得する←これらは必須です！
+        #*ローグライクには必要なし
+        try:
+            name = event_dic[event_now_list[i]]["name"]
+            type = event_dic[event_now_list[i]]["type"]
+            startTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_now_list[i]]["startTime"])
+            
+            if not type == "ROGUELIKE" and not type == "SANDBOX":
+                endTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_now_list[i]]["endTime"])
+                stageAdd = event_dic[event_now_list[i]]["stageAdd"]
+            news = event_dic[event_now_list[i]]["news"]    
+            link = event_dic[event_now_list[i]]["link"]
+            pic = event_dic[event_now_list[i]]["pic"]
+        except KeyError as e:
+            logger.exception(f"[event_now_list]にてエラー：{e}")
+                            
+        if type == "CRISIS":
             try:
-                type =  event_dic[k]["type"]
-                eventtime = event_dic[k]["startTime"]
-                eventEndtime = event_dic[k]["endTime"]
-                eventRewardEndTime = event_dic[k]["rewardEndTime"]
-            
-            except KeyError:
-                pass
-            
-            #開始時間より今の時間が早かった場合、開催予定リストに入れる
-            if time.time() < eventtime:
-                event_value += 1
-                event_value_list.append(k)
-            
-            #終了時間より今の時間が早かった場合、開催中リストに入れる    
-            elif time.time() < eventEndtime:
-                event_now += 1
-                event_now_list.append(k)
-            
-            #報酬受け取り期限より今の時間が早かった場合、終了リストに入れる  
-            elif time.time() < eventRewardEndTime:
-                event_end += 1
-                event_end_list.append(k)
-        
-        for i in range(len(event_now_list)):
-            #開催中リストから「名前(name)、イベントの種類(type)、開始時間(startTime)、*終了時間(endTime)*、公式告知(news)、攻略リンク(link)、*ステージ追加(stageAdd)*」の有無を取得する←これらは必須です！
-            #*ローグライクには必要なし
-            try:
-                name = event_dic[event_now_list[i]]["name"]
-                type = event_dic[event_now_list[i]]["type"]
-                startTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_now_list[i]]["startTime"])
-                
-                if not type == "ROGUELIKE" and not type == "SANDBOX":
-                    endTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_now_list[i]]["endTime"])
-                    stageAdd = event_dic[event_now_list[i]]["stageAdd"]
-                news = event_dic[event_now_list[i]]["news"]    
-                link = event_dic[event_now_list[i]]["link"]
-                pic = event_dic[event_now_list[i]]["pic"]
+                dailyStage = event_dic[event_now_list[i]]["dailyStage"]
+                permStage = event_dic[event_now_list[i]]["permStage"]["stageName"]
+                eventColor = event_dic[event_now_list[i]]["eventColor"]
             except KeyError as e:
-                logger.exception(f"[event_now_list]にてエラー：{e}")
-                                
-            if type == "CRISIS":
-                try:
-                    dailyStage = event_dic[event_now_list[i]]["dailyStage"]
-                    permStage = event_dic[event_now_list[i]]["permStage"]["stageName"]
-                    eventColor = event_dic[event_now_list[i]]["eventColor"]
-                except KeyError as e:
-                    logger.exception(f"[CRISIS.dailyStage]にてエラー：{e}")
+                logger.exception(f"[CRISIS.dailyStage]にてエラー：{e}")
+            
+            dt = datetime.datetime.fromtimestamp(event_dic[event_now_list[i]]["startTime"] - 43200) #starttimeは16時なので、4時にするために-43200にする
+            now = datetime.datetime.now()
+            delta = now - dt
+            crisis_day = delta.days + 1 #差の日にち+1日＝何日目
+            
+            if 1 <= crisis_day <= 4:
+                todaysDaily = dailyStage[0]
+                dailyEnd_date = dt + datetime.timedelta(days = 4)
+                dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
+            elif 5 <= crisis_day <= 7:
+                todaysDaily = dailyStage[1]
+                dailyEnd_date = dt + datetime.timedelta(days = 7)
+                dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
+            elif 8 <= crisis_day <= 10:
+                todaysDaily = dailyStage[2]
+                dailyEnd_date = dt + datetime.timedelta(days = 10)
+                dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
+            else:
+                todaysDaily = dailyStage[3]
+                dailyEnd_date = dt + datetime.timedelta(days = 14)
+                dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
                 
-                dt = datetime.datetime.fromtimestamp(event_dic[event_now_list[i]]["startTime"] - 43200) #starttimeは16時なので、4時にするために-43200にする
-                now = datetime.datetime.now()
-                delta = now - dt
-                crisis_day = delta.days + 1 #差の日にち+1日＝何日目
+            events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "eventColor": eventColor, "permStage": permStage, "news": news, "link": link, "todaysDaily": todaysDaily, "dailyEnd": dailyEnd_timestamp, "pic": pic})
+        
+        elif type == "ROGUELIKE":
+            try:
+                monthlyUpdate = event_dic[event_now_list[i]]["monthlyUpdate"]
+            except KeyError as e:
+                logger.error(e)
                 
-                if 1 <= crisis_day <= 4:
-                    todaysDaily = dailyStage[0]
-                    dailyEnd_date = dt + datetime.timedelta(days = 4)
-                    dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
-                elif 5 <= crisis_day <= 7:
-                    todaysDaily = dailyStage[1]
-                    dailyEnd_date = dt + datetime.timedelta(days = 7)
-                    dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
-                elif 8 <= crisis_day <= 10:
-                    todaysDaily = dailyStage[2]
-                    dailyEnd_date = dt + datetime.timedelta(days = 10)
-                    dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
-                else:
-                    todaysDaily = dailyStage[3]
-                    dailyEnd_date = dt + datetime.timedelta(days = 14)
-                    dailyEnd_timestamp = floor(dailyEnd_date.timestamp())
-                    
-                events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "eventColor": eventColor, "permStage": permStage, "news": news, "link": link, "todaysDaily": todaysDaily, "dailyEnd": dailyEnd_timestamp, "pic": pic})
-            
-            elif type == "ROGUELIKE":
-                try:
-                    monthlyUpdate = event_dic[event_now_list[i]]["monthlyUpdate"]
-                except KeyError as e:
-                    logger.error(e)
-                    
-                month = content = updateEndTime = nextmonth = nextcontent = nextUpdateStartTime = None
-                    
-                if monthlyUpdate:
-                    for update in monthlyUpdate:
-                        if update["startTime"] < time.time() and time.time() < update["endTime"]:
-                            
-                            month = update["month"]
-                            content = update["contents"]
-                            updateEndTime = "<t:{0}:F>( <t:{0}:R> )".format(update["endTime"])
-                            
-                        elif time.time() < update["startTime"]:
-                            
-                            nextmonth = update["month"]
-                            nextcontent = update["contents"]
-                            nextUpdateStartTime = "<t:{0}:F>( <t:{0}:R> )".format(update["startTime"])
-                            
-                events.append({"name": name, "dif": "present", "type": type, "news": news, "link": link, "pic": pic, "month": month, "content": content, "updateTime": f"今月の任務終了: {updateEndTime}",
-                               "nextmonth": nextmonth, "nextcontent": nextcontent, "nextUpdateTime": f"開始: {nextUpdateStartTime}"})    
-            
-            elif type == "SANDBOX":
-                try:
-                    monthlyUpdate = event_dic[event_now_list[i]]["monthlyUpdate"]
-                except KeyError as e:
-                    logger.error(e)
-                    
-                month = content = updateEndTime = nextmonth = nextcontent = nextUpdateStartTime = None
+            month = content = updateEndTime = nextmonth = nextcontent = nextUpdateStartTime = None
                 
-                if monthlyUpdate:
-                    for update in monthlyUpdate:
-                        if update["startTime"] < time.time() and time.time() < update["endTime"]:
-                            
-                            month = update["month"]
-                            content = update["contents"]
-                            updateEndTime = "<t:{0}:F>( <t:{0}:R> )".format(update["endTime"])
-                            
-                        elif time.time() < update["startTime"]:
-                            
-                            nextmonth = update["month"]
-                            nextcontent = update["contents"]
-                            nextUpdateStartTime = "<t:{0}:F>( <t:{0}:R> )".format(update["startTime"])
-                            
-                events.append({"name": name, "dif": "present", "type": type, "news": news, "link": link, "pic": pic, "month": month, "content": content, "updateTime": f"闘争の潮流入れ替え: {updateEndTime}",
-                               "nextmonth": nextmonth, "nextcontent": nextcontent, "nextUpdateTime": f"開始: {nextUpdateStartTime}"}) 
-            
-            elif type == "BREAK":
-                try:
-                    phase2StartTime = event_dic[event_now_list[i]]["phase2StartTime"]
-                    eventColor = event_dic[event_now_list[i]]["eventColor"]
-                except KeyError as e:
-                    logger.error(e)
-                    
-                events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "eventColor": eventColor, "phase2StartTime": "<t:{0}:F>( <t:{0}:R> )".format(phase2StartTime), "news": news, "link": link, "pic": pic})
-            
-            elif stageAdd is True:
-                try:
-                    additionalStage = event_dic[event_now_list[i]]["additionalStage"]
-                    remark = None
-                except KeyError as e:
-                    logger.error(e)
-                    
-                if additionalStage[0]["startTime"] > time.time():
-                    nextStageName = additionalStage[0]["name"]
-                    nextAddTime = "<t:{0}:F>( <t:{0}:R> )".format(additionalStage[0]["startTime"])
-                    if len(additionalStage) == 1:
-                        remark = "**このイベントはEXステージが登場予定です**\n"
-                    elif len(additionalStage) == 2:
-                        remark = "**このイベントはEXステージ、Sステージが登場予定です**\n"
-                    else:
-                        logger.error("予期されていないイベント内容です。")
-                        continue
+            if monthlyUpdate:
+                for update in monthlyUpdate:
+                    if update["startTime"] < time.time() and time.time() < update["endTime"]:
                         
-                elif additionalStage[-1]["startTime"] > time.time():
-                    nextStageName = additionalStage[1]["name"]
-                    nextAddTime = "<t:{0}:F>( <t:{0}:R> )".format(additionalStage[1]["startTime"])
-                    remark = "**EXステージが追加されました！**\n"
-                    if len(additionalStage) == 2:
-                        remark = "**EXステージが追加されました！Sステージが今後登場予定です**\n"
+                        month = update["month"]
+                        content = update["contents"]
+                        updateEndTime = "<t:{0}:F>( <t:{0}:R> )".format(update["endTime"])
+                        
+                    elif time.time() < update["startTime"]:
+                        
+                        nextmonth = update["month"]
+                        nextcontent = update["contents"]
+                        nextUpdateStartTime = "<t:{0}:F>( <t:{0}:R> )".format(update["startTime"])
+                        
+            events.append({"name": name, "dif": "present", "type": type, "news": news, "link": link, "pic": pic, "month": month, "content": content, "updateTime": f"今月の任務終了: {updateEndTime}",
+                           "nextmonth": nextmonth, "nextcontent": nextcontent, "nextUpdateTime": f"開始: {nextUpdateStartTime}"})    
+        
+        elif type == "SANDBOX":
+            try:
+                monthlyUpdate = event_dic[event_now_list[i]]["monthlyUpdate"]
+            except KeyError as e:
+                logger.error(e)
                 
-                elif len(additionalStage) == 1:
-                    stageAdd = False
-                    remark = "**EXステージが追加されました！**\n"
-                    nextStageName = ""
-                    nextAddTime = ""
+            month = content = updateEndTime = nextmonth = nextcontent = nextUpdateStartTime = None
+            
+            if monthlyUpdate:
+                for update in monthlyUpdate:
+                    if update["startTime"] < time.time() and time.time() < update["endTime"]:
+                        
+                        month = update["month"]
+                        content = update["contents"]
+                        updateEndTime = "<t:{0}:F>( <t:{0}:R> )".format(update["endTime"])
+                        
+                    elif time.time() < update["startTime"]:
+                        
+                        nextmonth = update["month"]
+                        nextcontent = update["contents"]
+                        nextUpdateStartTime = "<t:{0}:F>( <t:{0}:R> )".format(update["startTime"])
+                        
+            events.append({"name": name, "dif": "present", "type": type, "news": news, "link": link, "pic": pic, "month": month, "content": content, "updateTime": f"闘争の潮流入れ替え: {updateEndTime}",
+                           "nextmonth": nextmonth, "nextcontent": nextcontent, "nextUpdateTime": f"開始: {nextUpdateStartTime}"}) 
+        
+        elif type == "BREAK":
+            try:
+                phase2StartTime = event_dic[event_now_list[i]]["phase2StartTime"]
+                eventColor = event_dic[event_now_list[i]]["eventColor"]
+            except KeyError as e:
+                logger.error(e)
+                
+            events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "eventColor": eventColor, "phase2StartTime": "<t:{0}:F>( <t:{0}:R> )".format(phase2StartTime), "news": news, "link": link, "pic": pic})
+        
+        elif stageAdd is True:
+            try:
+                additionalStage = event_dic[event_now_list[i]]["additionalStage"]
+                remark = None
+            except KeyError as e:
+                logger.error(e)
+                
+            if additionalStage[0]["startTime"] > time.time():
+                nextStageName = additionalStage[0]["name"]
+                nextAddTime = "<t:{0}:F>( <t:{0}:R> )".format(additionalStage[0]["startTime"])
+                if len(additionalStage) == 1:
+                    remark = "**このイベントはEXステージが登場予定です**\n"
                 elif len(additionalStage) == 2:
-                    stageAdd = False
-                    remark = "**EXステージ、Sステージが追加されました！**\n"
-                    nextStageName = ""
-                    nextAddTime = ""
+                    remark = "**このイベントはEXステージ、Sステージが登場予定です**\n"
                 else:
                     logger.error("予期されていないイベント内容です。")
                     continue
                     
-                events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "news": news, "link": link, "stageAdd": stageAdd, "nextStageName": nextStageName, "nextAddTime": nextAddTime, "pic": pic, "remark": remark})
-                
-            else:
-                remark = None
-                events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "news": news, "link": link, "stageAdd": stageAdd, "pic": pic, "remark": remark})
+            elif additionalStage[-1]["startTime"] > time.time():
+                nextStageName = additionalStage[1]["name"]
+                nextAddTime = "<t:{0}:F>( <t:{0}:R> )".format(additionalStage[1]["startTime"])
+                remark = "**EXステージが追加されました！**\n"
+                if len(additionalStage) == 2:
+                    remark = "**EXステージが追加されました！Sステージが今後登場予定です**\n"
             
-        for i in range(len(event_end_list)):
-            try:
-                name = event_dic[event_end_list[i]]["name"]
-                type = event_dic[event_end_list[i]]["type"]
-                rewardEndTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_end_list[i]]["rewardEndTime"])
-                link = event_dic[event_end_list[i]]["link"]
-                pic = event_dic[event_end_list[i]]["pic"]
-            except KeyError as e:
-                logger.exception(f"[event_end_list]にてエラー：{e}")
+            elif len(additionalStage) == 1:
+                stageAdd = False
+                remark = "**EXステージが追加されました！**\n"
+                nextStageName = ""
+                nextAddTime = ""
+            elif len(additionalStage) == 2:
+                stageAdd = False
+                remark = "**EXステージ、Sステージが追加されました！**\n"
+                nextStageName = ""
+                nextAddTime = ""
+            else:
+                logger.error("予期されていないイベント内容です。")
+                continue
                 
-            events.append({"name": name, "dif": "past", "type": type, "rewardEndTime": rewardEndTime, "link": link, "pic": pic})
-                
+            events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "news": news, "link": link, "stageAdd": stageAdd, "nextStageName": nextStageName, "nextAddTime": nextAddTime, "pic": pic, "remark": remark})
+            
+        else:
+            remark = None
+            events.append({"name": name, "dif": "present", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "news": news, "link": link, "stageAdd": stageAdd, "pic": pic, "remark": remark})
         
-        for i in range(len(event_value_list)):
+    for i in range(len(event_end_list)):
+        try:
+            name = event_dic[event_end_list[i]]["name"]
+            type = event_dic[event_end_list[i]]["type"]
+            rewardEndTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_end_list[i]]["rewardEndTime"])
+            link = event_dic[event_end_list[i]]["link"]
+            pic = event_dic[event_end_list[i]]["pic"]
+        except KeyError as e:
+            logger.exception(f"[event_end_list]にてエラー：{e}")
             
-            if event_dic[event_value_list[i]]["type"] == "ROGUELIKE" or event_dic[event_value_list[i]]["type"] == "SANDBOX":
-                
-                try:
-                    name = event_dic[event_value_list[i]]["name"]
-                    type = event_dic[event_value_list[i]]["type"]
-                    startTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_value_list[i]]["startTime"])
-                    news = event_dic[event_value_list[i]]["news"]
-                    pic = event_dic[event_value_list[i]]["pic"]
-                
-                except KeyError as e:
-                    logger.exception(f"[event_value_list]にてエラー：{e}")
-                
-                events.append({"name": name, "dif": "future", "type": type, "time": f"> 開始: {startTime}", "news": news, "pic": pic})                
-                
-            else:
+        events.append({"name": name, "dif": "past", "type": type, "rewardEndTime": rewardEndTime, "link": link, "pic": pic})
             
-                try:
-                    name = event_dic[event_value_list[i]]["name"]
-                    type = event_dic[event_value_list[i]]["type"]
-                    startTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_value_list[i]]["startTime"])
-                    endTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_value_list[i]]["endTime"])
-                    news = event_dic[event_value_list[i]]["news"]
-                    pic = event_dic[event_value_list[i]]["pic"]
-                
-                except KeyError as e:
-                    logger.exception(f"[event_value_list]にてエラー：{e}")
-                
-                events.append({"name": name, "dif": "future", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "news": news, "pic": pic})
+    
+    for i in range(len(event_value_list)):
+        
+        if event_dic[event_value_list[i]]["type"] == "ROGUELIKE" or event_dic[event_value_list[i]]["type"] == "SANDBOX":
             
+            try:
+                name = event_dic[event_value_list[i]]["name"]
+                type = event_dic[event_value_list[i]]["type"]
+                startTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_value_list[i]]["startTime"])
+                news = event_dic[event_value_list[i]]["news"]
+                pic = event_dic[event_value_list[i]]["pic"]
+            
+            except KeyError as e:
+                logger.exception(f"[event_value_list]にてエラー：{e}")
+            
+            events.append({"name": name, "dif": "future", "type": type, "time": f"> 開始: {startTime}", "news": news, "pic": pic})                
+            
+        else:
+        
+            try:
+                name = event_dic[event_value_list[i]]["name"]
+                type = event_dic[event_value_list[i]]["type"]
+                startTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_value_list[i]]["startTime"])
+                endTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_value_list[i]]["endTime"])
+                news = event_dic[event_value_list[i]]["news"]
+                pic = event_dic[event_value_list[i]]["pic"]
+            
+            except KeyError as e:
+                logger.exception(f"[event_value_list]にてエラー：{e}")
+            
+            events.append({"name": name, "dif": "future", "type": type, "time": f"> 開始: {startTime}\n> 終了: {endTime}", "news": news, "pic": pic})
+        
     return(events)
 
-def eventcount():
+
+def _process_endfield_events(event_dic: dict) -> list:
+    """Process Endfield events with optional fields support"""
+    events = []
+    event_now_list = []
+    event_end_list = []
+    event_value_list = []
+    version_calendar = None
+    
+    for k in event_dic.keys():
+        try:
+            event_type = event_dic[k]["type"]
+            eventtime = event_dic[k]["startTime"]
+            eventEndtime = event_dic[k]["endTime"]
+            
+            # Version calendar handling
+            if event_type == "VERSION_CALENDAR":
+                if eventtime <= time.time() < eventEndtime:
+                    version_calendar = event_dic[k]
+                continue
+            
+            # Categorize events by time
+            if time.time() < eventtime:
+                event_value_list.append(k)
+            elif time.time() < eventEndtime:
+                event_now_list.append(k)
+            elif "rewardEndTime" in event_dic[k]:
+                eventRewardEndTime = event_dic[k]["rewardEndTime"]
+                if time.time() < eventRewardEndTime:
+                    event_end_list.append(k)
+        
+        except KeyError:
+            pass
+    
+    # Process current events
+    for event_id in event_now_list:
+        event = event_dic[event_id]
+        event_type = event["type"]
+        
+        base_event = {
+            "name": event["name"],
+            "dif": "present",
+            "type": event_type,
+            "description": event.get("description", ""),
+            "time": f"> 開始: <t:{event['startTime']}:F>( <t:{event['startTime']}:R> )\n> 終了: <t:{event['endTime']}:F>( <t:{event['endTime']}:R> )",
+            "news": event.get("news"),  # None if not exists
+            "link": event.get("link"),  # None if not exists
+            "pic": event.get("pic")     # None if not exists
+        }
+        events.append(base_event)
+    
+    # Process ended events (reward period)
+    for event_id in event_end_list:
+        event = event_dic[event_id]
+        events.append({
+            "name": event["name"],
+            "dif": "past",
+            "type": event["type"],
+            "rewardEndTime": f"<t:{event['rewardEndTime']}:F>( <t:{event['rewardEndTime']}:R> )",
+            "link": event.get("link"),
+            "pic": event.get("pic")
+        })
+    
+    # Process future events
+    for event_id in event_value_list:
+        event = event_dic[event_id]
+        events.append({
+            "name": event["name"],
+            "dif": "future",
+            "type": event["type"],
+            "time": f"> 開始: <t:{event['startTime']}:F>( <t:{event['startTime']}:R> )\n> 終了: <t:{event['endTime']}:F>( <t:{event['endTime']}:R> )",
+            "news": event.get("news"),
+            "pic": event.get("pic")
+        })
+    
+    # Add version calendar at the beginning if exists
+    if version_calendar:
+        events.insert(0, {
+            "name": version_calendar["name"],
+            "dif": "calendar",
+            "type": "VERSION_CALENDAR",
+            "version": version_calendar["version"],
+            "images": version_calendar["images"]  # Array of Twitter image URLs
+        })
+    
+    return events
+
+
+def eventcount(game: str = "arknights"):
+    """
+    Count events for specified game
+    Args:
+        game: "arknights" or "endfield"
+    """
     dir = os.path.abspath(__file__ + "/../")
     json_name = "jsons/events.json"
     with open(os.path.join(dir, json_name), encoding="utf-8") as f:
-        event_dic = json.load(f)
+        all_events = json.load(f)
+        
+        event_dic = all_events.get(game, {})
         
         eventtime = 0
         eventEndtime = 0
@@ -294,9 +407,14 @@ def eventcount():
         for k in event_dic.keys():
             try:
                 type = event_dic[k]["type"]
+                
+                # Skip version calendar
+                if type == "VERSION_CALENDAR":
+                    continue
+                
                 eventtime = event_dic[k]["startTime"]
                 eventEndtime = event_dic[k]["endTime"]
-                eventRewardEndTime = event_dic[k]["rewardEndTime"]
+                eventRewardEndTime = event_dic[k].get("rewardEndTime", 0)
             
             except KeyError:
                 pass
@@ -313,12 +431,12 @@ def eventcount():
                 if timeDay(eventEndtime, type="m/d") == timeDay(time.time()+86400, type="m/d"):
                     event_end_today += 1
             
-            elif time.time() < eventRewardEndTime:
+            elif eventRewardEndTime and time.time() < eventRewardEndTime:
                 event_end += 1
                 
-    logger.info(f"現在{event_now}個のイベントが進行中です")
-    logger.info(f"開催予定のイベントは{event_value}個、終了したイベントは{event_end}個あります")
-    logger.info(f"本日から始まるイベントは{event_today}個、本日で終了するイベントは{event_end_today}個です。")
-    
-    event_count = [event_now, event_end, event_value, event_today, event_end_today]        
-    return(event_count)
+        logger.info(f"[{game}] 現在{event_now}個のイベントが進行中です")
+        logger.info(f"[{game}] 開催予定のイベントは{event_value}個、終了したイベントは{event_end}個あります")
+        logger.info(f"[{game}] 本日から始まるイベントは{event_today}個、本日で終了するイベントは{event_end_today}個です。")
+        
+        event_count = [event_now, event_end, event_value, event_today, event_end_today]        
+        return(event_count)
