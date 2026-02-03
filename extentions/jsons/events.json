@@ -105,6 +105,17 @@
                     "stageName": "巫呪の骸野"
                 }
             ]
+        },
+        "デュエルチャンネル：ハニーデューシティ": {
+            "id": "デュエルチャンネル：ハニーデューシティ",
+            "type": "OTHER",
+            "name": "デュエルチャンネル：ハニーデューシティ",
+            "startTime": 1770102000,
+            "endTime": 1771268399,
+            "news": "https://arknights.jp/news/2541",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88167_%E3%83%87%E3%83%A5%E3%82%A8%E3%83%AB%E3%83%81%E3%83%A3%E3%83%B3%E3%83%8D%E3%83%AB%EF%BC%9A%E3%83%8F%E3%83%8B%E3%83%BC%E3%83%87%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%86%E3%82%A3",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/01/28/UlDSId7G.png",
+            "rewardEndTime": 1771527599
         }
     },
     "endfield": {
@@ -113,7 +124,7 @@
             "type": "VERSION_CALENDAR",
             "name": "バージョン「初号指令」スケジュール",
             "startTime": 1769050800,
-            "endTime": 1773604799,
+            "endTime": 1773691199,
             "images": [
                 "https://pbs.twimg.com/media/G_K9aWHWgAAOIDg.jpg",
                 "https://pbs.twimg.com/media/G_K9dE1bsAAseLn.jpg"
@@ -125,28 +136,35 @@
             "type": "OPSTORY",
             "name": "ウルフガード「離群の狼」",
             "startTime": 1769050800,
-            "endTime": 1773604799
+            "endTime": 1773691199
         },
         "レーヴァテイン「灰となれ、記憶の残骸よ」": {
             "id": "レーヴァテイン「灰となれ、記憶の残骸よ」",
             "type": "OPSTORY",
             "name": "レーヴァテイン「灰となれ、記憶の残骸よ」",
             "startTime": 1769050800,
-            "endTime": 1773604799
+            "endTime": 1773691199
         },
         "イヴォンヌ「ラブ、スクリーム＆試作モデル」": {
             "id": "イヴォンヌ「ラブ、スクリーム＆試作モデル」",
             "type": "OPSTORY",
             "name": "イヴォンヌ「ラブ、スクリーム＆試作モデル」",
             "startTime": 1769745600,
-            "endTime": 1773604799
+            "endTime": 1773691199
         },
         "ギルベルタ「トランスポーターからの手紙」": {
             "id": "ギルベルタ「トランスポーターからの手紙」",
             "type": "OPSTORY",
             "name": "ギルベルタ「トランスポーターからの手紙」",
             "startTime": 1770436800,
-            "endTime": 1773604799
+            "endTime": 1773691199
+        },
+        "カーリーの谷地絵本": {
+            "id": "カーリーの谷地絵本",
+            "type": "OTHER",
+            "name": "カーリーの谷地絵本",
+            "startTime": 1770436800,
+            "endTime": 1773691199
         }
     }
 }
