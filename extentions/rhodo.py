@@ -157,7 +157,7 @@ async def on_ready():
 
             if passed_second > 86400:
                 logger.warning(f"前回のリマインダー投稿から1日以上({passed_second}秒)が経過していました。リマインダーを投稿します。")
-                await reminder.remind("thread")
+                await reminder.remind()
             
         except Exception as e:
             logger.error(f"リマインダースレッドの確認に失敗しました！\n{e}")
@@ -788,8 +788,9 @@ async def help(interaction: discord.Interaction):
 
     await interaction.followup.send(embed=embed, ephemeral=True)
     
-@client.tree.command(name="add_reminder", description="remindarchive.jsonにanniRemind、sssRemindを追加します", guild=discord.Object(config.testserverid))
+@client.tree.command(name="add_reminder", description="reminds.jsonにanniRemind、sssRemindを追加します", guild=discord.Object(config.testserverid))
 @app_commands.describe(
+    game = "ゲーム arknights/endfield (デフォルト: arknights)",
     remind_id = "リマインダーID(anniRemind-202507, sssRemind-202507等)",
     remind_name = "殲滅作戦or保全駐在の名前(例: 殲滅依頼「66号航路」, 協奏保全駐在)",
     remind_type = "anni or sss",
@@ -797,7 +798,7 @@ async def help(interaction: discord.Interaction):
     start_time = "開始時間(例: 2023-10-01 16:00:00)",
     end_time = "終了時間(例: 2023-10-15 3:59:59)"
 )
-async def add_reminder(interaction: discord.Interaction, remind_id: str, remind_name: str, remind_type: Literal["anni", "sss"], link: str, start_time: str, end_time: str):
+async def add_reminder(interaction: discord.Interaction, remind_id: str, remind_name: str, remind_type: Literal["anni", "sss"], link: str, start_time: str, end_time: str, game: str = "arknights"):
     """リマインダーを追加します。"""
     if interaction.user == client.user:
         return
@@ -827,14 +828,170 @@ async def add_reminder(interaction: discord.Interaction, remind_id: str, remind_
     }
     
     remind_archive = load_json("reminds.json")
-    if remind_id in remind_archive:
-        logger.error(f"リマインダーID {remind_id} は既に存在します。")
-        await interaction.followup.send(f"リマインダーID `{remind_id}` は既に存在します。別のIDを使用してください。")
+    
+    # Check if game section exists
+    if game not in remind_archive:
+        remind_archive[game] = {}
+    
+    # Check if remind_id already exists in the game section
+    if remind_id in remind_archive[game]:
+        logger.error(f"リマインダーID {remind_id} は{game}セクションに既に存在します。")
+        await interaction.followup.send(f"リマインダーID `{remind_id}` は{game}セクションに既に存在します。別のIDを使用してください。")
         return
-    remind_archive.update(new_remind_dict)
+    
+    remind_archive[game].update(new_remind_dict)
     save_json("reminds.json", remind_archive)
     
-    await interaction.followup.send(f"リマインダー `{remind_id}` が追加されました！\n名前: {remind_name}\nタイプ: {remind_type}\nリンク: {link}\n開始時間: {startTime.strftime('%Y-%m-%d %H:%M:%S')}\n終了時間: {endTime.strftime('%Y-%m-%d %H:%M:%S')}")
+    await interaction.followup.send(f"リマインダー `{remind_id}` を{game}セクションに追加しました！\n名前: {remind_name}\nタイプ: {remind_type}\nリンク: {link}\n開始時間: {startTime.strftime('%Y-%m-%d %H:%M:%S')}\n終了時間: {endTime.strftime('%Y-%m-%d %H:%M:%S')}")
+    
+@client.tree.command(name="add_event", description="イベントを追加します", guild=discord.Object(config.testserverid))
+@app_commands.describe(
+    game="ゲーム arknights/endfield (デフォルト: arknights)",
+    event_id="イベントID（任意、自動生成されます）",
+    event_type="イベントの種類",
+    name="イベントの名前",
+    start_time="開始時間(例: 2023-10-01 16:00:00)",
+    end_time="終了時間(例: 2023-10-15 3:59:59)",
+    description="イベントの説明（任意）",
+    news_url="ニュースURL（任意）",
+    wiki_url="WikiのURL（任意）",
+    image_url="イベントの画像URL（任意、カンマ区切りで複数可）",
+    reward_end_time="報酬交換期限（任意、例: 2023-10-20 3:59:59）",
+    version_name="バージョン名（VERSION_CALENDARの場合のみ、例: 初号指令）"
+)
+async def add_event(
+    interaction: discord.Interaction,
+    event_type: Literal["VERSION_CALENDAR", "OPSTORY", "OTHER", "SIDESTORY", "MINISTORY", "CRISIS", "ROGUELIKE", "SANDBOX"],
+    name: str,
+    start_time: str,
+    end_time: str,
+    game: str = "arknights",
+    event_id: str = None,
+    description: str = None,
+    news_url: str = None,
+    wiki_url: str = None,
+    image_url: str = None,
+    reward_end_time: str = None,
+    version_name: str = None
+):
+    """イベントを追加します。"""
+    if interaction.user == client.user:
+        return
+    
+    await interaction.response.defer(ephemeral=True)
+    
+    # Parse times
+    try:
+        startTime = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+        endTime = datetime.datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        logger.error("日付のフォーマットエラーです。「YYYY-MM-DD HH:MM:SS」")
+        await interaction.followup.send("日付のフォーマットが正しくありません。「YYYY-MM-DD HH:MM:SS」の形式で入力してください。")
+        return
+    
+    startTime_timestamp = floor(startTime.astimezone(tz=JSTTime.tz_JST).timestamp())
+    endTime_timestamp = floor(endTime.astimezone(tz=JSTTime.tz_JST).timestamp())
+    
+    # Parse reward end time if provided
+    rewardEndTime_timestamp = None
+    if reward_end_time:
+        try:
+            rewardEndTime = datetime.datetime.strptime(reward_end_time, "%Y-%m-%d %H:%M:%S")
+            rewardEndTime_timestamp = floor(rewardEndTime.astimezone(tz=JSTTime.tz_JST).timestamp())
+        except ValueError:
+            logger.error("報酬交換期限のフォーマットエラーです。")
+            await interaction.followup.send("報酬交換期限のフォーマットが正しくありません。「YYYY-MM-DD HH:MM:SS」の形式で入力してください。")
+            return
+    
+    # Generate event_id if not provided
+    if not event_id:
+        if event_type == "VERSION_CALENDAR":
+            event_id = f"version_calendar_{version_name}" if version_name else f"version_calendar_{startTime.strftime('%Y%m')}"
+        else:
+            event_id = name.replace(" ", "_").replace("(", "").replace(")", "")
+    
+    # Build event dictionary based on type
+    new_event_dict = {
+        "id": event_id,
+        "type": event_type,
+        "name": name,
+        "startTime": startTime_timestamp,
+        "endTime": endTime_timestamp
+    }
+    
+    # Add optional fields
+    if description:
+        new_event_dict["description"] = description
+    
+    if news_url:
+        new_event_dict["news"] = news_url
+    
+    if wiki_url:
+        new_event_dict["link"] = wiki_url
+    
+    # Handle image_url - can be comma-separated for VERSION_CALENDAR
+    if image_url:
+        if event_type == "VERSION_CALENDAR":
+            # Split by comma and strip whitespace
+            images = [url.strip() for url in image_url.split(",")]
+            new_event_dict["images"] = images
+        else:
+            new_event_dict["pic"] = image_url.strip()
+    
+    # Add version name for VERSION_CALENDAR
+    if event_type == "VERSION_CALENDAR":
+        if not version_name:
+            await interaction.followup.send("VERSION_CALENDARタイプにはversion_nameが必要です。")
+            return
+        new_event_dict["version"] = version_name
+    
+    # Add reward end time if provided
+    if rewardEndTime_timestamp:
+        new_event_dict["rewardEndTime"] = rewardEndTime_timestamp
+    
+    # Add game-specific fields for Arknights
+    if game == "arknights":
+        if event_type in ["SIDESTORY", "MINISTORY"]:
+            new_event_dict["stageAdd"] = False
+        elif event_type in ["ROGUELIKE", "SANDBOX"]:
+            new_event_dict["monthlyUpdate"] = []
+    
+    # Load events.json
+    events_archive = load_json("events.json")
+    
+    # Check if game section exists
+    if game not in events_archive:
+        events_archive[game] = {}
+    
+    # Check if event_id already exists
+    if event_id in events_archive[game]:
+        logger.error(f"イベントID {event_id} は{game}セクションに既に存在します。")
+        await interaction.followup.send(f"イベントID `{event_id}` は{game}セクションに既に存在します。別のIDを使用してください。")
+        return
+    
+    # Add event
+    events_archive[game][event_id] = new_event_dict
+    save_json("events.json", events_archive)
+    
+    # Build confirmation message
+    confirm_msg = f"イベント `{event_id}` を{game}セクションに追加しました！\n"
+    confirm_msg += f"名前: {name}\n"
+    confirm_msg += f"タイプ: {event_type}\n"
+    confirm_msg += f"開始時間: {startTime.strftime('%Y-%m-%d %H:%M:%S')}\n"
+    confirm_msg += f"終了時間: {endTime.strftime('%Y-%m-%d %H:%M:%S')}\n"
+    
+    if event_type == "VERSION_CALENDAR":
+        confirm_msg += f"バージョン: {version_name}\n"
+        if image_url:
+            confirm_msg += f"画像数: {len(new_event_dict['images'])}枚\n"
+    
+    if description:
+        confirm_msg += f"説明: {description}\n"
+    
+    if reward_end_time:
+        confirm_msg += f"報酬交換期限: {rewardEndTime.strftime('%Y-%m-%d %H:%M:%S')}\n"
+    
+    await interaction.followup.send(confirm_msg)
     
 @client.tree.command(name="gather_reed_arts",
                         description="Twitterから必要な情報を収集します", guild=discord.Object(config.testserverid))
@@ -916,86 +1073,6 @@ async def edit_dynamic_config(interaction: discord.Interaction, key: str, value:
     except Exception as e:
         logger.error(f"動的configの編集に失敗しました！\n{e}")
         await interaction.followup.send(f"動的configの編集に失敗しました！\n{e}")
-
-@client.tree.command(name="add_event", description="イベントを追加します", guild=discord.Object(config.testserverid))
-@app_commands.describe(name="イベントの名前", 
-                       event_type="イベントの種類(例: SIDESTORY, MINISTORY, EVENT, MAIN, MULTIPLAY, BOSS_RUSH",
-                       start_time="イベントの開始時間(例: 2023-10-01 16:00:00)", 
-                       end_time="イベントの終了時間(例: 2023-10-15 3:59:59)", 
-                       stage_add="ステージ追加があるかどうか(T/F)",
-                       news_url="ニュースURL",
-                       wiki_url="WikiのURL",
-                       image_url="イベントの画像URL",
-                       reward_end_time="報酬交換期限(入力無の場合、終了時間から7日後の午前3時59分59秒になります)",
-                       event_id="イベントID(入力無の場合、イベント名を小文字にしてスペースをアンダースコアに置き換えたものになります)")
-async def add_event(interaction: discord.Interaction, name: str, event_type: Literal["SIDESTORY", "MINISTORY", "EVENT", "MAIN", "MULTIPLAY", "BOSS_RUSH"], start_time: str, end_time: str, stage_add: str, news_url: str, wiki_url: str, image_url: str, reward_end_time: str = None, event_id: str = None):
-
-    """新しいイベント情報をevents.jsonに追加します。"""
-    await interaction.response.defer()
-
-    try:
-        # タイムゾーン設定 (日本時間)
-        jst = JSTTime.tz_JST
-        time_format = "%Y-%m-%d %H:%M:%S"
-
-        # 時間文字列をパースしてUnixタイムスタンプに変換
-        dt_start = datetime.datetime.strptime(start_time, time_format)
-        localized_dt_start = dt_start.replace(tzinfo=jst)
-        start_timestamp = int(localized_dt_start.timestamp())
-
-        dt_end = datetime.datetime.strptime(end_time, time_format)
-        localized_dt_end = dt_end.replace(tzinfo=jst)
-        end_timestamp = int(localized_dt_end.timestamp())
-
-        # 報酬交換期限の処理
-        if reward_end_time:
-            dt_reward_end = datetime.datetime.strptime(reward_end_time, time_format)
-            localized_dt_reward_end = dt_reward_end.replace(tzinfo=jst)
-            reward_end_timestamp = int(localized_dt_reward_end.timestamp())
-        else:
-            # 指定がない場合は終了時間の7日後の3:59:59
-            reward_dt = localized_dt_end.replace(hour=3, minute=59, second=59) + datetime.timedelta(days=7)
-            reward_end_timestamp = int(reward_dt.timestamp())
-            
-        event_id = name.lower().replace(" ", "_") if event_id is None else event_id
-
-        # 新しいイベントデータを作成
-        new_event = {
-            "id": event_id,
-            "type": event_type,
-            "stageAdd": True if stage_add.lower() == "t" else False,
-            "name": name,
-            "news": news_url,
-            "link": wiki_url,
-            "pic": image_url,
-            "startTime": start_timestamp,
-            "endTime": end_timestamp,
-            "rewardEndTime": reward_end_timestamp
-        }
-
-        # JSONファイルを読み込む
-        events_data = load_json("events.json")
-
-        # データを追加
-        events_data[event_id] = new_event
-
-        save_json("events.json", events_data)
-
-        # 成功メッセージをEmbedで表示
-        embed = discord.Embed(title="イベント追加成功", color=discord.Color.green())
-        embed.description = f"イベント「{name}」をeventarchive.jsonに追加しました。確認後、events.jsonに反映してください。"
-        embed.add_field(name="ID", value=event_id, inline=False)
-        embed.add_field(name="開始日時", value=f"<t:{start_timestamp}:F>", inline=True)
-        embed.add_field(name="終了日時", value=f"<t:{end_timestamp}:F>", inline=True)
-        embed.add_field(name="報酬交換期限", value=f"<t:{reward_end_timestamp}:F>", inline=True)
-        embed.set_image(url=image_url)
-
-        await interaction.followup.send(embed=embed)
-
-    except ValueError:
-        await interaction.followup.send(f"エラー: 時間のフォーマットが正しくありません。`{time_format}`の形式で入力してください。")
-    except Exception as e:
-        await interaction.followup.send(f"予期せぬエラーが発生しました: {e}")
 
 @client.tree.command(name="add_recruit",
                      description="公開求人対象のオペレーターを追加します（複数追加可能）",
@@ -1082,21 +1159,18 @@ async def add_recruit(interaction: discord.Interaction, operators: str, add_time
 @client.tree.command(name="remind",
                         description="リマインドのテストを送ります",
                         guild=discord.Object(config.testserverid))
-@app_commands.describe(version="リマインドの時間 morning/afternoon/evening/thread")
-async def remind(interaction: discord.Interaction, version: str):
+@app_commands.describe(
+    game="ゲーム arknights/endfield (デフォルト: arknights)"
+)
+async def remind(interaction: discord.Interaction, game: str = "arknights"):
     if interaction.user == client.user:
         return
     await interaction.response.defer()
-    if not version == "thread":
-
-        await reminder.remind(version)
-        
-    else:
-        
-        global remindThreadID
-        thread = await reminder.remind(version)
-        remindThreadID = thread.id
-        
+    
+    global remindThreadID
+    thread = await reminder.remind(game)
+    remindThreadID = thread.id
+    
     await interaction.followup.send("完了しました！")
 
 @client.tree.command(name="eventtest",
@@ -1287,7 +1361,7 @@ async def mainttest(interaction: discord.Interaction):
 async def morning():
     try:
         logger.info("時間になりました。モーニングルーティンを始めます")
-        await reminder.remind("morning")
+        await reminder.remind()
 
     except Exception as e:
         logger.exception(f"[morning]にてエラー：{e}")  
@@ -1297,7 +1371,7 @@ async def send_remind():
     try:
         global remindThreadID
         logger.info("時間になりました。メンバーにリマインドを送ります。")
-        thread = await reminder.remind("thread")
+        thread = await reminder.remind()
         remindThreadID = thread.id
         await supportrequest.delete_old_request()
 
@@ -1308,7 +1382,7 @@ async def send_remind():
 async def afternoon():
     try:
         logger.info("時間になりました。アフタヌーンルーティンを始めます")
-        await reminder.remind("afternoon")
+        await reminder.remind()
 
     except Exception as e:
         logger.exception(f"[afternoon]にてエラー：{e}") 
@@ -1317,7 +1391,7 @@ async def afternoon():
 async def evening():
     try:
         logger.info("時間になりました。イヴニングルーティンを始めます")
-        await reminder.remind("evening")
+        await reminder.remind()
 
     except Exception as e:
         logger.exception(f"[evening]にてエラー：{e}") 
@@ -1326,7 +1400,7 @@ async def evening():
 async def new_days():
     try:
         logger.info("時間になりました。０時ルーティンを始めます")
-        await reminder.remind("evening")
+        await reminder.remind()
 
     except Exception as e:
         logger.exception(f"[new_days]にてエラー：{e}") 

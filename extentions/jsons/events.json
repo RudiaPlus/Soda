@@ -1,108 +1,152 @@
 {
-    "dis_perm_sandbox_1": {
-        "id": "dis_perm_sandbox_1",
-        "type": "SANDBOX",
-        "name": "生息演算「熱砂秘聞」",
-        "news": "https://arknights.jp/news/431",
-        "link": "https://arknights.wikiru.jp/?%E7%94%9F%E6%81%AF%E6%BC%94%E7%AE%97%E3%80%8C%E7%86%B1%E7%A0%82%E7%A7%98%E8%81%9E%E3%80%8D",
-        "pic": "https://webusstatic.yo-star.com/uy0news/aj/5d655d15263acb8249a6cc5cec51d49e.png",
-        "startTime": 1723014000,
-        "endTime": 1798729199,
-        "monthlyUpdate": []
-    },
-    "dis_rogue_5": {
-        "id": "dis_rogue_5",
-        "type": "ROGUELIKE",
-        "name": "統合戦略「歳の界園志異」",
-        "news": "https://arknights.jp/news/2119",
-        "link": "https://arknights.wikiru.jp/?%E7%B5%B1%E5%90%88%E6%88%A6%E7%95%A5%E3%80%8C%E6%AD%B3%E3%81%AE%E7%95%8C%E5%9C%92%E5%BF%97%E7%95%B0%E3%80%8D",
-        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/08/P1tioSJu.png",
-        "startTime": 1766041200,
-        "endTime": 1790794799,
-        "monthlyUpdate": []
-    },
-    "鏡中集": {
-        "id": "鏡中集",
-        "type": "MINISTORY",
-        "stageAdd": false,
-        "name": "鏡中集",
-        "news": "https://arknights.jp/news/2097",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88163_%E9%8F%A1%E4%B8%AD%E9%9B%86",
-        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/04/q4gSM8tO.png",
-        "startTime": 1765436400,
-        "endTime": 1765997999,
-        "rewardEndTime": 1766257199
-    },
-    "太陽すらも追い越して(復刻)": {
-        "id": "太陽すらも追い越して(復刻)",
-        "type": "SIDESTORY",
-        "stageAdd": false,
-        "name": "太陽すらも追い越して(復刻)",
-        "news": "https://www.arknights.jp/news/2273",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88164_%E5%A4%AA%E9%99%BD%E3%81%99%E3%82%89%E3%82%82%E8%BF%BD%E3%81%84%E8%B6%8A%E3%81%97%E3%81%A6%28%E5%BE%A9%E5%88%BB%29",
-        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/26/mkd7DQSM.png",
-        "startTime": 1767682800,
-        "endTime": 1768503599,
-        "rewardEndTime": 1768849199
-    },
-    "墟": {
-        "id": "墟",
-        "type": "SIDESTORY",
-        "stageAdd": true,
-        "name": "墟",
-        "news": "https://arknights.jp/news/2333",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88165_%E5%A2%9F",
-        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/01/09/Om7qfXi4.png",
-        "startTime": 1768546800,
-        "endTime": 1770317999,
-        "rewardEndTime": 1770922799,
-        "additionalStage": [
-            {
-                "name": "鍛冶町跡",
-                "startTime": 1769151600
-            },
-            {
-                "name": "縁切り石段",
-                "startTime": 1769756400
-            }
-        ]
-    },
-    "cc2#4": {
-        "id": "cc2#4",
-        "type": "CRISIS",
-        "name": "危機契約#4 作戦コード「弧光」",
-        "news": "https://arknights.jp/news/2476",
-        "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88166_%E5%8D%B1%E6%A9%9F%E5%A5%91%E7%B4%84BATTLEPLAN%EF%BC%834",
-        "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/01/19/3UiZmAp6.png",
-        "stageAdd": "CRISIS",
-        "startTime": 1769151600,
-        "endTime": 1770317999,
-        "eventColor": "A53042",
-        "permStage": {
-            "stageType": "PERM",
-            "stageName": "空に浮かぶ焦点"
+    "arknights": {
+        "dis_perm_sandbox_1": {
+            "id": "dis_perm_sandbox_1",
+            "type": "SANDBOX",
+            "name": "生息演算「熱砂秘聞」",
+            "news": "https://arknights.jp/news/431",
+            "link": "https://arknights.wikiru.jp/?%E7%94%9F%E6%81%AF%E6%BC%94%E7%AE%97%E3%80%8C%E7%86%B1%E7%A0%82%E7%A7%98%E8%81%9E%E3%80%8D",
+            "pic": "https://webusstatic.yo-star.com/uy0news/aj/5d655d15263acb8249a6cc5cec51d49e.png",
+            "startTime": 1723014000,
+            "endTime": 1798729199,
+            "monthlyUpdate": []
         },
-        "dailyStage": [
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 1,
-                "stageName": "連邦の監獄"
+        "dis_rogue_5": {
+            "id": "dis_rogue_5",
+            "type": "ROGUELIKE",
+            "name": "統合戦略「歳の界園志異」",
+            "news": "https://arknights.jp/news/2119",
+            "link": "https://arknights.wikiru.jp/?%E7%B5%B1%E5%90%88%E6%88%A6%E7%95%A5%E3%80%8C%E6%AD%B3%E3%81%AE%E7%95%8C%E5%9C%92%E5%BF%97%E7%95%B0%E3%80%8D",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/08/P1tioSJu.png",
+            "startTime": 1766041200,
+            "endTime": 1790794799,
+            "monthlyUpdate": []
+        },
+        "鏡中集": {
+            "id": "鏡中集",
+            "type": "MINISTORY",
+            "stageAdd": false,
+            "name": "鏡中集",
+            "news": "https://arknights.jp/news/2097",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88163_%E9%8F%A1%E4%B8%AD%E9%9B%86",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/04/q4gSM8tO.png",
+            "startTime": 1765436400,
+            "endTime": 1765997999,
+            "rewardEndTime": 1766257199
+        },
+        "太陽すらも追い越して(復刻)": {
+            "id": "太陽すらも追い越して(復刻)",
+            "type": "SIDESTORY",
+            "stageAdd": false,
+            "name": "太陽すらも追い越して(復刻)",
+            "news": "https://www.arknights.jp/news/2273",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88164_%E5%A4%AA%E9%99%BD%E3%81%99%E3%82%89%E3%82%82%E8%BF%BD%E3%81%84%E8%B6%8A%E3%81%97%E3%81%A6%28%E5%BE%A9%E5%88%BB%29",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/26/mkd7DQSM.png",
+            "startTime": 1767682800,
+            "endTime": 1768503599,
+            "rewardEndTime": 1768849199
+        },
+        "墟": {
+            "id": "墟",
+            "type": "SIDESTORY",
+            "stageAdd": true,
+            "name": "墟",
+            "news": "https://arknights.jp/news/2333",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88165_%E5%A2%9F",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/01/09/Om7qfXi4.png",
+            "startTime": 1768546800,
+            "endTime": 1770317999,
+            "rewardEndTime": 1770922799,
+            "additionalStage": [
+                {
+                    "name": "鍛冶町跡",
+                    "startTime": 1769151600
+                },
+                {
+                    "name": "縁切り石段",
+                    "startTime": 1769756400
+                }
+            ]
+        },
+        "cc2#4": {
+            "id": "cc2#4",
+            "type": "CRISIS",
+            "name": "危機契約#4 作戦コード「弧光」",
+            "news": "https://arknights.jp/news/2476",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88166_%E5%8D%B1%E6%A9%9F%E5%A5%91%E7%B4%84BATTLEPLAN%EF%BC%834",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/01/19/3UiZmAp6.png",
+            "stageAdd": "CRISIS",
+            "startTime": 1769151600,
+            "endTime": 1770317999,
+            "eventColor": "A53042",
+            "permStage": {
+                "stageType": "PERM",
+                "stageName": "空に浮かぶ焦点"
             },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 2,
-                "stageName": "溶炉の点検口"
-            },
-            {
-                "stageType": "DAILY",
-                "dailyNumber": 3,
-                "stageName": "枯葦の泥沼"
-            },
-            {
-                "stageType": "DAILY_FINAL",
-                "dailyNumber": 4,
-                "stageName": "巫呪の骸野"
-            }
-        ]
+            "dailyStage": [
+                {
+                    "stageType": "DAILY",
+                    "dailyNumber": 1,
+                    "stageName": "連邦の監獄"
+                },
+                {
+                    "stageType": "DAILY",
+                    "dailyNumber": 2,
+                    "stageName": "溶炉の点検口"
+                },
+                {
+                    "stageType": "DAILY",
+                    "dailyNumber": 3,
+                    "stageName": "枯葦の泥沼"
+                },
+                {
+                    "stageType": "DAILY_FINAL",
+                    "dailyNumber": 4,
+                    "stageName": "巫呪の骸野"
+                }
+            ]
+        }
+    },
+    "endfield": {
+        "version_calendar_初号指令": {
+            "id": "version_calendar_初号指令",
+            "type": "VERSION_CALENDAR",
+            "name": "バージョン「初号指令」スケジュール",
+            "startTime": 1769050800,
+            "endTime": 1773604799,
+            "images": [
+                "https://pbs.twimg.com/media/G_K9aWHWgAAOIDg.jpg",
+                "https://pbs.twimg.com/media/G_K9dE1bsAAseLn.jpg"
+            ],
+            "version": "初号指令"
+        },
+        "ウルフガード「離群の狼」": {
+            "id": "ウルフガード「離群の狼」",
+            "type": "OPSTORY",
+            "name": "ウルフガード「離群の狼」",
+            "startTime": 1769050800,
+            "endTime": 1773604799
+        },
+        "レーヴァテイン「灰となれ、記憶の残骸よ」": {
+            "id": "レーヴァテイン「灰となれ、記憶の残骸よ」",
+            "type": "OPSTORY",
+            "name": "レーヴァテイン「灰となれ、記憶の残骸よ」",
+            "startTime": 1769050800,
+            "endTime": 1773604799
+        },
+        "イヴォンヌ「ラブ、スクリーム＆試作モデル」": {
+            "id": "イヴォンヌ「ラブ、スクリーム＆試作モデル」",
+            "type": "OPSTORY",
+            "name": "イヴォンヌ「ラブ、スクリーム＆試作モデル」",
+            "startTime": 1769745600,
+            "endTime": 1773604799
+        },
+        "ギルベルタ「トランスポーターからの手紙」": {
+            "id": "ギルベルタ「トランスポーターからの手紙」",
+            "type": "OPSTORY",
+            "name": "ギルベルタ「トランスポーターからの手紙」",
+            "startTime": 1770436800,
+            "endTime": 1773604799
+        }
     }
 }

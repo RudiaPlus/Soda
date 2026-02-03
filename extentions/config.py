@@ -212,6 +212,7 @@ class Config:
 
         #endfield
         self.blueprint_channel = 1444998719228346451 #工業図面共有
+        self.efremind = 1467723347042242802 if self.test is False else self.remind_TEST #リマインダー(Endfield)
 
         # categories
         self.feedback_category = 1108189699715125268

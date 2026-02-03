@@ -333,6 +333,8 @@ async def remind(mode = "morning"):
                                     url = url)
             embed.set_author(name="メンテナンス")
             embeds.append(embed)
+        
+        logger.info(f"[remind] Processed {len(maintenance)} maintenance, {len(events)} events")
 
         for i in range(len(events)):
             if events[i]["dif"] == "present":
