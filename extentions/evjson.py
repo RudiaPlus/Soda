@@ -105,7 +105,7 @@ def _process_arknights_events(event_dic: dict) -> list:
             
             if not type == "ROGUELIKE" and not type == "SANDBOX":
                 endTime = "<t:{0}:F>( <t:{0}:R> )".format(event_dic[event_now_list[i]]["endTime"])
-                stageAdd = event_dic[event_now_list[i]]["stageAdd"]
+                stageAdd = event_dic[event_now_list[i]].get("stageAdd", False)
             news = event_dic[event_now_list[i]]["news"]    
             link = event_dic[event_now_list[i]]["link"]
             pic = event_dic[event_now_list[i]]["pic"]

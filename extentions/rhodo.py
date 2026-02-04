@@ -1046,6 +1046,59 @@ async def maintenance(interaction: discord.Interaction, number: int, status: Lit
         await interaction.response.defer()
         await maintenances.change_maint_end(number, new_end_timestamp)
         await interaction.followup.send("完了しました")
+
+@client.tree.command(name="add_maintenance", description="メンテナンスを追加します", guild=discord.Object(config.testserverid))
+@app_commands.describe(
+    start_time="開始時間(例: 2025-08-20 14:00:00)",
+    end_time="終了時間(例: 2025-08-20 17:00:00)",
+    link="公式サイトのお知らせURL(任意)",
+    pic="画像のURL(任意)"
+)
+async def add_maintenance(
+    interaction: discord.Interaction,
+    start_time: str,
+    end_time: str,
+    link: str = None,
+    pic: str = None
+):
+    """メンテナンス情報を追加します。"""
+    if interaction.user == client.user:
+        return
+    
+    await interaction.response.defer(ephemeral=True)
+    
+    try:
+        startTime = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+        endTime = datetime.datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        logger.error("日付のフォーマットエラーです。「YYYY-MM-DD HH:MM:SS」")
+        await interaction.followup.send("日付のフォーマットが正しくありません。「YYYY-MM-DD HH:MM:SS」の形式で入力してください。")
+        return
+
+    startTime_timestamp = floor(startTime.astimezone(tz=JSTTime.tz_JST).timestamp())
+    endTime_timestamp = floor(endTime.astimezone(tz=JSTTime.tz_JST).timestamp())
+    
+    new_maint_dict = {
+        "type": "MAINTENANCE",
+        "startTime": startTime_timestamp,
+        "endTime": endTime_timestamp,
+        "doing": False
+    }
+    
+    if link:
+        new_maint_dict["link"] = link
+
+    if pic:
+        new_maint_dict["pic"] = pic
+        
+    maint_list = load_json("maintenances.json")
+    if not isinstance(maint_list, list):
+        maint_list = []
+        
+    maint_list.append(new_maint_dict)
+    save_json("maintenances.json", maint_list)
+    
+    await interaction.followup.send(f"メンテナンス情報を追加しました！\n開始: {start_time}\n終了: {end_time}")
         
 @client.tree.command(name="nickname", description="ロードに覚えてほしいあなたの呼び方を設定します")
 @app_commands.describe(name="AIに覚えてほしいあなたの呼び方(後ろに先輩が付きます)")
