@@ -467,10 +467,18 @@ def load_json(file_name: str) -> dict:
 def save_json(file_name: str, data: dict):
     with open(os.path.join(dir, f"jsons\\{file_name}"), "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
+
+def load_reactions_json() -> dict:
+    path = os.path.join(dir, "jsons/reactions.json")
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if isinstance(data, dict):
+        return data
+    # Initialize to empty dict if the file is in an unexpected format.
+    return {}
      
 async def load_reactions(reaction: discord.Reaction):
-    with open(os.path.join(dir, "jsons/reactions.json"), "r", encoding="utf-8") as f:
-        reactions = json.load(f)
+    reactions = load_reactions_json()
     JST_timestamp = JSTTime.timeJST("timestamp")
     found = False
     posted = 0
@@ -500,7 +508,7 @@ async def load_reactions(reaction: discord.Reaction):
         if JST_timestamp - created_at > config.collect_agree_days:
             return 0, 0
         
-        reactions[reaction.message.id] = {"count": reaction_count, "created_at": created_at, "posted": 0}
+        reactions[search_id] = {"count": reaction_count, "created_at": created_at, "posted": 0}
         
     with open(os.path.join(dir, "jsons/reactions.json"), "w", encoding="utf-8") as f:
         json.dump(reactions, f, indent=2, ensure_ascii=False)
@@ -508,8 +516,7 @@ async def load_reactions(reaction: discord.Reaction):
     return reaction_count, posted
 
 async def posted_reaction_message(search_message: int, posted_message: int):
-    with open(os.path.join(dir, "jsons/reactions.json"), "r", encoding="utf-8") as f:
-        reactions = json.load(f)
+    reactions = load_reactions_json()
     search_id = str(search_message)
     if search_id in reactions:
         reactions[search_id]["posted"] = posted_message
