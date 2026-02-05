@@ -13,6 +13,13 @@ dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger()
 test = config.test
 
+# Endfield Event Configuration
+ENDFIELD_EVENT_STYLES = {
+    "OPSTORY": {"name": "物語イベント", "color": 0x0096fa},
+    "OTHER": {"name": "イベント", "color": 0xFFA500},
+    "DEFAULT": {"name": "イベント", "color": 0xFFA500}
+}
+
 @client.tree.command(name="set_remind",
                         description="リマインドを作り直します",
                         guild=discord.Object(config.testserverid))
@@ -895,12 +902,9 @@ async def remind(game="arknights", send_to_thread=False):
         for event in current_events:
             event_type = event.get("type", "")
             
-            if event_type == "OPSTORY":
-                color = 0x0096fa  # Blue for OPSTORY
-                author_name = "物語イベント"
-            else:
-                color = 0xFFA500  # Orange for all other events
-                author_name = "イベント"
+            style = ENDFIELD_EVENT_STYLES.get(event_type, ENDFIELD_EVENT_STYLES["DEFAULT"])
+            color = style["color"]
+            author_name = style["name"]
             
             embed = discord.Embed(
                 title=event['name'],
@@ -929,7 +933,9 @@ async def remind(game="arknights", send_to_thread=False):
             for event in future_events[:5]:
                 event_type = event.get("type", "")
                 
-                color = discord.Color.orange()
+                style = ENDFIELD_EVENT_STYLES.get(event_type, ENDFIELD_EVENT_STYLES["DEFAULT"])
+                color = style["color"]
+                author_name = style["name"]
                 
                 embed = discord.Embed(
                     title=event['name'],
