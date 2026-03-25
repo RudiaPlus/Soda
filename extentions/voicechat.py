@@ -610,6 +610,9 @@ for i in range(config.voice_clients):
     
     @client_voice.event
     async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState, client_voice = client_voice):
+        # bot自身や他のbotのイベントはスキップ（ループ防止）
+        if member.id == client_voice.user.id or member.bot:
+            return
         if before.channel and not after.channel:
             if member.guild.voice_client and len(before.channel.members) < 2:
                 if member.guild.voice_client.channel == before.channel:

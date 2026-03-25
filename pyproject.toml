@@ -28,7 +28,7 @@ dependencies = [
   "python-dotenv",
   "requests",
   "tavily-python",
-  "tweety-ns",
+  "tweety-ns @ git+https://github.com/mahrtayyab/tweety.git@main",
   "waitress",
   "zstandard",
   "sentence-transformers>=5.2.0",

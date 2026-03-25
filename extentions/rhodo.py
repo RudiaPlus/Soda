@@ -527,9 +527,11 @@ async def posted_reaction_message(search_message: int, posted_message: int):
 async def on_raw_reaction_add(reaction_payload: discord.RawReactionActionEvent):
     try:
         agree_emoji_id = 1183255845497229442
+        logger.debug(f"[reaction] emoji received: id={reaction_payload.emoji.id}, name={reaction_payload.emoji.name}, message_id={reaction_payload.message_id}")
         if reaction_payload.emoji.id != agree_emoji_id and reaction_payload.emoji.name != "I_agree":
             return
         
+        logger.debug(f"[reaction] I_agree detected on message {reaction_payload.message_id}")
         reaction_user = reaction_payload.user_id
         message_channel = client.get_channel(reaction_payload.channel_id)
         if message_channel is None:
@@ -537,8 +539,10 @@ async def on_raw_reaction_add(reaction_payload: discord.RawReactionActionEvent):
         message = await message_channel.fetch_message(reaction_payload.message_id)
 
         if not message.guild:
+            logger.debug("[reaction] skipped: not a guild message")
             return
         if message.author.bot is True:
+            logger.debug("[reaction] skipped: message author is bot")
             return
         reaction = None
         for item in message.reactions:
@@ -548,8 +552,10 @@ async def on_raw_reaction_add(reaction_payload: discord.RawReactionActionEvent):
                 reaction = item
                 break
         if reaction is None:
+            logger.debug(f"[reaction] skipped: I_agree reaction not found in message.reactions (found: {[str(r.emoji) for r in message.reactions]})")
             return
         
+        logger.debug(f"[reaction] calling load_reactions with count={reaction.count}")
         reaction_count, posted = await load_reactions(reaction)
         
         #リアクションの数とポストされたかどうかを確認
