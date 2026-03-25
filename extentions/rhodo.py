@@ -470,7 +470,7 @@ def save_json(file_name: str, data: dict):
 
 def load_reactions_json() -> dict:
     path = os.path.join(dir, "jsons/reactions.json")
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding="utf-8-sig") as f:
         data = json.load(f)
     if isinstance(data, dict):
         return data
