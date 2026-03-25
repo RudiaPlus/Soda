@@ -1,51 +1,5 @@
 {
     "arknights": {
-        "dis_perm_sandbox_1": {
-            "id": "dis_perm_sandbox_1",
-            "type": "SANDBOX",
-            "name": "生息演算「熱砂秘聞」",
-            "news": "https://arknights.jp/news/431",
-            "link": "https://arknights.wikiru.jp/?%E7%94%9F%E6%81%AF%E6%BC%94%E7%AE%97%E3%80%8C%E7%86%B1%E7%A0%82%E7%A7%98%E8%81%9E%E3%80%8D",
-            "pic": "https://webusstatic.yo-star.com/uy0news/aj/5d655d15263acb8249a6cc5cec51d49e.png",
-            "startTime": 1723014000,
-            "endTime": 1798729199,
-            "monthlyUpdate": []
-        },
-        "dis_rogue_5": {
-            "id": "dis_rogue_5",
-            "type": "ROGUELIKE",
-            "name": "統合戦略「歳の界園志異」",
-            "news": "https://arknights.jp/news/2119",
-            "link": "https://arknights.wikiru.jp/?%E7%B5%B1%E5%90%88%E6%88%A6%E7%95%A5%E3%80%8C%E6%AD%B3%E3%81%AE%E7%95%8C%E5%9C%92%E5%BF%97%E7%95%B0%E3%80%8D",
-            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/08/P1tioSJu.png",
-            "startTime": 1766041200,
-            "endTime": 1790794799,
-            "monthlyUpdate": []
-        },
-        "鏡中集": {
-            "id": "鏡中集",
-            "type": "MINISTORY",
-            "stageAdd": false,
-            "name": "鏡中集",
-            "news": "https://arknights.jp/news/2097",
-            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88163_%E9%8F%A1%E4%B8%AD%E9%9B%86",
-            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/04/q4gSM8tO.png",
-            "startTime": 1765436400,
-            "endTime": 1765997999,
-            "rewardEndTime": 1766257199
-        },
-        "太陽すらも追い越して(復刻)": {
-            "id": "太陽すらも追い越して(復刻)",
-            "type": "SIDESTORY",
-            "stageAdd": false,
-            "name": "太陽すらも追い越して(復刻)",
-            "news": "https://www.arknights.jp/news/2273",
-            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88164_%E5%A4%AA%E9%99%BD%E3%81%99%E3%82%89%E3%82%82%E8%BF%BD%E3%81%84%E8%B6%8A%E3%81%97%E3%81%A6%28%E5%BE%A9%E5%88%BB%29",
-            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2025/12/26/mkd7DQSM.png",
-            "startTime": 1767682800,
-            "endTime": 1768503599,
-            "rewardEndTime": 1768849199
-        },
         "墟": {
             "id": "墟",
             "type": "SIDESTORY",
@@ -68,44 +22,6 @@
                 }
             ]
         },
-        "cc2#4": {
-            "id": "cc2#4",
-            "type": "CRISIS",
-            "name": "危機契約#4 作戦コード「弧光」",
-            "news": "https://arknights.jp/news/2476",
-            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88166_%E5%8D%B1%E6%A9%9F%E5%A5%91%E7%B4%84BATTLEPLAN%EF%BC%834",
-            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/01/19/3UiZmAp6.png",
-            "stageAdd": "CRISIS",
-            "startTime": 1769151600,
-            "endTime": 1770317999,
-            "eventColor": "A53042",
-            "permStage": {
-                "stageType": "PERM",
-                "stageName": "空に浮かぶ焦点"
-            },
-            "dailyStage": [
-                {
-                    "stageType": "DAILY",
-                    "dailyNumber": 1,
-                    "stageName": "連邦の監獄"
-                },
-                {
-                    "stageType": "DAILY",
-                    "dailyNumber": 2,
-                    "stageName": "溶炉の点検口"
-                },
-                {
-                    "stageType": "DAILY",
-                    "dailyNumber": 3,
-                    "stageName": "枯葦の泥沼"
-                },
-                {
-                    "stageType": "DAILY_FINAL",
-                    "dailyNumber": 4,
-                    "stageName": "巫呪の骸野"
-                }
-            ]
-        },
         "デュエルチャンネル：ハニーデューシティ": {
             "id": "デュエルチャンネル：ハニーデューシティ",
             "type": "OTHER",
@@ -116,6 +32,40 @@
             "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88167_%E3%83%87%E3%83%A5%E3%82%A8%E3%83%AB%E3%83%81%E3%83%A3%E3%83%B3%E3%83%8D%E3%83%AB%EF%BC%9A%E3%83%8F%E3%83%8B%E3%83%BC%E3%83%87%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%86%E3%82%A3",
             "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/01/28/UlDSId7G.png",
             "rewardEndTime": 1771527599
+        },
+        "安らかな譫言": {
+            "id": "安らかな譫言",
+            "type": "SIDESTORY",
+            "name": "安らかな譫言",
+            "startTime": 1770706800,
+            "endTime": 1771873199,
+            "news": "https://arknights.jp/news/2603",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88168_%E5%AE%89%E3%82%89%E3%81%8B%E3%81%AA%E8%AD%AB%E8%A8%80",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/01/09/4CNuEMNb.png",
+            "stageAdd": false
+        },
+        "落日の向こうへ復刻": {
+            "id": "落日の向こうへ復刻",
+            "type": "SIDESTORY",
+            "name": "落日の向こうへ(復刻)",
+            "startTime": 1771873200,
+            "endTime": 1772737199,
+            "news": "https://arknights.jp/news/2682",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88169_%E8%90%BD%E6%97%A5%E3%81%AE%E5%90%91%E3%81%93%E3%81%86%E3%81%B8%28%E5%BE%A9%E5%88%BB%29",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/02/13/m872BpqP.png",
+            "rewardEndTime": 1773082799,
+            "stageAdd": false
+        },
+        "再建画策": {
+            "id": "再建画策",
+            "type": "OTHER",
+            "name": "再建画策",
+            "startTime": 1772780400,
+            "endTime": 1774551599,
+            "news": "https://arknights.jp/news/2739",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88170_%E5%86%8D%E5%BB%BA%E7%94%BB%E7%AD%96",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/02/24/SFiZGJiF.png",
+            "rewardEndTime": 1774810799
         }
     },
     "endfield": {
@@ -124,7 +74,7 @@
             "type": "VERSION_CALENDAR",
             "name": "バージョン「初号指令」スケジュール",
             "startTime": 1769050800,
-            "endTime": 1773691199,
+            "endTime": 1773259199,
             "images": [
                 "https://pbs.twimg.com/media/G_K9aWHWgAAOIDg.jpg",
                 "https://pbs.twimg.com/media/G_K9dE1bsAAseLn.jpg"
@@ -136,35 +86,28 @@
             "type": "OPSTORY",
             "name": "ウルフガード「離群の狼」",
             "startTime": 1769050800,
-            "endTime": 1773691199
+            "endTime": 1773259199
         },
         "レーヴァテイン「灰となれ、記憶の残骸よ」": {
             "id": "レーヴァテイン「灰となれ、記憶の残骸よ」",
             "type": "OPSTORY",
             "name": "レーヴァテイン「灰となれ、記憶の残骸よ」",
             "startTime": 1769050800,
-            "endTime": 1773691199
+            "endTime": 1773259199
         },
         "イヴォンヌ「ラブ、スクリーム＆試作モデル」": {
             "id": "イヴォンヌ「ラブ、スクリーム＆試作モデル」",
             "type": "OPSTORY",
             "name": "イヴォンヌ「ラブ、スクリーム＆試作モデル」",
             "startTime": 1769745600,
-            "endTime": 1773691199
+            "endTime": 1773259199
         },
         "ギルベルタ「トランスポーターからの手紙」": {
             "id": "ギルベルタ「トランスポーターからの手紙」",
             "type": "OPSTORY",
             "name": "ギルベルタ「トランスポーターからの手紙」",
             "startTime": 1770436800,
-            "endTime": 1773691199
-        },
-        "カーリーの谷地絵本": {
-            "id": "カーリーの谷地絵本",
-            "type": "OTHER",
-            "name": "カーリーの谷地絵本",
-            "startTime": 1770436800,
-            "endTime": 1773691199
+            "endTime": 1773259199
         },
         "霞光照らす武陵": {
             "id": "霞光照らす武陵",
@@ -178,7 +121,32 @@
             "type": "OTHER",
             "name": "理性消費軽減",
             "startTime": 1772424000,
-            "endTime": 1773691199
+            "endTime": 1773259199
+        },
+        "記憶の痕・古傷": {
+            "id": "記憶の痕・古傷",
+            "type": "OTHER",
+            "name": "記憶の痕・古傷",
+            "startTime": 1770868800,
+            "endTime": 1773259199
+        },
+        "version_calendar_潮起ち、故淵離る": {
+            "id": "version_calendar_潮起ち、故淵離る",
+            "type": "VERSION_CALENDAR",
+            "name": "バージョン「潮起ち、故淵離る」スケジュール",
+            "startTime": 1773288000,
+            "endTime": 1776376800,
+            "images": [
+                "https://pbs.twimg.com/media/HC0vH88a8AAi1Mv.jpg"
+            ],
+            "version": "潮起ち、故淵離る"
+        },
+        "ロッシ「赤騎士」": {
+            "id": "ロッシ「赤騎士」",
+            "type": "OPSTORY",
+            "name": "ロッシ「赤騎士」",
+            "startTime": 1774756800,
+            "endTime": 1776376800
         }
     }
 }

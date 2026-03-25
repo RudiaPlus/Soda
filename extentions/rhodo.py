@@ -525,88 +525,104 @@ async def posted_reaction_message(search_message: int, posted_message: int):
         
 @client.event
 async def on_raw_reaction_add(reaction_payload: discord.RawReactionActionEvent):
-    
-    if reaction_payload.emoji.name != "I_agree":
-        return
-    
-    reaction_user = reaction_payload.user_id
-    message_channel = client.get_channel(reaction_payload.channel_id)
-    message = await message_channel.fetch_message(reaction_payload.message_id)
-
-    if not message.guild:
-        return
-    if message.author.bot is True:
-        return
-    found = False
-    for reaction in message.reactions:
-        if type(reaction.emoji) is str:
-            continue
-        emoji_name = reaction.emoji.name
-        if emoji_name == "I_agree":
-            found = True
-            break
-    if found is False:
-        return
-    
-    reaction_count, posted = await load_reactions(reaction)
-    
-    #リアクションの数とポストされたかどうかを確認
-    if reaction_count >= 3 and posted == 0:
-
-        message_id = message.id
-        message_guild = message.guild
-        message_attachments = message.attachments
-        message_jump_url = message.jump_url
-        message_created_at_JST = message.created_at.astimezone(tz = JSTTime.tz_JST)
-        message_content = message.content
-        message_author = message.author
-        is_private = False
-        
-        if type(message_channel) is discord.Thread:
-            is_private = True
-        else:
-            default_overwrites = message_channel.overwrites_for(message_guild.default_role)
-            if default_overwrites.read_messages is False:
-                is_private = True
-        if is_private is True:
-            logger.info("プライベートチャンネルのため、聖堂入りを中止しました。")
+    try:
+        agree_emoji_id = 1183255845497229442
+        if reaction_payload.emoji.id != agree_emoji_id and reaction_payload.emoji.name != "I_agree":
             return
-        if message_author.get_role(config.cathedral_NG_role):
-            logger.info("聖堂NGのロールを持っているため、聖堂入りを中止しました")
-            return
-        channel = client.get_channel(config.cathedral)
         
-        embeds = []
-        embed = discord.Embed(description=message_content, timestamp=message_created_at_JST, color = discord.Color.yellow())
-        embed.set_author(name = message_author.display_name, icon_url=message_author.display_avatar, url = message_jump_url)
-        embed.set_footer(text = f"ID: {message_id}")
-        if message_attachments and "image" in message_attachments[0].content_type:
-            embed.set_image(url = message_attachments[0].url)
-        embeds.append(embed)
-        videos = []
-        if message_attachments:
+        reaction_user = reaction_payload.user_id
+        message_channel = client.get_channel(reaction_payload.channel_id)
+        if message_channel is None:
+            message_channel = await client.fetch_channel(reaction_payload.channel_id)
+        message = await message_channel.fetch_message(reaction_payload.message_id)
+
+        if not message.guild:
+            return
+        if message.author.bot is True:
+            return
+        reaction = None
+        for item in message.reactions:
+            if isinstance(item.emoji, str):
+                continue
+            if item.emoji.id == agree_emoji_id or item.emoji.name == "I_agree":
+                reaction = item
+                break
+        if reaction is None:
+            return
+        
+        reaction_count, posted = await load_reactions(reaction)
+        
+        #リアクションの数とポストされたかどうかを確認
+        if reaction_count >= 3 and posted == 0:
+
+            message_id = message.id
+            message_guild = message.guild
+            message_attachments = message.attachments
+            message_jump_url = message.jump_url
+            message_created_at_JST = message.created_at.astimezone(tz = JSTTime.tz_JST)
+            message_content = message.content
+            message_author = message.author
+            is_private = False
             
-            for number in range(len(message_attachments)):
-                if "image" in message_attachments[number].content_type and number != 0:
-                    embed = discord.Embed(color = discord.Color.yellow())
-                    embed.set_image(url = message_attachments[number].url)
-                    embeds.append(embed)
+            if isinstance(message_channel, discord.Thread):
+                is_private = message_channel.is_private()
+                if message_channel.parent:
+                    parent_overwrites = message_channel.parent.overwrites_for(message_guild.default_role)
+                    if parent_overwrites.read_messages is False:
+                        is_private = True
+            else:
+                default_overwrites = message_channel.overwrites_for(message_guild.default_role)
+                if default_overwrites.read_messages is False:
+                    is_private = True
+            if is_private is True:
+                logger.info("プライベートチャンネルのため、聖堂入りを中止しました。")
+                return
+            member_author = message_author if isinstance(message_author, discord.Member) else message_guild.get_member(message_author.id)
+            if member_author and member_author.get_role(config.cathedral_NG_role):
+                logger.info("聖堂NGのロールを持っているため、聖堂入りを中止しました")
+                return
+            channel = client.get_channel(config.cathedral)
+            if channel is None:
+                channel = await client.fetch_channel(config.cathedral)
+            
+            embeds = []
+            embed = discord.Embed(description=message_content, timestamp=message_created_at_JST, color = discord.Color.yellow())
+            embed.set_author(name = message_author.display_name, icon_url=message_author.display_avatar, url = message_jump_url)
+            embed.set_footer(text = f"ID: {message_id}")
+            if message_attachments:
+                first_content_type = message_attachments[0].content_type or ""
+                if "image" in first_content_type:
+                    embed.set_image(url = message_attachments[0].url)
+            embeds.append(embed)
+            videos = []
+            if message_attachments:
                 
-                if "video" in message_attachments[number].content_type:
-                    videos.append(message_attachments[number].url)
+                for number in range(len(message_attachments)):
+                    content_type = message_attachments[number].content_type or ""
+                    if "image" in content_type and number != 0:
+                        embed = discord.Embed(color = discord.Color.yellow())
+                        embed.set_image(url = message_attachments[number].url)
+                        embeds.append(embed)
+                    
+                    if "video" in content_type:
+                        videos.append(message_attachments[number].url)
 
-        logger.info(f"メッセージ({message_id})が{reaction_user}の手で聖堂へ刻まれました")                        
-        posted_message = await channel.send(content = f"{message_author.mention} さんのメッセージが <:I_agree:1183255845497229442> を{reaction.count}個獲得しました！\nメッセージへのリンク: {message_jump_url}", embeds = embeds)
-        for video_url in videos:
-            await posted_message.reply(content = f"[ブラウザで開く]({video_url})")
-        await posted_reaction_message(message_id, posted_message.id)
-    
-    if posted != 0:
-        channel = client.get_channel(config.cathedral)
-        edit_message = await channel.fetch_message(posted)
-        message_author = message.author
-        message_jump_url = message.jump_url
-        await edit_message.edit(content = f"{message_author.mention} さんのメッセージが <:I_agree:1183255845497229442> を{reaction.count}個獲得しました！\nメッセージへのリンク: {message_jump_url}")
+            logger.info(f"メッセージ({message_id})が{reaction_user}の手で聖堂へ刻まれました")                        
+            posted_message = await channel.send(content = f"{message_author.mention} さんのメッセージが <:I_agree:1183255845497229442> を{reaction.count}個獲得しました！\nメッセージへのリンク: {message_jump_url}", embeds = embeds)
+            for video_url in videos:
+                await posted_message.reply(content = f"[ブラウザで開く]({video_url})")
+            await posted_reaction_message(message_id, posted_message.id)
+        
+        if posted != 0:
+            channel = client.get_channel(config.cathedral)
+            if channel is None:
+                channel = await client.fetch_channel(config.cathedral)
+            edit_message = await channel.fetch_message(posted)
+            message_author = message.author
+            message_jump_url = message.jump_url
+            await edit_message.edit(content = f"{message_author.mention} さんのメッセージが <:I_agree:1183255845497229442> を{reaction.count}個獲得しました！\nメッセージへのリンク: {message_jump_url}")
+    except Exception as e:
+        logger.exception(f"[on_raw_reaction_add] error: {e}")
 
 @client.event
 async def on_member_join(member: discord.Member):

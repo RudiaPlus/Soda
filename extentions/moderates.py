@@ -31,6 +31,8 @@ REPORT_REASONS = [
     "トラブルの持ち込み",
     "虚偽の情報/誤解を招く情報の共有",
     "違法行為の助長または実行",
+    "コミュニケーションのマナー違反(他人が不快感を感じる強い言葉、他人の意見に寄り添わない、否定から入るなど)",
+    "その他(備考に理由を詳しく記入してください)"
 ]
 
 async def punishment_delete(member, id):
@@ -237,10 +239,10 @@ async def warning_and_timeout(interaction: discord.Interaction, member: discord.
 
         if reason:
             if timeout:
-                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告とタイムアウト**」が科されました。\n- あなたはこれより**{timeout_minutes}**、メッセージの送信やVCへの参加が出来ません。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとより重いタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
+                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告とタイムアウト**」が科されました。\n- あなたはこれより**{timeout_minutes}**、メッセージの送信やVCへの参加が出来ません。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとより重いタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\n処罰の流れの例は[こちら]({config.server_punishment_example_link})を参照してください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
             else:
-                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**警告**」が科されました。\n- メッセージの送信やVCへの参加は引き続き可能です。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
-            embed = discord.Embed(title="⚠️あなたはスタッフから警告されました",
+                description = f"{member_got.display_name}さん、あなたはスタッフの判断によって「**注意**」が科されました。\n- メッセージの送信やVCへの参加は引き続き可能です。\n- 警告の理由: {reason}\n\nこれは{len(member_punishments)+1}回目の処罰です。「警告」が数回重なるとタイムアウトやサーバーからの追放、Banなどの重い処罰が科されます。\n[サーバールール]({config.server_rule_link})や[Discordのコミュニティガイドライン]({config.community_guideline_link})を良く読んで、それらに違反しないようにご注意ください。\n処罰の流れの例は[こちら]({config.server_punishment_example_link})を参照してください。\nこの処罰に身に覚えが無い場合、/modmailコマンドでアピールすることが出来ます。"
+            embed = discord.Embed(title="⚠️あなたはスタッフから注意されました",
                                   description=description)
             embed.set_author(
                 name="あしたはこぶね", url=config.server_invite_link, icon_url=config.server_icon)

@@ -124,7 +124,11 @@ async def setup_app():
                     raise
 
     global APP
-    APP = await authenticate(config.twitter_account_name, config.twitter_account_token)
+    try:
+        APP = await authenticate(config.twitter_account_name, config.twitter_account_token)
+    except Exception as e:
+        logger.error(f"Twitterクライアントの初期化に失敗しました。Twitter関連機能はスキップされます: {e}")
+        APP = None
 
 
 async def gather_reed_arts(since: datetime.datetime):

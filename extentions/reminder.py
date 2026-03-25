@@ -17,6 +17,7 @@ test = config.test
 ENDFIELD_EVENT_STYLES = {
     "OPSTORY": {"name": "物語イベント", "color": 0x0096fa},
     "OTHER": {"name": "イベント", "color": 0xFFA500},
+    "MONUMENT": {"name": "映像の記念碑・記憶の痕", "color": 0xcb2b26},
     "DEFAULT": {"name": "イベント", "color": 0xFFA500}
 }
 

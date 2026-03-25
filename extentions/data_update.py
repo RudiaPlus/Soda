@@ -270,10 +270,16 @@ async def update_data() -> bool:
 async def update(interaction: discord.Interaction):
     await interaction.response.defer()
     start_time = datetime.now()
-    result = await update_data()
+    try:
+        result = await update_data()
+    except Exception as e:
+        logger.exception(f"update command failed: {e}")
+        await interaction.followup.send("Update failed. Please check logs.")
+        return
+
     if result is True:
         result_time = datetime.now()
         result_delta = result_time - start_time
-        await interaction.followup.send(f"更新に成功しました！\n経過した時間: {result_delta.total_seconds()}秒")
+        await interaction.followup.send(f"Update completed. elapsed: {result_delta.total_seconds()} sec")
     else:
-        await interaction.followup.send("更新に失敗しました......")
+        await interaction.followup.send("Update failed. Please check logs.")

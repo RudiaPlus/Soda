@@ -43,8 +43,9 @@ class Config:
             os.environ["DISCORD_VOICE_TOKEN_05"],
         ]
 
-        self.server_invite_link = "https://discord.gg/AshC"
+        self.server_invite_link = "https://discord.gg/Talos"
         self.server_rule_link = "https://discord.com/channels/1018858818345631745/1460258502340509833"
+        self.server_punishment_example_link = "https://discord.com/channels/1018858818345631745/1483502142185668661/1483502156035133581"
         self.community_guideline_link = "https://discord.com/guidelines"
         self.main_server = 1018858818345631745  # あしたはこぶね
         self.testserverid = 1059155328584908810  # メンテナンス部屋
