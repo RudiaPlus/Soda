@@ -115,7 +115,7 @@ async def init_models():
         app
     db_client = await get_akdb_conn()
     model = ChatOpenAI(model="gpt-5-chat-latest")
-    analyze_model = ChatOpenAI(model="gpt-5")
+    analyze_model = ChatOpenAI(model="gpt-5.4-mini")
     agent_model = ChatOpenAI(model="gpt-5-mini")
     embedding_model = await get_embedding_model()
 
@@ -633,4 +633,68 @@ async def direct_chat(user: discord.User, message: discord.Message):
         await message.channel.send(
             "ごめんなさい！今はうまく返答できないんです。後でもう一度お話ししましょう！"
         )
+        return None
+
+async def analyze_modmail_history(channel: discord.TextChannel) -> discord.Embed:
+    # Ensure the app and models are initialized (bypass full init_models to avoid Chroma DB dependency)
+    global analyze_model
+    if analyze_model is None:
+        from langchain_openai import ChatOpenAI
+        analyze_model = ChatOpenAI(model="gpt-5.4-mini")
+
+    try:
+        messages = []
+        async for msg in channel.history(limit=20, oldest_first=False):
+            # AIアシスタントのメッセージは除外
+            if msg.author == channel.guild.me and msg.embeds and msg.embeds[0].title == "AIによるメッセージの要約と解析":
+                continue
+            
+            content = msg.content
+            # スタッフの直接書き込みの場合
+            if msg.author != channel.guild.me and not msg.author.bot:
+                if not content:
+                    continue
+                name = msg.author.display_name
+                messages.append(f"スタッフ({name}): {content}")
+            else:
+                # メンバーのDMからの転送Embedの場合、または他Bot等の場合
+                if msg.embeds:
+                    embed = msg.embeds[0]
+                    name = embed.author.name if embed.author else "システム"
+                    # 内容はEmbedのdescriptionか、本文から取得
+                    content_str = embed.description or msg.content
+                    if not content_str:
+                        continue
+                    messages.append(f"メンバー({name}): {content_str}")
+        
+        # 古い順に並べ替え
+        messages.reverse()
+        history_str = "\n".join(messages)
+
+        prompt = f"""
+        あなたはコミュニティ運営（スタッフ）を支援する優秀なAIアシスタントです。
+        以下のModmail（お問い合わせ）の会話履歴を分析してください。
+
+        1. これまでの会話の要約
+        2. メンバーの意図や求めていること
+        3. コミュニティ運営としての良い返答の例（具体的な文案など。※必要な場合のみ）
+
+        出力はMarkdown形式で、見やすく簡潔に日本語で記述してください。
+
+        # 会話履歴
+        {history_str}
+        """
+
+        response = await analyze_model.ainvoke(prompt)
+        
+        embed = discord.Embed(
+            title="AIによるメッセージの要約と解析",
+            description=response.content,
+            color=discord.Color.purple()
+        )
+        embed.set_footer(text="※このメッセージはメンバーには転送・保存されません")
+        return embed
+
+    except Exception as e:
+        logger.error(f"Modmail analysis error: {e}")
         return None

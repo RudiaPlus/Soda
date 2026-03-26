@@ -405,6 +405,14 @@ async def handle_dm_message(message: discord.Message):
             
         await message.add_reaction("✅")
         logger.info(f"Modmailへ投稿されたメッセージ(id: {message.id})を正常に転送しました")
+        
+        # AIアシストの呼び出し
+        try:
+            assist_embed = await chat.analyze_modmail_history(mod_channel)
+            if assist_embed:
+                await mod_channel.send(embed=assist_embed)
+        except Exception as e:
+            logger.error(f"AI assist generation failed: {e}")
     else:
         response = await chat.direct_chat(author, message)
         if response:
@@ -441,7 +449,8 @@ async def on_message(message: discord.Message):
             await handle_blueprint_message(message)
         
         # Modmail staff message handler
-        if message.channel.category_id == config.feedback_category and message.channel.name.startswith("mail"):
+        is_feedback_category = (message.channel.category_id == config.feedback_category) or (message.channel.category and message.channel.category.name == "────フィードバック────")
+        if is_feedback_category and message.channel.name.startswith("mail"):
             await handle_modmail_staff_message(message)
     
     # DM handlers
