@@ -92,6 +92,25 @@ _GAME_MODE_REGISTRY: dict[str, GameModeProfile] = {
             "「削除」ボタンを押してください"
         ),
     ),
+    # 堅守協定
+    "堅守協定": GameModeProfile(
+        key="堅守協定",
+        title="堅守協定 募集",
+        request_channel_id=getattr(config, "multiplay_request_channel", 0),
+        thread_name_template="堅守協定チャット #{user_id}",
+        labels={
+            "room": "ルーム番号",
+            "players": "プレイヤー数",
+            "vc": "ボイスチャット連携",
+            "playtime": "プレイ時間",
+            "remarks": "遊び方",
+            "owner_prefix": "募集主",
+        },
+        footer_text=(
+            "作戦が終わった、もしくは募集を終えた場合は"
+            "「削除」ボタンを押してください"
+        ),
+    ),
     # その他
     "その他": GameModeProfile(
         key="その他",
@@ -432,6 +451,7 @@ class AKMultiCreateModal(discord.ui.Modal, title = "マルチプレイ募集"):
             options = [
                 discord.SelectOption(label = "協心競技", value = "協心競技"),
                 discord.SelectOption(label = "デュエルチャンネル", value = "デュエルチャンネル"),
+                discord.SelectOption(label = "堅守協定", value = "堅守協定"),
                 discord.SelectOption(label = "その他", value = "その他")
             ]
         )

@@ -20,6 +20,7 @@ from extentions import (
     chat,
     communitytool,
     evjson,
+    event_handlers,
     log,
     maintenances,
     makeembed,
@@ -884,7 +885,6 @@ async def add_reminder(interaction: discord.Interaction, remind_id: str, remind_
     
 @client.tree.command(name="add_event", description="イベントを追加します", guild=discord.Object(config.testserverid))
 @app_commands.describe(
-    game="ゲーム arknights/endfield (デフォルト: arknights)",
     event_id="イベントID（任意、自動生成されます）",
     event_type="イベントの種類",
     name="イベントの名前",
@@ -897,13 +897,13 @@ async def add_reminder(interaction: discord.Interaction, remind_id: str, remind_
     reward_end_time="報酬交換期限（任意、例: 2023-10-20 3:59:59）",
     version_name="バージョン名（VERSION_CALENDARの場合のみ、例: 初号指令）"
 )
+@app_commands.choices(event_type=event_handlers.ALL_EVENT_CHOICES)
 async def add_event(
     interaction: discord.Interaction,
-    event_type: Literal["VERSION_CALENDAR", "OPSTORY", "OTHER", "SIDESTORY", "MINISTORY", "CRISIS", "ROGUELIKE", "SANDBOX"],
+    event_type: str,
     name: str,
     start_time: str,
     end_time: str,
-    game: str = "arknights",
     event_id: str = None,
     description: str = None,
     news_url: str = None,
@@ -915,6 +915,8 @@ async def add_event(
     """イベントを追加します。"""
     if interaction.user == client.user:
         return
+    
+    game = event_handlers.get_game_by_event_type(event_type)
     
     await interaction.response.defer(ephemeral=True)
     
@@ -1001,11 +1003,13 @@ async def add_event(
     if game not in events_archive:
         events_archive[game] = {}
     
-    # Check if event_id already exists
-    if event_id in events_archive[game]:
-        logger.error(f"イベントID {event_id} は{game}セクションに既に存在します。")
-        await interaction.followup.send(f"イベントID `{event_id}` は{game}セクションに既に存在します。別のIDを使用してください。")
-        return
+    # Ensure unique event_id
+    original_event_id = event_id
+    counter = 2
+    while event_id in events_archive[game]:
+        event_id = f"{original_event_id}-{counter}"
+        counter += 1
+    new_event_dict["id"] = event_id
     
     # Add event
     events_archive[game][event_id] = new_event_dict
