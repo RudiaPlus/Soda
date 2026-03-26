@@ -226,6 +226,10 @@ async def save_modmail(channel: discord.TextChannel, delete_user: discord.User =
     async for message in channel.history(oldest_first = True):
         if vc_log is True and message.author == client.user:
             continue
+            
+        if message.author == client.user and message.embeds and message.embeds[0].title == "AIによるメッセージの要約と解析":
+            continue
+
         log_count += 1
         
         author = f"{str(message.author)} (スタッフ)" if vc_log is False else str(message.author)

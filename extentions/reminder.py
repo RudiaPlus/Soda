@@ -13,14 +13,6 @@ dir = os.path.abspath(__file__ + "/../")
 logger = log.setup_logger()
 test = config.test
 
-# Endfield Event Configuration
-ENDFIELD_EVENT_STYLES = {
-    "OPSTORY": {"name": "物語イベント", "color": 0x0096fa},
-    "OTHER": {"name": "イベント", "color": 0xFFA500},
-    "MONUMENT": {"name": "映像の記念碑・記憶の痕", "color": 0xcb2b26},
-    "DEFAULT": {"name": "イベント", "color": 0xFFA500}
-}
-
 @client.tree.command(name="set_remind",
                         description="リマインドを作り直します",
                         guild=discord.Object(config.testserverid))
@@ -582,223 +574,17 @@ async def remind(game="arknights", send_to_thread=False):
 
         logger.info(f"[remind] Processed {len(maintenance)} maintenance items")
 
-        for i in range(len(events)):
-            if events[i]["dif"] == "present":
-                if events[i]["type"] == "CRISIS":
-                    
-                    try:
-                        title =  events[i]["name"]
-                        eventTime =  events[i]["time"]
-                        news =  events[i]["news"]
-                        link = events[i]["link"]
-                        eventpic = events[i]["pic"]
-                        eventColor = int(events[i]["eventColor"], 16)
-                    except Exception:
-                        pass
-
-                    embed = discord.Embed(title=title,
-                                            description=f"- **高難易度のイベントです！**\n- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}",
-                                            color=eventColor,
-                                            url=link)
-                    embed.set_author(name="危機契約")
-                    embed.add_field(name="・通常試験区画",
-                                    value=f'**{events[i]["permStage"]}**')
-                    embed.add_field(name="・特別試験区画",
-                                    value=f'**{events[i]["todaysDaily"]["stageName"]}**\n> 賞金獲得期限: <t:{events[i]["dailyEnd"]}:R>',)
-                        
-                    embed.set_image(url = eventpic)
-                    embeds.append(embed)
-                    
-                elif events[i]["type"] == "ROGUELIKE":
-                    
-                    try:
-                        title =  events[i]["name"]
-                        news =  events[i]["news"]
-                        link = events[i]["link"]
-                        eventpic = events[i]["pic"]
-                    except Exception:
-                        pass
-                    
-                    embed = discord.Embed(title=title,
-                                            description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})",
-                                            color=0x852B2F,
-                                            url=link)
-                    embed.set_author(name="統合戦略")
-                    
-                    if events[i]["month"]:
-                        embed.add_field(name=f'・{events[i]["month"]}月の任務',
-                                        value=f'{events[i]["content"]}\n> {events[i]["updateTime"]}',
-                                        inline=False)
-                    
-                    if events[i]["nextmonth"]:
-                        embed.add_field(name=f'・{events[i]["nextmonth"]}月の任務',
-                                        value=f'{events[i]["nextcontent"]}\n> {events[i]["nextUpdateTime"]}',
-                                        inline=False)
-                    
-                    embed.set_image(url = eventpic)
-                    embeds.append(embed)
-                    
-                elif events[i]["type"] == "SANDBOX":
-                    
-                    try:
-                        title =  events[i]["name"]
-                        news =  events[i]["news"]
-                        link = events[i]["link"]
-                        eventpic = events[i]["pic"]
-                    except Exception:
-                        pass
-                    
-                    embed = discord.Embed(title=title,
-                                            description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})",
-                                            color=0xB0DB34,
-                                            url=link)
-                    embed.set_author(name="生息演算")
-                    
-                    if events[i]["month"]:
-                        embed.add_field(name=f'・{events[i]["month"]}月の闘争の潮流',
-                                        value=f'{events[i]["content"]}\n> {events[i]["updateTime"]}',
-                                        inline=False)
-                    
-                    if events[i]["nextmonth"]:
-                        embed.add_field(name=f'・{events[i]["nextmonth"]}月の闘争の潮流',
-                                        value=f'{events[i]["nextcontent"]}\n> {events[i]["nextUpdateTime"]}',
-                                        inline=False)
-                    
-                    embed.set_image(url = eventpic)
-                    embeds.append(embed)
-                    
-                elif events[i]["type"] == "BREAK":
-                    
-                    try:
-                        title =  events[i]["name"]
-                        eventTime =  events[i]["time"]
-                        news =  events[i]["news"]
-                        link = events[i]["link"]
-                        eventpic = events[i]["pic"]
-                        eventColor = int(events[i]["eventColor"], 16)
-                    except Exception:
-                        pass
-
-                    embed = discord.Embed(title=title,
-                                            description=f"- **高難易度のイベントです！**\n- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}",
-                                            color=eventColor,
-                                            url=link)
-                    embed.set_author(name="殲滅作戦")
-                    embed.add_field(name="・第2段階開放",
-                                    value=f'> 開放: {events[i]["phase2StartTime"]}')
-                        
-                    embed.set_image(url = eventpic)
-                    embeds.append(embed)
-                    
-                else:
-                    
-                    try:
-                        title =  events[i]["name"]
-                        eventTime =  events[i]["time"]
-                        news =  events[i]["news"]
-                        link = events[i]["link"]
-                        eventpic = events[i]["pic"]
-                    except Exception:
-                        pass
-                    
-                    event_type = events[i]["type"]
-                    
-                    if event_type == "SIDESTORY":
-                        if events[i].get("stageAdd") is True:
-                            author_name = "サイドストーリー"
-                            color = 0x24ab12
-                        else:
-                            author_name = "サイドストーリー"
-                            color = 0xD94A36
-                    elif event_type == "MINISTORY":
-                        author_name = "オムニバスストーリー"
-                        color = 0xCAC531
-                    elif event_type == "BOSS_RUSH":
-                        author_name = "導灯の試練"
-                        color = 0xFFBA00
-                    elif event_type == "MULTIPLAY":
-                        author_name = "マルチイベント"
-                        color = 0xCAC531
-                    elif event_type == "MAIN":
-                        author_name = "新章実装キャンペーン"
-                        color = 0x353536
-                    elif event_type == "SUPPORT":
-                        author_name = "新章公開 - 事前準備"
-                        color = 0x5C7CA8
-                    else:
-                        author_name = "イベント"
-                        color = 0xf29382
-                    
-                    embed = discord.Embed(title=title,
-                                            description=f"- 詳細: [公式サイト]({news})\n- 攻略情報: [有志Wiki]({link})\n{eventTime}",
-                                            color=color,
-                                            url=link)
-                    embed.set_author(name=author_name)
-                    
-                    if events[i].get("remark"):
-                        remark = events[i]["remark"]
-                        embed.description = f"- {remark}\n" + embed.description
-                    
-                    if events[i].get("stageAdd") is True:
-                        embed.add_field(name="・追加ステージ",
-                                        value=f'**{events[i]["nextStageName"]}**\n> 追加: {events[i]["nextAddTime"]}',
-                                        inline=False)
-                    
-                    embed.set_image(url = eventpic)
-                    embeds.append(embed)
-                    
-            elif events[i]["dif"] == "past":
-                
+        for event in events:
+            if hasattr(event, 'build_embed'):
                 try:
-                    title =  events[i]["name"]
-                    rewardEndTime =  events[i]["rewardEndTime"]
-                    link = events[i]["link"]
-                    eventpic = events[i]["pic"]
-                except Exception:
-                    pass
-                
-                embed = discord.Embed(title=title,
-                                        description=f"- 攻略情報: [有志Wiki]({link})\n> 報酬交換期限: {rewardEndTime}",
-                                        color=discord.Color.dark_grey(),
-                                        url=link)
-                embed.set_author(name="終了したイベント")
-                embed.set_image(url = eventpic)
-                embeds.append(embed)
-                
-            elif events[i]["dif"] == "future":
-                
-                try:
-                    title =  events[i]["name"]
-                    eventTime =  events[i]["time"]
-                    news =  events[i]["news"]
-                    eventpic = events[i]["pic"]
-                except Exception:
-                    pass
-                
-                if events[i]["type"] == "SIDESTORY":
-                    author_name = "サイドストーリー"
-                    color = discord.Color.blue()
-                elif events[i]["type"] == "MINISTORY":
-                    author_name = "ミニストーリー"
-                    color = discord.Color.green()
-                elif events[i]["type"] == "ROGUELIKE":
-                    author_name = "統合戦略"
-                    color = 0x0096fa
-                elif events[i]["type"] == "SANDBOX":
-                    author_name = "生息演算"
-                    color = 0xffa500
-                else:
-                    author_name = "イベント"
-                    color = discord.Color.orange()
-                
-                embed = discord.Embed(title=title,
-                                        description=f"- 詳細: [公式サイト]({news})\n{eventTime}",
-                                        color=color,
-                                        url=news)
-                embed.set_author(name=f"開催予定の{author_name}")
-                embed.set_image(url = eventpic)
-                embeds.append(embed)
-        
+                    embed = event.build_embed()
+                    if embed:
+                        embeds.append(embed)
+                except Exception as e:
+                    logger.error(f'[remind] Error building embed for event {event.get("name")}: {e}')
+            else:
+                logger.warning(f"Event {event.get('name')} does not have build_embed. (Raw Object: {event})")
+
         logger.info(f"[remind] Processed {len(events)} events, added {len(embeds)} embeds so far")
         
         refreshTime = JSTTime.timeJST("raw")
@@ -871,91 +657,22 @@ async def remind(game="arknights", send_to_thread=False):
         # For Endfield, create event list embeds
         event_dic = evjson.eventget("endfield")
         
-        # Version calendar
+        future_count = 0
         for event in event_dic:
-            if event.get("type") == "VERSION_CALENDAR" and event.get("dif") == "calendar":
-                embed = discord.Embed(
-                    title=f"{event['name']}",
-                    description=f"**バージョン:** {event['version']}",
-                    color=discord.Color.dark_grey()
-                )
-                embed.set_author(name="バージョンスケジュール")
-                if "images" in event and event["images"]:
-                    # Ensure Twitter image URLs have proper format
-                    image_url = event["images"][0]
-                    if "pbs.twimg.com" in image_url and not image_url.endswith((".jpg", ".png", ".webp")):
-                        image_url += ":large"  # Add Twitter image size suffix
-                    embed.set_image(url=image_url)
-                embeds.append(embed)
-                
-                # Add additional images as separate embeds
-                for i, img_url in enumerate(event["images"][1:], start=2):
-                    if "pbs.twimg.com" in img_url and not img_url.endswith((".jpg", ".png", ".webp")):
-                        img_url += ":large"
-                    img_embed = discord.Embed(color=discord.Color.dark_grey())
-                    img_embed.set_image(url=img_url)
-                    embeds.append(img_embed)
-                
-                break
-        
-        # Current events
-        current_events = [e for e in event_dic if e.get("dif") == "present"]
-        for event in current_events:
-            event_type = event.get("type", "")
-            
-            style = ENDFIELD_EVENT_STYLES.get(event_type, ENDFIELD_EVENT_STYLES["DEFAULT"])
-            color = style["color"]
-            author_name = style["name"]
-            
-            embed = discord.Embed(
-                title=event['name'],
-                description=event.get("description", ""),
-                color=color
-            )
-            embed.set_author(name=author_name)
-            
-            if "time" in event:
-                embed.add_field(name="\u200b", value=event["time"], inline=False)
-            
-            if event.get("news"):
-                embed.add_field(name="ニュース", value=f"[リンク]({event['news']})", inline=True)
-            
-            if event.get("link"):
-                embed.add_field(name="攻略情報", value=f"[リンク]({event['link']})", inline=True)
-            
-            if event.get("pic"):
-                embed.set_image(url=event["pic"])
-            
-            embeds.append(embed)
-        
-        # Future events
-        future_events = [e for e in event_dic if e.get("dif") == "future"]
-        if future_events:
-            for event in future_events[:5]:
-                event_type = event.get("type", "")
-                
-                style = ENDFIELD_EVENT_STYLES.get(event_type, ENDFIELD_EVENT_STYLES["DEFAULT"])
-                color = style["color"]
-                author_name = style["name"]
-                
-                embed = discord.Embed(
-                    title=event['name'],
-                    color=color
-                )
-                embed.set_author(name=f"開催予定の{author_name}")
-                
-                # Add time without label
-                if event.get('time'):
-                    embed.add_field(name="\u200b", value=event['time'], inline=False)
-                
-                if event.get("news"):
-                    embed.add_field(name="ニュース", value=f"[リンク]({event['news']})", inline=False)
-                
-                if event.get("pic"):
-                    embed.set_image(url=event["pic"])
-                
-                embeds.append(embed)
-        
+            try:
+                if event.get('dif') == 'future':
+                    if future_count >= 5:
+                        continue
+                    future_count += 1
+                if hasattr(event, 'build_embed'):
+                    built = event.build_embed()
+                    if isinstance(built, list):
+                        embeds.extend(built)
+                    elif built:
+                        embeds.append(built)
+            except Exception as e:
+                logger.error(f'[remind] Error building embed for Endfield event {event.get("name")}: {e}')
+
         refreshTime = JSTTime.timeJST("raw")
         refreshTime = f"<t:{round(refreshTime.timestamp())}:F>"
         

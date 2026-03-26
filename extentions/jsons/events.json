@@ -66,6 +66,17 @@
             "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88170_%E5%86%8D%E5%BB%BA%E7%94%BB%E7%AD%96",
             "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/02/24/SFiZGJiF.png",
             "rewardEndTime": 1774810799
+        },
+        "16章「背理分光」実装": {
+            "id": "16章「背理分光」実装",
+            "type": "MAIN",
+            "name": "16章「背理分光」実装",
+            "startTime": 1773903600,
+            "endTime": 1775069999,
+            "news": "https://arknights.jp/news/2812",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88171_%E7%AC%AC%E5%8D%81%E5%85%AD%E7%AB%A0%E5%85%AC%E9%96%8B",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/03/12/T95fFMMX.png",
+            "rewardEndTime": 1775674799
         }
     },
     "endfield": {
@@ -147,6 +158,43 @@
             "name": "ロッシ「赤騎士」",
             "startTime": 1774756800,
             "endTime": 1776376800
+        },
+        "映像の記念碑「灼ける傷跡」": {
+            "id": "映像の記念碑「灼ける傷跡」",
+            "type": "MONUMENT",
+            "name": "映像の記念碑「灼ける傷跡」",
+            "startTime": 1774497600,
+            "endTime": 1776376800
+        },
+        "理性消費軽減-2": {
+            "id": "理性消費軽減-2",
+            "type": "SANITY",
+            "name": "理性消費軽減",
+            "startTime": 1774152000,
+            "endTime": 1774728000
+        },
+        "物資配給・開拓祭": {
+            "id": "物資配給・開拓祭",
+            "type": "OTHER",
+            "name": "物資配給・開拓祭",
+            "startTime": 1773892800,
+            "endTime": 1775073600,
+            "link": "https://arknights-endfield.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88260319_%E7%89%A9%E8%B3%87%E9%85%8D%E7%B5%A6%E3%83%BB%E9%96%8B%E6%8B%93%E7%A5%AD",
+            "pic": "https://arknights-endfield.wikiru.jp/attach2/E382A4E38399E383B3E383883236303331395FE789A9E8B387E9858DE7B5A6E383BBE9968BE68B93E7A5AD_E789A9E8B387E9858DE7B5A6E383BBE9968BE68B93E7A5AD2E6A7067.jpg"
+        },
+        "無響の泉流": {
+            "id": "無響の泉流",
+            "type": "GUIDE",
+            "name": "無響の泉流",
+            "startTime": 1773288000,
+            "endTime": 1775073600
+        },
+        "清波の静流スタンプ": {
+            "id": "清波の静流スタンプ",
+            "type": "OTHER",
+            "name": "清波の静流スタンプ",
+            "startTime": 1773288000,
+            "endTime": 1774756799
         }
     }
 }

@@ -20,7 +20,7 @@ class Loggingbot_Handler(logging.Handler):
         request_body = {
             "content": f"```\n{message}\n```",
             "username": "ロード - エラー",
-            "avatar_url": client.user.avatar.url
+            "avatar_url": client.user.avatar.url if client.user and client.user.avatar else None
         }
         requests.post(self.log_webhook, headers={"Content-Type": "application/json"}, json = request_body)
     
