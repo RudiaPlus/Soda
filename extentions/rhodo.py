@@ -139,14 +139,13 @@ async def on_ready():
         communitytool.check_expired_redemption_codes.start()
         await recruit.operators_list_refresh()
         
-        #リマインダー(スレッド)の確認
+        #リマインダーチャンネルの確認
         try:
             global remindThreadID
-            channel = client.get_channel(config.remind)
-            remindThreadID = await reminder.reminder_message("thread")
+            remindThreadID = await reminder.reminder_message("channel")
+            remind_channel = client.get_channel(remindThreadID) if remindThreadID else client.get_channel(config.remind)
             last_remind_id = await reminder.reminder_message("last_remind")
-            remind_thread = channel.get_thread(remindThreadID)
-            last_remind = await remind_thread.fetch_message(last_remind_id)
+            last_remind = await remind_channel.fetch_message(last_remind_id)
             now_utc = datetime.datetime.utcnow()
             now_utc = now_utc.replace(tzinfo=datetime.timezone.utc)
             now_utc_timestamp = now_utc.timestamp()
@@ -161,7 +160,7 @@ async def on_ready():
                 await reminder.remind()
             
         except Exception as e:
-            logger.error(f"リマインダースレッドの確認に失敗しました！\n{e}")
+            logger.error(f"リマインダーの確認に失敗しました！\n{e}")
         
         #voice_statusの初期化
         voicechat.write_voice_status({})
@@ -1263,8 +1262,8 @@ async def remind(interaction: discord.Interaction, game: str = "arknights"):
     await interaction.response.defer()
     
     global remindThreadID
-    thread = await reminder.remind(game)
-    remindThreadID = thread.id
+    target_channel = await reminder.remind(game)
+    remindThreadID = target_channel.id
     
     await interaction.followup.send("完了しました！")
 
@@ -1322,12 +1321,11 @@ async def shutdown(interaction: discord.Interaction):
     quit()
 
 @client.tree.command(name="send_text_message",
-                        description="channelIDが空欄の場合、リマインダースレッドに投稿します！",
+                        description="channelIDが空欄の場合、リマインダーチャンネルに投稿します！",
                         guild=discord.Object(config.testserverid))
 async def send_text_message(interaction: discord.Interaction, text: str, channelid: str = None):
     if not channelid:
-        guild = client.get_guild(guildID)
-        channel = guild.get_thread(remindThreadID)
+        channel = client.get_channel(remindThreadID)
     else:
         channelid = int(normalize("NFKC", channelid))
         channel = client.get_channel(channelid)

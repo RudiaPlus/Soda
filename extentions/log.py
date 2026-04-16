@@ -14,7 +14,7 @@ logging_time = datetime.datetime.now()
 class Loggingbot_Handler(logging.Handler):
     def __init__(self, level = logging.WARNING):
         super().__init__(level=level)
-        self.log_webhook = "https://discord.com/api/webhooks/1318533525607157805/Y7JJj41bv4O5otOFW9n4hKhN7dcRo3NzAlF4Dejv9Vm9JPKUbEYhg7jE3EpMgPYgS298"
+        self.log_webhook = os.environ["LOGGING_WEBHOOK"]
     
     def log(self, message):
         request_body = {

@@ -77,6 +77,38 @@
             "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88171_%E7%AC%AC%E5%8D%81%E5%85%AD%E7%AB%A0%E5%85%AC%E9%96%8B",
             "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/03/12/T95fFMMX.png",
             "rewardEndTime": 1775674799
+        },
+        "協心競技＃2": {
+            "id": "協心競技＃2",
+            "type": "MULTIPLAY",
+            "name": "協心競技＃2",
+            "startTime": 1775026800,
+            "endTime": 1776797999,
+            "news": "https://arknights.jp/news/2848",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88172_%E5%8D%94%E5%BF%83%E7%AB%B6%E6%8A%80%EF%BC%832",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/03/26/ZXSbBofT.png",
+            "rewardEndTime": 1777057199
+        },
+        "聖山降臨1101": {
+            "id": "聖山降臨1101",
+            "type": "SIDESTORY",
+            "name": "聖山降臨1101",
+            "startTime": 1776150000,
+            "endTime": 1777921199,
+            "news": "https://arknights.jp/news/2909",
+            "link": "https://arknights.wikiru.jp/?%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88173_%E8%81%96%E5%B1%B1%E9%99%8D%E8%87%A81101",
+            "pic": "https://webusstatic.yo-star.com/web-cms-prod/upload/content/2026/04/08/2WD3NsY8.png",
+            "stageAdd": true,
+            "additionalStage": [
+                {
+                    "name": "変革の道",
+                    "startTime": 1776754800
+                },
+                {
+                    "name": "聖山の心",
+                    "startTime": 1777359600
+                }
+            ]
         }
     },
     "endfield": {
@@ -195,6 +227,54 @@
             "name": "清波の静流スタンプ",
             "startTime": 1773288000,
             "endTime": 1774756799
+        },
+        "version_calendar_春の暁、訪れし時": {
+            "id": "version_calendar_春の暁、訪れし時",
+            "type": "VERSION_CALENDAR",
+            "name": "バージョン「春の暁、訪れし時」スケジュール",
+            "startTime": 1776398400,
+            "endTime": 1780610400,
+            "images": [
+                "https://pbs.twimg.com/media/HF8zM8ca4AAtWoR?format=jpg"
+            ],
+            "version": "春の暁、訪れし時"
+        },
+        "新・月パス特典": {
+            "id": "新・月パス特典",
+            "type": "OTHER",
+            "name": "新・月パス特典",
+            "startTime": 1776398400,
+            "endTime": 1779048000
+        },
+        "映像の記念碑_「記憶の痕・毒流」": {
+            "id": "映像の記念碑_「記憶の痕・毒流」",
+            "type": "MONUMENT",
+            "name": "映像の記念碑 「記憶の痕・毒流」",
+            "startTime": 1778212800,
+            "endTime": 1779393600
+        },
+        "蝕海の鎮圧": {
+            "id": "蝕海の鎮圧",
+            "type": "GUIDE",
+            "name": "蝕海の鎮圧",
+            "startTime": 1776398400,
+            "endTime": 1778698800
+        },
+        "塵一掃": {
+            "id": "塵一掃",
+            "type": "OTHER",
+            "name": "塵一掃",
+            "startTime": 1774756800,
+            "endTime": 1776542400,
+            "pic": "https://pbs.twimg.com/media/HEV-4oXbYAAcPtd?format=jpg"
+        },
+        "生存特訓": {
+            "id": "生存特訓",
+            "type": "OTHER",
+            "name": "生存特訓",
+            "startTime": 1775707200,
+            "endTime": 1777492800,
+            "pic": "https://pbs.twimg.com/media/HFTxrQ7aYAAe8Ra?format=jpg"
         }
     }
 }

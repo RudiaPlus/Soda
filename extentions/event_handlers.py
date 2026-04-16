@@ -369,9 +369,10 @@ def get_arknights_handler(event_data, dif):
 ENDFIELD_EVENT_STYLES = {
     "OPSTORY": {"name": "物語イベント", "color": 0x0096fa},
     "GUIDE": {"name": "案内イベント", "color": 0x8A2BE2},
-    "SANITY": {"name": "理性消費軽減", "color": 0x3CB371},
+    "SANITY": {"name": "理性補給", "color": 0x3CB371},
     "OTHER": {"name": "イベント", "color": 0xFFA500},
     "MONUMENT": {"name": "映像の記念碑・記憶の痕", "color": 0xcb2b26},
+    "LEISURE": {"name": "レジャーイベント", "color": 0xFFA500},
     "DEFAULT": {"name": "イベント", "color": 0xFFA500}
 }
 
@@ -504,8 +505,9 @@ ALL_EVENT_CHOICES = [
     app_commands.Choice(name="【EF】バージョンスケジュール", value="VERSION_CALENDAR"),
     app_commands.Choice(name="【EF】物語イベント", value="OPSTORY"),
     app_commands.Choice(name="【EF】案内イベント", value="GUIDE"),
-    app_commands.Choice(name="【EF】理性消費軽減", value="SANITY"),
+    app_commands.Choice(name="【EF】理性補給", value="SANITY"),
     app_commands.Choice(name="【EF】映像の記念碑等", value="MONUMENT"),
+    app_commands.Choice(name="【EF】レジャーイベント", value="LEISURE"),
     app_commands.Choice(name="【EF】その他", value="OTHER")
 ]
 

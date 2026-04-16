@@ -1,4 +1,4 @@
-import datetime
+﻿import datetime
 import json
 import os
 import time
@@ -30,7 +30,7 @@ async def set_remind(interaction: discord.Interaction, game: str = "arknights"):
     
     message = await channel.send(f"{game}リマインダーを作り直します")
     message_key = "endfieldRemindMessage" if game == "endfield" else "remindMessage"
-    config.dynamic[message_key] = {"id": message.id, "thread_id": 0}
+    config.dynamic[message_key] = {"id": message.id, "channel_id": channel.id, "thread_id": 0}
     config.write_dynamic_config()
     await remind(game)
     await interaction.followup.send("完了しました")
@@ -39,7 +39,7 @@ async def reminder_message(type: str = "message", game: str = "arknights"):
     """
     Get reminder message ID for specified game
     Args:
-        type: "message", "thread", or "last_remind"
+        type: "message", "channel", "thread"(legacy), or "last_remind"
         game: "arknights" or "endfield"
     """
     if game == "endfield":
@@ -49,8 +49,11 @@ async def reminder_message(type: str = "message", game: str = "arknights"):
     
     if type == "message":
         return(config.dynamic[message_key]["id"])
+    elif type == "channel":
+        return config.dynamic[message_key].get("channel_id", config.dynamic[message_key].get("thread_id", 0))
     elif type == "thread":
-        return(config.dynamic[message_key]["thread_id"])
+        # legacy fallback
+        return config.dynamic[message_key].get("thread_id", config.dynamic[message_key].get("channel_id", 0))
     elif type == "last_remind":
         return(config.dynamic[message_key]["last_remind_id"])
         
@@ -232,8 +235,8 @@ async def endfield_daily_message_maker(remind_dic: dict) -> str:
     content = f"<@&1468109332905459842>\nおはようございます:sunny: ロードです！ {first}{redemption_warning}"
     return content
 
-async def send_endfield_remind_to_thread(thread: discord.Thread, remind_dic: dict) -> None:
-    """Send Endfield reminders to thread"""
+async def send_endfield_remind_to_thread(channel: discord.TextChannel | discord.Thread, remind_dic: dict) -> None:
+    """Send Endfield reminders to configured channel"""
     embeds = []
     
     # Weekly quest reminder
@@ -298,14 +301,14 @@ async def send_endfield_remind_to_thread(thread: discord.Thread, remind_dic: dic
         embeds.append(embed)
     
     content = await endfield_daily_message_maker(remind_dic)
-    message = await thread.send(content=content, embeds=embeds)
+    message = await channel.send(content=content, embeds=embeds)
     
     # Update dynamic config with last remind message
     config.dynamic["endfieldRemindMessage"]["last_remind_id"] = message.id
     config.write_dynamic_config()
     
     # Pin the message
-    pinned_messages = await thread.pins()
+    pinned_messages = await channel.pins()
     if pinned_messages:
         for msg in pinned_messages:
             await msg.unpin()
@@ -394,7 +397,7 @@ async def daily_message_maker(remind_dic: dict):
     content = f"<@&1076155144363851888>\nおはようございます:sunny: ロードです！  {first}{special_day}{eventnow}{eventendToday}{eventend}{eventfuture}{weekday}{monthly}\n- イベント情報はこちら！→<#{config.remind}>"
     return content
 
-async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_dic: dict) -> None:
+async def send_remind_to_thread(channel: discord.TextChannel | discord.Thread, remind_dic: dict, event_dic: dict) -> None:
     
     embeds = []
     
@@ -473,10 +476,10 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
         embeds.append(embed)
         
     content = await daily_message_maker(remind_dic=remind_dic)
-    last_remind_message = await thread.send(content = content, embeds = embeds)
+    last_remind_message = await channel.send(content = content, embeds = embeds)
     config.dynamic["remindMessage"]["last_remind_id"] = last_remind_message.id
     config.write_dynamic_config()
-    pinned_messages = await thread.pins()
+    pinned_messages = await channel.pins()
     if pinned_messages:
         for message in pinned_messages:
             await message.unpin()
@@ -484,10 +487,10 @@ async def send_remind_to_thread(thread: discord.Thread, remind_dic: dict, event_
 
 async def remind(game="arknights", send_to_thread=False):
     """
-    Main reminder function - updates message source and optionally sends to thread
+    Main reminder function - updates message source and optionally sends to configured channel
     Args:
         game: "arknights" or "endfield"
-        send_to_thread: If True, sends daily reminder to thread
+        send_to_thread: If True, sends daily reminder to configured channel
     """
     # Get appropriate channel
     if game == "endfield":
@@ -520,34 +523,29 @@ async def remind(game="arknights", send_to_thread=False):
         logger.error(f"{game}リマインドメッセージが正しく辞書に登録されていません。 /set_remindで作り直してください。")
         return
     
-    # Update thread
+    # Get target channel for reminder
     try:
-        threadid = await reminder_message("thread", game)
-        if not threadid:
-            logger.warning(f"{game}リマインドスレッドは作られていません。")
-            threadid = 0
-            
-        thread = channel.get_thread(threadid)
-        
-        if not thread:
-            logger.warning(f"{game}リマインドスレッドが見つかりません。作成します")
-            thread = await create_thread(channel, message)
-        
-            message_key = "endfieldRemindMessage" if game == "endfield" else "remindMessage"
-            config.dynamic[message_key]["thread_id"] = thread.id
-            config.write_dynamic_config()
-        
-    except Exception:
-        logger.error(f"{game}スレッドの取得と作成に失敗しました")
-        return
-    
-    # Send to thread only if send_to_thread is True
-    if send_to_thread:
-        # Send to thread based on game
-        if game == "endfield":
-            await send_endfield_remind_to_thread(thread, remind_dic)
+        target_channel_id = await reminder_message("channel", game)
+        if not target_channel_id:
+            logger.warning(f"{game}リマインドのテキストチャンネルが設定されていません。デフォルトのチャンネルを使用します。")
+            target_channel = channel
         else:
-            await send_remind_to_thread(thread, remind_dic, events)
+            target_channel = client.get_channel(target_channel_id)
+            if not target_channel:
+                logger.warning(f"{game}リマインドのテキストチャンネルが見つかりません。デフォルトのチャンネルを使用します。")
+                target_channel = channel
+                
+    except Exception as e:
+        logger.error(f"{game}リマインドのテキストチャンネル取得に失敗しました: {e}")
+        target_channel = channel
+    
+    # Send reminder only if send_to_thread is True
+    if send_to_thread:
+        # Send based on game
+        if game == "endfield":
+            await send_endfield_remind_to_thread(target_channel, remind_dic)
+        else:
+            await send_remind_to_thread(target_channel, remind_dic, events)
     
     # Update message source (event list)
     logger.info(f"[remind] Starting message source update for {game}")
@@ -680,4 +678,4 @@ async def remind(game="arknights", send_to_thread=False):
         # Always update
         await message.edit(content=f"最終更新: {refreshTime}", embeds=embeds)
     
-    return thread
+    return target_channel
