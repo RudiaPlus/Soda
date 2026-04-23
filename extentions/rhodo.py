@@ -705,7 +705,7 @@ class VoiceSpeechButtons(discord.ui.View):
     @discord.ui.button(label = "はい", style = discord.ButtonStyle.success, emoji = "✅")
     async def speechstart(self, interaction: discord.Interaction, button: discord.ui.Button):
                 
-        await voicechat.join_voice(interaction = interaction)
+        await voicechat.join_voice(interaction = interaction, channel = self.join_channel)
         await interaction.message.delete()
 
     @discord.ui.button(label = "いいえ", style = discord.ButtonStyle.danger)

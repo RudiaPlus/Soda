@@ -537,6 +537,11 @@ async def join_voice(interaction: discord.Interaction, channel: discord.VoiceCha
         embed = discord.Embed(title="ボイスチャンネルに接続出来ませんでした", description="もう一度お試しください。このエラーが繰り返す場合、Botが落ちている可能性があります。", color=discord.Color.red())
         embed.set_author(name="チャット読み上げ")
         await interaction.followup.send(embed=embed)
+    except Exception as e:
+        logger.exception(f"[join]にて予期せぬエラー: {e}")
+        embed = discord.Embed(title="エラーが発生しました", description=f"接続処理中にエラーが発生しました:\n```\n{e}\n```", color=discord.Color.red())
+        embed.set_author(name="チャット読み上げ")
+        await interaction.followup.send(embed=embed)
 
 @client.tree.command(name="join", description="【まずこちらを使ってください】利用できる読み上げクライアントを探し、チャット読み上げを開始します")
 @discord.app_commands.describe(channel="参加するチャンネル(任意)")

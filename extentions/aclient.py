@@ -36,8 +36,10 @@ class VoiceModule(discord.Client):
     async def join_voice_channel(self, channel: discord.VoiceChannel):
         if self.voice_clients:
             await self.voice_clients[0].disconnect()
-        channel_got = await self.fetch_channel(channel.id)
-        await channel_got.connect()
+        channel_got = self.get_channel(channel.id)
+        if not channel_got:
+            channel_got = await self.fetch_channel(channel.id)
+        await channel_got.connect(timeout=20.0)
         await self.change_presence(activity=discord.CustomActivity(name = f"読み上げ中　VC: {channel_got.name}"), status = discord.Status.idle)
     
 

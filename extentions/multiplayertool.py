@@ -202,7 +202,11 @@ async def send_multiplayer(user: discord.User,
                            mode: str | None = None) -> discord.Message:
     """Generic sender that uses game/mode profiles for flexibility."""
     profile = get_game_mode_profile(mode)
-    channel = client.get_channel(profile.request_channel_id)
+    # モジュールロード時の順序問題による 0 を防ぐため、動的に config を参照
+    req_channel_id = getattr(config, "multiplay_request_channel", profile.request_channel_id) or profile.request_channel_id
+    channel = client.get_channel(req_channel_id)
+    if channel is None:
+        channel = await client.fetch_channel(req_channel_id)
     multi_dict = load_multi_json()
 
     item = build_multiplayer_item(user, room_id, players, max_players, remarks, playtime, vc_linked)
@@ -288,12 +292,15 @@ class AKMultiJoinButton(discord.ui.View):
                     bots = guild.get_role(config.server_app_role)
                     try:
                         vc_channel = client.get_channel(item["vcLinked"])
-                        overwrite = {guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
-                                moderator: discord.PermissionOverwrite(view_channel = True, connect = True),
-                                administrator: discord.PermissionOverwrite(view_channel = True, connect = True),
-                                bots: discord.PermissionOverwrite(view_channel = True, connect = True),
-                                interaction.user: discord.PermissionOverwrite(view_channel = True),
-                                request_user: discord.PermissionOverwrite(view_channel = True, manage_channels = True)}
+                        overwrite = {
+                            guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
+                            interaction.user: discord.PermissionOverwrite(view_channel = True),
+                            request_user: discord.PermissionOverwrite(view_channel = True, manage_channels = True)
+                        }
+                        if moderator: overwrite[moderator] = discord.PermissionOverwrite(view_channel = True, connect = True)
+                        if administrator: overwrite[administrator] = discord.PermissionOverwrite(view_channel = True, connect = True)
+                        if bots: overwrite[bots] = discord.PermissionOverwrite(view_channel = True, connect = True)
+                        
                         await vc_channel.edit(overwrites=overwrite)
                         await return_interaction.response.send_message(f"参加しました！\n連携したボイスチャットに接続できます！→{vc_channel.jump_url}", ephemeral = True)
                     except Exception:
@@ -372,12 +379,14 @@ class VClinkAndSendButton(discord.ui.View):
                 vc_allowed = guild.get_role(config.vc_allowed_role)
                 bots = guild.get_role(config.server_app_role)
                 
-                overwrite = {guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
-                             vc_allowed: discord.PermissionOverwrite(view_channel = True, connect = True),
-                             moderator: discord.PermissionOverwrite(view_channel = True, connect = True),
-                             administrator: discord.PermissionOverwrite(view_channel = True, connect = True),
-                             bots: discord.PermissionOverwrite(view_channel = True, connect = True),
-                             interaction.user: discord.PermissionOverwrite(view_channel = True, manage_channels = True)}
+                overwrite = {
+                    guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
+                    interaction.user: discord.PermissionOverwrite(view_channel = True, manage_channels = True)
+                }
+                if vc_allowed: overwrite[vc_allowed] = discord.PermissionOverwrite(view_channel = True, connect = True)
+                if moderator: overwrite[moderator] = discord.PermissionOverwrite(view_channel = True, connect = True)
+                if administrator: overwrite[administrator] = discord.PermissionOverwrite(view_channel = True, connect = True)
+                if bots: overwrite[bots] = discord.PermissionOverwrite(view_channel = True, connect = True)
                 
                 await vc_channel.edit(name = f"マルチプレイヤー: {self.room_id}", overwrites = overwrite)
                 
@@ -409,11 +418,13 @@ class VClinkAndSendButton(discord.ui.View):
                 administrator = guild.get_role(config.administrator_role)
                 bots = guild.get_role(config.server_app_role)
                 
-                overwrite = {guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
-                            moderator: discord.PermissionOverwrite(view_channel = True, connect = True),
-                            administrator: discord.PermissionOverwrite(view_channel = True, connect = True),
-                            bots: discord.PermissionOverwrite(view_channel = True, connect = True),
-                            interaction.user: discord.PermissionOverwrite(view_channel = True, manage_channels = True)}
+                overwrite = {
+                    guild.default_role: discord.PermissionOverwrite(view_channel = False, connect = True),
+                    interaction.user: discord.PermissionOverwrite(view_channel = True, manage_channels = True)
+                }
+                if moderator: overwrite[moderator] = discord.PermissionOverwrite(view_channel = True, connect = True)
+                if administrator: overwrite[administrator] = discord.PermissionOverwrite(view_channel = True, connect = True)
+                if bots: overwrite[bots] = discord.PermissionOverwrite(view_channel = True, connect = True)
                 
                 await vc_channel.edit(name = f"マルチプレイヤー: {self.room_id}", user_limit=self.max_players, overwrites = overwrite)
                 
