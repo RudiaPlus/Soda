@@ -1,4 +1,4 @@
-﻿import datetime
+import datetime
 import json
 import os
 import time
@@ -232,13 +232,45 @@ async def endfield_daily_message_maker(remind_dic: dict) -> str:
     # Check for redemption codes expiring soon (within 1 day, considering 5:00 AM reset)
     redemption_warning = await check_endfield_redemption_codes_expiring_soon()
     
-    content = f"<@&1468109332905459842>\nおはようございます:sunny: ロードです！ {first}{redemption_warning}"
+    content = f"<@&1468109332905459842>\nおはようございます:sunny: ロードです！ {first}{daily_tasks}{redemption_warning}\n- イベント情報はこちら！→<#{config.efremind}>"
     return content
 
 async def send_endfield_remind_to_thread(channel: discord.TextChannel | discord.Thread, remind_dic: dict) -> None:
     """Send Endfield reminders to configured channel"""
     embeds = []
     
+    # Birthday check
+    birthday_json_name = "jsons/endfield_birthday.json"
+    try:
+        with open(os.path.join(dir, birthday_json_name), encoding="utf-8") as f:
+            birthday = json.load(f)
+        today = JSTTime.timeJST("m/d")
+        if today in birthday:
+            bdayop = f"本日は{birthday[today]}が誕生日です:birthday: おめでとうございます！"
+            embed = discord.Embed(title="ハッピーバースデー！", description=bdayop, color=discord.Color.green())
+            embeds.append(embed)
+    except Exception as e:
+        logger.error(f"Endfield誕生日取得中にエラー: {e}")
+
+    # Version Calendar check
+    events_json_path = "jsons/events.json"
+    try:
+        with open(os.path.join(dir, events_json_path), encoding="utf-8") as f:
+            all_events = json.load(f)
+            endfield_events = all_events.get("endfield", {})
+            current_timestamp = JSTTime.timeJST("timestamp")
+            
+            for key, ev in endfield_events.items():
+                if ev.get("type") == "VERSION_CALENDAR":
+                    if ev["startTime"] <= current_timestamp < ev["endTime"]:
+                        end_time = ev["endTime"]
+                        vlimit_embed = f"現バージョン・協約通行証の残り期間: <t:{end_time}:R>"
+                        embed = discord.Embed(title="バージョン終了日時", description=vlimit_embed, color=0x3498DB)
+                        embeds.append(embed)
+                        break
+    except Exception as e:
+        logger.error(f"Endfield version calendar取得中にエラー: {e}")
+
     # Weekly quest reminder
     if "weeklyRemind" in remind_dic:
         weekly = remind_dic["weeklyRemind"]
@@ -269,7 +301,7 @@ async def send_endfield_remind_to_thread(channel: discord.TextChannel | discord.
     expiring_codes = await get_endfield_expiring_redemption_codes()
     if expiring_codes:
         embed = discord.Embed(
-            title="⚠️ 引き換えコード期限警告",
+            title="引き換えコード期限警告",
             description=f"{len(expiring_codes)}個のコードが本日中（翌日5:00まで）に期限切れになります",
             color=0xFF6B6B  # Warning red
         )

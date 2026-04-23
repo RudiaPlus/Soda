@@ -1353,6 +1353,45 @@ async def add_preset(interaction: discord.Interaction, name: str, description: s
     embed = discord.Embed(title="プリセット追加完了", description=f"プリセット名: {name}\n説明: {description}\n本文: {bodytext}", color=discord.Color.green())
     await interaction.followup.send(embed=embed)
 
+@client.tree.command(name="add_endfield_birthday", description="エンドフィールドの誕生日データを追加します(スタッフ専用)")
+@app_commands.describe(date="誕生日(例: 12/25)", characters="キャラクター名(複数の場合はカンマ区切り)")
+@discord.app_commands.default_permissions(manage_messages=True)
+@discord.app_commands.guild_only()
+@discord.app_commands.checks.has_permissions(manage_messages=True)
+async def add_endfield_birthday(interaction: discord.Interaction, date: str, characters: str):
+    if interaction.user == client.user:
+        return
+    await interaction.response.defer()
+    
+    formatted_chars = "、".join([c.strip() for c in characters.replace("、", ",").split(",") if c.strip()])
+    
+    try:
+        birthday_json_path = "jsons/endfield_birthday.json"
+        
+        try:
+            with open(os.path.join(dir, birthday_json_path), "r", encoding="utf-8") as f:
+                birthday = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            birthday = {}
+            
+        if date in birthday:
+            existing_chars = birthday[date].split("、")
+            new_chars = formatted_chars.split("、")
+            combined = existing_chars + [c for c in new_chars if c not in existing_chars]
+            birthday[date] = "、".join(combined)
+        else:
+            birthday[date] = formatted_chars
+            
+        with open(os.path.join(dir, birthday_json_path), "w", encoding="utf-8") as f:
+            json.dump(birthday, f, indent=4, ensure_ascii=False)
+            
+        embed = discord.Embed(title="エンドフィールド誕生日データ追加完了", description=f"**日付**: {date}\n**キャラクター**: {birthday[date]}", color=discord.Color.green())
+        await interaction.followup.send(embed=embed)
+    except Exception as e:
+        logger.error(f"エンドフィールド誕生日データの追加に失敗しました: {e}")
+        embed = discord.Embed(title="エラー", description=f"エンドフィールド誕生日データの追加に失敗しました:\n{e}", color=discord.Color.red())
+        await interaction.followup.send(embed=embed)
+
 class DoctorNameCommand(app_commands.Group):
 
     @app_commands.command(name="set",
