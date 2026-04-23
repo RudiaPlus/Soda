@@ -163,6 +163,8 @@ async def moderate_show(member, interaction: discord.Interaction = None) -> List
             id = user_puni[index]["id"]
             date = user_puni[index]["date"]
             reason = user_puni[index]["reason"]
+            if len(reason) > 100:
+                reason = reason[:100] + "..."
             by = user_puni[index]["by"]
             if "timeout" in user_puni[index].keys():
                 timeout = f"{user_puni[index]['timeout']}分" if user_puni[index]['timeout'] else "無し"
@@ -762,6 +764,8 @@ class ModerateCommand(discord.app_commands.Group):
                     id = user_puni[index]["id"]
                     date = user_puni[index]["date"]
                     reason = user_puni[index]["reason"]
+                    if len(reason) > 100:
+                        reason = reason[:100] + "..."
                     by = user_puni[index]["by"]
                     if "timeout" in user_puni[index].keys():
                         timeout = f"{user_puni[index]['timeout']}分" if user_puni[index]['timeout'] else "無し"
