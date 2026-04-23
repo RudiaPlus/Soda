@@ -431,26 +431,41 @@ async def tool_form(interaction: discord.Interaction, channelid: str = "11424915
         message_to_edit = normalize("NFKC", edit)
     
     channel = await client.fetch_channel(channelid)
-    embed = discord.Embed(title = "コミュニティツール", description = "下のボタンから私の便利ツールをご利用できます！", color = discord.Color.red())
     
     screenshot_recruit_channel = config.screenshot_recruit_channel_url
     request_channel = config.request_url
     multi_channel = client.get_channel(config.multiplay_request_channel)
     
-    #ツールの説明
-    embed.add_field(name = "・公開求人ツール", value = f">>> 公開求人のタグから獲得できるオペレーターを表示します。\nスクリーンショット認識ver → {screenshot_recruit_channel}", inline=False)
-    embed.add_field(name = "・サポートリクエスト", value = f">>> サポートリクエストを送信します。\n詳しくは{request_channel}をご覧ください！", inline = False)
-    embed.add_field(name = "・ドクター情報登録", value = ">>> アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n削除する場合、任意のチャンネルで ***/doctorname delete*** を実行してください。\n-# ※登録した情報はメンバー全員が閲覧できますのでご注意ください。", inline = False)
-    embed.add_field(name = "・Wiki検索", value = ">>> オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。", inline = False)
-    embed.add_field(name = "・闇鍋招集", value = ">>> 統合戦略でオペレーターを招集する際、職業ごとにランダムで選んでくれるツールです。", inline = False)
-    embed.add_field(name = "・マルチプレイ募集 ", value = f">>> マルチプレイの募集を簡単に行えます！詳しくは{multi_channel.jump_url}をご覧ください！", inline = False)
+    body_text = "# コミュニティツール\n下のボタンから私の便利ツールをご利用できます！\n\n"
+    body_text += f"**・公開求人ツール**\n> 公開求人のタグから獲得できるオペレーターを表示します。\n> スクリーンショット認識ver → {screenshot_recruit_channel}\n\n"
+    body_text += f"**・サポートリクエスト**\n> サポートリクエストを送信します。\n> 詳しくは{request_channel}をご覧ください！\n\n"
+    body_text += "**・ドクター情報登録**\n> アークナイツのホーム画面等から確認できるゲーム内ID(○○○○#0000の形式)をサーバーに登録し、「サポートリクエスト」への応答を可能にします。\n> 削除する場合、任意のチャンネルで ***/doctorname delete*** を実行してください。\n> -# ※登録した情報はメンバー全員が閲覧できますのでご注意ください。\n\n"
+    body_text += "**・Wiki検索**\n> オペレーターを検索し、詳細と評価が載っている有志Wikiのページを表示します。\n\n"
+    body_text += "**・闇鍋招集**\n> 統合戦略でオペレーターを招集する際、職業ごとにランダムで選んでくれるツールです。\n\n"
+    body_text += f"**・マルチプレイ募集 **\n> マルチプレイの募集を簡単に行えます！詳しくは{multi_channel.jump_url}をご覧ください！\n\n"
+
+    components = [{
+        "type": 10,
+        "content": body_text.strip()
+    }]
     
-    embed.set_author(name = "ロード", icon_url=client.user.avatar)
+    view = ToolButtons()
+    client.add_view(view) # ensure discord.py view state supervisor tracks these persistent buttons
+    
+    for row in view.to_components():
+        components.append(row.to_dict())
+
+    payload = {
+        "flags": 32768,
+        "components": components
+    }
+    
     if not edit:
-        await channel.send(embed = embed, view = ToolButtons())
+        route = discord.http.Route("POST", "/channels/{channel_id}/messages", channel_id=channel.id)
+        await client.http.request(route, json=payload)
     else:
-        message = await channel.fetch_message(message_to_edit)
-        await message.edit(embed = embed, view = ToolButtons())
+        route = discord.http.Route("PATCH", "/channels/{channel_id}/messages/{message_id}", channel_id=channel.id, message_id=message_to_edit)
+        await client.http.request(route, json=payload)
     
     await interaction.followup.send("完了しました！")
 
