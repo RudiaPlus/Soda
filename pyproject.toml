@@ -10,7 +10,7 @@ dependencies = [
   "beautifulsoup4",
   "brotli",
   "chromadb",
-  "discord-py==2.7.1",
+  "discord-py[voice]==2.7.1",
   "flask",
   "langchain",
   "langchain-chroma",
